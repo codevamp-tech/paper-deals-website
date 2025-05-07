@@ -1,0 +1,65 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button"; // Adjust the path as needed
+import TopbarWithCategories from "./Categorei";
+
+const Topbar = () => {
+  return (
+    <header className="border-b border-zinc-800 h-[11vh]  ">
+      <div className="container mx-auto px-4 py-4">
+        <nav className="flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <Link href="/" className="text-2xl font-bold tracking-tighter">
+              <span className="text-white">Paper</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">
+                Deals
+              </span>
+            </Link>
+            <div className="hidden md:flex items-center gap-8">
+              {/* <Link
+                href="#products"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Categorei
+              </Link> */}
+              <TopbarWithCategories />
+              <Link
+                href="#solutions"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Solutions
+              </Link>
+              <Link
+                href="/about"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                href="#contact"
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              className="hidden md:flex border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
+            >
+              Log in
+            </Button>
+            <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white">
+              Get Started
+            </Button>
+          </div>
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+export default Topbar;
