@@ -1,14 +1,6 @@
-export default function ReadyToOrder({ isaboutpage }) {
+export default function ReadyToOrder() {
   return (
-    <div
-      className="py-16 px-6 text-white"
-      style={{
-        borderTop: isaboutpage ? "1px solid red " : "1px solid white", // borderTop only on Home page
-        borderBottom: isaboutpage
-          ? "1px solid transparent "
-          : "1px solid white", // borderBottom only on Home page
-      }}
-    >
+    <div className="border-t border-white border-b border-white  py-16 px-6 text-white">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-[#FFF5E1]">
           Ready to

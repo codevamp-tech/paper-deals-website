@@ -30,7 +30,7 @@ export default function AboutUs() {
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            <span className="text-[#8143e7]">
+            <span className="text-[#f76c29]">
               Largest Vertically
               <br />
               Integrated
@@ -45,7 +45,9 @@ export default function AboutUs() {
           </h1>
         </div>
         {/* add a business flow  */}
-
+        <div>
+          <img src="/flowimg.png" alt="business flow " />
+        </div>
         {/* end of business flow */}
       </div>
       {/*second page about us  */}
