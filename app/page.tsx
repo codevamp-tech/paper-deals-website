@@ -12,6 +12,7 @@ import Hero from "@/components/herohomepage/Heropage";
 export default function Home() {
   return (
     <div className="min-h-screen text-white">
+
       {/* Hero Section P2 and add intro below*/}
 
       <Hero />

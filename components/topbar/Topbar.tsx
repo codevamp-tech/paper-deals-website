@@ -1,11 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"; // Adjust the path as needed
 import TopbarWithCategories from "./Categorei";
+import { useRouter } from "next/navigation";
 
 const Topbar = () => {
+  const router = useRouter(); // Initialize the router
+
+  const handleSignupClick = () => {
+    router.push("/signup"); // Navigate programmatically to the signup page
+  };
+
   return (
     <header className="border-b border-zinc-800 h-[11vh]  ">
       <div className="container mx-auto px-4 py-4">
@@ -46,12 +53,18 @@ const Topbar = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              className="hidden md:flex border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
+            <Link
+              href="/login" // Direct link to the signup page
             >
-              Log in
-            </Button>
+              <Button
+                variant="outline"
+                className="hidden md:flex border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
+              >
+                Log in
+
+              </Button>
+            </Link>
+
             <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white">
               Get Started
             </Button>

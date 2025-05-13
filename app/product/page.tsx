@@ -1,3 +1,22 @@
+<<<<<<< HEAD
+"use client";
+import React, { useState } from "react";
+import ProductList from "./AllProduct";
+import Advertisement from "./Advertisement";
+import PriceList from "./ProductListing";
+import Detail from "./detail/page";
+
+export default function Product() {
+  return (
+    <div>
+      <Advertisement />
+      <ProductList />
+      <PriceList />
+      <Detail />
+    </div>
+  );
+}
+=======
 "use client";
 import React, { useState } from "react";
 import ProductList from "./AllProduct";
@@ -25,3 +44,4 @@ export default function Product() {
     </div>
   );
 }
+>>>>>>> 9befba398a387eb889c26a476e570e063c8a48c3

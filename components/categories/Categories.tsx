@@ -2,7 +2,7 @@
 import { useCallback, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useAnimation } from "framer-motion";
-
+ 
 const dummyData = [
   {
     _id: 1,
@@ -96,8 +96,9 @@ const dummyData = [
     icon: "/newsprint.jpeg",
   },
 ];
+ 
 
-const Categories = () => {
+const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
   const router = useRouter();
   const firstControls = useAnimation();
   const secondControls = useAnimation();
@@ -115,9 +116,7 @@ const Categories = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleConsult = useCallback((symptomsName) => {
-    router.push(`/doctors?keyword=${encodeURIComponent(symptomsName)}`);
-  }, []);
+
 
   const firstHalfSymptoms = dummyData.slice(0, 5);
   const secondHalfSymptoms = dummyData.slice(5, 12);
@@ -152,10 +151,10 @@ const Categories = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  h-[500px] [background-color:rgba(113,47,255,0.21)] rounded-full blur-[120px]"></div>
       <div className="text-center mb-12">
         <h5 className="text-primary-white text-[6vh] font-[900] font-[Poppins]">
-          Explore Our
+          {title }
         </h5>
         <motion.div className="text-accent-text text-[6vh] font-[900] mt-1 font-[Poppins]">
-          Categories
+         {subtitle}
         </motion.div>
       </div>
 
