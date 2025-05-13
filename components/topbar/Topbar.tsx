@@ -26,10 +26,10 @@ const Topbar = () => {
               </Link> */}
               <TopbarWithCategories />
               <Link
-                href="#solutions"
+                href="/product"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >
-                Solutions
+                Product
               </Link>
               <Link
                 href="/about"
@@ -38,10 +38,10 @@ const Topbar = () => {
                 About
               </Link>
               <Link
-                href="#contact"
+                href="/seller"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >
-                Contact
+                Seller
               </Link>
             </div>
           </div>
