@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { Poppins } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import Topbar from "@/components/topbar/Topbar";
+import BookModalButton from "@/components/flotiongbutton/StickyButton";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
         >
           <Topbar />
           {children}
+          <BookModalButton />
         </ThemeProvider>
       </body>
     </html>

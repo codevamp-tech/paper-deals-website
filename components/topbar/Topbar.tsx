@@ -45,10 +45,10 @@ const Topbar = () => {
                 About
               </Link>
               <Link
-                href="#contact"
+                href="/seller"
                 className="text-sm text-zinc-400 hover:text-white transition-colors"
               >
-                Contact
+                Seller
               </Link>
             </div>
           </div>

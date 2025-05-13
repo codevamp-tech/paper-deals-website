@@ -50,8 +50,8 @@ export default function InfiniteCarousel() {
   }, []);
 
   return (
-    <div className=" bg-white py-20 rounded-br-2xl  rounded-bl-2xl ">
-      <h1 className="text-4xl sm:text-5xl font-bold text-black text-center leading-tight pb-10 ">
+    <div className="bg-white py-20 rounded-br-2xl rounded-bl-2xl">
+      <h1 className="text-4xl sm:text-5xl font-bold text-black text-center leading-tight pb-10">
         Culture at{" "}
         <span
           style={{
@@ -61,14 +61,14 @@ export default function InfiniteCarousel() {
           Paper Deals
         </span>
       </h1>
-      <div className="overflow-hidden">
+      <div className="overflow-hidden mx-auto max-w-7xl px-4">
         <div
           ref={carouselRef}
           className="flex transition-transform"
           style={{ willChange: "transform" }}
         >
           {/* Formal event image */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Formal event"
@@ -77,7 +77,7 @@ export default function InfiniteCarousel() {
           </div>
 
           {/* Team celebration with trophy */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Team celebration"
@@ -86,7 +86,7 @@ export default function InfiniteCarousel() {
           </div>
 
           {/* Award ceremony */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Award ceremony"
@@ -95,7 +95,7 @@ export default function InfiniteCarousel() {
           </div>
 
           {/* Office team photo */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Office team"
@@ -104,7 +104,7 @@ export default function InfiniteCarousel() {
           </div>
 
           {/* Game or activity */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Game activity"
@@ -113,7 +113,7 @@ export default function InfiniteCarousel() {
           </div>
 
           {/* Holiday celebration */}
-          <div className="carousel-item flex-shrink-0 w-56 h-48 rounded-lg overflow-hidden mr-4">
+          <div className="carousel-item flex-shrink-0 w-80 h-64 rounded-lg overflow-hidden mr-6">
             <img
               src="/mainimg.png"
               alt="Holiday celebration"

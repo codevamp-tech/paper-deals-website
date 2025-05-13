@@ -7,7 +7,6 @@ import ProductInsights from "@/components/insight/Insight";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import Footer from "@/components/footer/Footer";
-import Topbar from "@/components/topbar/Topbar";
 import Hero from "@/components/herohomepage/Heropage";
 
 export default function Home() {
