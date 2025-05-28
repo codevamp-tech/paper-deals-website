@@ -23,12 +23,12 @@ const Hero = () => {
                 Revolutionize
               </span>{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#aaa]">
-                Your Business with Premium Paper Solutions
+                Your Business with Premium Solutions
               </span>
             </h1>
             <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto">
-              Elevate your business with our high-quality paper products
-              designed specifically for modern B2B needs.
+              Elevate your business with our high-quality products designed
+              specifically for modern B2B needs.
             </p>
 
             {/* Search + CTA */}

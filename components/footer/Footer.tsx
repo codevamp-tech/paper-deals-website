@@ -13,14 +13,17 @@ const Footer = () => {
               href="/"
               className="text-2xl font-bold tracking-tighter mb-6 block"
             >
-              <span className="text-white">Paper</span>
+              <span className="text-white">
+                F2Fintech
+                {""}
+              </span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">
-                Deals
+                Mart
               </span>
             </Link>
             <p className="text-zinc-400 mb-6">
-              Premium paper solutions for modern businesses. Quality,
-              reliability, and innovation.
+              Premium solutions for modern businesses. Quality, reliability, and
+              innovation.
             </p>
             <div className="flex gap-4">
               <a
@@ -113,7 +116,7 @@ const Footer = () => {
 
         <div className="border-t border-zinc-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-zinc-500 text-sm">
-            © 2025 PaperDeals. All rights reserved.
+            © 2025 F2Fintech mart. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0 items-center">
             <p className="text-[3px] text-zinc-500">H4554N</p>

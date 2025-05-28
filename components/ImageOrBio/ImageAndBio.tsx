@@ -38,7 +38,7 @@ const BioImageSec: React.FC = () => {
             className="object-cover w-full h-full"
             priority
           />
-          <img
+          {/* <img
             src="/imageflow.png"
             alt="Overlay Image"
             className="absolute z-10 hidden sm:block"
@@ -50,7 +50,7 @@ const BioImageSec: React.FC = () => {
               objectFit: "cover",
               marginLeft: "25vh",
             }}
-          />
+          /> */}
         </div>
       </div>
 

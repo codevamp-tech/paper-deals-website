@@ -41,7 +41,7 @@ export default function Advertisement() {
           <div className="flex flex-col md:flex-row justify-between items-center bg-white shadow-xl rounded-2xl p-4 md:p-6 lg:p-8 w-full md:w-3/4 lg:w-1/2 xl:w-1/4 min-h-[45vh] md:h-[45vh]  ">
             <div className="flex flex-col justify-between h-full w-full md:w-auto mb-6 md:mb-0">
               <h3 className="text-lg font-bold text-gray-900 mb-4 md:mb-2 text-center md:text-left">
-                Download Paper Deals App
+                Download Our App
               </h3>
               <div className="flex-shrink-0 md:ml-4 self-center mt-4 md:mt-0">
                 <img

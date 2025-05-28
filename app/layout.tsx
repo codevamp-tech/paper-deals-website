@@ -15,8 +15,8 @@ const poppins = Poppins({
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "PaperDeals - Premium B2B Paper Solutions",
-  description: "High-quality paper products for modern businesses",
+  title: "F2Fintech mart - Premium B2B Solutions",
+  description: "High-quality products for modern businesses",
   generator: "v0.dev",
 };
 

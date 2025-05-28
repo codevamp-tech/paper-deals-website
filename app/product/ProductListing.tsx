@@ -42,21 +42,21 @@ export default function PriceList() {
       brand: "VIBRANT",
       location: "EX - Ahmedabad",
       price: "Login To View",
-      time: "",
+      time: "8 hours ago",
     },
     {
       product: "Secondary TMT Fe 500",
       brand: "BHAGWATI",
       location: "EX - Nashik",
       price: "Login To View",
-      time: "",
+      time: "1 hours ago",
     },
     {
       product: "Secondary TMT Fe 500",
       brand: "MOIRA",
       location: "EX - Wada",
       price: "Login To View",
-      time: "",
+      time: "Yesterday",
     },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);

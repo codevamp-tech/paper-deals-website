@@ -196,7 +196,7 @@ export default function CategoriesDropdown() {
     <div className="relative">
       {/* Categories Button */}
       <button
-        className="flex items-center gap-2 px-4 py-4 hover:text-white text-zinc-400 font-medium"
+        className="flex items-center gap-2 px-4 py-4 hover:text-white text-white font-medium"
         onMouseEnter={handleOpenDropdown}
         onMouseLeave={() => setIsOpen(false)}
       >

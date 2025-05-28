@@ -1,7 +1,6 @@
-import { Card } from "@mui/material"
-import { Poppins } from "next/font/google"
-import type { Config } from "tailwindcss"
-
+import { Card } from "@mui/material";
+import { Poppins } from "next/font/google";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
@@ -22,7 +21,8 @@ const config: Config = {
     extend: {
       backgroundImage: {
         // 'card-gradient': 'radial-gradient(circle at center, rgba(11,177,213,1) 0%, rgba(145,52,233,1) 100%)',
-        'testo-gradient':' linear-gradient(181deg,rgba(84, 55, 146, 1) 0%, rgba(15, 10, 26, 1) 100%)',
+        "testo-gradient":
+          " linear-gradient(181deg,rgba(10, 92, 85, 1) 20%, rgba(4, 34, 32, 1) 100%)",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -30,20 +30,15 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        
-        primary: {
-    white:'#fff'
 
+        primary: {
+          white: "#fff",
         },
-        secondary: {
-        },
+        secondary: {},
         accent: {
-          text:'#ADD8E6'
-    
+          text: "#ADD8E6",
         },
-        card: {
-     
-        },
+        card: {},
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -52,15 +47,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-    
+
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
-
       },
       fontFamily: {
-        poppins: ['var(--font-poppins)'],
+        poppins: ["var(--font-poppins)"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -84,6 +78,6 @@ const config: Config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
 
-export default config
+export default config;

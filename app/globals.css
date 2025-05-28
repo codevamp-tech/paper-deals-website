@@ -55,9 +55,41 @@
   body {
     background: radial-gradient(
       circle,
-      rgba(84, 55, 146, 1) 80%,
+      rgba(10, 92, 85, 1) 27%,
+      rgba(10, 92, 85, 1) 42%,
       rgba(0, 0, 0, 1) 100%
     );
     @apply text-foreground font-poppins;
   }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

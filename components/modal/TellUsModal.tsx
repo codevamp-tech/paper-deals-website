@@ -17,8 +17,12 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 ">
       {/* Modal Container */}
       <div
-        className="bg-[linear-gradient(181deg,rgba(62,52,134,1)_0%,rgba(13,9,23,1)_91%)] w-full max-w-md rounded-lg shadow-lg relative ml-[55rem]
-      mt-[7rem]"
+        className="w-full max-w-md rounded-lg shadow-lg relative ml-[55rem]
+      mt-[7rem] "
+        style={{
+          background:
+            "linear-gradient(181deg, rgba(10, 92, 85, 1) 20%, rgba(4, 34, 32, 1) 100%)",
+        }}
       >
         {/* Header */}
         <div className="bg- px-4 py-3 text-white font-bold text-xl rounded-t-lg flex justify-between items-center">
