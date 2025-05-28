@@ -9,17 +9,15 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tighter mb-6 block"
-            >
-              <span className="text-white">
-                F2Fintech
-                {""}
-              </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">
-                Mart
-              </span>
+            <Link href="/">
+              <img
+                src="/logomain.png"
+                alt="LOGO"
+                style={{
+                  height: "auto",
+                  width: "12vw",
+                }}
+              />
             </Link>
             <p className="text-zinc-400 mb-6">
               Premium solutions for modern businesses. Quality, reliability, and
@@ -116,7 +114,7 @@ const Footer = () => {
 
         <div className="border-t border-zinc-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-zinc-500 text-sm">
-            © 2025 F2Fintech mart. All rights reserved.
+            © 2025 PaperDeals. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0 items-center">
             <p className="text-[3px] text-zinc-500">H4554N</p>

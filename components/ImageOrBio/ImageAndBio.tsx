@@ -26,30 +26,17 @@ const BioImageSec: React.FC = () => {
   ];
 
   return (
-    <div className="relative w-full max-w-[95vw] mx-auto px-4">
+    <div className="relative w-full max-w-[95vw] mx-auto px-4 h-[8vh] ">
       {/* Second Div - Background Image */}
       <div className="relative rounded-xl overflow-hidden shadow-2xl shadow-purple-500/10">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 mix-blend-overlay"></div>
         <div className="relative h-[60vh] sm:h-[70vh] md:h-[80vh]">
-          <Image
+          {/* <Image
             src="/mainimg.png"
             alt="Premium Paper Products"
             fill
             className="object-cover w-full h-full"
             priority
-          />
-          {/* <img
-            src="/imageflow.png"
-            alt="Overlay Image"
-            className="absolute z-10 hidden sm:block"
-            style={{
-              top: "20vh",
-              left: "15vw",
-              width: "40vw",
-              height: "auto",
-              objectFit: "cover",
-              marginLeft: "25vh",
-            }}
           /> */}
         </div>
       </div>
@@ -78,6 +65,16 @@ const BioImageSec: React.FC = () => {
             </div>
           ))}
         </div>
+        {/* <div className="flex justify-center items-center text-center mt-10">
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 leading-tight justify-center w-[80vw] ">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff]">
+              Revolutionize
+            </span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#aaa] ">
+              Your Business with Premium Solutions
+            </span>
+          </h1>
+        </div> */}
       </div>
     </div>
   );

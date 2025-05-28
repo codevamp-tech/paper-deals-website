@@ -35,7 +35,7 @@ export default function SellOnlinePage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
               Sell Online with{" "}
               <span className="text-blue-600 bg-gradient-to-r from-purple-600 to-cyan-500 bg-clip-text text-transparent">
-                F2Fintech mart
+                PaperDeals
               </span>
             </h1>
             <p className="text-lg text-gray-200 max-w-lg leading-relaxed">

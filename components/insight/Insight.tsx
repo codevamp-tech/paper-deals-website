@@ -36,6 +36,7 @@ export default function ProductInsights() {
   return (
     <div
       className="w-full  py-16 px-4 sm:px-6 lg:px-8 overflow-hidden
+       pt-32
     "
     >
       <div className="max-w-7xl mx-auto">

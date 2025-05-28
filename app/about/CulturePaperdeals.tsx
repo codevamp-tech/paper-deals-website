@@ -58,7 +58,7 @@ export default function InfiniteCarousel() {
             color: "#8440e8",
           }}
         >
-          F2Fintech mart
+          PaperDeals
         </span>
       </h1>
       <div className="overflow-hidden mx-auto max-w-7xl px-4">

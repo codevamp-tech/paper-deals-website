@@ -18,13 +18,13 @@ const Topbar = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-12">
-            <Link href="/" className="text-2xl font-bold tracking-tighter">
-              <span className="text-white">F2Fintech </span>
+            {/* <Link href="/" className="text-2xl font-bold tracking-tighter">
+              <span className="text-white">Paper </span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">
-                Mart
+                Deals
               </span>
-            </Link>
-            {/* <Link href="/">
+            </Link> */}
+            <Link href="/">
               <img
                 src="/logomain.png"
                 alt="LOGO"
@@ -33,7 +33,7 @@ const Topbar = () => {
                   width: "12vw",
                 }}
               />
-            </Link> */}
+            </Link>
             <div className="hidden md:flex items-center gap-8">
               {/* <Link
                 href="#products"
