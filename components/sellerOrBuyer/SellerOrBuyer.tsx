@@ -2,7 +2,7 @@
 import React from "react";
 import Advertising from "../advertising/Advertising";
 
-const isMobile = window.matchMedia("(max-width: 768px)").matches;
+// const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
 const SellerOrBuyer = () => {
   return (
