@@ -38,30 +38,30 @@ export default function FaqSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary-white">
-            Frequently Asked <span className="text-accent-text">Questions</span>
+            Frequently Asked <span className="text-gray-800">Questions</span>
           </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto">
+          <p className="text-gray-100 max-w-2xl mx-auto">
             Everything you need to know about our paper products and services
           </p>
         </div>
 
         <div className="max-w-3xl mx-auto">
           {faqs.map((faq, index) => (
-            <div key={index} className="mb-4 border-b border-zinc-800 pb-4">
+            <div key={index} className="mb-4 border-b border-white pb-4">
               <button
                 className="flex justify-between items-center w-full text-left py-4"
                 onClick={() => toggleFaq(index)}
               >
                 <span className="text-lg font-medium">{faq.question}</span>
                 <ChevronDown
-                  className={`h-5 w-5 text-zinc-400 transition-transform duration-300 ${
+                  className={`h-5 w-5 text-white transition-transform duration-300 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                 />
               </button>
               {openIndex === index && (
                 <div className="pb-4">
-                  <p className="text-zinc-400">{faq.answer}</p>
+                  <p className="text-white font-normal">{faq.answer}</p>
                 </div>
               )}
             </div>

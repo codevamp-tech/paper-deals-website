@@ -150,7 +150,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
         <h5 className="text-primary-white text-[6vh] font-[900] font-[Poppins]">
           {title}
         </h5>
-        <motion.div className="text-accent-text text-[6vh] font-[900] mt-1 font-[Poppins]">
+        <motion.div className="text-gray-800 text-[6vh] font-[900] mt-1 font-[Poppins]">
           {subtitle}
         </motion.div>
       </div>

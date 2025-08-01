@@ -161,23 +161,21 @@ export default function TestimonialSection() {
                   <h3
                     style={{
                       margin: "0",
-                      color: "#ffffff",
+                      color: "#333",
                       fontSize: "18px",
                       fontWeight: "600",
                     }}
                   >
                     {testimonial.name}
                   </h3>
-                  <p
-                    style={{ margin: "0", color: "#9ca3af", fontSize: "14px" }}
-                  >
+                  <p style={{ margin: "0", color: "gray", fontSize: "14px" }}>
                     {testimonial.role}
                   </p>
                 </div>
               </div>
               <p
                 style={{
-                  color: "#d1d5db",
+                  color: "#333",
                   fontSize: "16px",
                   lineHeight: "1.6",
                   margin: "0",

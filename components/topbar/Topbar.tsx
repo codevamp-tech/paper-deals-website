@@ -14,7 +14,7 @@ const Topbar = () => {
   };
 
   return (
-    <header className="border-b border-zinc-800 h-[11vh] bg-black  ">
+    <header className="bg-white  ">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-12">
@@ -44,37 +44,37 @@ const Topbar = () => {
               <TopbarWithCategories />
               <Link
                 href="/product"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Product
               </Link>
               <Link
                 href="/about"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 About
               </Link>
               <Link
                 href="/seller"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Seller
               </Link>
               <Link
                 href="/product/detail"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Detail
               </Link>
               <Link
                 href="/become-a-seller"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Become a Seller
               </Link>
               <Link
                 href="/order"
-                className="text-sm text-white hover:text-white transition-colors"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Order
               </Link>
@@ -86,7 +86,7 @@ const Topbar = () => {
             >
               <Button
                 variant="outline"
-                className="hidden md:flex border-zinc-700 text-zinc-300 hover:text-black hover:border-zinc-500"
+                className="hidden md:flex border-zinc-700 text-zinc-900 hover:text-[#333] hover:border-zinc-500 bg-white"
               >
                 Log in
               </Button>

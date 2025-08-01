@@ -4,7 +4,7 @@ export default function ReadyToOrder() {
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-[#FFF5E1]">
           Ready to
-          <span className="text-accent-text"> Order ?</span>
+          <span className="text-gray-800"> Order ?</span>
         </h2>
         <p className="text-lg mb-8">
           Simplify your Metal sourcing and Fabrications with Metalbook. Order
