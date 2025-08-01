@@ -7,7 +7,7 @@ import Advertising from "../advertising/Advertising";
 const SellerOrBuyer = () => {
   return (
     <>
-      <div className="flex justify-center items-center gap-16 min-h-screen font-inter overflow-hidden relative flex-col md:flex-row">
+      <div className="flex justify-center items-center  min-h-screen font-inter overflow-hidden relative flex-col md:flex-row">
         {/* LEFT BOX */}
         <div className="relative rounded-2xl h-auto md:h-[90vh] w-[95%] md:w-[35.5vw] bg-black border-white/10 shadow-lg overflow-hidden border p-5 md:p-7 mx-auto">
           <div className="relative">

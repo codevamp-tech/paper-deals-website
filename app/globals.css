@@ -53,11 +53,12 @@
   }
 
   body {
+    background: #00d4ff;
     background: radial-gradient(
       circle,
-      rgba(10, 92, 85, 1) 27%,
-      rgba(10, 92, 85, 1) 42%,
-      rgba(0, 0, 0, 1) 100%
+      rgba(0, 212, 255, 0.65) 0%,
+      rgba(112, 112, 179, 1) 35%,
+      rgba(0, 212, 255, 1) 100%
     );
     @apply text-foreground font-poppins;
   }

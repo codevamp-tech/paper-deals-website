@@ -51,8 +51,8 @@ export default function ProductInsights() {
 
         <div className="relative overflow-hidden">
           {/* Gradient overlays for smooth scroll effect */}
-          <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#063733] to-transparent z-10"></div>
-          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#07423d] to-transparent z-10"></div>
+          <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
+          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>
 
           <div className="overflow-hidden py-4">
             <div

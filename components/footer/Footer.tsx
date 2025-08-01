@@ -5,7 +5,7 @@ import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-zinc-800 pt-16 pb-8">
+    <footer className="pt-16 pb-8 bg-white">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
@@ -19,32 +19,32 @@ const Footer = () => {
                 }}
               />
             </Link>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-gray-700 mb-6">
               Premium solutions for modern businesses. Quality, reliability, and
               innovation.
             </p>
             <div className="flex gap-4">
               <a
                 href="#"
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
@@ -52,7 +52,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Products</h3>
+            <h3 className="font-bold mb-4 text-black">Products</h3>
             <ul className="space-y-2">
               {[
                 "Copy Paper",
@@ -64,7 +64,7 @@ const Footer = () => {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-zinc-400 hover:text-white transition-colors"
+                    className="text-gray-700 hover:text-gray-800 transition-colors"
                   >
                     {item}
                   </a>
@@ -74,7 +74,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Company</h3>
+            <h3 className="font-bold mb-4 text-black">Company</h3>
             <ul className="space-y-2">
               {[
                 "About Us",
@@ -86,7 +86,7 @@ const Footer = () => {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-zinc-400 hover:text-white transition-colors"
+                    className="text-gray-700 hover:text-gray-800 transition-colors"
                   >
                     {item}
                   </a>
@@ -96,13 +96,13 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold mb-4">Resources</h3>
+            <h3 className="font-bold mb-4 text-black">Resources</h3>
             <ul className="space-y-2">
               {["Blog", "Guides", "FAQ", "Support", "Partners"].map((item) => (
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-zinc-400 hover:text-white transition-colors"
+                    className="text-gray-700 hover:text-gray-800 transition-colors"
                   >
                     {item}
                   </a>
@@ -120,19 +120,19 @@ const Footer = () => {
             <p className="text-[3px] text-zinc-500">H4554N</p>
             <a
               href="#"
-              className="text-zinc-500 hover:text-white text-sm transition-colors"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-zinc-500 hover:text-white text-sm transition-colors"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
               Terms of Service
             </a>
             <a
               href="#"
-              className="text-zinc-500 hover:text-white text-sm transition-colors"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
               Cookie Policy
             </a>

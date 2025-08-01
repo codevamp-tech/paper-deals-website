@@ -93,7 +93,7 @@ const Advertising = () => {
               }`}
             >
               <span className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-200 uppercase rounded-full bg-white/10">
-                Customer Stories
+                Advertisment
               </span>
               <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-300 bg-clip-text">
                 Loved by <br className="hidden md:block" />
@@ -109,7 +109,7 @@ const Advertising = () => {
                     <div className="text-xl font-semibold text-white font-poppins">
                       {testimonials[currentIndex].name}
                     </div>
-                    <div className="text-lg font-medium text-indigo-300 font-poppins">
+                    <div className="text-lg font-medium text-gray-100 font-poppins">
                       {testimonials[currentIndex].product}
                     </div>
                   </footer>

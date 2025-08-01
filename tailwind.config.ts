@@ -22,7 +22,7 @@ const config: Config = {
       backgroundImage: {
         // 'card-gradient': 'radial-gradient(circle at center, rgba(11,177,213,1) 0%, rgba(145,52,233,1) 100%)',
         "testo-gradient":
-          " linear-gradient(181deg,rgba(10, 92, 85, 1) 20%, rgba(4, 34, 32, 1) 100%)",
+          "linear-gradient(181deg, rgba(245, 250, 249, 1) 20%, rgba(230, 240, 238, 1) 100%)",
       },
       colors: {
         border: "hsl(var(--border))",

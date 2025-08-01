@@ -30,7 +30,7 @@ export default function AboutUs() {
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            <span className="text-[#f76c29]">
+            <span className="text-[#000]">
               Largest Vertically
               <br />
               Integrated
