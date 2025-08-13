@@ -2,7 +2,7 @@ import React from "react";
 import SellOnlinePage from "./SellOnlinePage";
 import { StoryCarousel } from "./SuccessCarousel";
 import FaqSection from "@/components/faqSection/FaqSection";
-import Footer from "@/components/footer/Footer";
+
 
 export default function Product() {
   return (
@@ -13,7 +13,7 @@ export default function Product() {
           <StoryCarousel />
         </div>
         <FaqSection />
-        <Footer />
+        
       </div>
     </>
   );

@@ -5,7 +5,7 @@ import PriceList from "../product/ProductListing";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
-import Footer from "@/components/footer/Footer";
+
 
 const Seller = () => {
   return (
@@ -15,7 +15,7 @@ const Seller = () => {
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />
-      <Footer />
+ 
     </div>
   );
 };

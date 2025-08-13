@@ -4,7 +4,6 @@ import InfiniteCarousel from "./CulturePaperdeals";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
-import Footer from "@/components/footer/Footer";
 export default function AboutUs() {
   return (
     <section className="container mx-auto px-4 py-16  border  ">
@@ -218,7 +217,6 @@ export default function AboutUs() {
 
       <FaqSection />
 
-      <Footer />
     </section>
   );
 }
