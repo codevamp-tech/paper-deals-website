@@ -4,61 +4,130 @@ import { useState } from "react";
 
 const categories = [
   { id: "all", name: "All" },
-  { id: "mild-steel", name: "Mild Steel" },
-  { id: "stainless-steel", name: "Stainless Steel" },
-  { id: "aluminium", name: "Aluminium" },
-  { id: "copper", name: "Copper" },
-  { id: "zinc", name: "Zinc" },
-  { id: "nickel", name: "Nickel" },
-  { id: "ferrous-scrap", name: "Ferrous Scrap" },
-  { id: "non-ferrous-scrap", name: "Non Ferrous Scrap" },
+  { id: "kraft-paper", name: "Kraft Paper" },
+  { id: "board-paper", name: "Board Paper" },
+  { id: "tissue-paper", name: "Tissue Paper" },
+  { id: "office-paper", name: "Office Paper" },
+  { id: "premium-paper", name: "Premium Paper" },
+  { id: "stock-lot", name: "Stock Lot Paper" },
+  { id: "writing-printing", name: "Writing & Printing Paper" },
+  { id: "adhesive-paper", name: "Gumming / Adhesive Paper" },
+  { id: "art-paper", name: "Art Paper" },
+  { id: "matt-paper", name: "Matt Paper" },
+  { id: "coated-paper", name: "Coated / Cromo Paper" },
+  { id: "sbs-paper", name: "SBS Paper" },
+  { id: "newsprint", name: "Newsprint Paper" },
 ];
 
 export default function PriceList() {
   const data = [
     {
-      product: "Secondary TMT Fe 500D",
+      product: "Kraft Paper",
       brand: "FORTUNE",
       location: "EX - Delhi",
       price: "₹50,000 / MT",
       time: "2 hours ago",
     },
     {
-      product: "Secondary TMT Fe 500D",
+      product: "Duplex Board",
       brand: "FORTUNE",
       location: "EX - Amritsar",
       price: "₹49,700 / MT",
       time: "2 hours ago",
     },
     {
-      product: "Secondary TMT Fe 500",
+      product: "Jumbo Tissue",
       brand: "MONO",
       location: "EX - Ahmedabad",
       price: "Login To View",
-      time: "",
+      time: "4 hours ago",
     },
     {
-      product: "Secondary TMT Fe 500",
+      product: "Copier Paper - A4",
       brand: "VIBRANT",
       location: "EX - Ahmedabad",
-      price: "Login To View",
+      price: "₹72,000 / MT",
       time: "8 hours ago",
     },
     {
-      product: "Secondary TMT Fe 500",
+      product: "Prime Paper",
       brand: "BHAGWATI",
       location: "EX - Nashik",
       price: "Login To View",
-      time: "1 hours ago",
+      time: "1 hour ago",
     },
     {
-      product: "Secondary TMT Fe 500",
+      product: "Stock lot Papers",
       brand: "MOIRA",
       location: "EX - Wada",
       price: "Login To View",
       time: "Yesterday",
     },
+    {
+      product: "Writing & Printing paper",
+      brand: "FORTUNE",
+      location: "EX - Mumbai",
+      price: "₹62,500 / MT",
+      time: "3 hours ago",
+    },
+    {
+      product: "Gumming Sheets",
+      brand: "MONO",
+      location: "EX - Surat",
+      price: "Login To View",
+      time: "6 hours ago",
+    },
+    {
+      product: "Art Paper",
+      brand: "VIBRANT",
+      location: "EX - Delhi",
+      price: "₹78,000 / MT",
+      time: "5 hours ago",
+    },
+    {
+      product: "Matt Paper",
+      brand: "BHAGWATI",
+      location: "EX - Jaipur",
+      price: "₹74,500 / MT",
+      time: "2 days ago",
+    },
+    {
+      product: "Cromo Paper",
+      brand: "MOIRA",
+      location: "EX - Pune",
+      price: "Login To View",
+      time: "7 hours ago",
+    },
+    {
+      product: "S.B.S",
+      brand: "FORTUNE",
+      location: "EX - Hyderabad",
+      price: "₹85,000 / MT",
+      time: "1 day ago",
+    },
+    {
+      product: "News Print",
+      brand: "MONO",
+      location: "EX - Kolkata",
+      price: "₹42,000 / MT",
+      time: "Today",
+    },
+    {
+      product: "Kraft Paper",
+      brand: "VIBRANT",
+      location: "EX - Chennai",
+      price: "Login To View",
+      time: "2 days ago",
+    },
+    {
+      product: "Duplex Board",
+      brand: "BHAGWATI",
+      location: "EX - Indore",
+      price: "₹53,500 / MT",
+      time: "5 hours ago",
+    },
   ];
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -66,7 +135,7 @@ export default function PriceList() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12  ">
       <div className="mb-10 text-center">
         <h2 className="text-3xl font-bold text-white sm:text-4xl">
-          Mild Steel Most Viewed Price
+          Kraft & Board Paper Most Viewed Price
         </h2>
         <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 mx-auto rounded-full"></div>
       </div>

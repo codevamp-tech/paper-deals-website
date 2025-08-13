@@ -104,7 +104,7 @@ export default function TestimonialSection() {
         </p>
         <p className="flex justify-center text-[3vh] mt-1 mb-11 ">
           Discover what our valued partners and clients have to say about their
-          seamless experiences with Metalbook.
+          seamless experiences with Peparbook.
         </p>
         <div
           style={{
