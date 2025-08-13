@@ -17,8 +17,6 @@ export default function ProductInsights() {
       if (!scrollContainer) return;
 
       scrollPosition += 0.5;
-
-      // Use modulus to create seamless loop without resetting
       const scrollWidth = scrollContainer.scrollWidth / 2;
       const currentOffset = scrollPosition % scrollWidth;
 
@@ -34,23 +32,18 @@ export default function ProductInsights() {
   }, []);
 
   return (
-    <div
-      className="w-full  py-16 px-4 sm:px-6 lg:px-8 overflow-hidden
-       pt-32
-    "
-    >
+    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900]  mb-3">
-            Insights
+          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mb-3">
+            Paper Industry Insights
           </h2>
           <p className="flex justify-center text-[3vh]">
-            Keep up to date with Industry News and Commodity Prices.
+            Keep up to date with Paper Industry News and Commodity Prices.
           </p>
         </div>
 
         <div className="relative overflow-hidden">
-          {/* Gradient overlays for smooth scroll effect */}
           <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
           <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>
 
@@ -60,73 +53,72 @@ export default function ProductInsights() {
               className="flex gap-4 transition-transform"
               style={{ width: "fit-content" }}
             >
-              {/* Product Cards - duplicated for continuous scroll effect */}
               {[...Array(2)].map((_, dupeIndex) => (
                 <div key={dupeIndex} className="flex gap-4">
                   <ProductCard
-                    title="HB Wire"
-                    subtitle="12Gauge"
-                    price={47.7}
+                    title="A4 Copy Paper"
+                    subtitle="80 GSM, Bright White, 500 Sheets/Ream"
+                    price={0.85}
                     change={0.63}
                     isPositive={true}
                     date="29/04/2025"
-                    location="Raipur"
-                    type="Primary"
+                    location="Chennai"
+                    type="Premium"
                   />
 
                   <ProductCard
-                    title="Copper Wire Rods"
-                    subtitle="Primary CC Rods(CCR), 8mm, Cu 99.99%"
-                    price={872.0}
+                    title="Kraft Paper"
+                    subtitle="120 GSM, Natural Brown, 100% Recycled"
+                    price={1.2}
                     change={0.93}
                     isPositive={true}
                     date="29/04/2025"
                     location="Mumbai"
-                    type="Primary"
+                    type="Industrial"
                   />
 
                   <ProductCard
-                    title="Copper Wire Rods"
-                    subtitle="Primary CC Rods(CCR), 8mm, Cu 99.99%"
-                    price={865.0}
+                    title="Art Paper"
+                    subtitle="150 GSM, Glossy Finish, Coated"
+                    price={1.5}
                     change={0.8}
                     isPositive={false}
                     date="29/04/2025"
                     location="Delhi"
-                    type="Primary"
+                    type="Premium"
                   />
 
                   <ProductCard
-                    title="Channel"
-                    subtitle="100*50, IS2062/2011 E250 Gr A"
-                    price={45.3}
+                    title="Newsprint"
+                    subtitle="45 GSM, Standard Quality"
+                    price={0.45}
                     change={0.0}
                     isPositive={false}
                     date="29/04/2025"
-                    location="Raipur"
-                    type="Secondary"
+                    location="Kolkata"
+                    type="Standard"
                   />
 
                   <ProductCard
-                    title="Channel"
-                    subtitle="100*50, IS2062/2011 E250 Gr A"
-                    price={50.7}
+                    title="Gumming Sheets"
+                    subtitle="90 GSM, Self-Adhesive, White"
+                    price={1.8}
                     change={0.0}
                     isPositive={false}
                     date="29/04/2025"
-                    location="Mumbai"
-                    type="Secondary"
+                    location="Bangalore"
+                    type="Specialty"
                   />
 
                   <ProductCard
-                    title="Channel"
-                    subtitle="100*50, IS2062/2011 E250 Gr A"
-                    price={47.6}
+                    title="Corrugated Sheets"
+                    subtitle="3-Ply, E-Flute, 200 GSM"
+                    price={2.3}
                     change={1.04}
                     isPositive={false}
                     date="29/04/2025"
                     location="Hyderabad"
-                    type="Secondary"
+                    type="Packaging"
                   />
                 </div>
               ))}
@@ -146,7 +138,7 @@ interface ProductCardProps {
   isPositive: boolean;
   date: string;
   location: string;
-  type: "Primary" | "Secondary";
+  type: "Premium" | "Standard" | "Industrial" | "Specialty" | "Packaging";
 }
 
 function ProductCard({
@@ -159,17 +151,19 @@ function ProductCard({
   location,
   type,
 }: ProductCardProps) {
+  const typeColors = {
+    Premium: "bg-blue-50 text-blue-600",
+    Standard: "bg-green-50 text-green-600",
+    Industrial: "bg-amber-50 text-amber-600",
+    Specialty: "bg-purple-50 text-purple-600",
+    Packaging: "bg-red-50 text-red-600",
+  };
+
   return (
     <div className="w-[300px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white border border-slate-100 flex flex-col">
       <div className="flex justify-between items-center p-4 border-b border-slate-100">
         <h3 className="font-bold text-slate-800 text-lg">{title}</h3>
-        <span
-          className={`text-xs px-2 py-1 rounded-full ${
-            type === "Primary"
-              ? "bg-blue-50 text-blue-600"
-              : "bg-purple-50 text-purple-600"
-          }`}
-        >
+        <span className={`text-xs px-2 py-1 rounded-full ${typeColors[type]}`}>
           {type}
         </span>
       </div>
@@ -181,9 +175,9 @@ function ProductCard({
 
         <div className="flex items-end gap-2 mb-1">
           <span className="text-2xl font-bold text-slate-800">
-            {price.toFixed(1)}
+            ₹{price.toFixed(2)}
           </span>
-          <span className="text-slate-600 text-sm">/ Kg</span>
+          <span className="text-slate-600 text-sm">/ kg</span>
 
           <div
             className={`flex items-center ml-auto text-xs font-medium ${

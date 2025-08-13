@@ -25,8 +25,8 @@ const OrderNow = () => {
         {/* Image Section */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-6">
           <img
-            src="/shirt.png"
-            alt="T-shirt"
+            src="/paper-box.png"
+            alt="A4 Paper Box"
             className="max-w-full h-auto object-contain rounded-xl"
           />
         </div>
@@ -34,18 +34,18 @@ const OrderNow = () => {
         {/* Info Section */}
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 text-black bg-white">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6">
-            T-Shirt/Paper Box
+            A4 Paper Box
           </h1>
           <p className="text-xl md:text-2xl font-semibold text-green-600 mb-4">
-            INR 13
+            INR 45
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm md:text-md text-gray-700">
             <div>
-              <span className="font-semibold">Size:</span> 10 X 9.5 X 1 Inch
+              <span className="font-semibold">Size:</span> 12 X 9 X 5 Inch
             </div>
             <div>
-              <span className="font-semibold">Weight Capacity:</span> 5 - 10 Kg
+              <span className="font-semibold">Weight Capacity:</span> 5 - 8 Kg
             </div>
             <div>
               <span className="font-semibold">Paper Grades:</span> Virgin Kraft
@@ -62,18 +62,18 @@ const OrderNow = () => {
               Lithography/Offset
             </div>
             <div>
-              <span className="font-semibold">Material Grade:</span> 450 GSM
+              <span className="font-semibold">Material Grade:</span> 500 GSM
             </div>
             <div>
-              <span className="font-semibold">Special Finish:</span> Additional
-              Cut Out
+              <span className="font-semibold">Special Finish:</span> Embossed
+              Logo
             </div>
             <div>
               <span className="font-semibold">Properties:</span> Biodegradable,
-              Moisture Proof
+              Recyclable
             </div>
             <div>
-              <span className="font-semibold">Application:</span> Shirt
+              <span className="font-semibold">Application:</span> A4 Paper
               Packaging
             </div>
             <div>
@@ -95,47 +95,47 @@ const OrderNow = () => {
       {/* Similar Products */}
       <div className="py-12 px-4 md:px-10 bg-black">
         <h1 className="text-white text-3xl md:text-4xl font-bold text-center mb-10 relative">
-          Find products similar to T Shirt/ Shirt{" "}
-          <span className="text-[#8143e7]">Paper Box</span>
+          Find products similar to{" "}
+          <span className="text-[#8143e7]">A4 Paper Box</span>
         </h1>
 
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
           {[
             {
-              img: "/1.jpg",
-              title: "Kraft Paper Shirt Saree Packaging Box",
-              brand: "Saraswati Enterprises",
-              price: "10",
+              img: "/paper1.jpg",
+              title: "Kraft Paper Document Storage Box",
+              brand: "Saraswati Paper Products",
+              price: "55",
             },
             {
-              img: "/2.jpg",
-              title: "16.5 X 12 X 3.5 Inch Saree Packing Box",
-              brand: "Tannu Packaging",
-              price: "22",
+              img: "/paper2.jpg",
+              title: "A4 Paper File Storage Box",
+              brand: "Tannu Paper Solutions",
+              price: "65",
             },
             {
-              img: "/3.jpg",
-              title: "Kraft Paper T Shirt Box",
-              brand: "Vaishali Ads & Prints",
-              price: "7",
+              img: "/paper3.jpg",
+              title: "Premium Paper Archival Box",
+              brand: "Vaishali Paper Crafts",
+              price: "75",
             },
             {
-              img: "/4.jpg",
-              title: "T Shirt /shirt paper Box",
-              brand: "Print Plus",
-              price: "12",
+              img: "/paper4.jpg",
+              title: "Office Paper Organizer Box",
+              brand: "Print Plus Papers",
+              price: "48",
             },
             {
-              img: "/5.jpg",
-              title: "T Shirt Packaging Box",
-              brand: "Colour Drops",
-              price: "9",
+              img: "/paper5.jpg",
+              title: "Heavy Duty Paper Storage Box",
+              brand: "Colour Paper Mills",
+              price: "82",
             },
             {
-              img: "/6.jpg",
-              title: "T Shirt Packaging Box",
-              brand: "SS Creations",
-              price: "18.50",
+              img: "/paper6.jpg",
+              title: "Eco-Friendly Paper Filing Box",
+              brand: "SS Paper Creations",
+              price: "60",
             },
           ].map((product, idx) => (
             <div

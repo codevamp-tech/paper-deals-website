@@ -7,7 +7,7 @@ export default function ReadyToOrder() {
           <span className="text-gray-800"> Order ?</span>
         </h2>
         <p className="text-lg mb-8">
-          Simplify your Metal sourcing and Fabrications with Metalbook. Order
+          Simplify your Pepar sourcing and Fabrications with Peparbook. Order
           now and
           <br />
           experience the difference for yourself !
