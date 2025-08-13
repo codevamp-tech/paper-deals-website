@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ProductList from "./AllProduct";
 import Advertisement from "./Advertisement";
 import PriceList from "./ProductListing";
-import Footer from "@/components/footer/Footer";
+
 import FaqSection from "@/components/faqSection/FaqSection";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import Advertising from "@/components/advertising/Advertising";
@@ -20,7 +20,7 @@ export default function Product() {
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />
-      <Footer />
+      
     </div>
   );
 }

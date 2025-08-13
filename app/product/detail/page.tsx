@@ -10,7 +10,7 @@ import Categories from "@/components/categories/Categories";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
-import Footer from "@/components/footer/Footer";
+
 
 // import DetailWithCategories from "./Categoreis";
 
@@ -25,7 +25,7 @@ const Detail = () => {
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />
-      <Footer />
+      
     </div>
   );
 };
