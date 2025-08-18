@@ -102,37 +102,37 @@ const OrderNow = () => {
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
           {[
             {
-              img: "/paper1.jpg",
+              img: "/kraftpaper.jpeg",
               title: "Kraft Paper Document Storage Box",
               brand: "Saraswati Paper Products",
               price: "55",
             },
             {
-              img: "/paper2.jpg",
+              img: "/a4paper.jpeg",
               title: "A4 Paper File Storage Box",
               brand: "Tannu Paper Solutions",
               price: "65",
             },
             {
-              img: "/paper3.jpg",
+              img: "/primepaper.jpeg",
               title: "Premium Paper Archival Box",
               brand: "Vaishali Paper Crafts",
               price: "75",
             },
             {
-              img: "/paper4.jpg",
+              img: "/sbs.jpeg",
               title: "Office Paper Organizer Box",
               brand: "Print Plus Papers",
               price: "48",
             },
             {
-              img: "/paper5.jpg",
+              img: "/banner1.png",
               title: "Heavy Duty Paper Storage Box",
               brand: "Colour Paper Mills",
               price: "82",
             },
             {
-              img: "/paper6.jpg",
+              img: "/jumbo.jpeg",
               title: "Eco-Friendly Paper Filing Box",
               brand: "SS Paper Creations",
               price: "60",

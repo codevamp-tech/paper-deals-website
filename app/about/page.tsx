@@ -60,7 +60,7 @@ export default function AboutUs() {
               </span>
               <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight">
                 Pioneering <span className="text-[#8440e8]">Sustainable</span>{" "}
-                Pepar Solutions
+                Paper Solutions
               </h1>
             </div>
 
@@ -69,7 +69,7 @@ export default function AboutUs() {
                 As a vertically integrated leader, we deliver comprehensive
                 Value Added Services through innovation and partnership. Our
                 digital ecosystem connects all stakeholders on a unified
-                platform, driving efficiency and transparency across the Pepar
+                platform, driving efficiency and transparency across the paper
                 supply chain.
               </p>
 
@@ -77,7 +77,7 @@ export default function AboutUs() {
                 <p className="text-gray-300 italic">
                   "We're committed to reducing environmental impact by
                   optimizing resource utilization and pioneering circular
-                  economy practices in Pepar distribution."
+                  economy practices in paper distribution."
                 </p>
               </div>
 
@@ -157,7 +157,7 @@ export default function AboutUs() {
               <div className="col-span-2 relative group overflow-hidden rounded-2xl shadow-xl">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70 flex items-end p-6">
                   <h3 className="text-xl font-semibold text-white">
-                    Innovation in Pepar Processing
+                    Innovation in paper Processing
                   </h3>
                 </div>
                 <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white">
@@ -196,7 +196,7 @@ export default function AboutUs() {
               <div className="col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl shadow-xl h-full">
                 <img
                   src="/mainimg.png"
-                  alt="Premium Pepar products"
+                  alt="Premium paper products"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
@@ -216,7 +216,6 @@ export default function AboutUs() {
       <PartnerWithUs />
 
       <FaqSection />
-
     </section>
   );
 }
