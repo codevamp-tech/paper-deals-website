@@ -268,7 +268,8 @@ export default function CategoriesDropdown() {
               />
             </svg>
           </div>
-          All Categories
+          <span className="hidden sm:inline">All Categories</span>
+          <span className="sm:hidden">Categories</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4 ml-2"
@@ -289,29 +290,34 @@ export default function CategoriesDropdown() {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute left-0 top-full bg-black text-white shadow-lg z-50 w-[80vw]
-          h-[100vh]"
+          className="absolute left-0 top-full bg-black text-white shadow-lg z-50 
+        w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
+        -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
-          <div className="flex border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row border-t border-gray-200 h-full">
             {/* Left Sidebar - Categories */}
-            <div className="w-64 bg-black py-2">
+            <div className="w-full sm:w-64 md:w-72 lg:w-64 bg-black py-2 overflow-y-auto">
               {categoriesData.map((category, index) => (
                 <Link
                   key={index}
                   href={category.href}
-                  className={`flex items-center px-4 py-3 hover:bg-[#333] ${
+                  className={`flex items-center px-3 sm:px-4 py-3 hover:bg-[#333] ${
                     activeCategory?.name === category.name ? "bg-[#333]" : ""
                   }`}
                   onMouseEnter={() => handleCategoryHover(category)}
                 >
-                  <span className="mr-3 text-lg">{category.icon}</span>
-                  <span className="text-white">{category.name}</span>
+                  <span className="mr-2 sm:mr-3 text-base sm:text-lg">
+                    {category.icon}
+                  </span>
+                  <span className="text-white text-sm sm:text-base flex-1">
+                    {category.name}
+                  </span>
                   {category.name !== "Infrastructure & Construction" && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-auto text-white"
+                      className="h-3 w-3 sm:h-4 sm:w-4 ml-auto text-white flex-shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -329,57 +335,57 @@ export default function CategoriesDropdown() {
             </div>
 
             {/* Right Content Area */}
-            <div className="flex-1 p-6">
-              <div className="grid grid-cols-3 gap-6">
-                {/* Quick Links */}
-
+            <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Dynamic Products Column */}
                 {activeCategory && (
-                  <div>
-                    <h3 className="text-blue-600 font-semibold mb-4">
+                  <div className="order-1">
+                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
                       Products
                     </h3>
-                    {activeCategory.products.map((product, index) => (
-                      <Link
-                        key={index}
-                        href={product.href}
-                        className="flex items-center justify-between py-2 hover:text-blue-600 text-white"
-                      >
-                        <span>{product.name}</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 text-blue-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                    <div className="space-y-1 sm:space-y-2">
+                      {activeCategory.products.map((product, index) => (
+                        <Link
+                          key={index}
+                          href={product.href}
+                          className="flex items-center justify-between py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
-                    ))}
-                    <div className="mt-4">
+                          <span className="flex-1 pr-2">{product.name}</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 sm:text-blue-500 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-3 sm:mt-4">
                       {activeCategory.subCategories.map((subCat, index) => (
                         <Link
                           key={index}
                           href={`/products/${subCat
                             .toLowerCase()
                             .replace(/\s+/g, "-")}`}
-                          className={`block py-2 ${
+                          className={`block py-1 sm:py-2 text-sm sm:text-base ${
                             index === 0
-                              ? "flex items-center justify-between font-medium text-blue-600"
-                              : ""
+                              ? "flex items-center justify-between font-medium text-blue-400 sm:text-blue-600"
+                              : "text-white hover:text-blue-400 sm:hover:text-blue-600"
                           }`}
                         >
-                          <span>{subCat}</span>
+                          <span className="flex-1">{subCat}</span>
                           {index === 0 && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
+                              className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -400,22 +406,26 @@ export default function CategoriesDropdown() {
 
                 {/* Dynamic Cities Column */}
                 {activeCategory && (
-                  <div>
-                    <h3 className="text-blue-600 font-semibold mb-4">City</h3>
-                    {activeCategory.cities.map((city, index) => (
-                      <Link
-                        key={index}
-                        href={city.href}
-                        className="block py-2 hover:text-blue-600 text-white"
-                      >
-                        {city.name}
-                      </Link>
-                    ))}
+                  <div className="order-2">
+                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
+                      City
+                    </h3>
+                    <div className="space-y-1 sm:space-y-2">
+                      {activeCategory.cities.map((city, index) => (
+                        <Link
+                          key={index}
+                          href={city.href}
+                          className="block py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
+                        >
+                          {city.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                {/* Empty Column for spacing */}
-                <div></div>
+                {/* Empty Column for spacing on larger screens */}
+                <div className="hidden lg:block order-3"></div>
               </div>
             </div>
           </div>

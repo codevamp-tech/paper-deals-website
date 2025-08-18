@@ -38,7 +38,7 @@ export default function FaqSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary-white">
-            Frequently Asked <span className="text-gray-800">Questions</span>
+            Frequently Asked <span className="text-gray-100">Questions</span>
           </h2>
           <p className="text-gray-100 max-w-2xl mx-auto">
             Everything you need to know about our paper products and services

@@ -27,6 +27,7 @@ export default function PriceList() {
       location: "EX - Delhi",
       price: "₹50,000 / MT",
       time: "2 hours ago",
+      image: "/kraftpaper.jpeg", // Added image path
     },
     {
       product: "Duplex Board",
@@ -34,6 +35,7 @@ export default function PriceList() {
       location: "EX - Amritsar",
       price: "₹49,700 / MT",
       time: "2 hours ago",
+      image: "/duplexboard.jpeg",
     },
     {
       product: "Jumbo Tissue",
@@ -41,6 +43,7 @@ export default function PriceList() {
       location: "EX - Ahmedabad",
       price: "Login To View",
       time: "4 hours ago",
+      image: "/jumbo.jpeg",
     },
     {
       product: "Copier Paper - A4",
@@ -48,6 +51,7 @@ export default function PriceList() {
       location: "EX - Ahmedabad",
       price: "₹72,000 / MT",
       time: "8 hours ago",
+      image: "/a4paper.jpeg",
     },
     {
       product: "Prime Paper",
@@ -55,6 +59,7 @@ export default function PriceList() {
       location: "EX - Nashik",
       price: "Login To View",
       time: "1 hour ago",
+      image: "/primepaper.jpeg",
     },
     {
       product: "Stock lot Papers",
@@ -62,6 +67,7 @@ export default function PriceList() {
       location: "EX - Wada",
       price: "Login To View",
       time: "Yesterday",
+      image: "/stockpaper.jpeg",
     },
     {
       product: "Writing & Printing paper",
@@ -69,6 +75,7 @@ export default function PriceList() {
       location: "EX - Mumbai",
       price: "₹62,500 / MT",
       time: "3 hours ago",
+      image: "/writingpaper.jpeg",
     },
     {
       product: "Gumming Sheets",
@@ -76,6 +83,7 @@ export default function PriceList() {
       location: "EX - Surat",
       price: "Login To View",
       time: "6 hours ago",
+      image: "/gumming.jpeg",
     },
     {
       product: "Art Paper",
@@ -83,6 +91,7 @@ export default function PriceList() {
       location: "EX - Delhi",
       price: "₹78,000 / MT",
       time: "5 hours ago",
+      image: "/artpaper.jpeg",
     },
     {
       product: "Matt Paper",
@@ -90,6 +99,7 @@ export default function PriceList() {
       location: "EX - Jaipur",
       price: "₹74,500 / MT",
       time: "2 days ago",
+      image: "/mattpaper.jpeg",
     },
     {
       product: "Cromo Paper",
@@ -97,6 +107,7 @@ export default function PriceList() {
       location: "EX - Pune",
       price: "Login To View",
       time: "7 hours ago",
+      image: "/cromopaper.jpeg",
     },
     {
       product: "S.B.S",
@@ -104,6 +115,7 @@ export default function PriceList() {
       location: "EX - Hyderabad",
       price: "₹85,000 / MT",
       time: "1 day ago",
+      image: "/sbs.jpeg",
     },
     {
       product: "News Print",
@@ -111,6 +123,7 @@ export default function PriceList() {
       location: "EX - Kolkata",
       price: "₹42,000 / MT",
       time: "Today",
+      image: "/newsprint.jpeg",
     },
     {
       product: "Kraft Paper",
@@ -118,6 +131,7 @@ export default function PriceList() {
       location: "EX - Chennai",
       price: "Login To View",
       time: "2 days ago",
+      image: "/kraftpaper.jpeg",
     },
     {
       product: "Duplex Board",
@@ -125,6 +139,7 @@ export default function PriceList() {
       location: "EX - Indore",
       price: "₹53,500 / MT",
       time: "5 hours ago",
+      image: "/duplexboard.jpeg",
     },
   ];
 
@@ -150,13 +165,13 @@ export default function PriceList() {
             px-4 py-2 
             mx-2 mb-2 
             rounded-lg 
-            text-white 
+            text-black 
              
             text-sm sm:text-base 
             ${
               selectedCategory === category.id
-                ? "bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600"
-                : "bg-black"
+                ? " text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                : "bg-gray-100 font-medium"
             }
           `}
           >
@@ -202,8 +217,8 @@ export default function PriceList() {
               <div className="flex flex-col sm:flex-row items-center sm:items-start">
                 <div className="flex justify-center sm:ml-4 mt-4 sm:mt-0">
                   <img
-                    src="/mainimg.png"
-                    alt="potesium"
+                    src={item.image || "/mainimg.png"}
+                    alt={item.product}
                     style={{
                       width: "auto",
                       height: "20vh",
@@ -245,8 +260,8 @@ export default function PriceList() {
                 <button className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105">
                   Sell
                 </button>
-                <button className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105">
-                  Buy
+                <button className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105 t">
+                  Contact
                 </button>
               </div>
 

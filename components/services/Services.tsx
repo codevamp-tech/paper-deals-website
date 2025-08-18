@@ -13,7 +13,7 @@ export default function ServicesGrid() {
       icon: <ShoppingCart className="text-white" />,
       title: "Buying/Selling",
       description:
-        "Get connected to more than 4000+ stakeholders in the Pepar industry.",
+        "Get connected to more than 4000+ stakeholders in the paper industry.",
       bgGradient:
         "bg-white backdrop-blur-3xl border border-[#fff] text-[#F1F5F9]",
       hoverGradient:
@@ -23,8 +23,8 @@ export default function ServicesGrid() {
     },
     {
       icon: <Settings className="text-white" />,
-      title: "Pepar Fabrication",
-      description: "Get seamless Pepar fabrication and processing solutions.",
+      title: "paper Fabrication",
+      description: "Get seamless paper fabrication and processing solutions.",
       bgGradient:
         "bg-white backdrop-blur-3xl border border-[#fff] text-[#F1F5F9]",
       hoverGradient:
@@ -46,9 +46,9 @@ export default function ServicesGrid() {
     },
     {
       icon: <Recycle className="text-white" />,
-      title: "Pepar Recycling",
+      title: "paper Recycling",
       description:
-        "Aiming to be the most efficient marketplace for secondary Pepars.",
+        "Aiming to be the most efficient marketplace for secondary papers.",
       bgGradient:
         "bg-white backdrop-blur-3xl border border-[#fff] text-[#F1F5F9]",
       hoverGradient:

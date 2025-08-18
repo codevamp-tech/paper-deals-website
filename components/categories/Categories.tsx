@@ -144,13 +144,13 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
   }, [firstControls, secondControls]);
 
   return (
-    <div className="w-full min-h-screen  py-12 *:">
+    <div className="w-full min-h-screen    py-12 *:">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  h-[500px] [background-color:rgba(113,47,255,0.21)] rounded-full blur-[120px]"></div>
       <div className="text-center mb-12">
         <h5 className="text-primary-white text-[6vh] font-[900] font-[Poppins]">
           {title}
         </h5>
-        <motion.div className="text-gray-800 text-[6vh] font-[900] mt-1 font-[Poppins]">
+        <motion.div className="text-gray-100 text-[6vh] font-[900] mt-1 font-[Poppins]">
           {subtitle}
         </motion.div>
       </div>
@@ -181,7 +181,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
                 key={`first-${symptom._id}-${index}`}
                 className="flex-none w-1/6 relative"
               >
-                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-3xl border border-[#fff] text-[#F1F5F9] rounded-xl  p-6  transition-transform duration-300  shadow-xl h-56 ">
+                <div className="bg-gray-100 backdrop-blur-3xl  border-2 border-[#0c66e4]  text-[#000] rounded-xl  p-6  transition-transform duration-300  shadow-xl h-56 ">
                   <div className="p-4">
                     <div className="flex items-center mb-3">
                       <div className="w-16 h-16 bg-[#E6F6F4] rounded-2xl flex items-center justify-center shadow-md">
@@ -192,12 +192,12 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
                         />
                       </div>
                       <div className="ml-3">
-                        <h6 className="text-[#fff] font-semibold font-[Poppins]">
+                        <h6 className="text-[#000] font-semibold font-[Poppins]">
                           {symptom.name}
                         </h6>
                       </div>
                     </div>
-                    <p className="text-[#fff] text-sm font-[Poppins] font-medium leading-relaxed mt-5">
+                    <p className="text-[#000] text-sm font-[Poppins] font-medium leading-relaxed mt-5">
                       {symptom.description}
                     </p>
                   </div>
@@ -238,7 +238,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
               className="md:flex-none sm:w-20 md:w-1/6 md:relative"
             >
               <div className="sm:grid-cols-1 md:grid-cols-3">
-                <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-lg border border-white text-[#F1F5F9] rounded-xl p-6 transition-transform duration-300 shadow-xl h-56 max-sm:h-[420px] max-md:w-[50vw] max-sm:p-4">
+                <div className="bg-gray-100 backdrop-blur-lg border-2 border-[#0c66e4] text-[#000] rounded-xl p-6 transition-transform duration-300 shadow-xl h-56 max-sm:h-[43vh] max-md:w-[50vw] max-sm:p-4">
                   <div className="p-4 max-sm:p-2">
                     <div className="flex items-center mb-3 max-sm:flex-col max-sm:items-start">
                       <div className="w-16 h-16 bg-[#E6F6F4] rounded-2xl flex items-center justify-center shadow-md max-sm:mb-2">
@@ -249,12 +249,12 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
                         />
                       </div>
                       <div className="ml-3 max-sm:ml-0">
-                        <h6 className="text-[#fff] font-semibold font-[Poppins]">
+                        <h6 className="text-[#000] font-semibold font-[Poppins]">
                           {symptom.name}
                         </h6>
                       </div>
                     </div>
-                    <p className="text-[#fff] text-sm font-[Poppins] font-medium leading-relaxed mt-5 max-sm:mt-2">
+                    <p className="text-[#000] text-sm font-[Poppins] font-medium leading-relaxed mt-5 max-sm:mt-2">
                       {symptom.description}
                     </p>
                   </div>
