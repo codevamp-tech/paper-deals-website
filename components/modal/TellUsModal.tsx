@@ -20,12 +20,11 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
         className="w-full max-w-md rounded-lg shadow-lg relative ml-[55rem]
       mt-[7rem] "
         style={{
-          background:
-            "linear-gradient(181deg, rgba(10, 92, 85, 1) 20%, rgba(4, 34, 32, 1) 100%)",
+          background: "white",
         }}
       >
         {/* Header */}
-        <div className="bg- px-4 py-3 text-white font-bold text-xl rounded-t-lg flex justify-between items-center">
+        <div className="bg- px-4 py-3 text-blue-600 font-bold text-xl rounded-t-lg flex justify-between items-center">
           <span>Tell Us Your Requirement</span>
           <button onClick={onClose} className="text-red-500 text-2xl font-bold">
             &times;
@@ -39,7 +38,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
             <button
               className={`px-4 py-2 rounded-full text-sm font-medium ${
                 mode === "buy"
-                  ? "bg-green-100 text-green-700 border border-green-500"
+                  ? "bg-white text-blue-600 border border-blue-500"
                   : "bg-gray-100 text-gray-700"
               }`}
               onClick={() => setMode("buy")}
@@ -60,7 +59,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
 
           {/* Form Fields */}
           <form className="space-y-4">
-            <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <select className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm">
               <option>Select Product</option>
               <option>Paper</option>
               <option>Board</option>
@@ -69,35 +68,35 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
             <input
               type="text"
               placeholder="Quantity"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
             <input
               type="text"
               placeholder="Enter company"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
             <input
               type="text"
               placeholder="Enter Pincode"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="w-fullborder border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
             <input
               type="email"
               placeholder="Enter Email"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
             <div className="flex space-x-2">
-              <select className="border border-gray-300 rounded-md px-2 py-2 text-sm">
+              <select className="border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-2 py-2 text-sm">
                 <option>+91</option>
               </select>
               <input
                 type="tel"
                 placeholder="Enter mobile"
-                className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
               />
             </div>
 

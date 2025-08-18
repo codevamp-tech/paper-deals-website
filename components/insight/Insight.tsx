@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ArrowDown, ArrowUp, MapPin } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, MapPin } from "lucide-react";
 
 export default function ProductInsights() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,6 +43,26 @@ export default function ProductInsights() {
           </p>
         </div>
 
+        <div className="flex justify-end mb-6">
+          <a href="/insights-comparison">
+            <button
+              className="
+        flex items-center justify-center gap-2
+        px-6 py-3 
+        bg-white text-blue-600 
+        border border-cyan-600 
+        rounded-2xl 
+        font-medium
+        hover:bg-cyan-50 
+        transition-all duration-200
+        shadow-sm hover:shadow-md
+      "
+            >
+              View all Insights
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </a>
+        </div>
         <div className="relative overflow-hidden">
           <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
           <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>

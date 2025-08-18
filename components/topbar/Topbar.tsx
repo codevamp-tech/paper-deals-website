@@ -38,7 +38,7 @@ const Topbar = () => {
                 href="/product"
                 className="text-sm text-gray-700 hover:text-black transition-colors"
               >
-                Product
+                Products
               </Link>
               <Link
                 href="/about"
@@ -51,6 +51,12 @@ const Topbar = () => {
                 className="text-sm text-gray-700 hover:text-black transition-colors"
               >
                 Seller
+              </Link>
+              <Link
+                href="/buyers"
+                className="text-sm text-gray-700 hover:text-black transition-colors"
+              >
+                Buyer
               </Link>
               <Link
                 href="/product/detail"
@@ -113,13 +119,6 @@ const Topbar = () => {
                 </div>
               )}
             </div>
-
-            <Button
-              onClick={handleSignupClick}
-              className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white"
-            >
-              Get Started
-            </Button>
           </div>
 
           {/* Mobile/Tablet Right Side - Visible only on mobile and tablet */}
