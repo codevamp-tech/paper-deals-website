@@ -7,7 +7,7 @@ const categoriesData = [
   {
     name: "Kraft Paper",
     icon: "📄",
-    href: "/kraft-paper",
+    href: "/product",
     products: [
       { name: "Brown Kraft", href: "/products/brown-kraft" },
       { name: "Bleached Kraft", href: "/products/bleached-kraft" },
@@ -24,7 +24,7 @@ const categoriesData = [
   {
     name: "Duplex Board",
     icon: "📦",
-    href: "/duplex-board",
+    href: "/product",
     products: [
       { name: "White Back", href: "/products/white-back-duplex" },
       { name: "Grey Back", href: "/products/grey-back-duplex" },
@@ -41,7 +41,7 @@ const categoriesData = [
   {
     name: "Jumbo Tissue",
     icon: "🧻",
-    href: "/jumbo-tissue",
+    href: "/product",
     products: [
       { name: "Toilet Tissue Rolls", href: "/products/toilet-tissue-rolls" },
       { name: "Facial Tissue Rolls", href: "/products/facial-tissue-rolls" },
@@ -58,7 +58,7 @@ const categoriesData = [
   {
     name: "Copier Paper - A4",
     icon: "📑",
-    href: "/copier-paper-a4",
+    href: "/product",
     products: [
       { name: "70 GSM A4", href: "/products/70gsm-a4" },
       { name: "75 GSM A4", href: "/products/75gsm-a4" },
@@ -75,7 +75,7 @@ const categoriesData = [
   {
     name: "Prime Paper",
     icon: "📜",
-    href: "/prime-paper",
+    href: "/product",
     products: [
       { name: "Premium White", href: "/products/premium-white" },
       { name: "High Gloss", href: "/products/high-gloss" },
@@ -92,7 +92,7 @@ const categoriesData = [
   {
     name: "Stock lot Papers",
     icon: "📦",
-    href: "/stock-lot-papers",
+    href: "/product",
     products: [
       { name: "Surplus Coated", href: "/products/surplus-coated" },
       { name: "Overrun Papers", href: "/products/overrun-papers" },
@@ -109,7 +109,7 @@ const categoriesData = [
   {
     name: "Writing & Printing paper",
     icon: "🖋️",
-    href: "/writing-printing-paper",
+    href: "/product",
     products: [
       { name: "Offset Printing", href: "/products/offset-printing" },
       { name: "Bond Paper", href: "/products/bond-paper" },
@@ -126,7 +126,7 @@ const categoriesData = [
   {
     name: "Gumming Sheets",
     icon: "🏷️",
-    href: "/gumming-sheets",
+    href: "/product",
     products: [
       { name: "Label Sheets", href: "/products/label-sheets" },
       { name: "Adhesive Coated", href: "/products/adhesive-coated" },
@@ -143,7 +143,7 @@ const categoriesData = [
   {
     name: "Art Paper",
     icon: "🎨",
-    href: "/art-paper",
+    href: "/product",
     products: [
       { name: "Gloss Art", href: "/products/gloss-art" },
       { name: "Matt Art", href: "/products/matt-art" },
@@ -160,7 +160,7 @@ const categoriesData = [
   {
     name: "Matt Paper",
     icon: "📃",
-    href: "/matt-paper",
+    href: "/product",
     products: [
       { name: "Matte Coated", href: "/products/matte-coated" },
       { name: "Smooth Matte", href: "/products/smooth-matte" },
@@ -177,7 +177,7 @@ const categoriesData = [
   {
     name: "Cromo Paper",
     icon: "✨",
-    href: "/cromo-paper",
+    href: "/product",
     products: [
       { name: "Gloss Coated", href: "/products/gloss-coated" },
       { name: "High Gloss Cromo", href: "/products/high-gloss-cromo" },
@@ -194,7 +194,7 @@ const categoriesData = [
   {
     name: "S.B.S",
     icon: "📦",
-    href: "/sbs",
+    href: "/product",
     products: [
       { name: "Bleached SBS", href: "/products/bleached-sbs" },
       { name: "Coated SBS", href: "/products/coated-sbs" },
@@ -211,7 +211,7 @@ const categoriesData = [
   {
     name: "News Print",
     icon: "📰",
-    href: "/news-print",
+    href: "/product",
     products: [
       { name: "Standard Newsprint", href: "/products/standard-newsprint" },
       { name: "Recycled Newsprint", href: "/products/recycled-newsprint" },

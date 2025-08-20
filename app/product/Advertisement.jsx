@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Advertisement() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [currentImage, setCurrentImage] = useState(0);
 
   const categories = [
     { id: "abs", name: "ABS" },
@@ -11,26 +12,43 @@ export default function Advertisement() {
     { id: "lldpe", name: "LLDPE" },
   ];
 
+  const images = [
+    "/adimg.webp",
+    "/banner2.png",
+    "/banner3.jpg",
+    // add more images as needed
+  ];
+
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
 
+  // Carousel effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length);
+    }, 3000); // 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className=" py-12">
+    <section className="py-12">
       <div className="container mx-auto px-4">
         {/* Category List */}
-        <div className="flex gap-6 mb-8 justify-center ">
-          {/* Featured Product Area */}
-          <div className="relative rounded-xl overflow-hidden w-full md:w-[55vw]  h-[45vh]">
-            <img
-              src="adimg.webp"
-              alt="advertisement"
-              className="w-full h-auto"
-              style={{
-                borderRadius: "20px",
-                minHeight: "45vh",
-              }}
-            />
+        <div className="flex gap-6 mb-8 justify-center">
+          {/* Featured Product Area (Carousel) */}
+          <div className="relative rounded-xl overflow-hidden w-full md:w-[55vw] h-[45vh]">
+            {images.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="advertisement"
+                className={`w-full h-auto absolute top-0 left-0 transition-opacity duration-1000 ease-in-out ${
+                  index === currentImage ? "opacity-100" : "opacity-0"
+                }`}
+                style={{ borderRadius: "20px", minHeight: "45vh" }}
+              />
+            ))}
 
             <button className="absolute bottom-4 left-4 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-6 py-3 rounded-lg md:rounded-full transition-all duration-200">
               Get Quotes
@@ -38,7 +56,7 @@ export default function Advertisement() {
           </div>
 
           {/* App Download Section */}
-          <div className="flex flex-col md:flex-row justify-between items-center bg-white shadow-xl rounded-2xl p-4 md:p-6 lg:p-8 w-full md:w-3/4 lg:w-1/2 xl:w-1/4 min-h-[45vh] md:h-[45vh]  ">
+          <div className="flex flex-col md:flex-row justify-between items-center bg-white shadow-xl rounded-2xl p-4 md:p-6 lg:p-8 w-full md:w-3/4 lg:w-1/2 xl:w-1/4 min-h-[45vh] md:h-[45vh]">
             <div className="flex flex-col justify-between h-full w-full md:w-auto mb-6 md:mb-0">
               <h3 className="text-lg font-bold text-gray-900 mb-4 md:mb-2 text-center md:text-left">
                 Download Our App
@@ -73,7 +91,6 @@ export default function Advertisement() {
                 </a>
               </div>
             </div>
-            {/* Centered Image Container */}
           </div>
         </div>
       </div>

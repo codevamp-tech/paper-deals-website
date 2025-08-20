@@ -144,7 +144,110 @@ export default function PriceList() {
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isSignedIn, setIsSignedIn] = useState(false); // You would get this from your auth context
+
+  const handleBuyClick = () => {
+    if (!isSignedIn) {
+      setIsContactModalOpen(true);
+    } else {
+      // User is signed in, proceed with purchase
+      console.log("Proceeding with purchase...");
+    }
+  };
+
+  const ContactSellerModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    const [mobileNumber, setMobileNumber] = useState("");
+    const [country, setCountry] = useState("India");
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      // Handle form submission
+      console.log("Contact form submitted");
+      onClose();
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Contact Seller
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Get details on your mobile quickly
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              <div className="mb-5">
+                <label className="block text-gray-700 mb-2 font-medium">
+                  Mobile Number
+                </label>
+                <div className="flex">
+                  <div className="flex items-center justify-center px-4 bg-gray-100 rounded-l-lg border border-r-0 border-gray-300">
+                    +91
+                  </div>
+                  <input
+                    type="tel"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Enter your mobile"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-gray-700 mb-2 font-medium">
+                  Your Country
+                </label>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option>India</option>
+                  <option>United States</option>
+                  <option>United Kingdom</option>
+                  <option>Australia</option>
+                  <option>Canada</option>
+                </select>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h3 className="font-semibold text-gray-800">
+                  JCB NXT 225LC M Excavator, 110 kW
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Sold By - JCB India Limited, Faridabad, Haryana
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+
+          <div className="bg-gray-100 px-6 py-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-800 font-medium"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12  ">
@@ -257,8 +360,11 @@ export default function PriceList() {
 
               {/* Buttons */}
               <div className="mt-6 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
-                <button className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105">
-                  Sell
+                <button
+                  onClick={handleBuyClick}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105"
+                >
+                  Buy
                 </button>
                 <button className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 transform hover:scale-105 t">
                   Contact
@@ -278,10 +384,15 @@ export default function PriceList() {
           </div>
         ))}
 
-        {/* Modal */}
+        {/* Modals */}
         <RequirementModal
           visible={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+        />
+
+        <ContactSellerModal
+          isOpen={isContactModalOpen}
+          onClose={() => setIsContactModalOpen(false)}
         />
       </div>
     </div>
