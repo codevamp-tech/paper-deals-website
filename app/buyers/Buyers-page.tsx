@@ -184,6 +184,7 @@ const buyerRequirements = [
 export default function BuyersPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [selectedUrgency, setSelectedUrgency] = useState<string>("All");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [showQuotationModal, setShowQuotationModal] = useState<boolean>(false);
   const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
   const [quotationData, setQuotationData] = useState({
@@ -405,9 +406,9 @@ export default function BuyersPage() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters and View Toggle */}
         <div className="mb-8">
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center items-center">
             <div className="flex gap-2">
               <span className="text-sm font-medium text-gray-700 self-center">
                 Status:
@@ -444,179 +445,360 @@ export default function BuyersPage() {
                 </Button>
               ))}
             </div>
+            <div className="flex gap-2 ml-4">
+              <span className="text-sm font-medium text-gray-700 self-center">
+                View:
+              </span>
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className={viewMode === "grid" ? "bg-blue-600 text-white" : ""}
+              >
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                  />
+                </svg>
+                Grid
+              </Button>
+              <Button
+                variant={viewMode === "table" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("table")}
+                className={viewMode === "table" ? "bg-blue-600 text-white" : ""}
+              >
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Table
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Buyer Requirements Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredRequirements.map((requirement) => (
-            <Card
-              key={requirement.id}
-              className="bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group"
-            >
-              <CardContent className="p-6">
-                {/* Header with Status and Urgency */}
-                <div className="flex justify-between items-start mb-4">
+        {viewMode === "grid" ? (
+          /* Buyer Requirements Grid */
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredRequirements.map((requirement) => (
+              <Card
+                key={requirement.id}
+                className="bg-white border-0 shadow-sm hover:shadow-lg transition-all duration-300 group"
+              >
+                <CardContent className="p-6">
+                  {/* Header with Status and Urgency */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-2">
+                      <Badge
+                        variant="outline"
+                        className={getStatusColor(requirement.status)}
+                      >
+                        {requirement.status}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={getUrgencyColor(requirement.urgency)}
+                      >
+                        {requirement.urgency}
+                      </Badge>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">
+                        Posted: {requirement.postedDate}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {requirement.quotationsReceived} quotations
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Company Info */}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {requirement.buyerName}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {requirement.companyType} • {requirement.location}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span>{requirement.contactPerson}</span>
+                      <span>{requirement.phone}</span>
+                    </div>
+                  </div>
+
+                  {/* Product Requirements */}
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 mb-2">
+                      {requirement.productRequired}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-gray-600">GSM:</span>{" "}
+                        <span className="font-medium">
+                          {requirement.specifications.gsm}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Size:</span>{" "}
+                        <span className="font-medium">
+                          {requirement.specifications.size}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Shade:</span>{" "}
+                        <span className="font-medium">
+                          {requirement.specifications.shade}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Quality:</span>{" "}
+                        <span className="font-medium">
+                          {requirement.specifications.quality}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Details */}
+                  <div className="mb-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Quantity:</span>
+                      <span className="font-semibold text-gray-900">
+                        {requirement.quantity}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Budget:</span>
+                      <span className="font-semibold text-green-600">
+                        {requirement.budgetRange}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Delivery:</span>
+                      <span className="font-medium text-gray-900">
+                        {requirement.deliveryDate}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Location:</span>
+                      <span className="font-medium text-gray-900">
+                        {requirement.deliveryLocation}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Payment:</span>
+                      <span className="font-medium text-gray-900">
+                        {requirement.paymentTerms}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Additional Notes */}
+                  {requirement.additionalNotes && (
+                    <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        {requirement.additionalNotes}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
                   <div className="flex gap-2">
-                    <Badge
+                    <Button
+                      onClick={() => handleSubmitQuotation(requirement)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={requirement.status === "Closed"}
+                    >
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      Submit Quotation
+                    </Button>
+                    <Button
                       variant="outline"
-                      className={getStatusColor(requirement.status)}
+                      className="border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent"
                     >
-                      {requirement.status}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className={getUrgencyColor(requirement.urgency)}
-                    >
-                      {requirement.urgency}
-                    </Badge>
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Contact
+                    </Button>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">
-                      Posted: {requirement.postedDate}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {requirement.quotationsReceived} quotations
-                    </p>
-                  </div>
-                </div>
-
-                {/* Company Info */}
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    {requirement.buyerName}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {requirement.companyType} • {requirement.location}
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>{requirement.contactPerson}</span>
-                    <span>{requirement.phone}</span>
-                  </div>
-                </div>
-
-                {/* Product Requirements */}
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    {requirement.productRequired}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <span className="text-gray-600">GSM:</span>{" "}
-                      <span className="font-medium">
-                        {requirement.specifications.gsm}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Size:</span>{" "}
-                      <span className="font-medium">
-                        {requirement.specifications.size}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Shade:</span>{" "}
-                      <span className="font-medium">
-                        {requirement.specifications.shade}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Quality:</span>{" "}
-                      <span className="font-medium">
-                        {requirement.specifications.quality}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Order Details */}
-                <div className="mb-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Quantity:</span>
-                    <span className="font-semibold text-gray-900">
-                      {requirement.quantity}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Budget:</span>
-                    <span className="font-semibold text-green-600">
-                      {requirement.budgetRange}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Delivery:</span>
-                    <span className="font-medium text-gray-900">
-                      {requirement.deliveryDate}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Location:</span>
-                    <span className="font-medium text-gray-900">
-                      {requirement.deliveryLocation}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Payment:</span>
-                    <span className="font-medium text-gray-900">
-                      {requirement.paymentTerms}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Additional Notes */}
-                {requirement.additionalNotes && (
-                  <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-gray-700">
-                      {requirement.additionalNotes}
-                    </p>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleSubmitQuotation(requirement)}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={requirement.status === "Closed"}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    Submit Quotation
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent"
-                  >
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Contact
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          /* Table View */
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Company & Contact
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Product Required
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Quantity & Budget
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Delivery
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredRequirements.map((requirement) => (
+                    <tr key={requirement.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {requirement.buyerName}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {requirement.contactPerson}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {requirement.location}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {requirement.phone}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {requirement.productRequired}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {requirement.specifications.gsm} •{" "}
+                            {requirement.specifications.size}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {requirement.specifications.shade} •{" "}
+                            {requirement.specifications.quality}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {requirement.quantity}
+                          </div>
+                          <div className="text-sm font-semibold text-green-600">
+                            {requirement.budgetRange}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm text-gray-900">
+                            {requirement.deliveryDate}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {requirement.deliveryLocation}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {requirement.paymentTerms}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-1">
+                          <Badge
+                            variant="outline"
+                            className={`${getStatusColor(
+                              requirement.status
+                            )} text-xs`}
+                          >
+                            {requirement.status}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className={`${getUrgencyColor(
+                              requirement.urgency
+                            )} text-xs`}
+                          >
+                            {requirement.urgency}
+                          </Badge>
+                          <div className="text-xs text-gray-500">
+                            {requirement.quotationsReceived} quotes
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-2">
+                          <Button
+                            onClick={() => handleSubmitQuotation(requirement)}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                            disabled={requirement.status === "Closed"}
+                          >
+                            Quote
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-blue-200 text-blue-700 hover:bg-blue-50 text-xs bg-transparent"
+                          >
+                            Contact
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Quotation Modal */}
         {showQuotationModal && selectedBuyer && (

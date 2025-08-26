@@ -63,9 +63,11 @@ const SellerOrBuyer = () => {
               </div>
             ))}
           </div>
-          <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-            Become A Buyer
-          </button>
+          <a href="/buyers">
+            <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+              Become A Buyer
+            </button>
+          </a>
         </div>
 
         {/* SELLER CARD */}
@@ -123,9 +125,11 @@ const SellerOrBuyer = () => {
               </div>
             ))}
           </div>
-          <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-            Become A Seller
-          </button>
+          <a href="/become-a-seller">
+            <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+              Become A Seller
+            </button>
+          </a>
         </div>
       </div>
       <Advertising />

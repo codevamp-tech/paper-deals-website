@@ -23,7 +23,7 @@ export default function ServicesGrid() {
     },
     {
       icon: <Settings className="text-white" />,
-      title: "paper Fabrication",
+      title: "Paper Fabrication",
       description: "Get seamless paper fabrication and processing solutions.",
       bgGradient:
         "bg-white backdrop-blur-3xl border border-[#fff] text-[#F1F5F9]",
@@ -46,7 +46,7 @@ export default function ServicesGrid() {
     },
     {
       icon: <Recycle className="text-white" />,
-      title: "paper Recycling",
+      title: "Paper Recycling",
       description:
         "Aiming to be the most efficient marketplace for secondary papers.",
       bgGradient:
