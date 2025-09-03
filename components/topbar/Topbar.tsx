@@ -32,50 +32,75 @@ const Topbar = () => {
               />
             </Link>
             {/* Desktop Navigation - Hidden on mobile and tablet */}
-            <div className="hidden lg:flex items-center gap-8">
-              <TopbarWithCategories />
-              <Link
-                href="/product"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Products
-              </Link>
-              <Link
-                href="/about"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/seller"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Seller
-              </Link>
-              <Link
-                href="/buyers"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Buyer
-              </Link>
-              <Link
-                href="/product/detail"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Detail
-              </Link>
-              <Link
-                href="/become-a-seller"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Become a Seller
-              </Link>
-              <Link
-                href="/order"
-                className="text-sm text-gray-700 hover:text-black transition-colors"
-              >
-                Order
-              </Link>
+            <div className="hidden lg:flex flex-col items-start">
+              {/* Top links row */}
+              <div className="flex items-center gap-8">
+                <TopbarWithCategories />
+                <Link
+                  href="/#"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/product"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Products
+                </Link>
+                <Link
+                  href="/about"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  About
+                </Link>
+                <Link
+                  href="/seller"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Seller
+                </Link>
+                <Link
+                  href="/buyers"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Buyer
+                </Link>
+                <Link
+                  href="/product/detail"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Detail
+                </Link>
+                <Link
+                  href="/become-a-seller"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Become a Seller
+                </Link>
+                <Link
+                  href="/order"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+                  Order
+                </Link>
+              </div>
+
+              {/* Bottom row with buttons */}
+              <div className="flex items-center gap-4 mt-4">
+                <Link
+                  href="/live-stock"
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Live Stock
+                </Link>
+                <Link
+                  href="/consultants"
+                  className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+                >
+                  Consultants
+                </Link>
+              </div>
             </div>
           </div>
 
