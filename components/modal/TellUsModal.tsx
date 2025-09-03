@@ -12,6 +12,8 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
   if (!visible) return null;
 
   const [mode, setMode] = useState<"buy" | "sell">("buy");
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "credit">("cash");
+  const [showOtpButton, setShowOtpButton] = useState(false);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 ">
@@ -32,7 +34,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
         </div>
 
         {/* Modal Content */}
-        <div className="p-4">
+        <div className="p-4 mb-12">
           {/* Toggle Buttons */}
           <div className="flex space-x-4 mb-4">
             <button
@@ -80,8 +82,34 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
             <input
               type="text"
               placeholder="Enter Pincode"
-              className="w-fullborder border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
+
+            {/* Cash/Credit Radio Buttons */}
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="payment"
+                  value="cash"
+                  checked={paymentMethod === "cash"}
+                  onChange={() => setPaymentMethod("cash")}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-800">Cash</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="payment"
+                  value="credit"
+                  checked={paymentMethod === "credit"}
+                  onChange={() => setPaymentMethod("credit")}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-800">Credit</span>
+              </label>
+            </div>
 
             <input
               type="email"
@@ -100,9 +128,27 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               />
             </div>
 
+            {/* OTP Button */}
+            <button
+              type="button"
+              className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 border text-white py-2 rounded-md font-semibold"
+              onClick={() => setShowOtpButton(true)}
+            >
+              Send OTP
+            </button>
+
+            {showOtpButton && (
+              <button
+                type="button"
+                className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 border text-white py-2 rounded-md font-semibold"
+              >
+                Verify OTP
+              </button>
+            )}
+
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 border  text-white py-2 rounded-md font-semibold"
+              className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 border text-white py-2 rounded-md font-semibold "
             >
               Submit
             </button>
