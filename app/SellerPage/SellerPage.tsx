@@ -1,132 +1,276 @@
 "use client";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
 
-const steps = [
-  { title: "Email ID & GST" },
-  { title: "Password Creation" },
-  { title: "Onboarding Dashboard" },
-];
+import { useState } from "react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Settings,
+  Search,
+  Target,
+  Store,
+  Package,
+  TrendingUp,
+  DollarSign,
+} from "lucide-react";
 
-const SellerOnboarding: React.FC = () => {
-  const [currentStep] = useState(0);
-  const [category, setCategory] = useState<"all" | "books">("all");
+export default function LoginPages() {
+  const [currentPage, setCurrentPage] = useState("buyer"); // "buyer" or "seller"
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    loginType: "buyer",
+    isRobot: false,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // If login type changes, switch pages
+    if (name === "loginType") {
+      setCurrentPage(value);
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    setFormData({
+      ...formData,
+      isRobot: e.target.checked,
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log(`PaperDeals ${currentPage} signin:`, formData);
+    alert(`Demo ${currentPage} login - functionality not implemented`);
+  };
+
+  const buyerContent = {
+    title: "Welcome Back Buyer",
+    subtitle: "Sign in to access your account",
+    promoTitle: "Create new account for Seller and Buyer",
+    promoSubtitle:
+      "Join our platform to access exclusive deals and opportunities for both buyers and sellers",
+    image: "/loginimg.svg",
+    imageAlt: "Buyer Login Image",
+    icons: [
+      { component: Lock, key: "lock" },
+      { component: Settings, key: "settings" },
+      { component: Search, key: "search" },
+      { component: Target, key: "target" },
+    ],
+  };
+
+  const sellerContent = {
+    title: "Welcome Back Seller",
+    subtitle: "Sign in to manage your store",
+    promoTitle: "Start Selling with PaperDeals Today",
+    promoSubtitle:
+      "Join thousands of successful sellers and grow your business with our comprehensive platform and tools",
+    image: "/sellerimg.svg",
+    imageAlt: "Seller Login Image",
+    icons: [
+      { component: Store, key: "store" },
+      { component: Package, key: "package" },
+      { component: TrendingUp, key: "trending" },
+      { component: DollarSign, key: "dollar" },
+    ],
+  };
+
+  const content = currentPage === "buyer" ? buyerContent : sellerContent;
 
   return (
-    <div className="min-h-screen flex items-center justify-center   px-4">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 space-y-6">
-        {/* Step Indicator */}
-        <div className="flex items-center justify-between">
-          {steps.map((step, idx) => (
-            <div key={idx} className="flex-1 flex items-center">
-              <div className="relative flex flex-col items-center text-center">
-                <div
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 
-                    ${
-                      idx <= currentStep
-                        ? "bg-cyan-600 text-white"
-                        : "bg-gray-200 text-gray-500"
-                    }`}
-                >
-                  {idx + 1}
+    <div className="min-h-screen bg-gray-100 py-16">
+      {/* Header Section */}
+      <div className="relative h-48 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div
+            className="absolute inset-0 border"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white' fill-opacity='0.1'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20v20h20z'/%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+        </div>
+        {/* Header Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
+          <h1 className="text-5xl font-light mb-2">
+            {currentPage === "buyer" ? "Buyer Sign In" : "Seller Sign In"}
+          </h1>
+          <div className="flex items-center text-sm opacity-90">
+            <span>Home</span>
+            <span className="mx-2">›</span>
+            <span>{currentPage === "buyer" ? "Buyer" : "Seller"} Sign In</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 -mt-12 relative z-20">
+        <div className="flex flex-col lg:flex-row items-stretch justify-center max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white min-h-[600px]">
+          {/* Left Side - Form */}
+          <div className="w-full lg:w-1/2 p-12 lg:p-16">
+            <div className="max-w-md mx-auto">
+              <h2 className="text-3xl font-semibold text-gray-800 mb-2">
+                {content.title}
+              </h2>
+              <p className="text-gray-600 mb-8">{content.subtitle}</p>
+
+              <div className="space-y-6">
+                {/* Login Type Selector */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Login as
+                  </label>
+                  <select
+                    name="loginType"
+                    value={formData.loginType}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all bg-white text-gray-700"
+                  >
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                  </select>
                 </div>
-                <span className="mt-2 text-xs font-medium text-gray-600">
-                  {step.title}
-                </span>
-              </div>
-              {idx < steps.length - 1 && (
-                <div className="flex-1 h-0.5 bg-gray-200 mx-2">
-                  <motion.div
-                    className="h-0.5 bg-blue-600"
-                    initial={{ width: 0 }}
-                    animate={{ width: currentStep > idx ? "100%" : "0%" }}
-                    transition={{ duration: 0.5 }}
+
+                {/* Email Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+                    placeholder={`Enter your ${currentPage} email`}
                   />
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
 
-        {/* Form Fields */}
-        <div className="space-y-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Enter Mobile Number"
-              className="w-full pr-24 px-4 py-3 border border-gray-300 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-            />
-            <button className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition">
-              Send OTP
-            </button>
-          </div>
+                {/* Password Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 pr-12 transition-all"
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
 
-          <input
-            type="email"
-            placeholder="Email ID"
-            className="w-full pr-24 px-4 py-3 border border-gray-300 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-          />
+                {/* reCAPTCHA */}
+                <div className="flex items-center p-4 border-2 border-gray-200 rounded-lg bg-gray-50">
+                  <input
+                    type="checkbox"
+                    id="recaptcha"
+                    checked={formData.isRobot}
+                    onChange={handleCheckboxChange}
+                    className="w-5 h-5 text-cyan-600 border-2 border-gray-300 rounded focus:ring-cyan-500"
+                  />
+                  <label
+                    htmlFor="recaptcha"
+                    className="ml-3 text-sm text-gray-700"
+                  >
+                    I'm not a robot
+                  </label>
+                  <div className="ml-auto">
+                    <div className="w-10 h-10 bg-white border border-gray-300 rounded flex items-center justify-center">
+                      <div className="w-6 h-6 bg-gradient-to-br from-blue-500 via-green-500 via-yellow-500 to-red-500 rounded-sm"></div>
+                    </div>
+                  </div>
+                </div>
 
-          <div>
-            <p className="text-sm text-gray-700 mb-2">
-              What are you looking to sell on Flipkart?
-            </p>
-            <div className="flex space-x-4">
-              {["all", "books"].map((opt) => (
-                <motion.button
-                  key={opt}
-                  onClick={() => setCategory(opt as any)}
-                  className={`flex-1 border rounded-lg px-4 py-3 focus:outline-none transition 
-                    ${
-                      category === opt
-                        ? "bg-cyan-600 text-white border-cyan-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
-                    }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                {/* Forgot Password */}
+                <div className="text-left">
+                  <a href="#" className="text-sm text-cyan-600 hover:underline">
+                    Forgot Password ?
+                  </a>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  onClick={handleSubmit}
+                  className={`w-full ${
+                    currentPage === "buyer"
+                      ? "bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700"
+                      : "bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700"
+                  } text-white py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl`}
                 >
-                  {opt === "all" ? "All Categories" : "Only Books"}
-                </motion.button>
-              ))}
+                  {currentPage === "buyer" ? "SignIn" : "SignIn"}
+                </button>
+
+                <div className="text-center text-sm text-gray-500 mt-6">
+                  New {currentPage}?{" "}
+                  <a
+                    href="#"
+                    className="text-cyan-600 font-semibold hover:underline"
+                  >
+                    Register here
+                  </a>
+                </div>
+              </div>
             </div>
-            {category === "books" && (
-              <p className="mt-2 text-sm text-gray-500">(PAN is mandatory)</p>
-            )}
           </div>
 
-          <input
-            type="text"
-            placeholder="Enter GSTIN"
-            className="w-full pr-24 px-4 py-3 border border-gray-300 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-          />
-          <p className="text-xs text-gray-500">
-            GSTIN is required to sell products on Flipkart. You can also share
-            it in the final step.
-          </p>
-        </div>
+          {/* Right Side - Promo Section */}
+          <div className="w-full lg:w-1/2 bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 p-12 lg:p-16 flex flex-col justify-center items-center text-white relative overflow-hidden ">
+            {/* Floating Background Elements */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-1/4 -right-1/4 w-96 h-96 bg-white opacity-5 rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-1/4 -left-1/4 w-80 h-80 bg-white opacity-5 rounded-full animate-pulse delay-1000"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white opacity-5 rounded-full animate-ping"></div>
+            </div>
 
-        {/* Footer */}
-        <div className="text-center space-y-4">
-          <p className="text-xs text-gray-500">
-            By continuing, I agree to Flipkart’s{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Terms of Use
-            </a>{" "}
-            &{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Privacy Policy
-            </a>
-          </p>
-          <motion.button
-            className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white py-3 rounded-lg font-medium shadow-lg  transition transform hover:-translate-y-0.5"
-            whileHover={{ scale: 1.02 }}
-          >
-            Register & Continue →
-          </motion.button>
+            {/* Illustration */}
+            <div className="relative z-10 mb-12 ">
+              <div className=" bg-white bg-opacity-10 rounded-3xl backdrop-blur-sm border border-white border-opacity-20 flex items-center justify-center relative overflow-hidden">
+                {/* Main Character */}
+                <div>
+                  <img
+                    style={{ height: "50vh", width: "50vh" }}
+                    src="/loginimg.svg"
+                    alt="login Image"
+                  />
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute top-6 left-6 w-3 h-3 bg-white rounded-full opacity-60 animate-bounce"></div>
+                <div className="absolute top-12 right-12 w-2 h-2 bg-white rounded-full opacity-40 animate-bounce delay-300"></div>
+                <div className="absolute bottom-8 left-8 w-4 h-4 bg-white rounded-full opacity-50 animate-bounce delay-500"></div>
+              </div>
+            </div>
+
+            {/* Text Content */}
+            <div className="relative z-10 text-center">
+              <h3 className="text-2xl font-semibold mb-4">
+                Create new account for Seller and Buyer
+              </h3>
+              <p className="text-lg opacity-90 leading-relaxed">
+                Join our platform to access exclusive deals and opportunities
+                for both buyers and sellers
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default SellerOnboarding;
+}

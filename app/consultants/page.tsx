@@ -1,115 +1,103 @@
-import type { Metadata } from "next";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
-import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
-import FaqSection from "@/components/faqSection/FaqSection";
+"use client";
+
+import { useEffect, useState } from "react";
 import { ConsultantCard } from "./Consultants-Card";
 
-export const metadata: Metadata = {
-  title: "Our Experienced Consultants | PaperDeals",
-  description:
-    "Seasoned B2B paper industry consultants for sourcing, logistics, pricing, and quality.",
+type APIConsultant = {
+  id: number;
+  name: string;
+  phone_no: string;
+  consultant_price: 10;
+  mills_supported?: number | string; // 👈 new field (numeric preferred)
+  description?: string; // 👈 new field
+  organization?: {
+    organizations: string;
+    contact_person: string;
+    city: string;
+    materials_used: string;
+  } | null;
 };
 
-const consultants = [
-  {
-    name: "Anita Kumar",
-    title: "Senior Sourcing Strategist",
-    years: 14,
-    specialties: ["Pulp & Paper Sourcing", "Supplier Audits", "RFP Strategy"],
-    photoUrl: "/woman-consultant.jpg",
-  },
-  {
-    name: "Rahul Mehta",
-    title: "Logistics & Ops Consultant",
-    years: 11,
-    specialties: ["Supply Chain", "Freight Optimization", "Inventory Planning"],
-    photoUrl: "/man-consultant.jpg",
-  },
-  {
-    name: "Sara Lee",
-    title: "Pricing & Market Analyst",
-    years: 9,
-    specialties: ["Market Intelligence", "Pricing Models", "Bid Strategy"],
-    photoUrl: "/data-analyst-workspace.png",
-  },
-  {
-    name: "Martin Gomez",
-    title: "Quality & Compliance Lead",
-    years: 13,
-    specialties: ["QC Standards", "Sustainability", "Certifications"],
-    photoUrl: "/quality-expert.jpg",
-  },
-];
-
-const specialBadges = [
-  "Paper Grades & Specs",
-  "Vendor Development",
-  "Global Sourcing",
-  "Cost Engineering",
-  "Sustainability (FSC/PEFC)",
-  "Freight & Warehousing",
-];
+type Consultant = {
+  _id: string;
+  name: string;
+  title: string;
+  years: number;
+  millsSupported: number | string;
+  description: string;
+  specialties: string[];
+  photoUrl?: string;
+  photoAlt?: string;
+};
 
 export default function ConsultantsPage() {
+  const [consultants, setConsultants] = useState<Consultant[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchConsultants() {
+      try {
+        const res = await fetch(
+          "http://localhost:5000/api/users/getallsellers?user_type=5"
+        );
+        const json = await res.json();
+
+        // 
+
+        const mapped = json.data.map((c: APIConsultant) => ({
+          _id: String(c.id),
+          name: c.name,
+          title: c.organization?.organizations || "Independent Consultant",
+
+          // years of experience
+          years: Number(c.consultant_price) || 0,
+
+          // mills supported: numeric preferred, fallback to string
+          millsSupported:
+            c.mills_supported && Number(c.mills_supported) > 0
+              ? Number(c.mills_supported)
+              : c.organization?.materials_used || "all",
+
+          // description: prefer API description, fallback to contact person
+          description:
+            c.description || c.organization?.contact_person || "No description available",
+
+          specialties: c.organization ? [c.organization.city].filter(Boolean) : [],
+
+          // ✅ use organization.image_banner if available, else fallback
+          photoUrl: c.organization?.image_banner
+            ? `http://localhost:5000/${c.organization.image_banner}`
+            : "/placeholder.svg?height=112&width=112&query=consultant",
+
+          photoAlt: c.name,
+        }));
+
+
+
+        setConsultants(mapped);
+      } catch (err) {
+        console.error("Error fetching consultants:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchConsultants();
+  }, []);
+
   return (
-    <>
-      <main className="container mx-auto px-4 py-16 bg-[#fafafa]">
-        {/* Hero with gradient badge - matches About page vibe */}
-        <section className="text-center space-y-4">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#22d3ee] text-white">
-            <span className="font-medium">Our Experienced Consultants</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            <span className="text-black">Strategy. Sourcing.</span>{" "}
-            <span className="text-gray-700">Execution.</span>
-          </h1>
-          <p className="mx-auto max-w-2xl text-gray-600">
-            B2B paper supply-chain expertise for measurable outcomes—optimize
-            procurement, logistics, pricing, and quality.
-          </p>
-        </section>
-
-        {/* Expertise badges */}
-        <section className="mt-8">
-          <Card
-            className="bg-[#fafafa] border border-white/10"
-            style={{
-              boxShadow:
-                "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-            }}
-          >
-            <CardContent className="p-6">
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                {specialBadges.map((s) => (
-                  <Badge
-                    key={s}
-                    variant="outline"
-                    className="text-sm text-gray-700 border-white/20 bg-white/5"
-                  >
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Consultants Grid */}
-        <section className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {consultants.map((c) => (
-            <ConsultantCard key={c.name} consultant={c} />
-          ))}
-        </section>
-
-        {/* Common site sections */}
-      </main>
-      <div className="mt-12">
-        <ReadyToOrder />
-        <PartnerWithUs isaboutpage />
-        <FaqSection />
-      </div>
-    </>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {loading ? (
+        <p className="col-span-full text-center text-gray-500">
+          Loading consultants...
+        </p>
+      ) : consultants.length > 0 ? (
+        consultants.map((c) => <ConsultantCard key={c._id} consultant={c} />)
+      ) : (
+        <p className="col-span-full text-center text-gray-500">
+          No consultants found.
+        </p>
+      )}
+    </div>
   );
 }

@@ -14,7 +14,7 @@ export default function FaqSection() {
     {
       question: "What minimum order quantities do you require?",
       answer:
-        "Our minimum order quantities vary by product type. For standard copy paper, the minimum order is 10 reams. For specialty papers, minimums may be lower. Please contact our sales team for specific product minimums.",
+        "Our minimum order quantities very by product type. For standard copy paper, the minimum order is 10 reams. For specialty papers, minimums may be lower. Please contact our sales team for specific product minimums.",
     },
     {
       question: "Do you offer custom paper solutions?",

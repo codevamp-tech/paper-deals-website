@@ -43,9 +43,21 @@ const Topbar = () => {
                   Home
                 </Link>
                 <Link
-                  href="/product"
+                  href="/live-stock"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"                >
+                  Live Stock
+                </Link>
+                <Link
+                  href="/consultants"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
                 >
+                  Consultants
+                </Link>
+                <Link
+                  href="/about"
+                  className="text-sm text-gray-700 hover:text-black transition-colors"
+                >
+
                   Products
                 </Link>
                 <Link
@@ -70,42 +82,28 @@ const Topbar = () => {
                   href="/product/detail"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
                 >
-                  Detail
+                  {/* Detail
                 </Link>
                 <Link
                   href="/become-a-seller"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
-                >
+                > */}
                   Become a Seller
                 </Link>
-                <Link
+                {/* <Link
                   href="/order"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
                 >
                   Order
-                </Link>
+                </Link> */}
               </div>
 
-              {/* Bottom row with buttons */}
-              <div className="flex items-center gap-4 mt-4">
-                <Link
-                  href="/live-stock"
-                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Live Stock
-                </Link>
-                <Link
-                  href="/consultants"
-                  className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
-                >
-                  Consultants
-                </Link>
-              </div>
+
             </div>
           </div>
 
           {/* Desktop Right Side - Hidden on mobile and tablet */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center ">
             <div
               className="relative"
               onMouseEnter={() => setIsOpen(true)}
@@ -115,15 +113,14 @@ const Topbar = () => {
               <button className="flex items-center gap-2 px-4 py-2 bg-cyan-400 text-white rounded-lg hover:bg-cyan-500 transition-colors duration-200">
                 Log in
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
               {/* Dropdown Menu */}
               {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute top-full right-0   w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="py-2">
                     <Link
                       href="/buyer-login"
@@ -157,9 +154,8 @@ const Topbar = () => {
               <button className="flex items-center gap-2 px-3 py-2 bg-cyan-400 text-white rounded-lg hover:bg-cyan-500 transition-colors duration-200 text-sm">
                 Log in
                 <ChevronDown
-                  className={`w-3 h-3 transition-transform duration-200 ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
+                  className={`w-3 h-3 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 

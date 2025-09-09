@@ -7,7 +7,7 @@ const SellerOrBuyer = () => {
     <>
       <div className="flex flex-col md:flex-row justify-center items-center min-h-screen gap-6 md:gap-8 py-10 px-4">
         {/* BUYER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[80vh] flex flex-col">
+        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[70vh] flex flex-col">
           <div className="mb-6">
             <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
               Become a <span className="text-black">Buyer</span>
@@ -71,7 +71,7 @@ const SellerOrBuyer = () => {
         </div>
 
         {/* SELLER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[80vh] flex flex-col">
+        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[70vh] flex flex-col">
           <div className="mb-6">
             <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
               Become a <span className="text-black">Seller</span>

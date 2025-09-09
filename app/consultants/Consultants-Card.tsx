@@ -10,21 +10,31 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Box } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Consultant = {
+  id: string | number;  // ✅ id zaroori hai routing ke liye
   name: string;
   title: string;
   years: number;
+  millsSupported?: string;
+  description?: string;
   specialties: string[];
   photoAlt?: string;
   photoUrl?: string;
 };
 
 export function ConsultantCard({ consultant }: { consultant: Consultant }) {
-  const { name, title, years, specialties, photoAlt, photoUrl } = consultant;
+  const { id, name, title, years, specialties, photoAlt, photoUrl, millsSupported, description } = consultant;
+  const router = useRouter();
+
+  // ✅ Button click handler
+  const handleBook = () => {
+    router.push(`/consultants/${id}/consultantbook`);
+  };
+
   return (
-    <Card className="h-full flex flex-col bg-white/30 border-white/20 ">
+    <Card className="h-full flex flex-col bg-white/30 border-white/20">
       <CardHeader className="flex flex-row items-center gap-4">
         <div className="relative h-14 w-14 rounded-full overflow-hidden bg-muted">
           <Image
@@ -45,8 +55,18 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
           <p className="text-sm text-gray-600 truncate">{title}</p>
         </div>
       </CardHeader>
+
       <CardContent className="space-y-3">
-        <p className="text-sm text-gray-600">{years}+ years experience</p>
+        <p className="text-sm text-gray-600">
+          <strong>Years of Experience:</strong> {years}
+        </p>
+        <p className="text-sm text-gray-600">
+          <strong>Mills Supported:</strong> {millsSupported || "N/A"}
+        </p>
+        <p className="text-sm text-gray-600">
+          <strong>Description:</strong> {description || "No description available"}
+        </p>
+
         <div className="flex flex-wrap gap-2">
           {specialties.map((sp) => (
             <Badge
@@ -59,10 +79,11 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
           ))}
         </div>
       </CardContent>
+
       <CardFooter className="mt-auto">
         <Button
+          onClick={handleBook}
           className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-          variant="default"
         >
           Book a consultation
         </Button>

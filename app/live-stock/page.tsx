@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,72 +21,21 @@ type Row = {
   sellerType: string;
   category: string;
   productName: string;
+  subProduct?: string;
   bf: string | number;
   gsm: string;
   shade: string;
   size: string;
   wl: string;
   pricePerKg: string;
+  spotPrice?: string | number;
   quantity: string;
 };
 
-const INITIAL: Row[] = [
-  {
-    location: "kailashi devi , kashipur",
-    sellerType: "Manufacturer",
-    category: "Duplex Board",
-    productName: "SIGMA",
-    bf: "0",
-    gsm: "425 GSM",
-    shade: "",
-    size: "22X44",
-    wl: "22X44",
-    pricePerKg: "35.32 ₹",
-    quantity: "1547.1",
-  },
-  {
-    location: "NEW DELHI",
-    sellerType: "Distributor",
-    category: "Duplex Board",
-    productName: "LWC",
-    bf: "0",
-    gsm: "230",
-    shade: "",
-    size: "",
-    wl: "",
-    pricePerKg: "36.6 ₹",
-    quantity: "36",
-  },
-  {
-    location: "NEW DELHI",
-    sellerType: "Distributor",
-    category: "Duplex Board",
-    productName: "G.B.",
-    bf: "0",
-    gsm: "230",
-    shade: "",
-    size: "",
-    wl: "",
-    pricePerKg: "38.93 ₹",
-    quantity: "38",
-  },
-  {
-    location: "kailashi devi , kashipur",
-    sellerType: "Manufacturer",
-    category: "Duplex Board",
-    productName: "SIGMA",
-    bf: "0",
-    gsm: "400 GSM",
-    shade: "",
-    size: "61.3X89",
-    wl: "61.3X89",
-    pricePerKg: "0 ₹",
-    quantity: "7850",
-  },
-];
-
 export default function LiveStockPage() {
-  const [rows] = useState<Row[]>(INITIAL);
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [sortConfig, setSortConfig] = useState<{
@@ -94,11 +43,64 @@ export default function LiveStockPage() {
     direction: "asc" | "desc";
   } | null>(null);
 
-  // Filtering & sorting logic
+  // 🔹 Fetch API
+  useEffect(() => {
+    async function fetchStocks() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const API_URL = "http://localhost:5000/api/live-stocks/view-live-stockes";
+
+        let res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+
+        const json = await res.json();
+
+        if (!json?.data || !Array.isArray(json.data)) {
+          throw new Error("Invalid API response format");
+        }
+
+        const mapped: Row[] = json.data.map((item: any) => {
+          const p = item.ProductNew || {};
+          return {
+            location: p.shade || "-",
+            sellerType:
+              p.user_type === 2
+                ? "Manufacturer"
+                : p.user_type === 3
+                ? "Distributor"
+                : "Other",
+            category: p.category_id || "-",
+            productName: p.product_name || "-",
+            subProduct: p.sub_product || "-",
+            bf: p.bf || "0",
+            gsm: p.gsm || "-",
+            shade: p.shade || "-",
+            size: p.size || "-",
+            wl: p.w_l || "-",
+            pricePerKg: p.price_per_kg ? `${p.price_per_kg} ₹` : "0 ₹",
+            spotPrice: item.spot_price || "-",
+            quantity: p.quantity_in_kg || "0",
+          };
+        });
+
+        setRows(mapped);
+      } catch (err: any) {
+        console.error("Error fetching stocks:", err);
+        setError(err.message || "Something went wrong while fetching stocks");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStocks();
+  }, []);
+
+  // 🔹 Filtering & sorting logic
   const filteredRows = useMemo(() => {
     let data = [...rows];
 
-    // search
     if (search) {
       data = data.filter((r) =>
         Object.values(r).some((val) =>
@@ -107,12 +109,10 @@ export default function LiveStockPage() {
       );
     }
 
-    // filter by seller type
     if (filter !== "all") {
       data = data.filter((r) => r.sellerType === filter);
     }
 
-    // sorting
     if (sortConfig) {
       data.sort((a, b) => {
         const valA = String(a[sortConfig.key]).toLowerCase();
@@ -150,18 +150,17 @@ export default function LiveStockPage() {
           </h1>
           <p className="max-w-2xl mx-auto text-gray-600">
             Real-time styled view of major paper and packaging companies. Data
-            is simulated and updates every few seconds.
+            comes directly from the server.
           </p>
         </section>
 
-        {/* Table with search/filter/sort */}
+        {/* Table */}
         <section className="mt-10">
           <Card className="bg-white shadow-sm border border-gray-200 rounded-xl relative">
             <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 px-4">
-              {/* Search + Filter Row */}
+              {/* Search + Filter */}
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                {/* Search */}
-                <div className="flex items-center w-full sm:w-[300px] md:w-[400px] lg:w-[500px] relative ">
+                <div className="flex items-center w-full sm:w-[300px] md:w-[400px] lg:w-[500px] relative">
                   <Input
                     placeholder="Search for buyer & seller..."
                     value={search}
@@ -173,7 +172,6 @@ export default function LiveStockPage() {
                   </button>
                 </div>
 
-                {/* Filter */}
                 <Select value={filter} onValueChange={setFilter}>
                   <SelectTrigger className="w-full sm:w-40 h-12 rounded-full border-gray-300 bg-[#fafafa] text-gray-600">
                     <SelectValue placeholder="Filter by Seller" />
@@ -187,13 +185,9 @@ export default function LiveStockPage() {
               </div>
             </CardHeader>
 
-            <CardTitle className="text-lg font-semibold text-gray-900 px-4 absolute bottom-[45vh]">
-              Market Overview
-            </CardTitle>
-
             <CardContent className="overflow-x-auto">
               <div className="min-w-full overflow-x-auto">
-                <table className="w-full min-w-[800px] text-sm border-collapse">
+                <table className="w-full min-w-[900px] text-sm border-collapse">
                   <thead>
                     <tr className="text-gray-600 text-left border-b border-gray-200">
                       {[
@@ -201,12 +195,14 @@ export default function LiveStockPage() {
                         "sellerType",
                         "category",
                         "productName",
+                        "subProduct",
                         "bf",
                         "gsm",
                         "shade",
                         "size",
                         "wl",
                         "pricePerKg",
+                        "spotPrice",
                         "quantity",
                       ].map((col) => (
                         <th
@@ -223,38 +219,60 @@ export default function LiveStockPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRows.map((r, i) => (
-                      <tr
-                        key={i}
-                        className={`${
-                          i % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        } hover:bg-gray-100 transition-colors`}
-                      >
-                        <td className="py-3 px-4 text-gray-800 whitespace-nowrap">
-                          {r.location}
-                        </td>
-                        <td className="py-3 px-4 text-gray-800 whitespace-nowrap">
-                          {r.sellerType}
-                        </td>
-                        <td className="py-3 px-4 text-gray-800 whitespace-nowrap">
-                          {r.category}
-                        </td>
-                        <td className="py-3 px-4 text-gray-800 whitespace-nowrap">
-                          {r.productName}
-                        </td>
-                        <td className="py-3 px-4 text-gray-800">{r.bf}</td>
-                        <td className="py-3 px-4 text-gray-800">{r.gsm}</td>
-                        <td className="py-3 px-4 text-gray-800">{r.shade}</td>
-                        <td className="py-3 px-4 text-gray-800">{r.size}</td>
-                        <td className="py-3 px-4 text-gray-800">{r.wl}</td>
-                        <td className="py-3 px-4 text-gray-800">
-                          {r.pricePerKg}
-                        </td>
-                        <td className="py-3 px-4 font-semibold text-gray-900">
-                          {r.quantity}
+                    {loading ? (
+                      <tr>
+                        <td colSpan={13} className="py-6 text-center text-gray-500">
+                          Loading stocks...
                         </td>
                       </tr>
-                    ))}
+                    ) : error ? (
+                      <tr>
+                        <td colSpan={13} className="py-6 text-center text-red-500">
+                          {error}
+                        </td>
+                      </tr>
+                    ) : filteredRows.length === 0 ? (
+                      <tr>
+                        <td colSpan={13} className="py-6 text-center text-gray-500">
+                          No stock data available
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredRows.map((r, i) => (
+                        <tr
+                          key={i}
+                          className={`${
+                            i % 2 === 0 ? "bg-gray-50" : "bg-white"
+                          } hover:bg-gray-100 transition-colors`}
+                        >
+                          <td className="py-3 px-4 text-blue-600 font-medium">{r.location}</td>
+                          <td className="py-3 px-4">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                r.sellerType === "Manufacturer"
+                                  ? "bg-green-100 text-green-700"
+                                  : r.sellerType === "Distributor"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-gray-200 text-gray-700"
+                              }`}
+                            >
+                              {r.sellerType}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-orange-600">{r.category}</td>
+                          <td className="py-3 px-4 text-indigo-600 font-semibold">{r.productName}</td>
+                          <td className="py-3 px-4 text-indigo-500">{r.subProduct}</td>
+                          <td className="py-3 px-4 text-pink-600">{r.bf}</td>
+                          <td className="py-3 px-4 text-teal-600">{r.gsm}</td>
+                          <td className="py-3 px-4 text-purple-600">{r.shade}</td>
+                          <td className="py-3 px-4 text-amber-600">{r.size}</td>
+                          <td className="py-3 px-4 text-cyan-600">{r.wl}</td>
+                          <td className="py-3 px-4 font-bold text-red-600">{r.pricePerKg}</td>
+                          <td className="py-3 px-4 font-bold text-red-500">{r.spotPrice}</td>
+                          <td className="py-3 px-4 font-bold text-violet-700">{r.quantity}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
