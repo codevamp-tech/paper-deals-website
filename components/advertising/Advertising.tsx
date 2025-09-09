@@ -20,7 +20,7 @@ const Advertising = () => {
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/advertisement"); // 👈 API
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertisement`); // 👈 API
         
         const data = await res.json();
         console.log("API Response:", data);
@@ -96,7 +96,7 @@ const Advertising = () => {
               <div
                 className="w-full h-full bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(http://localhost:5000/${ads[currentIndex]?.image})`,
+                  backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}/${ads[currentIndex]?.image})`,
                 }}
               ></div>
             </div>

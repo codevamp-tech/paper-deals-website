@@ -34,7 +34,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/categiry"); // 👈 API URL
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`); // 👈 API URL
         const data = await res.json();
         console.log("Fetched categories:", data);
 
@@ -119,7 +119,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
                     <div className="flex items-center mb-3">
                       <div className="w-16 h-16 bg-[#E6F6F4] rounded-2xl flex items-center justify-center shadow-md">
                         <img
-                          src={`http://localhost:5000/${cat.icon}`}
+                          src={`${process.env.NEXT_PUBLIC_API_URL}/${cat.icon}`}
                           alt={cat.name}
                           className="w-auto h-16 rounded-xl"
                         />
@@ -157,7 +157,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
                   <div className="flex items-center mb-3">
                     <div className="w-16 h-16 bg-[#E6F6F4] rounded-2xl flex items-center justify-center shadow-md">
                       <img
-                        src={`http://localhost:5000/${cat.icon}`}
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/${cat.icon}`}
                         alt={cat.name}
                         className="w-auto h-16 rounded-xl"
                       />
