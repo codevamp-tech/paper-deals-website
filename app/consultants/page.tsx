@@ -38,7 +38,7 @@ export default function ConsultantsPage() {
     async function fetchConsultants() {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/users/getallsellers?user_type=5"
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=5`
         );
         const json = await res.json();
 
@@ -66,7 +66,7 @@ export default function ConsultantsPage() {
 
           // ✅ use organization.image_banner if available, else fallback
           photoUrl: c.organization?.image_banner
-            ? `http://localhost:5000/${c.organization.image_banner}`
+            ? `${process.env.NEXT_PUBLIC_API_URL}/${c.organization.image_banner}`
             : "/placeholder.svg?height=112&width=112&query=consultant",
 
           photoAlt: c.name,

@@ -22,7 +22,7 @@ export default function SellerList() {
     const fetchSellers = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/users/getallsellers?user_type=2"
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`
         );
         const data = await res.json();
         setSellers(data.data); // ✅ API returns { data: [] }

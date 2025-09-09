@@ -33,7 +33,7 @@ const ConsultantBookingPage: React.FC = () => {
     e.preventDefault()
 
     try {
-      const res = await fetch("http://localhost:5000/api/consultant/book", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/consultant/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

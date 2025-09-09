@@ -50,7 +50,7 @@ export default function LiveStockPage() {
         setLoading(true);
         setError(null);
 
-        const API_URL = "http://localhost:5000/api/live-stocks/view-live-stockes";
+        const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/live-stocks/view-live-stockes`;
 
         let res = await fetch(API_URL);
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);

@@ -55,7 +55,7 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
     React.useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/categiry"); // use the correct backend route
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`); // use the correct backend route
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
                 const data = await res.json();
                 setCategories(data.categories || []);
@@ -78,7 +78,7 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
         };
 
         try {
-            const res = await fetch("http://localhost:5000/api/enquiry/enquiries", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
