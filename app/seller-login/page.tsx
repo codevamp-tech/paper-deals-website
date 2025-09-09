@@ -20,6 +20,7 @@ export default function SellerSignin() {
     console.log('signin:', formData);
     // Add your seller signin logic here
   };
+  const currentPage = formData.loginType;
 
   return (
     <div className="min-h-screen bg-gray-100 py-16">
