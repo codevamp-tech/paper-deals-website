@@ -8,14 +8,10 @@ import {
   Settings,
   Search,
   Target,
-  Store,
-  Package,
-  TrendingUp,
-  DollarSign,
+  User,
 } from "lucide-react";
 
-export default function LoginPages() {
-  const [currentPage, setCurrentPage] = useState("buyer"); // "buyer" or "seller"
+export default function BuyerSignin() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -25,16 +21,10 @@ export default function LoginPages() {
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
-
-    // If login type changes, switch pages
-    if (name === "loginType") {
-      setCurrentPage(value);
-    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -45,43 +35,9 @@ export default function LoginPages() {
   };
 
   const handleSubmit = () => {
-    console.log(`PaperDeals ${currentPage} signin:`, formData);
-    alert(`Demo ${currentPage} login - functionality not implemented`);
+    console.log("PaperDeals signin:", formData);
+    alert("Demo login - functionality not implemented");
   };
-
-  const buyerContent = {
-    title: "Welcome Back Buyer",
-    subtitle: "Sign in to access your account",
-    promoTitle: "Create new account for Seller and Buyer",
-    promoSubtitle:
-      "Join our platform to access exclusive deals and opportunities for both buyers and sellers",
-    image: "/loginimg.svg",
-    imageAlt: "Buyer Login Image",
-    icons: [
-      { component: Lock, key: "lock" },
-      { component: Settings, key: "settings" },
-      { component: Search, key: "search" },
-      { component: Target, key: "target" },
-    ],
-  };
-
-  const sellerContent = {
-    title: "Welcome Back Seller",
-    subtitle: "Sign in to manage your store",
-    promoTitle: "Start Selling with PaperDeals Today",
-    promoSubtitle:
-      "Join thousands of successful sellers and grow your business with our comprehensive platform and tools",
-    image: "/sellerimg.svg",
-    imageAlt: "Seller Login Image",
-    icons: [
-      { component: Store, key: "store" },
-      { component: Package, key: "package" },
-      { component: TrendingUp, key: "trending" },
-      { component: DollarSign, key: "dollar" },
-    ],
-  };
-
-  const content = currentPage === "buyer" ? buyerContent : sellerContent;
 
   return (
     <div className="min-h-screen bg-gray-100 py-16">
@@ -98,13 +54,11 @@ export default function LoginPages() {
         </div>
         {/* Header Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
-          <h1 className="text-5xl font-light mb-2">
-            {currentPage === "buyer" ? "Buyer Sign In" : "Seller Sign In"}
-          </h1>
+          <h1 className="text-5xl font-light mb-2">Sign In</h1>
           <div className="flex items-center text-sm opacity-90">
             <span>Home</span>
             <span className="mx-2">›</span>
-            <span>{currentPage === "buyer" ? "Buyer" : "Seller"} Sign In</span>
+            <span>Sign In</span>
           </div>
         </div>
       </div>
@@ -115,10 +69,9 @@ export default function LoginPages() {
           {/* Left Side - Form */}
           <div className="w-full lg:w-1/2 p-12 lg:p-16">
             <div className="max-w-md mx-auto">
-              <h2 className="text-3xl font-semibold text-gray-800 mb-2">
-                {content.title}
+              <h2 className="text-3xl font-semibold text-gray-800 mb-8">
+                Sign In
               </h2>
-              <p className="text-gray-600 mb-8">{content.subtitle}</p>
 
               <div className="space-y-6">
                 {/* Login Type Selector */}
@@ -148,7 +101,7 @@ export default function LoginPages() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
-                    placeholder={`Enter your ${currentPage} email`}
+                    placeholder="Enter your email"
                   />
                 </div>
 
@@ -208,17 +161,13 @@ export default function LoginPages() {
                 {/* Submit Button */}
                 <button
                   onClick={handleSubmit}
-                  className={`w-full ${
-                    currentPage === "buyer"
-                      ? "bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700"
-                      : "bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700"
-                  } text-white py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl`}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  {currentPage === "buyer" ? "SignIn" : "SignIn"}
+                  Signin
                 </button>
 
                 <div className="text-center text-sm text-gray-500 mt-6">
-                  New {currentPage}?{" "}
+                  New user?{" "}
                   <a
                     href="#"
                     className="text-cyan-600 font-semibold hover:underline"

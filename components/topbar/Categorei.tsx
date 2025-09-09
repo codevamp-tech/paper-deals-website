@@ -6,13 +6,63 @@ import Link from "next/link";
 const categoriesData = [
   {
     name: "Kraft Paper",
-    icon: "🏗️",
-    href: "/mild-steel",
+    icon: "📄",
+    href: "/product",
     products: [
-      { name: "HR Plate", href: "/products/hr-plate" },
-      { name: "HRC", href: "/products/hrc" },
-      { name: "Flat Products", href: "/products/flat-products" },
-      { name: "Semi-Finished", href: "/products/semi-finished" },
+      { name: "Brown Kraft", href: "/products/brown-kraft" },
+      { name: "Bleached Kraft", href: "/products/bleached-kraft" },
+      { name: "Recycled Kraft", href: "/products/recycled-kraft" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Surat", href: "/city/surat" },
+      { name: "Ahmedabad", href: "/city/ahmedabad" },
+    ],
+    subCategories: ["Brown Kraft", "Bleached Kraft", "Recycled Kraft"],
+  },
+  {
+    name: "Duplex Board",
+    icon: "📦",
+    href: "/product",
+    products: [
+      { name: "White Back", href: "/products/white-back-duplex" },
+      { name: "Grey Back", href: "/products/grey-back-duplex" },
+      { name: "Coated Board", href: "/products/coated-duplex" },
+    ],
+    cities: [
+      { name: "Amritsar", href: "/city/amritsar" },
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Pune", href: "/city/pune" },
+    ],
+    subCategories: ["White Back", "Grey Back", "Coated Board"],
+  },
+  {
+    name: "Jumbo Tissue",
+    icon: "🧻",
+    href: "/product",
+    products: [
+      { name: "Toilet Tissue Rolls", href: "/products/toilet-tissue-rolls" },
+      { name: "Facial Tissue Rolls", href: "/products/facial-tissue-rolls" },
+      { name: "Napkin Tissue Rolls", href: "/products/napkin-tissue-rolls" },
+    ],
+    cities: [
+      { name: "Ahmedabad", href: "/city/ahmedabad" },
+      { name: "Surat", href: "/city/surat" },
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+    ],
+    subCategories: ["Toilet Tissue", "Facial Tissue", "Napkin Tissue"],
+  },
+  {
+    name: "Copier Paper - A4",
+    icon: "📑",
+    href: "/product",
+    products: [
+      { name: "70 GSM A4", href: "/products/70gsm-a4" },
+      { name: "75 GSM A4", href: "/products/75gsm-a4" },
+      { name: "80 GSM A4", href: "/products/80gsm-a4" },
     ],
     cities: [
       { name: "Delhi", href: "/city/delhi" },
@@ -20,159 +70,160 @@ const categoriesData = [
       { name: "Chennai", href: "/city/chennai" },
       { name: "Kolkata", href: "/city/kolkata" },
     ],
-    subCategories: [
-      "Flat Products",
-      "Semi-Finished",
-      "Long Products",
-      "Structure",
-    ],
+    subCategories: ["70 GSM", "75 GSM", "80 GSM"],
   },
   {
-    name: "Non Ferrous",
-    icon: "🔶",
-    href: "/non-ferrous",
+    name: "Prime Paper",
+    icon: "📜",
+    href: "/product",
     products: [
-      { name: "Aluminum", href: "/products/aluminum" },
-      { name: "Copper", href: "/products/copper" },
-      { name: "Brass", href: "/products/brass" },
-      { name: "Bronze", href: "/products/bronze" },
+      { name: "Premium White", href: "/products/premium-white" },
+      { name: "High Gloss", href: "/products/high-gloss" },
+      { name: "Specialty Prime", href: "/products/specialty-prime" },
     ],
     cities: [
-      { name: "Bangalore", href: "/city/bangalore" },
-      { name: "Hyderabad", href: "/city/hyderabad" },
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-      { name: "Pune", href: "/city/pune" },
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Jaipur", href: "/city/jaipur" },
+      { name: "Indore", href: "/city/indore" },
     ],
-    subCategories: ["Sheets", "Coils", "Rods", "Wires"],
+    subCategories: ["Premium White", "High Gloss", "Specialty Prime"],
   },
   {
-    name: "Polymers & Packaging",
+    name: "Stock lot Papers",
     icon: "📦",
-    href: "/polymers-packaging",
+    href: "/product",
     products: [
-      { name: "HDPE", href: "/products/hdpe" },
-      { name: "LDPE", href: "/products/ldpe" },
-      { name: "PVC", href: "/products/pvc" },
-      { name: "Films", href: "/products/films" },
+      { name: "Surplus Coated", href: "/products/surplus-coated" },
+      { name: "Overrun Papers", href: "/products/overrun-papers" },
+      { name: "Discount Lot", href: "/products/discount-lot" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Ahmedabad", href: "/city/ahmedabad" },
+      { name: "Surat", href: "/city/surat" },
+    ],
+    subCategories: ["Surplus Coated", "Overrun Papers", "Discount Lot"],
+  },
+  {
+    name: "Writing & Printing paper",
+    icon: "🖋️",
+    href: "/product",
+    products: [
+      { name: "Offset Printing", href: "/products/offset-printing" },
+      { name: "Bond Paper", href: "/products/bond-paper" },
+      { name: "Ledger Paper", href: "/products/ledger-paper" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Kolkata", href: "/city/kolkata" },
+      { name: "Chennai", href: "/city/chennai" },
+    ],
+    subCategories: ["Offset Printing", "Bond Paper", "Ledger Paper"],
+  },
+  {
+    name: "Gumming Sheets",
+    icon: "🏷️",
+    href: "/product",
+    products: [
+      { name: "Label Sheets", href: "/products/label-sheets" },
+      { name: "Adhesive Coated", href: "/products/adhesive-coated" },
+      { name: "Sticker Paper", href: "/products/sticker-paper" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Pune", href: "/city/pune" },
+      { name: "Ahmedabad", href: "/city/ahmedabad" },
+    ],
+    subCategories: ["Label Sheets", "Adhesive Coated", "Sticker Paper"],
+  },
+  {
+    name: "Art Paper",
+    icon: "🎨",
+    href: "/product",
+    products: [
+      { name: "Gloss Art", href: "/products/gloss-art" },
+      { name: "Matt Art", href: "/products/matt-art" },
+      { name: "Textured Art", href: "/products/textured-art" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Kolkata", href: "/city/kolkata" },
+      { name: "Surat", href: "/city/surat" },
+    ],
+    subCategories: ["Gloss", "Matt", "Textured"],
+  },
+  {
+    name: "Matt Paper",
+    icon: "📃",
+    href: "/product",
+    products: [
+      { name: "Matte Coated", href: "/products/matte-coated" },
+      { name: "Smooth Matte", href: "/products/smooth-matte" },
+      { name: "Premium Matte", href: "/products/premium-matte" },
+    ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Jaipur", href: "/city/jaipur" },
+      { name: "Chennai", href: "/city/chennai" },
+    ],
+    subCategories: ["Matte Coated", "Smooth Matte", "Premium Matte"],
+  },
+  {
+    name: "Cromo Paper",
+    icon: "✨",
+    href: "/product",
+    products: [
+      { name: "Gloss Coated", href: "/products/gloss-coated" },
+      { name: "High Gloss Cromo", href: "/products/high-gloss-cromo" },
+      { name: "Printable Cromo", href: "/products/printable-cromo" },
     ],
     cities: [
       { name: "Delhi", href: "/city/delhi" },
       { name: "Mumbai", href: "/city/mumbai" },
       { name: "Surat", href: "/city/surat" },
-      { name: "Vadodara", href: "/city/vadodara" },
-    ],
-    subCategories: ["Plastic Sheets", "Films", "Packaging", "Containers"],
-  },
-  {
-    name: "Chemicals",
-    icon: "🧪",
-    href: "/chemicals",
-    products: [
-      { name: "Industrial Chemicals", href: "/products/industrial-chemicals" },
-      {
-        name: "Agricultural Chemicals",
-        href: "/products/agricultural-chemicals",
-      },
-      { name: "Specialty Chemicals", href: "/products/specialty-chemicals" },
-      { name: "Dyes & Pigments", href: "/products/dyes-pigments" },
-    ],
-    cities: [
-      { name: "Vapi", href: "/city/vapi" },
-      { name: "Ankleshwar", href: "/city/ankleshwar" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Vadodara", href: "/city/vadodara" },
-    ],
-    subCategories: [
-      "Base Chemicals",
-      "Petrochemicals",
-      "Specialty Chemicals",
-      "Dyes",
-    ],
-  },
-  {
-    name: "Energy & Petroleum",
-    icon: "⛽",
-    href: "/energy-petroleum",
-    products: [
-      { name: "Crude Oil", href: "/products/crude-oil" },
-      { name: "Natural Gas", href: "/products/natural-gas" },
-      { name: "Bio Fuel", href: "/products/bio-fuel" },
-      { name: "Coal", href: "/products/coal" },
-    ],
-    cities: [
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Jamnagar", href: "/city/jamnagar" },
-      { name: "Paradip", href: "/city/paradip" },
-      { name: "Visakhapatnam", href: "/city/visakhapatnam" },
-    ],
-    subCategories: ["Crude Oil", "Natural Gas", "Bio Fuel", "Refined Products"],
-  },
-  {
-    name: "Stainless Steel",
-    icon: "🔩",
-    href: "/stainless-steel",
-    products: [
-      { name: "SS Sheets", href: "/products/ss-sheets" },
-      { name: "SS Coils", href: "/products/ss-coils" },
-      { name: "SS Pipes", href: "/products/ss-pipes" },
-      { name: "SS Fittings", href: "/products/ss-fittings" },
-    ],
-    cities: [
-      { name: "Chennai", href: "/city/chennai" },
       { name: "Ahmedabad", href: "/city/ahmedabad" },
-      { name: "Pune", href: "/city/pune" },
-      { name: "Jamshedpur", href: "/city/jamshedpur" },
     ],
-    subCategories: ["Sheets", "Coils", "Pipes", "Fittings"],
+    subCategories: ["Gloss Coated", "High Gloss", "Printable Cromo"],
   },
   {
-    name: "Pipes",
-    icon: "🔧",
-    href: "/pipes",
+    name: "S.B.S",
+    icon: "📦",
+    href: "/product",
     products: [
-      { name: "MS Pipes", href: "/products/ms-pipes" },
-      { name: "GI Pipes", href: "/products/gi-pipes" },
-      { name: "SS Pipes", href: "/products/ss-pipes" },
-      { name: "PVC Pipes", href: "/products/pvc-pipes" },
-    ],
-    cities: [
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-      { name: "Indore", href: "/city/indore" },
-      { name: "Chennai", href: "/city/chennai" },
-      { name: "Jaipur", href: "/city/jaipur" },
-    ],
-    subCategories: [
-      "Steel Pipes",
-      "Plastic Pipes",
-      "Seamless Pipes",
-      "ERW Pipes",
-    ],
-  },
-  {
-    name: "Infrastructure & Construction",
-    icon: "🏗️",
-    href: "/infrastructure-construction",
-    products: [
-      { name: "TMT Bars", href: "/products/tmt-bars" },
-      { name: "Cement", href: "/products/cement" },
-      { name: "Structural Steel", href: "/products/structural-steel" },
-      {
-        name: "Pre-Engineered Buildings",
-        href: "/products/pre-engineered-buildings",
-      },
+      { name: "Bleached SBS", href: "/products/bleached-sbs" },
+      { name: "Coated SBS", href: "/products/coated-sbs" },
+      { name: "Premium SBS", href: "/products/premium-sbs" },
     ],
     cities: [
       { name: "Delhi", href: "/city/delhi" },
       { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Bangalore", href: "/city/bangalore" },
-      { name: "Hyderabad", href: "/city/hyderabad" },
+      { name: "Kolkata", href: "/city/kolkata" },
+      { name: "Surat", href: "/city/surat" },
     ],
-    subCategories: [
-      "Steel Products",
-      "Cement & Concrete",
-      "Structural Elements",
-      "Building Materials",
+    subCategories: ["Bleached SBS", "Coated SBS", "Premium SBS"],
+  },
+  {
+    name: "News Print",
+    icon: "📰",
+    href: "/product",
+    products: [
+      { name: "Standard Newsprint", href: "/products/standard-newsprint" },
+      { name: "Recycled Newsprint", href: "/products/recycled-newsprint" },
+      { name: "White Newsprint", href: "/products/white-newsprint" },
     ],
+    cities: [
+      { name: "Delhi", href: "/city/delhi" },
+      { name: "Mumbai", href: "/city/mumbai" },
+      { name: "Kolkata", href: "/city/kolkata" },
+      { name: "Chennai", href: "/city/chennai" },
+    ],
+    subCategories: ["Standard", "Recycled", "White"],
   },
 ];
 
@@ -217,7 +268,8 @@ export default function CategoriesDropdown() {
               />
             </svg>
           </div>
-          All Categories
+          <span className="hidden sm:inline">All Categories</span>
+          <span className="sm:hidden">Categories</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4 ml-2"
@@ -238,29 +290,34 @@ export default function CategoriesDropdown() {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute left-0 top-full bg-black text-white shadow-lg z-50 w-[80vw]
-          h-[100vh]"
+          className="absolute left-0 top-full bg-black text-white shadow-lg z-50 
+        w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
+        -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
-          <div className="flex border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row border-t border-gray-200 h-full">
             {/* Left Sidebar - Categories */}
-            <div className="w-64 bg-black py-2">
+            <div className="w-full sm:w-64 md:w-72 lg:w-64 bg-black py-2 overflow-y-auto">
               {categoriesData.map((category, index) => (
                 <Link
                   key={index}
                   href={category.href}
-                  className={`flex items-center px-4 py-3 hover:bg-[#333] ${
+                  className={`flex items-center px-3 sm:px-4 py-3 hover:bg-[#333] ${
                     activeCategory?.name === category.name ? "bg-[#333]" : ""
                   }`}
                   onMouseEnter={() => handleCategoryHover(category)}
                 >
-                  <span className="mr-3 text-lg">{category.icon}</span>
-                  <span className="text-white">{category.name}</span>
+                  <span className="mr-2 sm:mr-3 text-base sm:text-lg">
+                    {category.icon}
+                  </span>
+                  <span className="text-white text-sm sm:text-base flex-1">
+                    {category.name}
+                  </span>
                   {category.name !== "Infrastructure & Construction" && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-auto text-white"
+                      className="h-3 w-3 sm:h-4 sm:w-4 ml-auto text-white flex-shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -278,57 +335,57 @@ export default function CategoriesDropdown() {
             </div>
 
             {/* Right Content Area */}
-            <div className="flex-1 p-6">
-              <div className="grid grid-cols-3 gap-6">
-                {/* Quick Links */}
-
+            <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Dynamic Products Column */}
                 {activeCategory && (
-                  <div>
-                    <h3 className="text-blue-600 font-semibold mb-4">
+                  <div className="order-1">
+                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
                       Products
                     </h3>
-                    {activeCategory.products.map((product, index) => (
-                      <Link
-                        key={index}
-                        href={product.href}
-                        className="flex items-center justify-between py-2 hover:text-blue-600 text-white"
-                      >
-                        <span>{product.name}</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 text-blue-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                    <div className="space-y-1 sm:space-y-2">
+                      {activeCategory.products.map((product, index) => (
+                        <Link
+                          key={index}
+                          href={product.href}
+                          className="flex items-center justify-between py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
-                    ))}
-                    <div className="mt-4">
+                          <span className="flex-1 pr-2">{product.name}</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 sm:text-blue-500 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-3 sm:mt-4">
                       {activeCategory.subCategories.map((subCat, index) => (
                         <Link
                           key={index}
                           href={`/products/${subCat
                             .toLowerCase()
                             .replace(/\s+/g, "-")}`}
-                          className={`block py-2 ${
+                          className={`block py-1 sm:py-2 text-sm sm:text-base ${
                             index === 0
-                              ? "flex items-center justify-between font-medium text-blue-600"
-                              : ""
+                              ? "flex items-center justify-between font-medium text-blue-400 sm:text-blue-600"
+                              : "text-white hover:text-blue-400 sm:hover:text-blue-600"
                           }`}
                         >
-                          <span>{subCat}</span>
+                          <span className="flex-1">{subCat}</span>
                           {index === 0 && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
+                              className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -349,22 +406,26 @@ export default function CategoriesDropdown() {
 
                 {/* Dynamic Cities Column */}
                 {activeCategory && (
-                  <div>
-                    <h3 className="text-blue-600 font-semibold mb-4">City</h3>
-                    {activeCategory.cities.map((city, index) => (
-                      <Link
-                        key={index}
-                        href={city.href}
-                        className="block py-2 hover:text-blue-600 text-white"
-                      >
-                        {city.name}
-                      </Link>
-                    ))}
+                  <div className="order-2">
+                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
+                      City
+                    </h3>
+                    <div className="space-y-1 sm:space-y-2">
+                      {activeCategory.cities.map((city, index) => (
+                        <Link
+                          key={index}
+                          href={city.href}
+                          className="block py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
+                        >
+                          {city.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                {/* Empty Column for spacing */}
-                <div></div>
+                {/* Empty Column for spacing on larger screens */}
+                <div className="hidden lg:block order-3"></div>
               </div>
             </div>
           </div>

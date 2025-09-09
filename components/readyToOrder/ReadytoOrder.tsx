@@ -1,13 +1,13 @@
 export default function ReadyToOrder() {
   return (
-    <div className="border-t border-white border-b border-white  py-16 px-6 text-white">
+    <div className="py-16 px-6 text-white">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-[#FFF5E1]">
           Ready to
-          <span className="text-gray-800"> Order ?</span>
+          <span className="text-gray-100"> Order ?</span>
         </h2>
         <p className="text-lg mb-8">
-          Simplify your Metal sourcing and Fabrications with Metalbook. Order
+          Simplify your paper sourcing and Fabrications with paperbook. Order
           now and
           <br />
           experience the difference for yourself !

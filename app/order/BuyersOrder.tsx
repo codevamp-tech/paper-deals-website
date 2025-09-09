@@ -47,7 +47,7 @@ const TrackingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col p-4 md:p-6 ">
+    <div className="min-h-screen flex flex-col p-4 md:p-6 bg-[#111]">
       {/* Breadcrumb */}
       <div className="mb-4 md:mb-8 flex items-center space-x-2 md:space-x-4 text-sm text-white">
         <Link href="/#">
@@ -103,7 +103,7 @@ const TrackingPage = () => {
                     : "translate-x-2 opacity-0"
                 }`}
               >
-                <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5" />
+                <ChevronRightIcon style={"w-4 h-4 md:w-5 md:h-5"} />
               </span>
             </button>
           ))}
@@ -247,7 +247,7 @@ const TrackingPage = () => {
                     </div>
                   </div>
                   <div className="mt-4 md:mt-6 flex flex-col sm:flex-row justify-end sm:space-x-3 space-y-2 sm:space-y-0">
-                    <button className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-xs md:text-sm font-medium hover:bg-gray-50 transition">
+                    <button className="text-black w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-xs md:text-sm font-medium hover:bg-gray-700 transition">
                       View Details
                     </button>
                     <button className="w-full sm:w-auto px-4 py-2 bg-cyan-500 text-white rounded-lg text-xs md:text-sm font-medium hover:bg-cyan-600 transition">
