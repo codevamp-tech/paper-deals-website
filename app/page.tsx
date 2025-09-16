@@ -1,3 +1,9 @@
+"use client"
+
+import { useState } from "react"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+
 import TestimonialsSection from "@/components/testimonial";
 import FaqSection from "../components/faqSection/FaqSection";
 import Categoreie from "@/components/categories/Categories";
@@ -9,45 +15,35 @@ import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import Hero from "@/components/herohomepage/Heropage";
 
 export default function Home() {
-  return (
-    <div className="min-h-screen text-white">
+  return (<div className="min-h-screen text-white"> {/* Hero Section P2 and add intro below*/}
 
-      {/* Hero Section P2 and add intro below*/}
 
-      <Hero />
+    {/* Hero Section */}
+    <Hero />
 
-      {/* Insight  */}
+    {/* Insight  */}
+    <ProductInsights />
 
-      <ProductInsights />
+    {/* Categories */}
+    <Categoreie />
 
-      {/* categoreis P4 */}
+    {/* Products Section */}
+    <SellerOrBuyer />
 
-      <Categoreie />
+    {/* Our Services */}
+    <ServicesGrid />
 
-      {/* Products Section */}
+    {/* Ready To Order */}
+    <ReadyToOrder />
 
-      <SellerOrBuyer />
+    {/* Partner with us */}
+    <PartnerWithUs />
 
-      {/* Our Services */}
+    {/* Testimonials */}
+    <TestimonialsSection />
 
-      <ServicesGrid />
-
-      {/* Ready To Order  */}
-
-      <ReadyToOrder />
-
-      {/* Partner with us  */}
-
-      <PartnerWithUs />
-
-      {/* Testimonials */}
-
-      <TestimonialsSection />
-
-      {/* FAQ Section */}
-
-      <FaqSection />
-
-    </div>
+    {/* FAQ Section */}
+    <FaqSection />
+  </div>
   );
 }

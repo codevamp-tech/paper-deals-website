@@ -144,13 +144,13 @@ export default function BuyersPage() {
                   <Field label="State" value={org?.state} />
                   <Field label="Productions Capacity (TPM)" value={capacity} />
                   <Field label="Deals In" value={dealsIn} />
-                  <Field label="Contact Person" value={org?.contact_person} />
-                  <Field label="Email" value={email} />
+                  <Field label="Description" value={org?.contact_person} />
+                  {/* <Field label="Email" value={email} />
                   <Field label="Phone" value={phone} />
-                  <Field label="Address" value={org?.address} />
+                  <Field label="Address" value={org?.address} /> */}
                 </div>
 
-                {/* Description */}
+                {/* { Description } */}
                 {description ? (
                   <div className="mt-6">
                     <p className="text-sm font-semibold text-gray-800">

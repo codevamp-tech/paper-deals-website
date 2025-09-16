@@ -7,8 +7,22 @@ import BioImageSec from "../ImageOrBio/ImageAndBio"; // Replace with actual path
 
 const images = ["/banner1.png", "/banner2.png", "/banner3.jpg"]; // Replace with actual image paths in your public folder
 
+// Dummy products (you can replace with API call)
+const products = [
+  "Premium A4 Paper",
+  "Recycled Kraft Paper",
+  "Cardboard Packaging",
+  "Glossy Brochure Sheets",
+  "Custom Business Cards",
+  "Notebook Papers",
+];
+
 const Hero = () => {
   const [current, setCurrent] = useState(0);
+
+  // Search states
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<string[]>([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -17,8 +31,24 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Handle search logic
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (value.trim() === "") {
+      setResults([]);
+    } else {
+      const filtered = products.filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase())
+      );
+      setResults(filtered);
+    }
+  };
+
   return (
     <section className="relative py-[12vh] overflow-hidden">
+      {/* Background images */}
       <div className="absolute inset-0 z-0">
         {images.map((src, index) => (
           <img
@@ -30,9 +60,7 @@ const Hero = () => {
             }`}
           />
         ))}
-        {/* Optional overlays for blur or color tint */}
         <div className="absolute inset-0 bg-black/40 z-10" />
-        {/* Background Blurs */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] [background-color:rgba(113,47,255,0.21)] rounded-full blur-[120px] z-20" />
         <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-cyan-500/20 rounded-full blur-[100px] z-20" />
       </div>
@@ -54,22 +82,43 @@ const Hero = () => {
             </p>
 
             {/* Search + CTA */}
-            <div className="flex justify-center">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <div className="relative group max-w-4xl mx-auto">
+            <div className="flex justify-center relative w-full max-w-xl mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+                <div className="relative group w-full">
+                  {/* Search Icon */}
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                   </div>
+
+                  {/* Search Input */}
                   <input
                     type="text"
                     placeholder="Search samples..."
+                    value={query}
+                    onChange={handleSearch}
                     className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg 
                       focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all
                       hover:border-gray-400 shadow-sm hover:shadow-md"
                   />
+
+                  {/* Arrow Icon */}
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                   </div>
+
+                  {/* Search Results Dropdown */}
+                  {results.length > 0 && (
+                    <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
+                      {results.map((item, index) => (
+                        <li
+                          key={index}
+                          className="px-4 py-2 hover:bg--100 cursor-pointer"
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
 

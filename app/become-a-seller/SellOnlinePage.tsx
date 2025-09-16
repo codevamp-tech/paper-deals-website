@@ -1,4 +1,7 @@
-"use cleint";
+"use client";
+
+import React, { useState } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -10,8 +13,10 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import WhySellpaperdeals from "./Why-Sell-Paperdeals";
-
+import RegisterNow from "@/components/modal/RegisterNow";
 export default function SellOnlinePage() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="min-h-screen  font-sans">
       {/* Animated Breadcrumb */}
@@ -143,10 +148,15 @@ export default function SellOnlinePage() {
             Join India's most trusted e-commerce platform and take your business
             to new heights
           </p>
-          <button className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-Poppins">
+          <button className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-Poppins"
+            onClick={() => setIsOpen(true)}>
             Register Now - It's Free!
           </button>
         </div>
+        <RegisterNow
+          visible={isOpen}
+          onClose={() => setIsOpen(false)}
+        />
       </section>
     </div>
   );

@@ -7,7 +7,7 @@ const SellerOrBuyer = () => {
     <>
       <div className="flex flex-col md:flex-row justify-center items-center min-h-screen gap-6 md:gap-8 py-10 px-4">
         {/* BUYER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[70vh] flex flex-col">
+        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[auto] flex flex-col">
           <div className="mb-6">
             <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
               Become a <span className="text-black">Buyer</span>
@@ -52,7 +52,7 @@ const SellerOrBuyer = () => {
                 <img
                   src={item.icon}
                   alt={item.title}
-                  className="w-10 h-10 mx-auto mb-3"
+                  className="w-auto h-10 mx-auto mb-3"
                 />
                 <h3 className="text-gray-800 text-center font-medium">
                   {item.title}
@@ -64,14 +64,16 @@ const SellerOrBuyer = () => {
             ))}
           </div>
           <a href="/buyers">
-            <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-              Become A Buyer
-            </button>
+            <div className="flex justify-center">
+              <button className="mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+                Become A Seller
+              </button>
+            </div>
           </a>
         </div>
 
         {/* SELLER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[70vh] flex flex-col">
+        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[auto] flex flex-col">
           <div className="mb-6">
             <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
               Become a <span className="text-black">Seller</span>
@@ -126,9 +128,11 @@ const SellerOrBuyer = () => {
             ))}
           </div>
           <a href="/become-a-seller">
-            <button className=" mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-              Become A Seller
-            </button>
+            <div className="flex justify-center">
+              <button className="mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+                Become A Seller
+              </button>
+            </div>
           </a>
         </div>
       </div>

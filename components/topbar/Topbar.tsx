@@ -2,22 +2,91 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button"; // Adjust the path as needed
+import { Button } from "@/components/ui/button";
 import TopbarWithCategories from "./Categorei";
 import { useRouter } from "next/navigation";
 import { ChevronDown, User, Store, Menu, X } from "lucide-react";
+import RequestCallback from "../modal/RequestCallback";
+import SupportModal from "../modal/SupportModal";
+
+// ✅ Toggle UI imports
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const Topbar = () => {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+
+  // ✅ Toggle state
+  const [enabled, setEnabled] = useState(false);
 
   const handleSignupClick = () => {
-    router.push("/signup"); // Navigate programmatically to the signup page
+    router.push("/signup");
   };
 
   return (
     <header className="bg-white">
+
+      {/* 🔵 Top Strip */}
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-sm">
+        <div className="container mx-auto flex justify-between items-center px-4 py-2">
+          {/* Left Side - Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsSupportOpen(true)}
+              className="px-3 py-1 rounded-lg text-sm font-medium hover:underline"
+            >
+              Support
+            </button>
+            <button
+              onClick={() => setIsRequestOpen(true)}
+              className="px-3 py-1 rounded-lg text-sm font-medium hover:underline"
+            >
+              Request Call
+            </button>
+          </div>
+
+
+          {/* Right Side - Phone, Email & Toggle */}
+          <div className="flex items-center gap-6">
+            {/* Phone */}
+            <div className="flex items-center gap-2">
+              📞 <span>9837093712</span>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-center gap-2">
+              ✉️ <span>support@paperdeals.in</span>
+            </div>
+
+            {/* ✅ Toggle Section (moved to the end) */}
+            <div className="flex items-center gap-2">
+              <Label
+                htmlFor="mode-toggle"
+                className={`cursor-pointer font-semibold transition-colors ${enabled ? "text-green-300" : "text-white"
+                  }`}
+              >
+                {enabled ? "B2B" : "B2C"}
+              </Label>
+              <Switch
+                id="mode-toggle"
+                checked={enabled}
+                onCheckedChange={setEnabled}
+                className={`transition-colors ${enabled
+                    ? "bg-green-400 data-[state=checked]:bg-green-500"
+                    : "bg-white data-[state=unchecked]:bg-gray-200"
+                  }`}
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-12">
@@ -54,7 +123,7 @@ const Topbar = () => {
                   Consultants
                 </Link>
                 <Link
-                  href="/about"
+                  href="/product"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
                 >
 
@@ -79,15 +148,9 @@ const Topbar = () => {
                   Buyer
                 </Link>
                 <Link
-                  href="/product/detail"
-                  className="text-sm text-gray-700 hover:text-black transition-colors"
-                >
-                  {/* Detail
-                </Link>
-                <Link
                   href="/become-a-seller"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
-                > */}
+                >
                   Become a Seller
                 </Link>
                 {/* <Link
@@ -245,6 +308,26 @@ const Topbar = () => {
               >
                 Become a Seller
               </Link>
+
+
+              <Link
+                href="/live-stock"
+                className="text-sm text-gray-700 hover:text-black transition-colors py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Live Stock
+              </Link>
+
+
+              <Link
+                href="/consultants"
+                className="text-sm text-gray-700 hover:text-black transition-colors py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                consultants
+              </Link>
+
+
               <Link
                 href="/order"
                 className="text-sm text-gray-700 hover:text-black transition-colors py-2"
@@ -256,6 +339,16 @@ const Topbar = () => {
           </div>
         )}
       </div>
+      {/* 🔹 Request Callback Modal */}
+      <RequestCallback
+        visible={isRequestOpen}
+        onClose={() => setIsRequestOpen(false)}
+      />
+      <SupportModal
+        visible={isSupportOpen}
+        onClose={() => setIsSupportOpen(false)}
+      />
+
     </header>
   );
 };

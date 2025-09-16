@@ -1,247 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const categoriesData = [
-  {
-    name: "Kraft Paper",
-    icon: "📄",
-    href: "/product",
-    products: [
-      { name: "Brown Kraft", href: "/products/brown-kraft" },
-      { name: "Bleached Kraft", href: "/products/bleached-kraft" },
-      { name: "Recycled Kraft", href: "/products/recycled-kraft" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Surat", href: "/city/surat" },
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-    ],
-    subCategories: ["Brown Kraft", "Bleached Kraft", "Recycled Kraft"],
-  },
-  {
-    name: "Duplex Board",
-    icon: "📦",
-    href: "/product",
-    products: [
-      { name: "White Back", href: "/products/white-back-duplex" },
-      { name: "Grey Back", href: "/products/grey-back-duplex" },
-      { name: "Coated Board", href: "/products/coated-duplex" },
-    ],
-    cities: [
-      { name: "Amritsar", href: "/city/amritsar" },
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Pune", href: "/city/pune" },
-    ],
-    subCategories: ["White Back", "Grey Back", "Coated Board"],
-  },
-  {
-    name: "Jumbo Tissue",
-    icon: "🧻",
-    href: "/product",
-    products: [
-      { name: "Toilet Tissue Rolls", href: "/products/toilet-tissue-rolls" },
-      { name: "Facial Tissue Rolls", href: "/products/facial-tissue-rolls" },
-      { name: "Napkin Tissue Rolls", href: "/products/napkin-tissue-rolls" },
-    ],
-    cities: [
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-      { name: "Surat", href: "/city/surat" },
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-    ],
-    subCategories: ["Toilet Tissue", "Facial Tissue", "Napkin Tissue"],
-  },
-  {
-    name: "Copier Paper - A4",
-    icon: "📑",
-    href: "/product",
-    products: [
-      { name: "70 GSM A4", href: "/products/70gsm-a4" },
-      { name: "75 GSM A4", href: "/products/75gsm-a4" },
-      { name: "80 GSM A4", href: "/products/80gsm-a4" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Chennai", href: "/city/chennai" },
-      { name: "Kolkata", href: "/city/kolkata" },
-    ],
-    subCategories: ["70 GSM", "75 GSM", "80 GSM"],
-  },
-  {
-    name: "Prime Paper",
-    icon: "📜",
-    href: "/product",
-    products: [
-      { name: "Premium White", href: "/products/premium-white" },
-      { name: "High Gloss", href: "/products/high-gloss" },
-      { name: "Specialty Prime", href: "/products/specialty-prime" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Jaipur", href: "/city/jaipur" },
-      { name: "Indore", href: "/city/indore" },
-    ],
-    subCategories: ["Premium White", "High Gloss", "Specialty Prime"],
-  },
-  {
-    name: "Stock lot Papers",
-    icon: "📦",
-    href: "/product",
-    products: [
-      { name: "Surplus Coated", href: "/products/surplus-coated" },
-      { name: "Overrun Papers", href: "/products/overrun-papers" },
-      { name: "Discount Lot", href: "/products/discount-lot" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-      { name: "Surat", href: "/city/surat" },
-    ],
-    subCategories: ["Surplus Coated", "Overrun Papers", "Discount Lot"],
-  },
-  {
-    name: "Writing & Printing paper",
-    icon: "🖋️",
-    href: "/product",
-    products: [
-      { name: "Offset Printing", href: "/products/offset-printing" },
-      { name: "Bond Paper", href: "/products/bond-paper" },
-      { name: "Ledger Paper", href: "/products/ledger-paper" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Kolkata", href: "/city/kolkata" },
-      { name: "Chennai", href: "/city/chennai" },
-    ],
-    subCategories: ["Offset Printing", "Bond Paper", "Ledger Paper"],
-  },
-  {
-    name: "Gumming Sheets",
-    icon: "🏷️",
-    href: "/product",
-    products: [
-      { name: "Label Sheets", href: "/products/label-sheets" },
-      { name: "Adhesive Coated", href: "/products/adhesive-coated" },
-      { name: "Sticker Paper", href: "/products/sticker-paper" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Pune", href: "/city/pune" },
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-    ],
-    subCategories: ["Label Sheets", "Adhesive Coated", "Sticker Paper"],
-  },
-  {
-    name: "Art Paper",
-    icon: "🎨",
-    href: "/product",
-    products: [
-      { name: "Gloss Art", href: "/products/gloss-art" },
-      { name: "Matt Art", href: "/products/matt-art" },
-      { name: "Textured Art", href: "/products/textured-art" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Kolkata", href: "/city/kolkata" },
-      { name: "Surat", href: "/city/surat" },
-    ],
-    subCategories: ["Gloss", "Matt", "Textured"],
-  },
-  {
-    name: "Matt Paper",
-    icon: "📃",
-    href: "/product",
-    products: [
-      { name: "Matte Coated", href: "/products/matte-coated" },
-      { name: "Smooth Matte", href: "/products/smooth-matte" },
-      { name: "Premium Matte", href: "/products/premium-matte" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Jaipur", href: "/city/jaipur" },
-      { name: "Chennai", href: "/city/chennai" },
-    ],
-    subCategories: ["Matte Coated", "Smooth Matte", "Premium Matte"],
-  },
-  {
-    name: "Cromo Paper",
-    icon: "✨",
-    href: "/product",
-    products: [
-      { name: "Gloss Coated", href: "/products/gloss-coated" },
-      { name: "High Gloss Cromo", href: "/products/high-gloss-cromo" },
-      { name: "Printable Cromo", href: "/products/printable-cromo" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Surat", href: "/city/surat" },
-      { name: "Ahmedabad", href: "/city/ahmedabad" },
-    ],
-    subCategories: ["Gloss Coated", "High Gloss", "Printable Cromo"],
-  },
-  {
-    name: "S.B.S",
-    icon: "📦",
-    href: "/product",
-    products: [
-      { name: "Bleached SBS", href: "/products/bleached-sbs" },
-      { name: "Coated SBS", href: "/products/coated-sbs" },
-      { name: "Premium SBS", href: "/products/premium-sbs" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Kolkata", href: "/city/kolkata" },
-      { name: "Surat", href: "/city/surat" },
-    ],
-    subCategories: ["Bleached SBS", "Coated SBS", "Premium SBS"],
-  },
-  {
-    name: "News Print",
-    icon: "📰",
-    href: "/product",
-    products: [
-      { name: "Standard Newsprint", href: "/products/standard-newsprint" },
-      { name: "Recycled Newsprint", href: "/products/recycled-newsprint" },
-      { name: "White Newsprint", href: "/products/white-newsprint" },
-    ],
-    cities: [
-      { name: "Delhi", href: "/city/delhi" },
-      { name: "Mumbai", href: "/city/mumbai" },
-      { name: "Kolkata", href: "/city/kolkata" },
-      { name: "Chennai", href: "/city/chennai" },
-    ],
-    subCategories: ["Standard", "Recycled", "White"],
-  },
-];
+type ApiCategory = {
+  id: number;
+  name: string;
+  image: string;
+  status: number;
+  date: string;
+};
+
+type ApiResponse = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  categories: ApiCategory[];
+};
 
 export default function CategoriesDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCategory, setActiveCategory] = useState<ApiCategory | null>(null);
+  const [categoriesData, setCategoriesData] = useState<ApiCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const handleCategoryHover = (category) => {
+  // Fetch categories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=${page}&limit=10`
+        );
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const data: ApiResponse = await res.json();
+
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          setCategoriesData(data.categories);
+          setActiveCategory(data.categories[0]); // default active
+          setTotalPages(data.totalPages);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, [page]);
+
+  const handleCategoryHover = (category: ApiCategory) => {
     setActiveCategory(category);
   };
 
-  // Set default active category when dropdown opens
   const handleOpenDropdown = () => {
     setIsOpen(true);
-    if (!activeCategory) {
+    if (!activeCategory && categoriesData.length > 0) {
       setActiveCategory(categoriesData[0]);
     }
   };
+
+  if (loading) {
+    return (
+      <button className="px-4 py-4 text-gray-700 font-medium">Loading...</button>
+    );
+  }
 
   return (
     <div className="relative">
@@ -251,183 +78,115 @@ export default function CategoriesDropdown() {
         onMouseEnter={handleOpenDropdown}
         onMouseLeave={() => setIsOpen(false)}
       >
-        <div className="flex items-center">
-          <div className="mr-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </div>
-          <span className="hidden sm:inline">All Categories</span>
-          <span className="sm:hidden">Categories</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </div>
+        <span className="hidden sm:inline">All Categories</span>
+        <span className="sm:hidden">Categories</span>
       </button>
 
       {/* Dropdown Menu */}
-      {isOpen && (
+      {isOpen && categoriesData.length > 0 && (
         <div
           className="absolute left-0 top-full bg-black text-white shadow-lg z-50 
-        w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
-        -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
+          w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
+          -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
           <div className="flex flex-col sm:flex-row border-t border-gray-200 h-full">
             {/* Left Sidebar - Categories */}
             <div className="w-full sm:w-64 md:w-72 lg:w-64 bg-black py-2 overflow-y-auto">
-              {categoriesData.map((category, index) => (
-                <Link
-                  key={index}
-                  href={category.href}
-                  className={`flex items-center px-3 sm:px-4 py-3 hover:bg-[#333] ${
-                    activeCategory?.name === category.name ? "bg-[#333]" : ""
+              {categoriesData.map((category) => (
+                <button
+                  key={category.id}
+                  className={`flex items-center gap-3 w-full text-left px-3 sm:px-4 py-3 hover:bg-[#333] ${
+                    activeCategory?.id === category.id ? "bg-[#333]" : ""
                   }`}
                   onMouseEnter={() => handleCategoryHover(category)}
                 >
-                  <span className="mr-2 sm:mr-3 text-base sm:text-lg">
-                    {category.icon}
-                  </span>
+                  {/* Image (fallback if empty) */}
+                  {category.image ? (
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="w-6 h-6 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center text-xs">
+                      {category.name.charAt(0)}
+                    </div>
+                  )}
+
                   <span className="text-white text-sm sm:text-base flex-1">
                     {category.name}
                   </span>
-                  {category.name !== "Infrastructure & Construction" && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3 w-3 sm:h-4 sm:w-4 ml-auto text-white flex-shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  )}
-                </Link>
+                </button>
               ))}
+
+              {/* Pagination Controls */}
+              <div className="flex justify-between items-center px-4 py-2 text-sm text-gray-300">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className={`px-2 py-1 rounded ${
+                    page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-[#333]"
+                  }`}
+                >
+                  Prev
+                </button>
+                <span>
+                  Page {page} / {totalPages}
+                </span>
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className={`px-2 py-1 rounded ${
+                    page === totalPages
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-[#333]"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
             </div>
 
             {/* Right Content Area */}
-            <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {/* Dynamic Products Column */}
-                {activeCategory && (
-                  <div className="order-1">
-                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
-                      Products
-                    </h3>
-                    <div className="space-y-1 sm:space-y-2">
-                      {activeCategory.products.map((product, index) => (
-                        <Link
-                          key={index}
-                          href={product.href}
-                          className="flex items-center justify-between py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
-                        >
-                          <span className="flex-1 pr-2">{product.name}</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400 sm:text-blue-500 flex-shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </Link>
-                      ))}
-                    </div>
-                    <div className="mt-3 sm:mt-4">
-                      {activeCategory.subCategories.map((subCat, index) => (
-                        <Link
-                          key={index}
-                          href={`/products/${subCat
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}`}
-                          className={`block py-1 sm:py-2 text-sm sm:text-base ${
-                            index === 0
-                              ? "flex items-center justify-between font-medium text-blue-400 sm:text-blue-600"
-                              : "text-white hover:text-blue-400 sm:hover:text-blue-600"
-                          }`}
-                        >
-                          <span className="flex-1">{subCat}</span>
-                          {index === 0 && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+            {activeCategory && (
+              <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
+                <h2 className="text-lg font-semibold mb-3">
+                  {activeCategory.name}
+                </h2>
+                <p className="text-sm text-gray-300">
+                  Status:{" "}
+                  {activeCategory.status === 1 ? "Active ✅" : "Inactive ❌"}
+                </p>
+                <p className="text-sm text-gray-400">
+                  Added on: {new Date(activeCategory.date).toLocaleDateString()}
+                </p>
+                {activeCategory.image && (
+                  <img
+                    src={activeCategory.image}
+                    alt={activeCategory.name}
+                    className="mt-4 w-40 h-40 object-cover rounded-lg shadow"
+                  />
                 )}
 
-                {/* Dynamic Cities Column */}
-                {activeCategory && (
-                  <div className="order-2">
-                    <h3 className="text-blue-400 sm:text-blue-600 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
-                      City
-                    </h3>
-                    <div className="space-y-1 sm:space-y-2">
-                      {activeCategory.cities.map((city, index) => (
-                        <Link
-                          key={index}
-                          href={city.href}
-                          className="block py-1 sm:py-2 hover:text-blue-400 sm:hover:text-blue-600 text-white text-sm sm:text-base"
-                        >
-                          {city.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Empty Column for spacing on larger screens */}
-                <div className="hidden lg:block order-3"></div>
+                {/* Example Links */}
+                <div className="mt-6 space-y-2">
+                  <Link
+                    href={`/category/${activeCategory.id}`}
+                    className="block text-blue-400 hover:underline"
+                  >
+                    View Products
+                  </Link>
+                  <Link
+                    href={`/category/${activeCategory.id}/sellers`}
+                    className="block text-blue-400 hover:underline"
+                  >
+                    Find Sellers
+                  </Link>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
