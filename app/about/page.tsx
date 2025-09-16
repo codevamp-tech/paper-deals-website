@@ -6,7 +6,7 @@ import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
 export default function AboutUs() {
   return (
-    <section className="container mx-auto px-4 py-16  border  ">
+<section className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-10">
         {/* Left Column - Text Content */}
         <div className="space-y-6 ">

@@ -23,8 +23,8 @@ function Field({
 }) {
   return (
     <div className="space-y-1">
-      <p className="text-sm font-semibold text-foreground">{label}</p>
-      <p className="text-sm text-muted-foreground">{value || "N/A"}</p>
+        <p className="text-sm font-semibold text-black">{label}</p>
+       <p className="text-sm text-gray-600">{value || "N/A"}</p>
     </div>
   )
 }
@@ -90,17 +90,16 @@ export default function BuyersPage() {
   }, [id])
 
   if (loading) {
-    return (
-      <main className="min-h-screen grid place-items-center">
-        <p className="text-sm font-medium text-muted-foreground">Loading…</p>
+    return ( <main className="min-h-screen grid place-items-center bg-white text-black">
+         <p className="text-sm font-medium text-gray-600">Loading…</p>
       </main>
     )
   }
 
   if (!seller) {
     return (
-      <main className="min-h-screen grid place-items-center">
-        <p className="text-sm font-medium text-muted-foreground">Seller not found</p>
+     <main className="min-h-screen grid place-items-center bg-white text-black">
+        <p className="text-sm font-medium text-gray-600">Seller not found</p>
       </main>
     )
   }
@@ -120,15 +119,15 @@ export default function BuyersPage() {
   const phone = seller.phone_no || org?.phone || ""
 
   return (
-    <main className="min-h-screen bg-background">
+   <main className="min-h-screen text-[#8143e7] text-black">
       <section className="max-w-5xl mx-auto px-4 py-8 md:py-12">
-        <Card className="border rounded-xl">
+        <Card className="border rounded-xl bg-white text-black">
           <div className="p-5 md:p-8">
             {/* Top section: image + name/badge + quick fields */}
             <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 md:gap-8">
               {/* Image / Logo */}
               <div className="w-full">
-                <div className="aspect-[4/3] w-full rounded-lg border bg-muted/30 overflow-hidden flex items-center justify-center">
+                 <div className="aspect-[4/3] w-full rounded-lg border bg-gray-100 overflow-hidden flex items-center justify-center">
                   {org?.image_banner ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -142,8 +141,8 @@ export default function BuyersPage() {
                     />
                   ) : (
                     <div className="text-center">
-                      <Building className="mx-auto h-14 w-14 text-muted-foreground/50" />
-                      <p className="mt-2 text-xs text-muted-foreground">
+                         <Building className="mx-auto h-14 w-14 text-gray-400" />
+                        <p className="mt-2 text-xs text-gray-500">
                         No company logo
                       </p>
                     </div>
@@ -154,7 +153,7 @@ export default function BuyersPage() {
               {/* Right: Title + badge + fields */}
               <div className="flex flex-col justify-center">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl md:text-3xl font-bold text-balance">
+                  <h1 className="text-2xl md:text-3xl font-bold ">
                     {orgName}
                   </h1>
                   <Badge
@@ -175,17 +174,17 @@ export default function BuyersPage() {
                   <Field label="State" value={org?.state} />
                   <Field label="Productions Capacity (TPM)" value={capacity} />
                   <Field label="Deals In" value={dealsIn} />
-                  <Field label="Contact Person" value={org?.contact_person} />
-                  <Field label="Email" value={email} />
+                  {/* <Field label="Description" value={org?.contact_person} /> */}
+                  {/* <Field label="Email" value={email} />
                   <Field label="Phone" value={phone} />
-                  <Field label="Address" value={org?.address} />
+                  <Field label="Address" value={org?.address} /> */}
                 </div>
 
                 {/* Description as a full row */}
                 {description ? (
                   <div className="mt-6">
                     <p className="text-sm font-semibold">Descriptions</p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-sm text-gray-600 mt-1">
                       {description}
                     </p>
                   </div>
@@ -196,7 +195,7 @@ export default function BuyersPage() {
         </Card>
 
         {/* CTA – centered under the card */}
-        <div className="mt-8 flex justify-center">
+        {/* <div className="mt-8 flex justify-center">
           {email ? (
             <a
               href={`mailto:${email}`}
@@ -204,7 +203,7 @@ export default function BuyersPage() {
               aria-label="Enquiry Now via Email"
             >
               <Button className="px-6 h-11 text-white bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500">
-                Enquiry Now
+                
               </Button>
             </a>
           ) : (
@@ -212,7 +211,7 @@ export default function BuyersPage() {
               Enquiry Now
             </Button>
           )}
-        </div>
+        </div> */}
       </section>
     </main>
   )

@@ -1,11 +1,44 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, MapPin } from "lucide-react";
 
 export default function ProductInsights() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [products, setProducts] = useState<any[]>([]);
 
+  // ✅ Fetch API Data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/live-price`
+        );
+        const data = await res.json();
+
+        if (data && Array.isArray(data.data)) {
+          const mapped = data.data.map((item: any) => ({
+            id: item.id,
+            title: item.name,
+            subtitle: `${item.gsm || ""} ${item.quality || ""}`.trim() || "—",
+            price: item.price,
+            change: item.change || 0,
+            isPositive: (item.change || 0) > 0,
+            date: item.updated_at || "—",
+            location: item.location,
+            type: "Premium", // 🔑 API me type nahi hai, default set kar diya
+          }));
+          setProducts(mapped);
+        }
+      } catch (error) {
+        console.error("Error fetching insights:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ✅ Auto-scroll effect
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -26,14 +59,13 @@ export default function ProductInsights() {
 
     animationId = requestAnimationFrame(scroll);
 
-    return () => {
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
+    return () => cancelAnimationFrame(animationId);
+  }, [products]);
 
   return (
     <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32">
       <div className="max-w-7xl mx-auto">
+        {/* Heading */}
         <div className="text-center mb-12">
           <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mb-3">
             Paper Industry Insights
@@ -43,26 +75,19 @@ export default function ProductInsights() {
           </p>
         </div>
 
+        {/* Button */}
         <div className="flex justify-end mb-6">
           <a href="/insights-comparison">
             <button
-              className="
-        flex items-center justify-center gap-2
-        px-6 py-3 
-        bg-white text-blue-600 
-        border border-cyan-600 
-        rounded-2xl 
-        font-medium
-        hover:bg-cyan-50 
-        transition-all duration-200
-        shadow-sm hover:shadow-md
-      "
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 border border-cyan-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               View all Insights
               <ArrowRight className="w-5 h-5" />
             </button>
           </a>
         </div>
+
+        {/* Product Cards */}
         <div className="relative overflow-hidden">
           <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
           <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>
@@ -75,71 +100,19 @@ export default function ProductInsights() {
             >
               {[...Array(2)].map((_, dupeIndex) => (
                 <div key={dupeIndex} className="flex gap-4">
-                  <ProductCard
-                    title="A4 Copy Paper"
-                    subtitle="80 GSM, Bright White, 500 Sheets/Ream"
-                    price={0.85}
-                    change={0.63}
-                    isPositive={true}
-                    date="29/04/2025"
-                    location="Chennai"
-                    type="Premium"
-                  />
-
-                  <ProductCard
-                    title="Kraft Paper"
-                    subtitle="120 GSM, Natural Brown, 100% Recycled"
-                    price={1.2}
-                    change={0.93}
-                    isPositive={true}
-                    date="29/04/2025"
-                    location="Mumbai"
-                    type="Industrial"
-                  />
-
-                  <ProductCard
-                    title="Art Paper"
-                    subtitle="150 GSM, Glossy Finish, Coated"
-                    price={1.5}
-                    change={0.8}
-                    isPositive={false}
-                    date="29/04/2025"
-                    location="Delhi"
-                    type="Premium"
-                  />
-
-                  <ProductCard
-                    title="Newsprint"
-                    subtitle="45 GSM, Standard Quality"
-                    price={0.45}
-                    change={0.0}
-                    isPositive={false}
-                    date="29/04/2025"
-                    location="Kolkata"
-                    type="Standard"
-                  />
-
-                  <ProductCard
-                    title="Gumming Sheets"
-                    subtitle="90 GSM, Self-Adhesive, White"
-                    price={1.8}
-                    change={0.0}
-                    isPositive={false}
-                    date="29/04/2025"
-                    location="Bangalore"
-                    type="Specialty"
-                  />
-
-                  <ProductCard
-                    title="Corrugated Sheets"
-                    subtitle="3-Ply, E-Flute, 200 GSM"
-                    price={2.3}
-                    change={1.04}
-                    isPositive={false}
-                    date="29/04/2025"
-                    location="Hyderabad"
-                    type="Packaging"
-                  />
+                  {products.map((p) => (
+                    <ProductCard
+                      key={p.id + dupeIndex}
+                      title={p.title}
+                      subtitle={p.subtitle}
+                      price={p.price}
+                      change={p.change}
+                      isPositive={p.isPositive}
+                      date={p.date}
+                      location={p.location}
+                      type={p.type}
+                    />
+                  ))}
                 </div>
               ))}
             </div>

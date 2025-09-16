@@ -10,7 +10,6 @@ export default function BuyersPage() {
   const [buyers, setBuyers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const buyersPerPage = 5;
 
@@ -21,7 +20,6 @@ export default function BuyersPage() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/getBuyer`
         );
         const data = await res.json();
-        console.log("API Response:", data);
 
         if (data && Array.isArray(data.data)) {
           setBuyers(data.data);
@@ -41,7 +39,7 @@ export default function BuyersPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen r from-purple">
         <p className="text-lg font-semibold text-gray-700">Loading...</p>
       </div>
     );
@@ -54,7 +52,7 @@ export default function BuyersPage() {
   const totalPages = Math.ceil(buyers.length / buyersPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen text-[#8143e7] p-6"> {/* <-- bg-gray-50 ko bg-white kar diya */}
       <div className="space-y-6 max-w-6xl mx-auto">
         {currentBuyers.map((buyer) => {
           const org = buyer.organization;
@@ -62,10 +60,14 @@ export default function BuyersPage() {
           return (
             <Card
               key={buyer.id}
-              className="flex items-start gap-6 p-6 shadow-md border border-gray-200 bg-white rounded-lg"
+              className="flex items-start gap-6 p-6 rounded-xl bg-white text-gray-800"
+              style={{
+                boxShadow:
+                  "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
+              }}
             >
               {/* Left Image */}
-              <div className="w-40 h-40 bg-gray-100 border flex items-center justify-center">
+              <div className="w-40 h-40 bg-gray-100 border flex items-center justify-center rounded-md">
                 {org?.image_banner ? (
                   <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${org.image_banner}`}
@@ -79,9 +81,8 @@ export default function BuyersPage() {
 
               {/* Right Content */}
               <div className="flex-1">
-                {/* Header */}
                 <div className="flex items-center gap-4 mb-2">
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-xl font-bold text-[#8143e7]">
                     {org?.organizations || buyer.name}
                   </h2>
                   <Badge
@@ -95,7 +96,6 @@ export default function BuyersPage() {
                   </Badge>
                 </div>
 
-                {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-800">
                   <p>
                     <span className="font-semibold">Contact Person:</span>{" "}
@@ -127,10 +127,10 @@ export default function BuyersPage() {
                   </p>
                 </div>
 
-                {/* Action Button */}
                 <div className="mt-3">
-                  <Button className="bg-sky-500 hover:bg-sky-600 text-white rounded-md"
-                   onClick={() => router.push(`/buyers/profile/${buyer.id}`)}
+                  <Button
+                    onClick={() => router.push(`/buyers/profile/${buyer.id}`)}
+                    className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 text-white font-semibold px-6 py-2 rounded-lg transition"
                   >
                     View Profile
                   </Button>

@@ -3,18 +3,21 @@
 import { useEffect, useState } from "react";
 import { ConsultantCard } from "./Consultants-Card";
 
+
+
 type APIConsultant = {
   id: number;
   name: string;
   phone_no: string;
-  consultant_price: 10;
-  mills_supported?: number | string; // 👈 new field (numeric preferred)
-  description?: string; // 👈 new field
+  consultant_price: number; // ✅ fixed type
+  mills_supported?: number | string;
+  description?: string;
   organization?: {
     organizations: string;
     contact_person: string;
     city: string;
     materials_used: string;
+    image_banner?: string; // ✅ added
   } | null;
 };
 
@@ -29,6 +32,7 @@ type Consultant = {
   photoUrl?: string;
   photoAlt?: string;
 };
+
 
 export default function ConsultantsPage() {
   const [consultants, setConsultants] = useState<Consultant[]>([]);

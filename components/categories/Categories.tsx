@@ -85,7 +85,7 @@ const Categories = ({ title = "Explore Our", subtitle = "Categories" }) => {
   }
 
   if (categories.length === 0) {
-    return <p className="text-center text-red-500">No categories found!</p>;
+    return <p className="text-center text-red-500"></p>;
   }
 
   return (
