@@ -2,53 +2,81 @@
 
 import React, { useEffect, useState } from "react";
 import { Search, ChevronRight, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button"; // Adjust path if needed
-import BioImageSec from "../ImageOrBio/ImageAndBio"; // Replace with actual path
+import { Button } from "@/components/ui/button";
+import BioImageSec from "../ImageOrBio/ImageAndBio";
+import { useRouter } from "next/navigation";
 
-const images = ["/banner1.png", "/banner2.png", "/banner3.jpg"]; // Replace with actual image paths in your public folder
-
-// Dummy products (you can replace with API call)
-const products = [
-  "Premium A4 Paper",
-  "Recycled Kraft Paper",
-  "Cardboard Packaging",
-  "Glossy Brochure Sheets",
-  "Custom Business Cards",
-  "Notebook Papers",
-];
+const images = ["/banner1.png", "/banner2.png", "/banner3.jpg"];
 
 const Hero = () => {
   const [current, setCurrent] = useState(0);
-
-  // Search states
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const router = useRouter();
 
+  // background slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 5000); // 5 seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // Handle search logic
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
-
-    if (value.trim() === "") {
+  // fetch search results
+  useEffect(() => {
+    if (!query.trim()) {
       setResults([]);
-    } else {
-      const filtered = products.filter((item) =>
-        item.toLowerCase().includes(value.toLowerCase())
-      );
-      setResults(filtered);
+      return;
     }
+    const fetchResults = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/search?query=${query}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setResults(data.data || []);
+      } catch (err) {
+        console.error("Search error:", err);
+        setResults([]);
+      }
+    };
+    fetchResults();
+  }, [query]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
+  // ✅ navigate on click
+  const handleSelect = (item: any) => {
+    if (item.user_type === 2) {
+      router.push(`/seller/${item.id}`);
+    } else if (item.user_type === 3) {
+      router.push(`/buyers/profile/${item.id}`);
+    }
+  };
+
+  const getUserTypeBadge = (userType: number) => {
+    if (userType === 2) {
+      return (
+        <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+          Seller
+        </span>
+      );
+    } else if (userType === 3) {
+      return (
+        <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+          Buyer
+        </span>
+      );
+    }
+    return null;
   };
 
   return (
     <section className="relative py-[12vh] overflow-hidden">
-      {/* Background images */}
+      {/* Background */}
       <div className="absolute inset-0 z-0">
         {images.map((src, index) => (
           <img
@@ -61,60 +89,59 @@ const Hero = () => {
           />
         ))}
         <div className="absolute inset-0 bg-black/40 z-10" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] [background-color:rgba(113,47,255,0.21)] rounded-full blur-[120px] z-20" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-cyan-500/20 rounded-full blur-[100px] z-20" />
       </div>
 
       <div className="h-[60vh] relative z-30">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff]">
-                Revolutionize
-              </span>{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#aaa]">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
+              Revolutionize{" "}
+              <span className="text-gray-200">
                 Your Business with Premium Paper Solutions
               </span>
             </h1>
             <p className="text-xl text-zinc-200 mb-8 max-w-2xl mx-auto">
-              Elevate your business with our high-quality products designed
-              specifically for modern B2B needs.
+              Elevate your business with our high-quality products designed for
+              modern B2B needs.
             </p>
 
-            {/* Search + CTA */}
+            {/* Search */}
             <div className="flex justify-center relative w-full max-w-xl mx-auto">
               <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
                 <div className="relative group w-full">
-                  {/* Search Icon */}
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                    <Search className="h-5 w-5 text-gray-400" />
                   </div>
-
-                  {/* Search Input */}
                   <input
                     type="text"
                     placeholder="Search samples..."
                     value={query}
                     onChange={handleSearch}
-                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg 
-                      focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all
-                      hover:border-gray-400 shadow-sm hover:shadow-md"
+                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg"
                   />
-
-                  {/* Arrow Icon */}
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
 
-                  {/* Search Results Dropdown */}
+                  {/* Dropdown */}
                   {results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
-                      {results.map((item, index) => (
+                      {results.map((item) => (
                         <li
-                          key={index}
-                          className="px-4 py-2 hover:bg--100 cursor-pointer"
+                          key={item.id}
+                          onClick={() => handleSelect(item)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
                         >
-                          {item}
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{item.name}</span>
+                            {getUserTypeBadge(item.user_type)}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {item.email_address}
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {/* 📞 {item.phone_no} */}
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -122,7 +149,7 @@ const Hero = () => {
                 </div>
               </div>
 
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white px-8 py-6 text-lg ml-4">
+              <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-8 py-6 text-lg ml-4">
                 Shop Now <ShoppingCart className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -130,7 +157,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Visual Section */}
       <BioImageSec />
     </section>
   );

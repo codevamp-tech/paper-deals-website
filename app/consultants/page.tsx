@@ -22,7 +22,7 @@ type APIConsultant = {
 };
 
 type Consultant = {
-  _id: string;
+  id: string;
   name: string;
   title: string;
   years: number;
@@ -49,7 +49,7 @@ export default function ConsultantsPage() {
         // 
 
         const mapped = json.data.map((c: APIConsultant) => ({
-          _id: String(c.id),
+        id: String(c.id),
           name: c.name,
           title: c.organization?.organizations || "Independent Consultant",
 

@@ -30,7 +30,7 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
 
   // ✅ Button click handler
   const handleBook = () => {
-    router.push(`/consultants/${id}/consultantbook`);
+    router.push(`/consultants/${id}`);
   };
 
   return (
