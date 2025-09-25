@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Eye } from "lucide-react";
 
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
+
+// 🆕 shadcn dialog import
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Row = {
   location: string;
@@ -30,6 +38,7 @@ type Row = {
   pricePerKg: string;
   spotPrice?: string | number;
   quantity: string;
+  viewDetails?: string;
 };
 
 export default function LiveStockPage() {
@@ -42,6 +51,15 @@ export default function LiveStockPage() {
     key: keyof Row;
     direction: "asc" | "desc";
   } | null>(null);
+
+  // 🆕 Modal states
+  const [selectedRow, setSelectedRow] = useState<Row | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleView = (row: Row) => {
+    setSelectedRow(row);
+    setIsModalOpen(true);
+  };
 
   // 🔹 Fetch API
   useEffect(() => {
@@ -69,8 +87,8 @@ export default function LiveStockPage() {
               p.user_type === 2
                 ? "Manufacturer"
                 : p.user_type === 3
-                ? "Distributor"
-                : "Other",
+                  ? "Distributor"
+                  : "Other",
             category: p.category_id || "-",
             productName: p.product_name || "-",
             subProduct: p.sub_product || "-",
@@ -204,6 +222,8 @@ export default function LiveStockPage() {
                         "pricePerKg",
                         "spotPrice",
                         "quantity",
+                        "view",
+                        "Enquiry",
                       ].map((col) => (
                         <th
                           key={col}
@@ -221,19 +241,28 @@ export default function LiveStockPage() {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan={13} className="py-6 text-center text-gray-500">
+                        <td
+                          colSpan={13}
+                          className="py-6 text-center text-gray-500"
+                        >
                           Loading stocks...
                         </td>
                       </tr>
                     ) : error ? (
                       <tr>
-                        <td colSpan={13} className="py-6 text-center text-red-500">
+                        <td
+                          colSpan={13}
+                          className="py-6 text-center text-red-500"
+                        >
                           {error}
                         </td>
                       </tr>
                     ) : filteredRows.length === 0 ? (
                       <tr>
-                        <td colSpan={13} className="py-6 text-center text-gray-500">
+                        <td
+                          colSpan={13}
+                          className="py-6 text-center text-gray-500"
+                        >
                           No stock data available
                         </td>
                       </tr>
@@ -241,35 +270,67 @@ export default function LiveStockPage() {
                       filteredRows.map((r, i) => (
                         <tr
                           key={i}
-                          className={`${
-                            i % 2 === 0 ? "bg-gray-50" : "bg-white"
-                          } hover:bg-gray-100 transition-colors`}
+                          className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"
+                            } hover:bg-gray-100 transition-colors`}
                         >
-                          <td className="py-3 px-4 text-blue-600 font-medium">{r.location}</td>
+                          <td className="py-3 px-4 text-blue-600 font-medium">
+                            {r.location}
+                          </td>
                           <td className="py-3 px-4">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                r.sellerType === "Manufacturer"
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${r.sellerType === "Manufacturer"
                                   ? "bg-green-100 text-green-700"
                                   : r.sellerType === "Distributor"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-gray-200 text-gray-700"
-                              }`}
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-gray-200 text-gray-700"
+                                }`}
                             >
                               {r.sellerType}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-orange-600">{r.category}</td>
-                          <td className="py-3 px-4 text-indigo-600 font-semibold">{r.productName}</td>
-                          <td className="py-3 px-4 text-indigo-500">{r.subProduct}</td>
+                          <td className="py-3 px-4 text-orange-600">
+                            {r.category}
+                          </td>
+                          <td className="py-3 px-4 text-indigo-600 font-semibold">
+                            {r.productName}
+                          </td>
+                          <td className="py-3 px-4 text-indigo-500">
+                            {r.subProduct}
+                          </td>
                           <td className="py-3 px-4 text-pink-600">{r.bf}</td>
                           <td className="py-3 px-4 text-teal-600">{r.gsm}</td>
-                          <td className="py-3 px-4 text-purple-600">{r.shade}</td>
-                          <td className="py-3 px-4 text-amber-600">{r.size}</td>
+                          <td className="py-3 px-4 text-purple-600">
+                            {r.shade}
+                          </td>
+                          <td className="py-3 px-4 text-amber-600">
+                            {r.size}
+                          </td>
                           <td className="py-3 px-4 text-cyan-600">{r.wl}</td>
-                          <td className="py-3 px-4 font-bold text-red-600">{r.pricePerKg}</td>
-                          <td className="py-3 px-4 font-bold text-red-500">{r.spotPrice}</td>
-                          <td className="py-3 px-4 font-bold text-violet-700">{r.quantity}</td>
+                          <td className="py-3 px-4 font-bold text-red-600">
+                            {r.pricePerKg}
+                          </td>
+                          <td className="py-3 px-4 font-bold text-red-500">
+                            {r.spotPrice}
+                          </td>
+                          <td className="py-3 px-4 font-bold text-violet-700">
+                            {r.quantity}
+                          </td>
+                          <td className="py-3 px-4">
+                            <button
+                              onClick={() => handleView(r)}
+                              className="hover:text-blue-600 text-blue-500"
+                            >
+                              <Eye />
+                            </button>
+                          </td>
+                          <td className="py-3 px-4 font-bold text-violet-700">
+                            <Link
+                              href={`/enquirynow?product=${encodeURIComponent(r.productName)}`}
+                              className="text-purple-600 hover:text-purple-800 font-semibold underline"
+                            >
+                              Enquiry now
+                            </Link>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -280,6 +341,55 @@ export default function LiveStockPage() {
           </Card>
         </section>
       </main>
+
+      {/* 🆕 Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-lg bg-white text-black">
+          <DialogHeader>
+            <DialogTitle>Stock Details</DialogTitle>
+          </DialogHeader>
+          {selectedRow && (
+            <div className="space-y-2 text-sm">
+              <p>
+                <strong>Product:</strong> {selectedRow.productName}
+              </p>
+              <p>
+                <strong>Category:</strong> {selectedRow.category}
+              </p>
+              <p>
+                <strong>Sub Product:</strong> {selectedRow.subProduct}
+              </p>
+              <p>
+                <strong>BF:</strong> {selectedRow.bf}
+              </p>
+              <p>
+                <strong>GSM:</strong> {selectedRow.gsm}
+              </p>
+              <p>
+                <strong>Shade:</strong> {selectedRow.shade}
+              </p>
+              <p>
+                <strong>Size:</strong> {selectedRow.size}
+              </p>
+              <p>
+                <strong>WL:</strong> {selectedRow.wl}
+              </p>
+              <p>
+                <strong>Price Per Kg:</strong> {selectedRow.pricePerKg}
+              </p>
+              <p>
+                <strong>Spot Price:</strong> {selectedRow.spotPrice}
+              </p>
+              <p>
+                <strong>Quantity:</strong> {selectedRow.quantity}
+              </p>
+              <p>
+                <strong>Seller Type:</strong> {selectedRow.sellerType}
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <div className="mt-12">
         <ReadyToOrder />
