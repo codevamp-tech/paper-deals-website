@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import ProductList from "./AllProduct";
-import PriceList from "./ProductListing";
+// import ProductList from "./AllProduct";
 import Advertising from "@/components/advertising/Advertising";
 import FaqSection from "@/components/faqSection/FaqSection";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import RequirementModal from "@/components/modal/TellUsModal";
+import PriceList from "./productListing";
 
 export default function Product() {
   return (

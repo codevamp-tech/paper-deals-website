@@ -154,7 +154,8 @@ export default function AdminSidebar({ onClose }) {
 
             {/* Scrollable Navigation */}
             {/* Scrollable Navigation */}
-            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+            <div className="flex-1 overflow-y-auto md:overflow-y-hidden space-y-2 pr-2">
+
                 {/* Static Single Links */}
                 {navigation.map((item) => (
                     <Link

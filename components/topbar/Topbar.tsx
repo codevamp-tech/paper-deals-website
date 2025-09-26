@@ -147,6 +147,13 @@ const Topbar = () => {
                 >
                   Buyer
                 </Link>
+                    {/* <Link
+                href="/product/detail"
+                className="text-sm text-gray-700 hover:text-black transition-colors py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Detail
+              </Link> */}
                 <Link
                   href="/become-a-seller"
                   className="text-sm text-gray-700 hover:text-black transition-colors"
