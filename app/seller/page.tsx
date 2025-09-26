@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import PriceList from "../product/ProductListing";
+import PriceList from "../../components/sellerListing";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";

@@ -78,7 +78,7 @@ const ConsultantBookingPage: React.FC = () => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/consultant/consultant_id_book`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/consultant/book`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

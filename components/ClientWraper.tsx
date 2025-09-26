@@ -13,22 +13,28 @@ export default function ClientWrapper({
     children: React.ReactNode;
 }) {
     const [user, setUser] = useState<any>(null);
+    const [hideLayout, setHideLayout] = useState(false);
     const pathname = usePathname();
+
     useEffect(() => {
         const u = getUserFromToken();
         setUser(u);
-    }, []);
 
-    const isBuyerDashboard = user && pathname.startsWith("/buyer3/dashboard");
+        // अगर पहली बार buyer dashboard पे गया है, तो layout छिपा दो
+        if (pathname.startsWith("/buyer3")) {
+            setHideLayout(true);
+        } else {
+            setHideLayout(false);
+        }
 
-
+    }, [pathname]);
 
     return (
         <>
-            {!isBuyerDashboard && <Topbar />}
+            {!hideLayout && <Topbar />}
             {children}
-            {!isBuyerDashboard && <BookModalButton />}
-            {!isBuyerDashboard && <Footer />}
+            {!hideLayout && <BookModalButton />}
+            {!hideLayout && <Footer />}
         </>
     );
 }

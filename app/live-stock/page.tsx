@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -16,11 +16,10 @@ import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
 
-// 🆕 shadcn dialog import
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
+  DialogHeader as UIDialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 
@@ -38,7 +37,6 @@ type Row = {
   pricePerKg: string;
   spotPrice?: string | number;
   quantity: string;
-  viewDetails?: string;
 };
 
 export default function LiveStockPage() {
@@ -52,16 +50,20 @@ export default function LiveStockPage() {
     direction: "asc" | "desc";
   } | null>(null);
 
-  // 🆕 Modal states
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
   const handleView = (row: Row) => {
     setSelectedRow(row);
     setIsModalOpen(true);
   };
 
-  // 🔹 Fetch API
+  const handleEnquiry = (row: Row) => {
+    setSelectedRow(row);
+    setIsEnquiryModalOpen(true);
+  };
+
   useEffect(() => {
     async function fetchStocks() {
       try {
@@ -69,12 +71,10 @@ export default function LiveStockPage() {
         setError(null);
 
         const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/live-stocks/view-live-stockes`;
-
         let res = await fetch(API_URL);
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
 
         const json = await res.json();
-
         if (!json?.data || !Array.isArray(json.data)) {
           throw new Error("Invalid API response format");
         }
@@ -115,7 +115,6 @@ export default function LiveStockPage() {
     fetchStocks();
   }, []);
 
-  // 🔹 Filtering & sorting logic
   const filteredRows = useMemo(() => {
     let data = [...rows];
 
@@ -156,9 +155,9 @@ export default function LiveStockPage() {
 
   return (
     <>
-      <main className="container mx-auto px-4 py-16 bg-[#fafafa]">
+      <main className="w-screen -mx-[calc((100vw-100%)/2)] bg-[#fafafa]">
         {/* Hero */}
-        <section className="space-y-3 text-center">
+        <section className="space-y-3 text-center py-16">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#22d3ee] text-white">
             <span className="font-medium">Live Stock</span>
           </div>
@@ -173,8 +172,8 @@ export default function LiveStockPage() {
         </section>
 
         {/* Table */}
-        <section className="mt-10">
-          <Card className="bg-white shadow-sm border border-gray-200 rounded-xl relative">
+        <section>
+          <Card className="w-full border-0 shadow-none rounded-none">
             <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 px-4">
               {/* Search + Filter */}
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -203,9 +202,9 @@ export default function LiveStockPage() {
               </div>
             </CardHeader>
 
-            <CardContent className="overflow-x-auto">
-              <div className="min-w-full overflow-x-auto">
-                <table className="w-full min-w-[900px] text-sm border-collapse">
+            <CardContent className="p-0">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full table-fixed text-sm border-collapse">
                   <thead>
                     <tr className="text-gray-600 text-left border-b border-gray-200">
                       {[
@@ -242,7 +241,7 @@ export default function LiveStockPage() {
                     {loading ? (
                       <tr>
                         <td
-                          colSpan={13}
+                          colSpan={15}
                           className="py-6 text-center text-gray-500"
                         >
                           Loading stocks...
@@ -251,7 +250,7 @@ export default function LiveStockPage() {
                     ) : error ? (
                       <tr>
                         <td
-                          colSpan={13}
+                          colSpan={15}
                           className="py-6 text-center text-red-500"
                         >
                           {error}
@@ -260,7 +259,7 @@ export default function LiveStockPage() {
                     ) : filteredRows.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={13}
+                          colSpan={15}
                           className="py-6 text-center text-gray-500"
                         >
                           No stock data available
@@ -324,12 +323,12 @@ export default function LiveStockPage() {
                             </button>
                           </td>
                           <td className="py-3 px-4 font-bold text-violet-700">
-                            <Link
-                              href={`/enquirynow?product=${encodeURIComponent(r.productName)}`}
+                            <button
+                              onClick={() => handleEnquiry(r)}
                               className="text-purple-600 hover:text-purple-800 font-semibold underline"
                             >
                               Enquiry now
-                            </Link>
+                            </button>
                           </td>
                         </tr>
                       ))
@@ -342,54 +341,131 @@ export default function LiveStockPage() {
         </section>
       </main>
 
-      {/* 🆕 Modal */}
+      {/* View Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-lg bg-white text-black">
-          <DialogHeader>
-            <DialogTitle>Stock Details</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-md rounded-2xl shadow-2xl p-0 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+            <DialogTitle className="text-lg font-semibold text-white text-center">
+              Stock Details
+            </DialogTitle>
+          </div>
+
           {selectedRow && (
-            <div className="space-y-2 text-sm">
-              <p>
+            <div className="p-6 space-y-4">
+              {[
+                { label: "Product", value: selectedRow.productName },
+                { label: "Category", value: selectedRow.category },
+                { label: "Sub Product", value: selectedRow.subProduct },
+                { label: "BF", value: selectedRow.bf },
+                { label: "GSM", value: selectedRow.gsm },
+                { label: "Shade", value: selectedRow.shade },
+                { label: "Size", value: selectedRow.size },
+                { label: "WL", value: selectedRow.wl },
+                { label: "Price Per Kg", value: selectedRow.pricePerKg },
+                { label: "Spot Price", value: selectedRow.spotPrice },
+                { label: "Quantity", value: selectedRow.quantity },
+                { label: "Seller Type", value: selectedRow.sellerType },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center border-b border-gray-200 pb-2 last:border-b-0"
+                >
+                  <span className="text-sm font-medium text-gray-600">
+                    {item.label}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="bg-gray-50 px-6 py-3 flex justify-end">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium hover:opacity-90 transition"
+            >
+              Close
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enquiry Modal */}
+      {/* Enquiry Modal */}
+      <Dialog open={isEnquiryModalOpen} onOpenChange={setIsEnquiryModalOpen}>
+        <DialogContent className="max-w-lg rounded-2xl shadow-2xl p-0 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+            <DialogTitle className="text-lg font-semibold text-white text-center">
+              Enquiry Now
+            </DialogTitle>
+          </div>
+
+          {selectedRow && (
+            <form className="p-6 space-y-4">
+              <p className="text-black">
                 <strong>Product:</strong> {selectedRow.productName}
               </p>
-              <p>
-                <strong>Category:</strong> {selectedRow.category}
-              </p>
-              <p>
-                <strong>Sub Product:</strong> {selectedRow.subProduct}
-              </p>
-              <p>
-                <strong>BF:</strong> {selectedRow.bf}
-              </p>
-              <p>
-                <strong>GSM:</strong> {selectedRow.gsm}
-              </p>
-              <p>
-                <strong>Shade:</strong> {selectedRow.shade}
-              </p>
-              <p>
-                <strong>Size:</strong> {selectedRow.size}
-              </p>
-              <p>
-                <strong>WL:</strong> {selectedRow.wl}
-              </p>
-              <p>
-                <strong>Price Per Kg:</strong> {selectedRow.pricePerKg}
-              </p>
-              <p>
-                <strong>Spot Price:</strong> {selectedRow.spotPrice}
-              </p>
-              <p>
-                <strong>Quantity:</strong> {selectedRow.quantity}
-              </p>
-              <p>
-                <strong>Seller Type:</strong> {selectedRow.sellerType}
-              </p>
-            </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1 text-black">
+                  Name
+                </label>
+                <Input
+                  className="bg-white text-black border border-gray-300"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1 text-black">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  className="bg-white text-black border border-gray-300"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1 text-black">
+                  Mobile
+                </label>
+                <Input
+                  type="tel"
+                  className="bg-white text-black border border-gray-300"
+                  placeholder="Enter your mobile number"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1 text-black">
+                  Message
+                </label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-md p-2 text-sm bg-white text-black"
+                  placeholder="Write your enquiry..."
+                  rows={3}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition"
+              >
+                Submit Enquiry
+              </button>
+            </form>
           )}
         </DialogContent>
       </Dialog>
+
 
       <div className="mt-12">
         <ReadyToOrder />
