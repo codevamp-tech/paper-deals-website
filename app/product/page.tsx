@@ -6,7 +6,7 @@ import FaqSection from "@/components/faqSection/FaqSection";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import RequirementModal from "@/components/modal/TellUsModal";
-import PriceList from "./productListing";
+import PriceList from "./ProductListing";
 
 export default function Product() {
   return (

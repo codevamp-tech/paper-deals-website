@@ -80,7 +80,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <Card className="w-full h-[500px] flex flex-col bg-white text-black">
+    <Card className="w-full h-full  flex flex-col bg-white text-black">
       <CardHeader>
         <CardTitle className="text-black">Chat</CardTitle>
       </CardHeader>

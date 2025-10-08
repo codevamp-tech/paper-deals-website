@@ -150,7 +150,7 @@ export default function SellerEditForm() {
   const [fileUploads, setFileUploads] = useState<FileUploads>(initialFileUploads)
   const [loading, setLoading] = useState(false)
   const user = getUserFromToken()
-  console.log("user", user);
+  console.log("user????", user);
   const userId = user?.user_id
 
 
@@ -753,7 +753,7 @@ export default function SellerEditForm() {
                     }
                   />
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() =>
                       document.getElementById("pan-upload")?.click()
@@ -785,7 +785,7 @@ export default function SellerEditForm() {
                     }
                   />
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() =>
                       document.getElementById("iso-upload")?.click()
@@ -817,7 +817,7 @@ export default function SellerEditForm() {
                     }
                   />
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() =>
                       document.getElementById("incorporation-upload")?.click()
@@ -846,7 +846,7 @@ export default function SellerEditForm() {
                     }
                   />
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
                     onClick={() =>
                       document.getElementById("gst-cert-upload")?.click()

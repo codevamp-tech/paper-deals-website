@@ -56,7 +56,7 @@ export default function UserList() {
   return (
     <div className="w-full space-y-6 bg-blue-600- text-black p-4 rounded-lg">
       {/* Tab Buttons */}
-     <div className="flex justify-center space-x-4">
+     <div className="flex justify-start space-x-4">
         <div className="flex gap-2">
 
 
@@ -67,13 +67,13 @@ export default function UserList() {
             >
              seller
             </Button>
-            <Button
+            {/* <Button
               variant={activeTab === "seller" ? "default" : "outline"}
               onClick={() => setActiveTab("consultant")}
               className="transition-all duration-200 ease-in-out text-black bg-white"
             >
               consultant
-            </Button>
+            </Button> */}
             
           </div>
 </div>

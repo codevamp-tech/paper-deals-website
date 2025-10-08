@@ -21,6 +21,7 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get("token")?.value;
   const user = token ? await verifyToken(token) : null;
+  console.log("user??", user);
   const isAuthenticated = !!user;
 
   // 🚨 Not authenticated → redirect to login

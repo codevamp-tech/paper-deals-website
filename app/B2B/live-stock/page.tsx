@@ -70,7 +70,7 @@ export default function LiveStockPage() {
         setLoading(true);
         setError(null);
 
-        const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/live-stocks/view-live-stockes`;
+        const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/live-stocks/view-live-stock`;
         let res = await fetch(API_URL);
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
 
@@ -273,7 +273,7 @@ export default function LiveStockPage() {
                             } hover:bg-gray-100 transition-colors`}
                         >
                           <td className="py-3 px-4 text-blue-600 font-medium">
-                            {r.location}
+                            {r.ProductNew?.seller?.organization?.city || "N/A"}
                           </td>
                           <td className="py-3 px-4">
                             <span

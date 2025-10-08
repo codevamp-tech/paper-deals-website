@@ -41,7 +41,7 @@ export default function CloseDealsPage() {
       try {
         setLoading(true)
         const res = await fetch(
-          `http://localhost:5000/api/dashboard/closed?page=${page}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/closed?page=${page}`,
           {
             method: "GET",
             headers: {
@@ -104,7 +104,7 @@ export default function CloseDealsPage() {
   }
 
   const handleEdit = (id: string) => {
-    router.push(`/admin/directorder/${id}`)
+    router.push(`/buyer3/DirectSingleOrder/${id}`)
   }
 
   return (
