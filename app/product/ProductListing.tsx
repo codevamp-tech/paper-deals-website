@@ -22,7 +22,7 @@ const categories = [
   { id: "newsprint", name: "Newsprint Paper" },
 ];
 
-export default function PriceList() {
+export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 0 });
   const [loading, setLoading] = useState(true);
