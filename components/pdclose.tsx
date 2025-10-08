@@ -45,7 +45,7 @@ export default function ClosedPdDealsPage() {
         if (!token) throw new Error("No token in cookies");
 
         const res = await fetch(
-          `https://paper-deal-server.onrender.com/api/pd-deals-master/closedpddeals?page=${page}&limit=${limit}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/pd-deals-master/closedpddeals?page=${page}&limit=${limit}`,
           {
             method: "GET",
             headers: {

@@ -191,80 +191,43 @@ export default function DealForm() {
     setForm((prev: any) => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = async () => {
-    try {
-      // 1️⃣ Determine the endpoint for the current step
-      const endpoints = ["dashboard", "samplings", "validation", "clearance", "payment", "transportation", "close"]
-      const endpoint = endpoints[currentStep] || "dashboard"
+ const handleSubmit = async () => {
+  try {
+    const endpoints = ["dashboard", "samplings", "validation", "clearance", "payment", "transportation", "close"];
+    const endpoint = endpoints[currentStep] || "dashboard";
 
-      // 2️⃣ Build the payload based on the current step
-      const payload = getStepPayload(currentStep, form)
+    const payload = getStepPayload(currentStep, form);
 
-      // 3️⃣ Detect if the step has file upload
-      const hasFile =
-        Boolean(
-          (currentStep === 0 && form.technicalDataSheet) ||
-          (currentStep === 1 && form.uploadDocument) ||
-          (currentStep === 2 && form.verificationDoc)   // ✅ added verification step
-        );
-
-
-      let options: RequestInit
-      console.log("hasFile", hasFile)
-      if (hasFile) {
-        // 4️⃣ Handle FormData for file upload
-        const fd = new FormData()
-        Object.entries(payload).forEach(([k, v]) => {
-          if (v !== null && v !== undefined && typeof v !== "object") fd.append(k, v as string)
-        })
-
-        if (currentStep === 0 && form.technicalDataSheet) {
-          fd.append("tds", form.technicalDataSheet);
-        }
-
-        if (currentStep === 1 && form.uploadDocument) {
-          fd.append("upload_doc", form.uploadDocument);
-        }
-
-        if (currentStep === 2 && form.verificationDoc) {
-          fd.append("upload_docu", form.verificationDoc); // ✅ match model field
-        }
-
-        options = {
-          method: endpoint === "dashboard" ? "PUT" : "POST",
-          body: fd,
-        }
-      } else {
-        // 5️⃣ Normal JSON payload
-        options = {
-          method: endpoint === "dashboard" ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+    // Convert payload to query string
+    const queryParams = new URLSearchParams();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, value.toString());
       }
+    });
 
-      // 6️⃣ Construct the API URL
-      const url =
-        endpoint === "dashboard"
-          ? `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/${dealId}`
-          : `${process.env.NEXT_PUBLIC_API_URL}/api/${endpoint}`
-      console.log("options", options)
-      // 7️⃣ Call the API
-      const res = await fetch(url, options)
-      const data = await res.json()
+    // Construct URL with query params
+    const url =
+      endpoint === "dashboard"
+        ? `https://paper-deal-server.onrender.com/api/dashboard/${dealId}?${queryParams.toString()}`
+        : `https://paper-deal-server.onrender.com/api/${endpoint}?${queryParams.toString()}`;
 
-      // 8️⃣ Handle response
-      if (res.ok) {
-        toast.success(`Step updated successfully: ${FORM_STEPS[currentStep].title}`)
-        setCompletedSteps((prev) => new Set([...prev, currentStep]))
-      } else {
-        throw new Error(data.message || "Unknown error")
-      }
-    } catch (err) {
-      console.error(err)
-      toast.error(`Failed to update step: ${FORM_STEPS[currentStep].title}`)
+    // GET request
+    const res = await fetch(url, { method: "GET" });
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(`Step updated successfully: ${FORM_STEPS[currentStep].title}`);
+      setCompletedSteps((prev) => new Set([...prev, currentStep]));
+    } else {
+      throw new Error(data.message || "Unknown error");
     }
+  } catch (err) {
+    console.error(err);
+    toast.error(`Failed to update step: ${FORM_STEPS[currentStep].title}`);
   }
+};
+
 
 
 
@@ -286,7 +249,7 @@ export default function DealForm() {
 
   const fetchDeal = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/dealbyid/${dealId}`)
+      const res = await fetch(`https://paper-deal-server.onrender.com/api/dashboard/dealbyid/${dealId}`)
       const data = await res.json()
       setForm(mapApiToForm(data))
       console.log("[v0] Deal data loaded from API")
@@ -297,7 +260,7 @@ export default function DealForm() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`)
+      const res = await fetch("https://paper-deal-server.onrender.com/api/categiry")
       const data = await res.json()
       setCategories(data.categories || data.data || []) // <-- only array goes into state
       console.log("[v0] Categories loaded from API", data)
@@ -309,8 +272,8 @@ export default function DealForm() {
   const fetchBuyersAndSellers = async () => {
     try {
       const [buyerRes, sellerRes] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/getBuyer`),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`),
+        fetch("https://paper-deal-server.onrender.com/api/users/getBuyer"),
+        fetch("https://paper-deal-server.onrender.com/api/users/getallsellers?user_type=2"),
       ])
       const buyersData = await buyerRes.json()
       const sellersData = await sellerRes.json()
@@ -344,10 +307,9 @@ export default function DealForm() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Buyer</label>
                   <Select value={form.buyerId || ""} onValueChange={(v) => handleChange("buyerId", v)}>
-                    <SelectTrigger className="bg-white text-black border border-gray-300">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select Buyer" />
                     </SelectTrigger>
-
                     <SelectContent>
                       {buyers.map((b) => (
                         <SelectItem key={b.id} value={b.id}>
@@ -361,10 +323,9 @@ export default function DealForm() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Seller</label>
                   <Select value={form.sellerId || ""} onValueChange={(v) => handleChange("sellerId", v)}>
-                    <SelectTrigger className="bg-white text-black border border-gray-300">
-                      <SelectValue placeholder="Select Buyer" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Seller" />
                     </SelectTrigger>
-
                     <SelectContent>
                       {sellers.map((s) => (
                         <SelectItem key={s.id} value={s.id}>
@@ -406,9 +367,9 @@ export default function DealForm() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Technical Data Sheet</label>
-                  <input
+                  <Input
                     type="file"
-                    className="block w-full text-sm !text-black border border-gray-300 rounded-lg cursor-pointer !bg-white"
+                    onChange={(e) => handleChange("technicalDataSheet", e.target.files?.[0] || null)}
                   />
                 </div>
               </div>
@@ -420,16 +381,22 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Category</label>
-                  <Select>
-                    <SelectTrigger className="bg-white text-black border border-gray-300">
-                      <SelectValue placeholder="Select Buyer" />
+                  <Select value={form.category || ""} onValueChange={(v) => handleChange("category", v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white text-black border border-gray-300">
-                      <SelectItem value="buyer1">Buyer 1</SelectItem>
-                      <SelectItem value="buyer2">Buyer 2</SelectItem>
+                    <SelectContent>
+                      {Array.isArray(categories) && categories.length > 0 ? (
+                        categories.map((c: any) => (
+                          <SelectItem key={c.id} value={c.id.toString()}>
+                            {c.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="p-2 text-gray-500">No categories found</div>
+                      )}
                     </SelectContent>
                   </Select>
-
                 </div>
 
                 <div>
@@ -752,8 +719,8 @@ export default function DealForm() {
     <div className="max-w-7xl mx-auto p-6">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-black" >Deal Management</h1>
-          <Badge variant="default">
+          <h1 className="text-2xl font-bold">Deal Management</h1>
+          <Badge variant="outline">
             Step {currentStep + 1} of {FORM_STEPS.length}
           </Badge>
         </div>
@@ -789,10 +756,10 @@ export default function DealForm() {
         </div>
       </div>
 
-      <Card className="bg-white text-black border">
+      <Card>
         <CardHeader>
           <CardTitle>{FORM_STEPS[currentStep].title}</CardTitle>
-          <p className="text-sm">{FORM_STEPS[currentStep].description}</p>
+          <p className="text-sm text-muted-foreground">{FORM_STEPS[currentStep].description}</p>
         </CardHeader>
         <CardContent>
           {renderStepContent()}
@@ -802,22 +769,19 @@ export default function DealForm() {
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 0}
-              className="flex items-center bg-white text-black border"
+              className="flex items-center bg-transparent"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Previous
             </Button>
 
             <div className="flex items-center space-x-3">
-              <Button className="bg-white text-black border">
+              <Button onClick={handleSubmit}>
                 Update {FORM_STEPS[currentStep].title}
               </Button>
 
-              <Button
-                onClick={nextStep}
-                disabled={currentStep === FORM_STEPS.length - 1}
-                className="flex items-center bg-white text-black border"
-              >
+
+              <Button onClick={nextStep} disabled={currentStep === FORM_STEPS.length - 1} className="flex items-center">
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>

@@ -134,7 +134,7 @@ export default function AdminSidebar({ onClose }) {
     const isActive = (href) => pathname === href
 
     return (
-        <div className="h-full flex flex-col p-4 text-white bg-blue-500 ">
+        <div className="h-full flex flex-col p-4 text-black bg-sky-500 ">
             {/* Mobile Close Button */}
             <div className="flex justify-between items-center md:hidden mb-6 text-white">
                 {/* <div className="text-lg font-bold">Demo Buyer</div> */}
@@ -147,8 +147,9 @@ export default function AdminSidebar({ onClose }) {
             <div className="hidden md:flex items-center space-x-2 mb-8">
                 {/* <div className="bg-blue-600 text-white p-2 rounded-lg font-bold text-xl">PD</div> */}
                 <div>
-                    {/* <div className="font-bold text-lg">Paper Deals</div>
-                    <div className="text-sm text-gray-400">Demo Buyer</div> */}
+                    {/* <Link href="/" className="flex-shrink-0">
+                        <img className="h-10 w-auto md:h-12" src="/logomain.png" alt="LOGO" />
+                    </Link> */}
                 </div>
             </div>
 

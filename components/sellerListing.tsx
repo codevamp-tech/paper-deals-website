@@ -210,7 +210,7 @@ export default function SellerList() {
                   </div>
 
                   <button
-                     onClick={() => router.push(`/seller/${seller.id}`)}
+                     onClick={() => router.push(`/B2B/seller/${seller.id}`)}
                     className="mt-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-colors duration-300"
                   >
                     View Profile

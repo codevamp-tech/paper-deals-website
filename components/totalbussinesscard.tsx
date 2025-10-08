@@ -22,7 +22,7 @@ export default function TotalBusinessCard() {
     const fetchData = async () => {
       try {
         const [directRes, paperRes] = await Promise.all([
-          fetch("https://paper-deal-server.onrender.com/api/dashboard/summary", {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/summary`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -30,7 +30,7 @@ export default function TotalBusinessCard() {
             },
             credentials: "include",
           }),
-          fetch("https://paper-deal-server.onrender.com/api/pd-deals/stats", {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pd-deals/stats`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

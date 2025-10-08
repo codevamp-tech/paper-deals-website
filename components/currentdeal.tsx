@@ -35,7 +35,7 @@ const DealsTable: React.FC = () => {
       try {
         setLoading(true)
         const res = await fetch(
-          `http://localhost:5000/api/dashboard/current?page=${currentPage}&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/current?page=${currentPage}&limit=10`,
           {
             method: "GET",
             headers: {
@@ -75,7 +75,7 @@ const DealsTable: React.FC = () => {
   }, [currentPage, token])
 
   const handleEdit = (id: number) => {
-    router.push(`/admin/directorder/${id}`)
+     router.push(`/buyer3/DirectSingleOrder/${id}`)
   }
 
   if (loading) return <p>Loading...</p>
