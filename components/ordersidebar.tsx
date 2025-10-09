@@ -17,8 +17,8 @@ const OrderSidebar = () => {
 
   const menuItems = [
     { id: "orders", label: "Orders", icon: <PackageIcon />, route: "/order" },
-    { id: "favourite", label: "Favorites", icon: <HeartIcon />, route: "/order/favourites" },
-    { id: "logout", label: "Logout", icon: <LogOutIcon />, route: "/logout" },
+    // { id: "favourite", label: "Favorites", icon: <HeartIcon />, route: "/order/favourites" },
+    // { id: "logout", label: "Logout", icon: <LogOutIcon />, route: "/logout" },
   ];
 
   // Automatically detect active tab based on current route
