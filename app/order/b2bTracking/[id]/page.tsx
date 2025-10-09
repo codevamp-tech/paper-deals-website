@@ -191,42 +191,42 @@ export default function DealForm() {
     setForm((prev: any) => ({ ...prev, [field]: value }))
   }
 
- const handleSubmit = async () => {
-  try {
-    const endpoints = ["dashboard", "samplings", "validation", "clearance", "payment", "transportation", "close"];
-    const endpoint = endpoints[currentStep] || "dashboard";
+  const handleSubmit = async () => {
+    try {
+      const endpoints = ["dashboard", "samplings", "validation", "clearance", "payment", "transportation", "close"];
+      const endpoint = endpoints[currentStep] || "dashboard";
 
-    const payload = getStepPayload(currentStep, form);
+      const payload = getStepPayload(currentStep, form);
 
-    // Convert payload to query string
-    const queryParams = new URLSearchParams();
-    Object.entries(payload).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        queryParams.append(key, value.toString());
+      // Convert payload to query string
+      const queryParams = new URLSearchParams();
+      Object.entries(payload).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
+      });
+
+      // Construct URL with query params
+      const url =
+        endpoint === "dashboard"
+          ? `https://paper-deal-server.onrender.com/api/dashboard/${dealId}?${queryParams.toString()}`
+          : `https://paper-deal-server.onrender.com/api/${endpoint}?${queryParams.toString()}`;
+
+      // GET request
+      const res = await fetch(url, { method: "GET" });
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success(`Step updated successfully: ${FORM_STEPS[currentStep].title}`);
+        setCompletedSteps((prev) => new Set([...prev, currentStep]));
+      } else {
+        throw new Error(data.message || "Unknown error");
       }
-    });
-
-    // Construct URL with query params
-    const url =
-      endpoint === "dashboard"
-        ? `https://paper-deal-server.onrender.com/api/dashboard/${dealId}?${queryParams.toString()}`
-        : `https://paper-deal-server.onrender.com/api/${endpoint}?${queryParams.toString()}`;
-
-    // GET request
-    const res = await fetch(url, { method: "GET" });
-    const data = await res.json();
-
-    if (res.ok) {
-      toast.success(`Step updated successfully: ${FORM_STEPS[currentStep].title}`);
-      setCompletedSteps((prev) => new Set([...prev, currentStep]));
-    } else {
-      throw new Error(data.message || "Unknown error");
+    } catch (err) {
+      console.error(err);
+      toast.error(`Failed to update step: ${FORM_STEPS[currentStep].title}`);
     }
-  } catch (err) {
-    console.error(err);
-    toast.error(`Failed to update step: ${FORM_STEPS[currentStep].title}`);
-  }
-};
+  };
 
 
 
@@ -258,37 +258,9 @@ export default function DealForm() {
     }
   }
 
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch("https://paper-deal-server.onrender.com/api/categiry")
-      const data = await res.json()
-      setCategories(data.categories || data.data || []) // <-- only array goes into state
-      console.log("[v0] Categories loaded from API", data)
-    } catch (error) {
-      console.log("API unavailable,")
-    }
-  }
-
-  const fetchBuyersAndSellers = async () => {
-    try {
-      const [buyerRes, sellerRes] = await Promise.all([
-        fetch("https://paper-deal-server.onrender.com/api/users/getBuyer"),
-        fetch("https://paper-deal-server.onrender.com/api/users/getallsellers?user_type=2"),
-      ])
-      const buyersData = await buyerRes.json()
-      const sellersData = await sellerRes.json()
-      setBuyers(buyersData.data)
-      setSellers(sellersData.data)
-      console.log("[v0] Buyers and sellers loaded from API")
-    } catch (error) {
-      console.log("API unavailable")
-    }
-  }
 
   useEffect(() => {
     fetchDeal()
-    fetchBuyersAndSellers()
-    fetchCategories()
   }, [dealId])
 
   const renderStepContent = () => {
@@ -301,12 +273,12 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Deal Id</label>
-                  <Input value={form.dealId || ""} onChange={(e) => handleChange("dealId", e.target.value)} />
+                  <Input value={form.dealId || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Buyer</label>
-                  <Select value={form.buyerId || ""} onValueChange={(v) => handleChange("buyerId", v)}>
+                  <Select value={form.buyerId || ""} disabled>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Buyer" />
                     </SelectTrigger>
@@ -322,7 +294,7 @@ export default function DealForm() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Seller</label>
-                  <Select value={form.sellerId || ""} onValueChange={(v) => handleChange("sellerId", v)}>
+                  <Select value={form.sellerId || ""} disabled>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Seller" />
                     </SelectTrigger>
@@ -344,33 +316,27 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Contact Person</label>
-                  <Input
-                    value={form.contactPerson || ""}
-                    onChange={(e) => handleChange("contactPerson", e.target.value)}
-                  />
+                  <Input value={form.contactPerson || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Mobile Number</label>
-                  <Input value={form.mobile || ""} onChange={(e) => handleChange("mobile", e.target.value)} />
+                  <Input value={form.mobile || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
-                  <Input value={form.email || ""} onChange={(e) => handleChange("email", e.target.value)} />
+                  <Input value={form.email || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Remarks</label>
-                  <Input value={form.remarks || ""} onChange={(e) => handleChange("remarks", e.target.value)} />
+                  <Input value={form.remarks || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Technical Data Sheet</label>
-                  <Input
-                    type="file"
-                    onChange={(e) => handleChange("technicalDataSheet", e.target.files?.[0] || null)}
-                  />
+                  <Input type="file" disabled />
                 </div>
               </div>
             </div>
@@ -381,7 +347,7 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Category</label>
-                  <Select value={form.category || ""} onValueChange={(v) => handleChange("category", v)}>
+                  <Select value={form.category || ""} disabled>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
@@ -401,97 +367,98 @@ export default function DealForm() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Product</label>
-                  <Input value={form.product || ""} onChange={(e) => handleChange("product", e.target.value)} />
+                  <Input value={form.product || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Sub Product</label>
-                  <Input value={form.subProduct || ""} onChange={(e) => handleChange("subProduct", e.target.value)} />
+                  <Input value={form.subProduct || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Brightness</label>
-                  <Input value={form.brightness || ""} onChange={(e) => handleChange("brightness", e.target.value)} />
+                  <Input value={form.brightness || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Gsm</label>
-                  <Input value={form.gsm || ""} onChange={(e) => handleChange("gsm", e.target.value)} />
+                  <Input value={form.gsm || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">BF</label>
-                  <Input value={form.bf || ""} onChange={(e) => handleChange("bf", e.target.value)} />
+                  <Input value={form.bf || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Shade</label>
-                  <Input value={form.shade || ""} onChange={(e) => handleChange("shade", e.target.value)} />
+                  <Input value={form.shade || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">HSN No.</label>
-                  <Input value={form.hsnNo || ""} onChange={(e) => handleChange("hsnNo", e.target.value)} />
+                  <Input value={form.hsnNo || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Grain</label>
-                  <Input value={form.grain || ""} onChange={(e) => handleChange("grain", e.target.value)} />
+                  <Input value={form.grain || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Sheet</label>
-                  <Input value={form.sheet || ""} onChange={(e) => handleChange("sheet", e.target.value)} />
+                  <Input value={form.sheet || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">W*L</label>
-                  <Input value={form.wl || ""} onChange={(e) => handleChange("wl", e.target.value)} />
+                  <Input value={form.wl || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">No of Bundle</label>
-                  <Input value={form.noOfBundle || ""} onChange={(e) => handleChange("noOfBundle", e.target.value)} />
+                  <Input value={form.noOfBundle || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">No of Rim</label>
-                  <Input value={form.noOfRim || ""} onChange={(e) => handleChange("noOfRim", e.target.value)} />
+                  <Input value={form.noOfRim || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Rim Weight</label>
-                  <Input value={form.rimWeight || ""} onChange={(e) => handleChange("rimWeight", e.target.value)} />
+                  <Input value={form.rimWeight || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Size in inch</label>
-                  <Input value={form.sizeInch || ""} onChange={(e) => handleChange("sizeInch", e.target.value)} />
+                  <Input value={form.sizeInch || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Stock in Kg</label>
-                  <Input value={form.stockKg || ""} onChange={(e) => handleChange("stockKg", e.target.value)} />
+                  <Input value={form.stockKg || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Quantity in Kg</label>
-                  <Input value={form.quantityKg || ""} onChange={(e) => handleChange("quantityKg", e.target.value)} />
+                  <Input value={form.quantityKg || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Price in Kg</label>
-                  <Input value={form.priceKg || ""} onChange={(e) => handleChange("priceKg", e.target.value)} />
+                  <Input value={form.priceKg || ""} disabled />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Total Amount</label>
-                  <Input value={form.totalAmount || ""} onChange={(e) => handleChange("totalAmount", e.target.value)} />
+                  <Input value={form.totalAmount || ""} disabled />
                 </div>
               </div>
             </div>
           </div>
-        )
+        );
+
 
       case 1: // Sampling
         return (
@@ -505,6 +472,7 @@ export default function DealForm() {
                     value={form.dateOfSample || ""}
                     onChange={(e) => handleChange("dateOfSample", e.target.value)}
                     className="pr-10"
+                    disabled
                   />
                 </div>
               </div>
@@ -515,6 +483,7 @@ export default function DealForm() {
                   placeholder="Sample Verification"
                   value={form.sampleVerification || ""}
                   onChange={(e) => handleChange("sampleVerification", e.target.value)}
+                  disabled
                 />
               </div>
 
@@ -526,6 +495,7 @@ export default function DealForm() {
                     value={form.labReport || ""}
                     onChange={(e) => handleChange("labReport", e.target.value)}
                     className="pr-10"
+                    disabled
                   />
                 </div>
               </div>
@@ -536,6 +506,7 @@ export default function DealForm() {
                   placeholder="Remarks"
                   value={form.samplingRemarks || ""}
                   onChange={(e) => handleChange("samplingRemarks", e.target.value)}
+                  disabled
                 />
               </div>
 
@@ -546,8 +517,8 @@ export default function DealForm() {
                     type="file"
                     onChange={(e) => handleChange("uploadDocument", e.target.files?.[0] || null)}
                     className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    disabled
                   />
-
                 </div>
               </div>
 
@@ -556,14 +527,16 @@ export default function DealForm() {
                 <select
                   value={form.samplingStatus || 0}
                   onChange={(e) => handleChange("samplingStatus", parseInt(e.target.value))}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  className="w-full p-2 border border-gray-300 rounded-md bg-white"
                 >
                   <option value={0}>Pending</option>
                   <option value={1}>Approved</option>
+                   <option value={2}>Rejected</option>
                 </select>
               </div>
             </div>
           </div>
+
         )
 
 
@@ -572,15 +545,18 @@ export default function DealForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Date of Validation</label>
-              <Input type="date" onChange={(e) => handleChange("dov", e.target.value)} />
+              <Input type="date" onChange={(e) => handleChange("dov", e.target.value)}
+              disabled />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Sample</label>
-              <Input onChange={(e) => handleChange("sample", e.target.value)} />
+              <Input onChange={(e) => handleChange("sample", e.target.value)} 
+              disabled/>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Stock Approved</label>
-              <Input onChange={(e) => handleChange("stockApproved", e.target.value)} />
+              <Input onChange={(e) => handleChange("stockApproved", e.target.value)}
+              disabled />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2"> Upload Document</label>
@@ -588,6 +564,7 @@ export default function DealForm() {
                 type="file"
                 accept="application/pdf"
                 onChange={(e) => handleChange("verificationDoc", e.target.files?.[0] || null)}
+                disabled
               />
             </div>
           </div>
@@ -598,15 +575,19 @@ export default function DealForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Clearance Date</label>
-              <Input type="date" onChange={(e) => handleChange("clearanceDate", e.target.value)} />
+              <Input type="date" onChange={(e) => handleChange("clearanceDate", e.target.value)}
+              disabled />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Product Price</label>
-              <Input onChange={(e) => handleChange("productPrice", e.target.value)} />
+              <Input onChange={(e) => handleChange("productPrice", e.target.value)} 
+              disabled/>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Remarks</label>
-              <Input onChange={(e) => handleChange("remarks", e.target.value)} />
+              <Input onChange={(e) => handleChange("remarks", e.target.value)}
+              disabled 
+              />
             </div>
           </div>
         )
@@ -616,15 +597,18 @@ export default function DealForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Transaction Date</label>
-              <Input type="date" onChange={(e) => handleChange("transactionDate", e.target.value)} />
+              <Input type="date" onChange={(e) => handleChange("transactionDate", e.target.value)}
+               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Transaction Id</label>
-              <Input onChange={(e) => handleChange("transactionId", e.target.value)} />
+              <Input onChange={(e) => handleChange("transactionId", e.target.value)}
+               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Detail</label>
-              <Input onChange={(e) => handleChange("detail", e.target.value)} />
+              <Input onChange={(e) => handleChange("detail", e.target.value)}
+               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Account Number</label>

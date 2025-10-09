@@ -17,7 +17,6 @@ const OrderSidebar = () => {
 
   const menuItems = [
     { id: "orders", label: "Orders", icon: <PackageIcon />, route: "/order" },
-    { id: "tracking", label: "Tracking", icon: <TruckIcon />, route: "/order/tracking" },
     { id: "favourite", label: "Favorites", icon: <HeartIcon />, route: "/order/favourites" },
     { id: "logout", label: "Logout", icon: <LogOutIcon />, route: "/logout" },
   ];
