@@ -96,12 +96,14 @@ const Topbar = () => {
 
                 <button
                   id="mode-toggle"
-                  onClick={() => {
+                  onClick={async () => {
                     const newValue = !enabled
                     setEnabled(newValue)
                     localStorage.setItem("mode", newValue ? "B2B" : "B2C")
-                    router.push("/")
-                    window.location.reload()
+                    router.push("/");
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
                   }}
                   className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-300 ${
                     enabled ? "bg-green-600" : "bg-black"
