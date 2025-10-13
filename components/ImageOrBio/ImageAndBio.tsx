@@ -42,9 +42,10 @@ const BioImageSec: React.FC = () => {
       </div>
 
       {/* First Div - Overlay Content */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20 w-full px-4">
+      {/* First Div - Overlay Content */}
+      <div className="absolute top-[-6vh] sm:top-[-10vh] md:top-[-10] left-1/2 transform -translate-x-1/2 z-20 w-full px-2 xs:px-3 sm:px-4">
         <div
-          className="rounded-tl-xl rounded-tr-xl shadow-lg p-4 sm:p-6 md:p-8 lg:p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[95vw] mx-auto"
+          className="rounded-tl-xl rounded-tr-xl shadow-lg p-3 xs:p-4 sm:p-5 md:p-6 lg:p-8 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 md:gap-6 max-w-[95vw] mx-auto"
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.4)",
             backdropFilter: "blur(1px)",
@@ -53,14 +54,18 @@ const BioImageSec: React.FC = () => {
           {stats.map((item, index) => (
             <div
               key={index}
-              className="flex items-center space-x-4 hover:scale-105 transition-transform duration-300"
+              className="flex items-center space-x-2 xs:space-x-3 sm:space-x-4 hover:scale-105 transition-transform duration-300"
             >
-              <div className="text-3xl md:text-4xl">{item.icon}</div>
-              <div>
-                <h4 className="text-lg md:text-xl font-bold text-primary-white">
+              <div className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl">
+                {item.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold text-primary-white truncate">
                   {item.value}
                 </h4>
-                <p className="text-sm text-white">{item.label}</p>
+                <p className="text-xs xs:text-sm text-white truncate">
+                  {item.label}
+                </p>
               </div>
             </div>
           ))}

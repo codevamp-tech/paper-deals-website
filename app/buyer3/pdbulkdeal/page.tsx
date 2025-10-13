@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Archive, BarChart3 } from 'lucide-react';
+import { TrendingUp, Archive, BarChart3 } from "lucide-react";
 import ClosedPdDealsPage from "@/components/currentdeal";
 import CurrentPaperDealPage from "@/components/closedeal";
 
@@ -15,8 +15,7 @@ export default function DealsPage() {
 
   return (
     <div className="min-h-screen  text-black ">
-      <div className="container mx-auto p-6">
-
+      <div className="container mx-auto p-6 ">
         <div className="flex items-center  justify-between mb-6">
           <div className="flex gap-2">
             <Button
@@ -31,7 +30,7 @@ export default function DealsPage() {
               onClick={() => setActiveTab("current")}
               className="transition-all duration-200 ease-in-out text-black bg-white"
             >
-              PD  Closed Deals
+              PD Closed Deals
             </Button>
           </div>
         </div>
