@@ -22,6 +22,8 @@ import {
   DialogHeader as UIDialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Pagination from "@/components/pagination";
+import { toast } from "sonner";
 
 type Row = {
   location: string;
@@ -37,6 +39,19 @@ type Row = {
   pricePerKg: string;
   spotPrice?: string | number;
   quantity: string;
+  sellerId: string | number | null;
+};
+
+
+type SellerProduct = {
+  id: number;
+  name: string;
+  category: string;
+  gsm: string;
+  bf: string;
+  shade: string;
+  size: string;
+  price: string | number;
 };
 
 export default function LiveStockPage() {
@@ -54,9 +69,26 @@ export default function LiveStockPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
-  const handleView = (row: Row) => {
-    setSelectedRow(row);
-    setIsModalOpen(true);
+  // modal states
+  const [selectedSellerId, setSelectedSellerId] = useState<string | number | null>(null);
+  const [sellerProducts, setSellerProducts] = useState<SellerProduct[]>([]);
+  const [modalPage, setModalPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [modalLoading, setModalLoading] = useState(false);
+  // 🟣 Enquiry form state
+  const [enquiryForm, setEnquiryForm] = useState({
+    name: "",
+    email_id: "",
+    phone: "",
+    message: "",
+    status: 0,
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+
+  const handleEnquiryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEnquiryForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEnquiry = (row: Row) => {
@@ -82,6 +114,7 @@ export default function LiveStockPage() {
         const mapped: Row[] = json.data.map((item: any) => {
           const p = item.ProductNew || {};
           return {
+            sellerId: p.seller_id || null, // 👈 Add this
             location: p.shade || "-",
             sellerType:
               p.user_type === 2
@@ -153,6 +186,88 @@ export default function LiveStockPage() {
     });
   };
 
+
+
+  const handleView = async (row: Row, page = 1) => {
+    if (!row.sellerId) return;
+    setSelectedSellerId(row.sellerId);
+    setIsModalOpen(true);
+    setModalLoading(true);
+
+    try {
+      const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/seller/${row.sellerId}?page=${page}&limit=5`;
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch seller stocks");
+      const data = await res.json();
+
+      setSellerProducts(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setModalPage(page);
+    } catch (err) {
+      console.error("Error fetching seller products", err);
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const handleProductEnquiry = (product: SellerProduct) => {
+    setSelectedRow({
+      id: product.id,
+      location: "-",
+      sellerType: "-",
+      category: product.category,
+      productName: product.name,
+      bf: product.bf,
+      gsm: product.gsm,
+      shade: product.shade,
+      size: "-",
+      wl: "-",
+      pricePerKg: product.price,
+      quantity: "-",
+      sellerId: selectedSellerId,
+    });
+    setIsEnquiryModalOpen(true);
+  };
+
+
+  const handleSubmitEnquiry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedRow) return;
+
+    try {
+      setSubmitting(true);
+      const payload = {
+        products: selectedRow.id,  // must match model field name
+        spot_price_id: selectedRow.spotPrice || null, // optional, if applicable
+        name: enquiryForm.name,
+        phone: enquiryForm.phone,   // ✅ added
+        email_id: enquiryForm.email_id,
+        message: enquiryForm.message,
+        status: 0,
+      };
+
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/spotPriceEnqiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to submit enquiry");
+
+      toast.success("✅ Enquiry submitted successfully!");
+      setEnquiryForm({ name: "", email_id: "", phone: "", message: "", status: 0 });
+      setIsEnquiryModalOpen(false);
+    } catch (err: any) {
+      console.error("Error submitting enquiry:", err);
+      toast.error(err.message || "Something went wrong while submitting enquiry");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+
   return (
     <>
       <main className="w-screen -mx-[calc((100vw-100%)/2)] bg-[#fafafa]">
@@ -222,7 +337,7 @@ export default function LiveStockPage() {
                         "spotPrice",
                         "quantity",
                         "view",
-                        "Enquiry",
+                        // "Enquiry",
                       ].map((col) => (
                         <th
                           key={col}
@@ -278,10 +393,10 @@ export default function LiveStockPage() {
                           <td className="py-3 px-4">
                             <span
                               className={`px-2 py-1 rounded-full text-xs font-semibold ${r.sellerType === "Manufacturer"
-                                  ? "bg-green-100 text-green-700"
-                                  : r.sellerType === "Distributor"
-                                    ? "bg-yellow-100 text-yellow-700"
-                                    : "bg-gray-200 text-gray-700"
+                                ? "bg-green-100 text-green-700"
+                                : r.sellerType === "Distributor"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-gray-200 text-gray-700"
                                 }`}
                             >
                               {r.sellerType}
@@ -322,14 +437,14 @@ export default function LiveStockPage() {
                               <Eye />
                             </button>
                           </td>
-                          <td className="py-3 px-4 font-bold text-violet-700">
+                          {/* <td className="py-3 px-4 font-bold text-violet-700">
                             <button
                               onClick={() => handleEnquiry(r)}
                               className="text-purple-600 hover:text-purple-800 font-semibold underline"
                             >
                               Enquiry now
                             </button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     )}
@@ -343,56 +458,84 @@ export default function LiveStockPage() {
 
       {/* View Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-md rounded-2xl shadow-2xl p-0 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
+        <DialogContent className="max-w-3xl rounded-2xl shadow-lg bg-white">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
             <DialogTitle className="text-lg font-semibold text-white text-center">
-              Stock Details
+              Seller’s Product List
             </DialogTitle>
           </div>
 
-          {selectedRow && (
-            <div className="p-6 space-y-4">
-              {[
-                { label: "Product", value: selectedRow.productName },
-                { label: "Category", value: selectedRow.category },
-                { label: "Sub Product", value: selectedRow.subProduct },
-                { label: "BF", value: selectedRow.bf },
-                { label: "GSM", value: selectedRow.gsm },
-                { label: "Shade", value: selectedRow.shade },
-                { label: "Size", value: selectedRow.size },
-                { label: "WL", value: selectedRow.wl },
-                { label: "Price Per Kg", value: selectedRow.pricePerKg },
-                { label: "Spot Price", value: selectedRow.spotPrice },
-                { label: "Quantity", value: selectedRow.quantity },
-                { label: "Seller Type", value: selectedRow.sellerType },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex justify-between items-center border-b border-gray-200 pb-2 last:border-b-0"
-                >
-                  <span className="text-sm font-medium text-gray-600">
-                    {item.label}
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900">
-                    {item.value}
-                  </span>
-                </div>
-              ))}
+          {modalLoading ? (
+            <div className="text-center py-6 text-gray-500">Loading...</div>
+          ) : (
+            <div className="p-6">
+              {sellerProducts.length === 0 ? (
+                <p className="text-center text-gray-500">No products found.</p>
+              ) : (
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b text-left text-gray-600">
+                      <th className="py-2 px-3">Product</th>
+                      <th className="py-2 px-3">Category</th>
+                      <th className="py-2 px-3">GSM</th>
+                      <th className="py-2 px-3">BF</th>
+                      <th className="py-2 px-3">Shade</th>
+                      <th className="py-2 px-3">Price</th>
+                      <th className="py-2 px-3 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sellerProducts.map((p) => (
+                      <tr key={p.id} className="border-b hover:bg-gray-50">
+                        <td className="py-2 px-3 font-medium">{p.product_name || p.name}</td>
+                        <td className="py-2 px-3">
+                          {p.category?.name || p.category_id || "-"}
+                        </td>
+                        <td className="py-2 px-3">{p.gsm}</td>
+                        <td className="py-2 px-3">{p.bf}</td>
+                        <td className="py-2 px-3">{p.shade}</td>
+                        <td className="py-2 px-3 text-red-600 font-semibold">
+                          {p.price_per_kg || p.price} ₹
+                        </td>
+                        <td className="py-2 px-3 text-center">
+                          <button
+                            onClick={() =>
+                              handleProductEnquiry({
+                                id: p.id,
+                                name: p.product_name || p.name,
+                                category: p.category_id || p.category,
+                                gsm: p.gsm,
+                                bf: p.bf,
+                                shade: p.shade,
+                                size: p.size || "-",
+                                price: p.price_per_kg || p.price,
+                              })
+                            }
+                            className="text-purple-600 hover:text-purple-800 font-semibold underline"
+                          >
+                            Enquiry
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <Pagination
+                  totalPages={totalPages}
+                  currentPage={modalPage}
+                  onPageChange={(page: number) => handleView({ ...filteredRows.find(r => r.sellerId === selectedSellerId)! }, page)}
+                />
+              )}
             </div>
           )}
-
-          <div className="bg-gray-50 px-6 py-3 flex justify-end">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium hover:opacity-90 transition"
-            >
-              Close
-            </button>
-          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Enquiry Modal */}
+
       {/* Enquiry Modal */}
       <Dialog open={isEnquiryModalOpen} onOpenChange={setIsEnquiryModalOpen}>
         <DialogContent className="max-w-lg rounded-2xl shadow-2xl p-0 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
@@ -404,67 +547,87 @@ export default function LiveStockPage() {
           </div>
 
           {selectedRow && (
-            <form className="p-6 space-y-4">
+            <form className="p-6 space-y-4" onSubmit={handleSubmitEnquiry}>
               <p className="text-black">
                 <strong>Product:</strong> {selectedRow.productName}
               </p>
 
+              {/* Name */}
               <div>
                 <label className="block text-sm font-medium mb-1 text-black">
                   Name
                 </label>
                 <Input
+                  name="name"
+                  value={enquiryForm.name}
+                  onChange={handleEnquiryChange}
                   className="bg-white text-black border border-gray-300"
                   placeholder="Enter your name"
                   required
                 />
               </div>
 
+              {/* Email */}
               <div>
                 <label className="block text-sm font-medium mb-1 text-black">
                   Email
                 </label>
                 <Input
+                  name="email_id"
                   type="email"
+                  value={enquiryForm.email_id}
+                  onChange={handleEnquiryChange}
                   className="bg-white text-black border border-gray-300"
                   placeholder="Enter your email"
                   required
                 />
               </div>
 
+              {/* Mobile */}
               <div>
                 <label className="block text-sm font-medium mb-1 text-black">
                   Mobile
                 </label>
                 <Input
+                  name="phone"
                   type="tel"
+                  value={enquiryForm.phone}
+                  onChange={handleEnquiryChange}
                   className="bg-white text-black border border-gray-300"
                   placeholder="Enter your mobile number"
                   required
                 />
               </div>
 
+              {/* Message */}
               <div>
                 <label className="block text-sm font-medium mb-1 text-black">
                   Message
                 </label>
                 <textarea
+                  name="message"
+                  value={enquiryForm.message}
+                  onChange={handleEnquiryChange}
                   className="w-full border border-gray-300 rounded-md p-2 text-sm bg-white text-black"
                   placeholder="Write your enquiry..."
                   rows={3}
+                  required
                 />
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition"
+                disabled={submitting}
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition disabled:opacity-50"
               >
-                Submit Enquiry
+                {submitting ? "Submitting..." : "Submit Enquiry"}
               </button>
             </form>
           )}
         </DialogContent>
       </Dialog>
+
 
 
       <div className="mt-12">
