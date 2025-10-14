@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@/hooks/use-theme";
 import { useState, useEffect } from "react";
 
 interface Advertisement {
@@ -15,6 +16,7 @@ const Advertising = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   // ✅ Fetch API
   useEffect(() => {
@@ -64,7 +66,10 @@ const Advertising = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen font-inter overflow-hidden relative px-4 xs:px-6 sm:px-8">
+    <div
+      className="flex justify-center items-center min-h-screen font-inter overflow-hidden relative px-4 xs:px-6 sm:px-8"
+      style={{ backgroundColor: theme.bg1 }}
+    >
       <div className="relative rounded-3xl w-full max-w-[90vw] xs:max-w-[85vw] sm:max-w-[80vw] md:w-[80vw] h-[60vh] xs:h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[80vh] bg-white/5 backdrop-blur-[16px] border border-white/20 shadow-2xl overflow-hidden group">
         <div className="relative z-10 p-4 xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 h-full flex flex-col md:flex-row justify-between gap-4 xs:gap-5 sm:gap-6 md:gap-8">
           {/* Left side - Ads text */}

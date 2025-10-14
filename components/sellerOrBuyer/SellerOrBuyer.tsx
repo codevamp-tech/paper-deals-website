@@ -1,11 +1,14 @@
 "use client";
 import React from "react";
 import Advertising from "../advertising/Advertising";
+import { useTheme } from "@/hooks/use-theme";
 
 const SellerOrBuyer = () => {
+  const { theme } = useTheme();
+
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-center items-center min-h-screen gap-6 md:gap-8 py-10 px-4">
+      <div className="flex flex-col md:flex-row justify-center items-center min-h-screen gap-6 md:gap-8 py-10 px-4  bg-white ">
         {/* BUYER CARD
         <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[auto] flex flex-col">
           <div className="mb-6">
@@ -73,9 +76,18 @@ const SellerOrBuyer = () => {
         </div> */}
 
         {/* SELLER CARD */}
-        <div className="w-full max-w-2x1 md:w-[40vw]  lg:w-[50vw] xl:w-[42vw] bg-white   rounded-2xl p-8   transition-all duration-300 flex flex-col shadow-lg hover:shadow-2xl">
+        <div
+          className="w-full max-w-2x1 md:w-[40vw]  lg:w-[50vw] xl:w-[42vw] bg-white   rounded-2xl p-8   transition-all duration-300 flex flex-col "
+          style={{
+            boxShadow:
+              "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+          }}
+        >
           <div className="mb-6 text-center">
-            <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
+            <h1
+              className=" text-3xl md:text-4xl font-semibold mb-2"
+              style={{ color: theme.Text }}
+            >
               Become a <span className="text-black">Seller</span>
             </h1>
             <p className="text-gray-700 text-base md:text-lg leading-relaxed">
@@ -128,14 +140,16 @@ const SellerOrBuyer = () => {
 
           <a href="/become-a-seller">
             <div className="flex justify-center">
-              <button className="mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+              <button
+                className="mt-4 flex justify-center items-center  text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
+                style={{ backgroundColor: theme.bg1 }}
+              >
                 Become A Seller
               </button>
             </div>
           </a>
         </div>
       </div>
-
     </>
   );
 };

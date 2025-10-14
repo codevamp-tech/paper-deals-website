@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, MapPin } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function ProductInsights() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -61,13 +62,19 @@ export default function ProductInsights() {
 
     return () => cancelAnimationFrame(animationId);
   }, [products]);
+  const { theme } = useTheme();
 
   return (
-    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32">
+    <div
+      className={`w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32  ${theme.Bg}`}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
-          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mb-3">
+          <h2
+            className=" text-[6vh] font-[900] mb-3"
+            style={{ color: theme.Text }}
+          >
             Paper Industry Insights
           </h2>
           <p className="flex justify-center text-[3vh]">
@@ -79,7 +86,8 @@ export default function ProductInsights() {
         <div className="flex justify-end mb-6">
           <a href="/insights-comparison">
             <button
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 border border-cyan-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{ color: theme.Text }}
             >
               View all Insights
               <ArrowRight className="w-5 h-5" />
@@ -89,8 +97,8 @@ export default function ProductInsights() {
 
         {/* Product Cards */}
         <div className="relative overflow-hidden">
-          <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
-          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>
+          {/* <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
+          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div> */}
 
           <div className="overflow-hidden py-4">
             <div

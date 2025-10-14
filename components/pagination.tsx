@@ -49,7 +49,7 @@ export default function Pagination({
 
   return (
     <div className="mt-4 flex justify-center">
-      <div className="flex flex-wrap items-center justify-center gap-2 bg-white p-2 rounded-md shadow">
+      <div className="flex flex-wrap items-center justify-center gap-2 bg-gray-200 p-2 rounded-md shadow">
         <Button
           variant="outline"
           className="bg-white text-black border-gray-300 hover:bg-gray-100"

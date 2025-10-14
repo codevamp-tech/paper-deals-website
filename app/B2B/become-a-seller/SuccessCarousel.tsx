@@ -90,9 +90,15 @@ export function StoryCarousel() {
   }, []);
 
   return (
-    <div className="relative overflow-x-hidden ">
+    <div className="relative overflow-x-hidden py-10">
       <div className="overflow-hidden rounded-xl bg-white shadow-lg w-[95vw]  ">
-        <div className="flex flex-col md:flex-row items-center p-6 md:p-8 border border-blue-600">
+        <div
+          className="flex flex-col md:flex-row items-center p-6 md:p-"
+          style={{
+            boxShadow:
+              "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+          }}
+        >
           <div className="md:w-1/3 mb-6 md:mb-0 flex justify-center">
             <div className="relative h-40 w-40 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-blue-100">
               <Image
