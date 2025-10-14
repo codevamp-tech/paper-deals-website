@@ -2,6 +2,7 @@
 
 import RequirementModal from "@/components/modal/TellUsModal";
 import Pagination from "@/components/pagination";
+import { useTheme } from "@/hooks/use-theme";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -69,6 +70,7 @@ export default function ProductListing() {
       console.log({ mobileNumber, country });
       onClose();
     };
+    const { theme } = useTheme();
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
@@ -187,14 +189,15 @@ export default function ProductListing() {
       />
     );
   };
+  const { theme } = useTheme();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
       <div className="mb-12 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-white">
+        <h2 className="text-3xl sm:text-4xl font-bold text-black">
           Kraft & Board Paper Most Viewed Price
         </h2>
-        <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-cyan-500 mx-auto rounded-full mt-2"></div>
+        <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
       </div>
 
       {/* Categories */}
@@ -205,8 +208,8 @@ export default function ProductListing() {
             onClick={() => setSelectedCategory(cat.id)}
             className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${
               selectedCategory === cat.id
-                ? "text-white bg-gradient-to-r from-red-500 to-orange-500 shadow-lg"
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-200"
             }`}
           >
             {cat.name}
@@ -221,7 +224,13 @@ export default function ProductListing() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((item) => (
             <Link key={item.id} href={`/product/${item.id}`}>
-              <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2 border border-gray-100">
+              <div
+                className="relative bg-[#fff] rounded-2xl  overflow-hidden  transition transform hover:-translate-y-2"
+                style={{
+                  boxShadow:
+                    "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+                }}
+              >
                 {/* Top-right Rating */}
                 <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white bg-opacity-90 px-3 py-1 rounded-lg shadow-md">
                   <span className="text-yellow-400 font-bold">
@@ -258,17 +267,17 @@ export default function ProductListing() {
                   <div className="flex gap-3 mt-3">
                     <button
                       onClick={handleBuyClick}
-                      className="flex-1 py-2 rounded-lg text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 transition"
+                      className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
                     >
                       Buy
                     </button>
-                    <button className="flex-1 py-2 rounded-lg text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 transition">
+                    <button className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition">
                       Contact
                     </button>
                   </div>
 
                   <button
-                    className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:opacity-90 transition mt-2"
+                    className="w-full py-2 rounded-lg bg-[#38d200] text-white hover:opacity-90 transition mt-2"
                     onClick={() => setIsModalOpen(true)}
                   >
                     Tell Us Your Requirement
@@ -290,7 +299,10 @@ export default function ProductListing() {
       </div>
 
       {/* Modals */}
-      <RequirementModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <RequirementModal
+        visible={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       <ContactSellerModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@/hooks/use-theme";
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 
@@ -32,13 +33,20 @@ export default function FaqSection() {
         "We provide sample kits for all our paper products so you can test quality and suitability before placing a larger order. Sample kits can be requested through our website or by contacting our sales team.",
     },
   ];
+  const { theme } = useTheme();
 
   return (
-    <section className="py-20" id="faq">
+    <section
+      className="py-20"
+      id="faq"
+      style={{
+        backgroundColor: theme.bg1,
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary-white">
-            Frequently Asked <span className="text-gray-100">Questions</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4  text-white">
+            Frequently Asked Questions
           </h2>
           <p className="text-gray-100 max-w-2xl mx-auto">
             Everything you need to know about our paper products and services
@@ -52,7 +60,9 @@ export default function FaqSection() {
                 className="flex justify-between items-center w-full text-left py-4"
                 onClick={() => toggleFaq(index)}
               >
-                <span className="text-lg font-medium">{faq.question}</span>
+                <span className="text-lg font-medium text-white">
+                  {faq.question}
+                </span>
                 <ChevronDown
                   className={`h-5 w-5 text-white transition-transform duration-300 ${
                     openIndex === index ? "rotate-180" : ""
@@ -61,7 +71,7 @@ export default function FaqSection() {
               </button>
               {openIndex === index && (
                 <div className="pb-4">
-                  <p className="text-white font-normal">{faq.answer}</p>
+                  <p className="text-gray-200 font-normal">{faq.answer}</p>
                 </div>
               )}
             </div>

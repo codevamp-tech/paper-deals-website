@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function TestimonialSection() {
   const [mounted, setMounted] = useState(false);
@@ -40,12 +41,15 @@ export default function TestimonialSection() {
 
     fetchTestimonial();
   }, []);
+  const { theme } = useTheme();
 
   if (!mounted) return null;
-  if (loading) return <p className="text-center mt-10">Loading testimonials...</p>;
+  if (loading)
+    return <p className="text-center mt-10">Loading testimonials...</p>;
 
   return (
     <div
+      className="bg-white"
       style={{
         padding: "40px 20px",
         width: "100%",
@@ -59,6 +63,7 @@ export default function TestimonialSection() {
         <p
           className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mt-1 font-[Poppins]
            flex  justify-center mt-10"
+          style={{ color: theme.Text }}
         >
           Testimonials
         </p>
@@ -87,12 +92,19 @@ export default function TestimonialSection() {
                   display: "inline-block",
                   width: "100%",
                   marginBottom: "20px",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                  boxShadow:
+                    "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 }}
                 className="hover:shadow-lg hover:transform hover:scale-[1.02] bg-testo-gradient"
               >
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
+                >
                   <div
                     style={{
                       width: "48px",
@@ -104,14 +116,21 @@ export default function TestimonialSection() {
                     }}
                   >
                     <Image
-                      src={testimonial. profile || "/placeholder.svg"}
+                      src={testimonial.profile || "/placeholder.svg"}
                       alt={testimonial.writer}
                       fill
                       style={{ objectFit: "cover" }}
                     />
                   </div>
                   <div>
-                    <h3 style={{ margin: "0", color: "#333", fontSize: "18px", fontWeight: "600" }}>
+                    <h3
+                      style={{
+                        margin: "0",
+                        color: "#333",
+                        fontSize: "18px",
+                        fontWeight: "600",
+                      }}
+                    >
                       {testimonial.writer}
                     </h3>
                     <p style={{ margin: "0", color: "gray", fontSize: "14px" }}>
@@ -119,13 +138,22 @@ export default function TestimonialSection() {
                     </p>
                   </div>
                 </div>
-                <p style={{ color: "#333", fontSize: "16px", lineHeight: "1.6", margin: "0" }}>
+                <p
+                  style={{
+                    color: "#333",
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    margin: "0",
+                  }}
+                >
                   "{testimonial.para}"
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-400">No testimonials available</p>
+            <p className="text-center text-gray-400">
+              No testimonials available
+            </p>
           )}
         </div>
       </div>

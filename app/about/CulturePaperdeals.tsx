@@ -1,4 +1,5 @@
 "use client";
+import { useTheme } from "@/hooks/use-theme";
 import React, { useEffect, useRef } from "react";
 
 export default function InfiniteCarousel() {
@@ -48,6 +49,7 @@ export default function InfiniteCarousel() {
       cancelAnimationFrame(animation);
     };
   }, []);
+  const { theme } = useTheme();
 
   return (
     <div className="bg-white py-20 rounded-br-2xl rounded-bl-2xl">
@@ -55,7 +57,7 @@ export default function InfiniteCarousel() {
         Culture at{" "}
         <span
           style={{
-            color: "#8440e8",
+            color: theme.Text,
           }}
         >
           PaperDeals

@@ -53,7 +53,6 @@ const OrderNow = ({ productId }: { productId: string }) => {
     <div className="min-h-screen bg-white">
       <div className="flex flex-col md:flex-row">
         {/* Image Section */}
-       
 
         <div className="w-full md:w-1/2 flex flex-col items-start justify-center p-6 relative">
           <img
@@ -66,7 +65,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
           <a
             href={product.image || "/paper.jpg"}
             download
-            className="mt-3 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-5 py-2 rounded-full text-sm hover:opacity-90 transition"
+            className="mt-3 bg-[#0f7aed] text-white px-5 py-2 rounded-full text-sm hover:opacity-90 transition"
           >
             ⬇ Download
           </a>
@@ -83,10 +82,10 @@ const OrderNow = ({ productId }: { productId: string }) => {
           <p className="text-gray-700 mb-4">{product.description}</p>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <button className="bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-6 py-3 w-full sm:w-1/2 rounded-full text-lg">
+            <button className="bg-[#38d200] text-white px-6 py-3 w-full sm:w-1/2 rounded-full text-lg">
               Order Now
             </button>
-            <button className="bg-black text-white px-6 py-3 w-full sm:w-1/2 rounded-full text-lg">
+            <button className="bg-transparent border border-[#0f7aed] text-[#0f7aed] px-6 py-3 w-full sm:w-1/2 rounded-full text-lg">
               Add To Cart
             </button>
           </div>
@@ -94,17 +93,21 @@ const OrderNow = ({ productId }: { productId: string }) => {
       </div>
 
       {/* Related Products */}
-      <div className="py-12 px-4 md:px-10 bg-black">
-        <h1 className="text-white text-3xl md:text-4xl font-bold text-center mb-10">
+      <div className="py-12 px-4 md:px-10 bg-white">
+        <h1 className="text-black text-3xl md:text-4xl font-bold text-center mb-10">
           Related Products in{" "}
-          <span className="text-[#8143e7]">{product.category_id}</span>
+          <span className="text-[#38d200]">{product.category_id}</span>
         </h1>
 
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
           {relatedProducts.map((p: any) => (
             <div
               key={p.id}
-              className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#000] flex-shrink-0 border border-[#8143e7]"
+              className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#fff] flex-shrink-0 border border-[#38d200]"
+              style={{
+                boxShadow:
+                  "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+              }}
             >
               <div className="relative h-44 overflow-hidden group">
                 <img
@@ -114,12 +117,12 @@ const OrderNow = ({ productId }: { productId: string }) => {
                 />
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-white text-sm line-clamp-2">
+                <h3 className="font-semibold text-black text-sm line-clamp-2">
                   {p.product_name}
                 </h3>
-                <p className="text-lg font-bold text-white mt-2">
+                <p className="text-lg font-bold text-black mt-2">
                   ₹{p.price_per_kg}
-                  <span className="text-[#aaa] text-sm font-normal">
+                  <span className="text-gray-700 text-sm font-normal">
                     {" "}
                     /Kg
                   </span>
