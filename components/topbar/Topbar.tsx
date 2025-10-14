@@ -106,9 +106,8 @@ const Topbar = () => {
               <div className="flex items-center gap-1.5 sm:gap-2 bg-gray-300 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 shadow-sm">
                 <Label
                   htmlFor="mode-toggle"
-                  className={`cursor-pointer font-semibold text-xs sm:text-sm transition-colors ${
-                    enabled ? "text-green-600" : "text-black"
-                  }`}
+                  className={`cursor-pointer font-semibold text-xs sm:text-sm transition-colors ${enabled ? "text-green-600" : "text-black"
+                    }`}
                 >
                   {enabled ? "B2B" : "B2C"}
                 </Label>
@@ -124,16 +123,14 @@ const Topbar = () => {
                       window.location.reload();
                     }, 500);
                   }}
-                  className={`relative inline-flex h-5 w-10 sm:h-6 sm:w-12 items-center rounded-full transition-colors duration-300 ${
-                    enabled ? "bg-green-600" : "bg-black"
-                  }`}
+                  className={`relative inline-flex h-5 w-10 sm:h-6 sm:w-12 items-center rounded-full transition-colors duration-300 ${enabled ? "bg-green-600" : "bg-black"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
-                      enabled
+                    className={`inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${enabled
                         ? "translate-x-5 sm:translate-x-6"
                         : "translate-x-0.5 sm:translate-x-1"
-                    }`}
+                      }`}
                   />
                 </button>
               </div>
@@ -216,9 +213,8 @@ const Topbar = () => {
                     <User className="w-4 h-4" />
                     Login
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -230,9 +226,8 @@ const Topbar = () => {
                     <User className="w-4 h-4" />
                     Login
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
                 </>
@@ -241,11 +236,10 @@ const Topbar = () => {
               {/* Dropdown - shows on all screen sizes */}
               {!user && isOpen && (
                 <div
-                  className={`absolute top-full ${
-                    window.innerWidth < 768
+                  className={`absolute top-full ${window.innerWidth < 768
                       ? "left-0 right-0 mx-auto w-48"
                       : "right-0 w-48"
-                  } mt-2 bg-white rounded-lg shadow-xl z-50 w-[25vw]`}
+                    } mt-2 bg-white rounded-lg shadow-xl z-50 w-[25vw]`}
                 >
                   <Link
                     href="/buyer-login"
@@ -377,12 +371,7 @@ const Topbar = () => {
                 >
                   Consultants
                 </Link>
-                <Link
-                  href="/B2B/seller"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Seller
-                </Link>
+
                 <Link
                   href="/B2B/become-a-seller"
                   className="text-sm hover:text-cyan-300"
@@ -422,6 +411,12 @@ const Topbar = () => {
                 </Link>
                 <Link href="/product" className="text-sm hover:text-cyan-300">
                   Products
+                </Link>
+                <Link
+                  href="/B2B/seller"
+                  className="text-sm hover:text-cyan-300"
+                >
+                  Seller
                 </Link>
                 <Link href="/about" className="text-sm hover:text-cyan-300">
                   About Us
