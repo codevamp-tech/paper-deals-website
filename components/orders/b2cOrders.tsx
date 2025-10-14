@@ -94,7 +94,7 @@ const OrderCard = ({ order }: any) => {
   const handleTrackOrder = () => {
     
     // You can later replace alert() with a router push or modal:
- router.push(`/order/tracking/${order.deal_id}`);
+ router.push(`/buyer3/order/tracking/${order.deal_id}`);
   };
 
   return (
