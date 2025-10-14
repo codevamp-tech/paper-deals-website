@@ -237,10 +237,10 @@ const Topbar = () => {
               {/* Dropdown - shows on all screen sizes */}
               {!user && isOpen && (
                 <div
-                  className={`absolute top-full ${window.innerWidth < 768
-                    ? "left-0 right-0 mx-auto w-48"
-                    : "right-0 w-48"
-                    } mt-2 bg-white rounded-lg shadow-xl z-50 w-[25vw]`}
+                  className={`absolute ${typeof window !== "undefined" && window.innerWidth < 768
+                      ? "left-1/2 -translate-x-1/2 w-48"
+                      : "right-0 w-48"
+                    } top-[calc(50%+2px)] bg-white rounded-lg shadow-lg z-50`}
                 >
                   <Link
                     href="/buyer-login"
