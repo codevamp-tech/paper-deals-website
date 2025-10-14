@@ -166,7 +166,7 @@ export default function BuyersPage() {
 
         {/* CTA – centered under the card */}
         <div className="mt-8 flex justify-center">
-          <Link href={`/B2B/seller/${id}/${enquiryid}`}>
+          <Link href={`/B2B/seller/${id}/enquiry`}>
             <Button className="px-6 h-11 text-white bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500">
               Enquiry Now
             </Button>
