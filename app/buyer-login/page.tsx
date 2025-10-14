@@ -171,13 +171,14 @@ export default function BuyerSignin() {
                 {/* Forgot Password + Register */}
                 <div className="flex justify-between items-center text-sm">
                   <a
-                    href="#"
+                    href="/forget"
                     className="text-gray-500 hover:text-cyan-600 transition-colors"
                   >
                     Forgot Password?
                   </a>
                   <a
-                    href="#"
+
+                    href="/register"
                     className="font-semibold text-cyan-600 hover:text-blue-600 transition-colors"
                   >
                     Register Here →

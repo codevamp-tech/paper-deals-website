@@ -395,11 +395,7 @@ const Topbar = () => {
                 </Link>
 
                 {/* ✅ Show only if buyer logged in */}
-                {isLoggedIn && (
-                  <Link href="/order" className="text-sm hover:text-cyan-300">
-                    My Orders
-                  </Link>
-                )}
+               
               </>
             ) : (
               <>
@@ -426,11 +422,11 @@ const Topbar = () => {
                 </Link>
 
                 {/* ✅ Show only if buyer logged in */}
-                {isLoggedIn && (
+                {/* {isLoggedIn && (
                   <Link href="/order" className="text-sm hover:text-cyan-300">
                     My Orders
                   </Link>
-                )}
+                )} */}
               </>
             )}
           </div>

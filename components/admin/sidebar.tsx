@@ -56,6 +56,7 @@ import { Button } from "@/components/ui/button";
 
 // ✅ Main Navigation Items (only single-link pages)
 const navigation = [
+<<<<<<< Updated upstream
   { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
   { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
   {
@@ -73,6 +74,19 @@ const navigation = [
     icon: MessageSquareText,
   },
 ];
+=======
+    { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
+    { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
+    { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
+    { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
+    { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
+    { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
+    { name: "Chat", href: "/buyer3/chat", icon: Pi },
+    { name: "Change Password", href: "/buyer3/changepassword", icon: MessageSquareText },
+     { name: "order", href: "/buyer3/order", icon: MessageSquareText },
+
+]
+>>>>>>> Stashed changes
 
 // ✅ Dropdown Menu Component
 function DropdownMenu({ title, icon: Icon, isOpen, toggle, links }) {
@@ -118,6 +132,7 @@ export default function AdminSidebar({ onClose }) {
   const pathname = usePathname();
   const router = useRouter();
 
+<<<<<<< Updated upstream
   // ✅ Fixed: Added missing state for PD Deals
   const [dashboardOpen, setDashboardOpen] = useState(false);
   const [directsingleorderOpen, setDirectSingleOrderOpen] = useState(false);
@@ -128,6 +143,19 @@ export default function AdminSidebar({ onClose }) {
   const [chatOpen, setchatOpen] = useState(false);
   const [changepasswordOpen, setchangepasswordOpen] = useState(false);
   const [subscriptionOpen, setsubscriptionsOpen] = useState(false);
+=======
+    // ✅ Fixed: Added missing state for PD Deals
+    const [dashboardOpen, setDashboardOpen] = useState(false)
+    const [directsingleorderOpen, setDirectSingleOrderOpen] = useState(false)
+    const [enquiryOpen, setenquiryOpen] = useState(false)
+    const [pdbulkdealOpen, setPdbulkDealOpen] = useState(false)
+    const [profileOpen, setprofileOpen] = useState(false)
+    const [directreportOpen, setdirectreportOpen] = useState(false)
+    const [chatOpen, setchatOpen] = useState(false)
+    const [changepasswordOpen, setchangepasswordOpen] = useState(false)
+    const [subscriptionOpen, setsubscriptionsOpen] = useState(false)
+     const [suborderOpen, setorderOpen] = useState(false)
+>>>>>>> Stashed changes
 
   const handleLogout = async () => {
     try {
