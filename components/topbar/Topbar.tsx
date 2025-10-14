@@ -128,8 +128,8 @@ const Topbar = () => {
                 >
                   <span
                     className={`inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${enabled
-                        ? "translate-x-5 sm:translate-x-6"
-                        : "translate-x-0.5 sm:translate-x-1"
+                      ? "translate-x-5 sm:translate-x-6"
+                      : "translate-x-0.5 sm:translate-x-1"
                       }`}
                   />
                 </button>
@@ -137,36 +137,37 @@ const Topbar = () => {
             </div>
 
             {/* Search Bar */}
-            {showSearch && (
-              <div className="hidden md:flex items-center flex-1 mx-6 relative">
-                <div className="relative w-full max-w-md">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
-                  <input
-                    type="text"
-                    placeholder="Search sellers, buyers or products..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
-                  />
-                  {results.length > 0 && (
-                    <div className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
-                      {results.map((item: any) => (
-                        <Link
-                          key={item.id}
-                          href={`/user/${item.id}`}
-                          className="block px-4 py-2 hover:bg-cyan-50 text-gray-700 text-sm"
-                        >
-                          {item.user_name || item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+            <div className="hidden md:flex items-center flex-1 justify-center">
+              {showSearch && (
+                <div className="hidden md:flex items-center flex-1 mx-6 relative">
+                  <div className="relative w-full max-w-md">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Search sellers, buyers or products..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
+                    />
+                    {results.length > 0 && (
+                      <div className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+                        {results.map((item: any) => (
+                          <Link
+                            key={item.id}
+                            href={`/user/${item.id}`}
+                            className="block px-4 py-2 hover:bg-cyan-50 text-gray-700 text-sm"
+                          >
+                            {item.user_name || item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-
+              )}
+            </div>
             {/* Right Section (Login / User) */}
-            <div className="relative">
+            <div className="flex items-end justify-end">
               {user ? (
                 <div className="flex items-center">
                   {/* Desktop View */}
@@ -237,8 +238,8 @@ const Topbar = () => {
               {!user && isOpen && (
                 <div
                   className={`absolute top-full ${window.innerWidth < 768
-                      ? "left-0 right-0 mx-auto w-48"
-                      : "right-0 w-48"
+                    ? "left-0 right-0 mx-auto w-48"
+                    : "right-0 w-48"
                     } mt-2 bg-white rounded-lg shadow-xl z-50 w-[25vw]`}
                 >
                   <Link
@@ -395,7 +396,7 @@ const Topbar = () => {
                 </Link>
 
                 {/* ✅ Show only if buyer logged in */}
-               
+
               </>
             ) : (
               <>
