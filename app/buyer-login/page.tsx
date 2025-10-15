@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, X } from "lucide-react";
 import Cookies from "js-cookie";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function BuyerSignin() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,6 +17,7 @@ export default function BuyerSignin() {
     isRobot: false,
   });
 
+  // ✅ Handle input changes
   const handleInputChange = (e: any) => {
     setFormData({
       ...formData,
@@ -27,10 +32,10 @@ export default function BuyerSignin() {
     });
   };
 
+  // ✅ Handle Login Submit
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    if (!formData.isRobot) return;
+    if (!formData.isRobot) return alert("Please verify you're not a robot.");
 
     try {
       const res = await fetch(
@@ -57,17 +62,40 @@ export default function BuyerSignin() {
       if (res.ok) {
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "/buyer3/dashboard"; // direct redirect
+        window.location.href = "/buyer3/dashboard";
       } else {
-        console.error("Login failed:", data.message || "Invalid credentials");
+        alert(data.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("Login error:", err);
     }
   };
 
+  // ✅ Forgot Password Submit
+  const handleForgotPassword = async (e: any) => {
+    e.preventDefault();
+    if (!forgotEmail) return alert("Please enter your email");
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/forgot-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: forgotEmail }),
+        }
+      );
+      const data = await res.json();
+      alert(data.message || "Password reset link sent!");
+      setIsForgotOpen(false);
+      setForgotEmail("");
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 py-16">
+    <div className="min-h-screen bg-gray-100 relative">
       {/* Header Section */}
       <div className="relative h-48 bg-gradient-to-r from-cyan-700 via-blue-700 to-indigo-700 overflow-hidden">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
@@ -91,7 +119,7 @@ export default function BuyerSignin() {
               </h2>
 
               <div className="space-y-6">
-                {/* Login Type Selector */}
+                {/* Login Type */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Login as
@@ -108,7 +136,7 @@ export default function BuyerSignin() {
                   </div>
                 </div>
 
-                {/* Email Input */}
+                {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Email address
@@ -126,7 +154,7 @@ export default function BuyerSignin() {
                   </div>
                 </div>
 
-                {/* Password Input */}
+                {/* Password */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Password
@@ -151,7 +179,7 @@ export default function BuyerSignin() {
                   </div>
                 </div>
 
-                {/* reCAPTCHA */}
+                {/* Captcha */}
                 <div className="flex items-center p-4 border-2 border-gray-200 rounded-lg bg-gray-50">
                   <input
                     type="checkbox"
@@ -160,24 +188,20 @@ export default function BuyerSignin() {
                     onChange={handleCheckboxChange}
                     className="w-5 h-5 text-cyan-600 border-2 border-gray-300 rounded focus:ring-cyan-500"
                   />
-                  <label
-                    htmlFor="recaptcha"
-                    className="ml-3 text-sm text-gray-700"
-                  >
+                  <label htmlFor="recaptcha" className="ml-3 text-sm text-gray-700">
                     I'm not a robot
                   </label>
                 </div>
 
-                {/* Forgot Password + Register */}
+                {/* Forgot + Register */}
                 <div className="flex justify-between items-center text-sm">
-                  <a
-                    href="/forget"
+                  <button
+                    onClick={() => setIsForgotOpen(true)}
                     className="text-gray-500 hover:text-cyan-600 transition-colors"
                   >
                     Forgot Password?
-                  </a>
+                  </button>
                   <a
-
                     href="/register"
                     className="font-semibold text-cyan-600 hover:text-blue-600 transition-colors"
                   >
@@ -185,7 +209,7 @@ export default function BuyerSignin() {
                   </a>
                 </div>
 
-                {/* Submit Button */}
+                {/* Submit */}
                 <button
                   onClick={handleSubmit}
                   className="w-full py-4 rounded-xl font-semibold text-lg text-white shadow-lg bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-600 hover:to-blue-700 transform hover:scale-105 transition-all"
@@ -196,7 +220,7 @@ export default function BuyerSignin() {
             </div>
           </div>
 
-          {/* Right Side - Promo Section */}
+          {/* Right Side */}
           <div className="w-full lg:w-1/2 bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 p-12 lg:p-16 flex flex-col justify-center items-center text-white relative overflow-hidden">
             <div className="relative z-10 mb-12">
               <div className="bg-white bg-opacity-10 rounded-3xl backdrop-blur-sm border border-white border-opacity-20 flex items-center justify-center p-6">
@@ -210,16 +234,72 @@ export default function BuyerSignin() {
 
             <div className="relative z-10 text-center">
               <h3 className="text-2xl font-semibold mb-4">
-                Create new account for Seller and Buyer
+                Create new account for  Buyer
               </h3>
               <p className="text-lg opacity-90 leading-relaxed">
                 Join our platform to access exclusive deals and opportunities
-                for both buyers and sellers
+                for  buyers 
               </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ✅ Forgot Password Modal */}
+      <AnimatePresence>
+        {isForgotOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl relative"
+            >
+              <button
+                onClick={() => setIsForgotOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              >
+                <X size={22} />
+              </button>
+
+              <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
+                Forgot Password
+              </h2>
+              <p className="text-gray-600 text-sm mb-6 text-center">
+                Enter your registered email to receive reset instructions.
+              </p>
+
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email"
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 transition-all"
+                >
+                  Send Reset Link
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

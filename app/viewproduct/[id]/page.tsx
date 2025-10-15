@@ -28,11 +28,11 @@ export default function ViewProductPage() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/products/${id}`
         );
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
-        setProduct(data);
+        setProduct(data.data);
       } catch (err) {
         console.error("Error fetching product:", err);
       } finally {
@@ -48,7 +48,7 @@ export default function ViewProductPage() {
   }
 
   if (!product) {
-    return <div className="flex justify-center items-center h-[60vh] text-xl">❌ Product not found</div>;
+    return <div className="flex justify-center items-center h-[60vh] text-xl">❌ Product not</div>;
   }
 
   return (
@@ -74,9 +74,14 @@ export default function ViewProductPage() {
       </p>
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Seller Info</h2>
-        <p className="text-gray-700">Name: {product.seller.name}</p>
-        <p className="text-gray-700">Email: {product.seller.email_address}</p>
-        <p className="text-gray-700">Phone: {product.seller.phone_no}</p>
+        <p className="text-black">
+            <strong>Organization:</strong>{" "}
+            {product.seller.organization.organizations}
+          </p>
+          <p className="text-black">
+            <strong>City:</strong> {product.seller.organization.city}
+          </p>
+         
       </div>
     </div>
   );
