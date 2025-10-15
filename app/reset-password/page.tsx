@@ -83,7 +83,7 @@ function ResetPasswordInner() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-purple-7000 to-sky-200 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-tr from-purple-800 to-sky-300 flex items-center justify-center p-4">
       <div className="bg-gradient-to-br from-white/90 via-white/80 to-white/90 shadow-2xl rounded-3xl w-full max-w-lg p-10 border border-white/30 backdrop-blur-lg">
         <h2 className="text-3xl md:text-4xl font-bold text-purple-700 text-center mb-8 animate-pulse">
           Change Password

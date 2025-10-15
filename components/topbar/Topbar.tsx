@@ -141,14 +141,17 @@ const Topbar = () => {
               {showSearch && (
                 <div className="hidden md:flex items-center flex-1 mx-6 relative">
                   <div className="relative w-full max-w-md">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Search sellers, buyers or products..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
+                      className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
                     />
+
+                    {/* 🔹 Search Icon on Right */}
+                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
+
                     {results.length > 0 && (
                       <div className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
                         {results.map((item: any) => (
@@ -166,92 +169,30 @@ const Topbar = () => {
                 </div>
               )}
             </div>
+
             {/* Right Section (Login / User) */}
             <div className="flex items-end justify-end">
-              {user ? (
-                <div className="flex items-center">
-                  {/* Desktop View */}
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg font-semibold shadow-md">
-                    <User className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{user.user_name}</span>
-                    <button
-                      onClick={handleLogout}
-                      className="ml-2 text-sm text-white/80 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      Logout
-                    </button>
-                  </div>
-
-                  {/* Mobile View - Circle with Initials */}
-                  <div className="sm:hidden relative">
-                    <button
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-semibold text-sm shadow-md hover:bg-blue-600 transition-colors"
-                    >
-                      {getInitials(user.user_name)}
-                    </button>
-
-                    {/* Dropdown Menu */}
-                    {isDropdownOpen && (
-                      <div className="absolute top-full right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left transition-colors"
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* Desktop: Button */}
-                  <button
-                    onClick={() => setIsOpen((prev) => !prev)}
-                    className="hidden md:flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-md"
-                  >
-                    <User className="w-4 h-4" />
-                    Login
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                        }`}
-                    />
-                  </button>
-
-                  {/* Mobile/Tablet: Text link */}
-                  <button
-                    onClick={() => setIsOpen((prev) => !prev)}
-                    className="flex md:hidden items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium text-sm"
-                  >
-                    <User className="w-4 h-4" />
-                    Login
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                        }`}
-                    />
-                  </button>
-                </>
-              )}
-
-              {/* Dropdown - shows on all screen sizes */}
-              {!user && isOpen && (
-                <div
-                  className={`absolute ${typeof window !== "undefined" && window.innerWidth < 768
-                      ? "left-1/2 -translate-x-1/2 w-48"
-                      : "right-0 w-48"
-                    } top-[calc(50%+2px)] bg-white rounded-lg shadow-lg z-50`}
+              <div className="flex items-center">
+                {/* Desktop Button */}
+                <Link
+                  href="/buyer-login"
+                  className="hidden md:flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-md"
                 >
-                  <Link
-                    href="/buyer-login"
-                    className="flex items-center gap-3 px-4 py-3 text-blue-500 hover:text-blue-700 transition-colors duration-200"
-                  >
-                    <User className="w-4 h-4" />
-                    Buyer Login
-                  </Link>
-                </div>
-              )}
+                  <User className="w-4 h-4" />
+                  Login
+                </Link>
+
+                {/* Mobile/Tablet Button */}
+                <Link
+                  href="/buyer-login"
+                  className="flex md:hidden items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium text-sm"
+                >
+                  <User className="w-4 h-4" />
+                  Login
+                </Link>
+              </div>
             </div>
+
             <nav className="relative">
               {/* Your regular desktop navigation */}
 

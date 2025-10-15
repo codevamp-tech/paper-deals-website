@@ -3,12 +3,22 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // ✅ Add this import
 import { ChevronRight } from "lucide-react";
 import WhySellpaperdeals from "./Why-Sell-Paperdeals";
 import RegisterNow from "@/components/modal/RegisterNow";
 
 export default function SellOnlinePage() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // ✅ Hook for navigation
+
+  const handleSellerLogin = () => {
+    // 🔹 Option 1: Internal Next.js route
+    // router.push("/seller-login");
+
+    // 🔹 Option 2: If your admin panel is external (uncomment this line instead)
+    window.location.href = "https://paper-deals-admin.netlify.app/";
+  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -39,7 +49,6 @@ export default function SellOnlinePage() {
               leading e-commerce platform.
             </p>
             <div className="flex space-x-4">
-              {/* ✅ Modified Button */}
               <button
                 className="bg-[#0f7aed] text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
                 onClick={() => setIsOpen(true)}
@@ -47,8 +56,12 @@ export default function SellOnlinePage() {
                 Start Selling
               </button>
 
-              <button className="border border-white text-black font-medium py-3 px-6 rounded-lg  transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
-                Learn More
+              {/* ✅ Seller Login Redirect */}
+              <button
+                onClick={handleSellerLogin}
+                className="border border-gray-300 text-black font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:border-blue-600 hover:text-blue-600 shadow-md hover:shadow-lg"
+              >
+                Login as a Seller
               </button>
             </div>
           </div>
@@ -57,7 +70,7 @@ export default function SellOnlinePage() {
             <div className="relative h-64 md:h-96 w-full animate-float">
               <Image
                 src="/becomeaseller.png"
-                alt="Sell on Flipkart"
+                alt="Sell on PaperDeals"
                 fill
                 className="object-contain rounded-lg"
                 priority
@@ -81,7 +94,7 @@ export default function SellOnlinePage() {
             to new heights.
           </p>
           <button
-            className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg "
+            className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg"
             style={{
               boxShadow:
                 "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
@@ -92,7 +105,7 @@ export default function SellOnlinePage() {
           </button>
         </div>
 
-        {/* ✅ Same Popup */}
+        {/* Popup Modal */}
         <RegisterNow visible={isOpen} onClose={() => setIsOpen(false)} />
       </section>
     </div>

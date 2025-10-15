@@ -9,10 +9,12 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useRouter } from "next/navigation"; // ✅ added
 
 export default function ProductCrousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const { theme } = useTheme();
 
   // ✅ Fetch API Data
   useEffect(() => {
@@ -70,7 +72,6 @@ export default function ProductCrousel() {
 
     return () => cancelAnimationFrame(animationId);
   }, [products]);
-  const { theme } = useTheme();
 
   return (
     <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32 bg-white">
@@ -78,14 +79,14 @@ export default function ProductCrousel() {
         {/* Heading */}
         <div className="text-center mb-12">
           <h2
-            className=" text-[6vh] font-[900] mb-3"
+            className="text-[6vh] font-[900] mb-3"
             style={{ color: theme.Text }}
           >
             Products
           </h2>
         </div>
 
-        {/* Button */}
+        {/* View All Products Button */}
         <div className="flex justify-end mb-6">
           <a href="/product">
             <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 border border-cyan-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md">
@@ -95,10 +96,8 @@ export default function ProductCrousel() {
           </a>
         </div>
 
+        {/* Product Carousel */}
         <div className="relative overflow-hidden">
-          {/* <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
-          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div> */}
-
           <div className="overflow-hidden py-4">
             <div
               ref={scrollRef}
@@ -110,6 +109,7 @@ export default function ProductCrousel() {
                   {products.map((p) => (
                     <ProductCard
                       key={p.id + dupeIndex}
+                      id={p.id}
                       title={p.title}
                       subtitle={p.subtitle}
                       price={p.price}
@@ -131,6 +131,7 @@ export default function ProductCrousel() {
 }
 
 interface ProductCardProps {
+  id: number;
   title: string;
   subtitle: string;
   price: number;
@@ -142,6 +143,7 @@ interface ProductCardProps {
 }
 
 function ProductCard({
+  id,
   title,
   subtitle,
   price,
@@ -150,6 +152,12 @@ function ProductCard({
   date,
   type,
 }: ProductCardProps) {
+  const router = useRouter(); // ✅ for navigation
+
+  const handleClick = () => {
+    router.push(`/product/${id}`); // ✅ Navigate to product detail page
+  };
+
   const typeColors = {
     Premium: "from-blue-500 to-cyan-500",
     Standard: "from-green-500 to-emerald-500",
@@ -167,7 +175,10 @@ function ProductCard({
   };
 
   return (
-    <div className="group w-[380px] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border border-slate-200 hover:border-blue-300 hover:-translate-y-1">
+    <div
+      onClick={handleClick}
+      className="group w-[380px] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border border-slate-200 hover:border-blue-300 hover:-translate-y-1 cursor-pointer"
+    >
       <div
         className={`h-24 bg-gradient-to-br ${typeColors[type]} relative overflow-hidden`}
       >
