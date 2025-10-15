@@ -4,10 +4,11 @@ import InfiniteCarousel from "./CulturePaperdeals";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function AboutUs() {
   // Mock theme for demonstration
-  const theme = { Text: "#8b5cf6" };
+  const { theme } = useTheme();
 
   return (
     <section className="w-full">
@@ -17,7 +18,12 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left Column - Text Content */}
             <div className="space-y-6">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white">
+              <div
+                className="inline-flex items-center px-4 py-2 rounded-full text-white"
+                style={{
+                  backgroundColor: theme.bg1,
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -230,15 +236,6 @@ export default function AboutUs() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Placeholder sections for other components */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-gray-100 rounded-lg p-8 text-center">
-            <p className="text-gray-600">InfiniteCarousel Component</p>
           </div>
         </div>
       </div>

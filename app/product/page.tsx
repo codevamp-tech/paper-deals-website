@@ -16,7 +16,7 @@ export default function Product() {
     <div>
       <Advertising />
       {/* <ProductList /> */}
-      <div className="border border-red-500 bg-white">
+      <div className="bg-white">
         <PriceList />
       </div>
 
