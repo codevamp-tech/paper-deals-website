@@ -159,19 +159,25 @@ const Footer = () => {
             <span className="font-medium text-gray-700">PaperDeals</span>. All
             rights reserved.
           </p>
-
-          <div className="flex flex-wrap justify-center md:justify-end gap-6 mt-4 md:mt-0 text-sm">
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
-              (policy, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="text-gray-500 hover:text-blue-600 transition-colors duration-150"
-                >
-                  {policy}
-                </a>
-              )
-            )}
+          <div className="flex flex-wrap justify-center md:justify-end gap-6 mt-4 md:mt-0 items-center">
+            <a
+              href="/privacy-policy"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/term"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="/payment-policy"
+              className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
+            >
+              Payment Policy
+            </a>
           </div>
         </div>
       </div>
