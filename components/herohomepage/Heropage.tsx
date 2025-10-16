@@ -85,9 +85,8 @@ const Hero = () => {
             key={index}
             src={src}
             alt={`Background ${index}`}
-            className={`absolute w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-              index === current ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === current ? "opacity-100" : "opacity-0"
+              }`}
           />
         ))}
         <div className="absolute inset-0 bg-black/40 z-10" />
@@ -152,6 +151,7 @@ const Hero = () => {
               </div>
 
               <Button
+                onClick={() => router.push("/product")} // 👈 redirect to products page
                 className="text-white px-8 py-6 text-lg ml-4"
                 style={{
                   backgroundColor: theme.bg1,
@@ -159,6 +159,7 @@ const Hero = () => {
               >
                 Shop Now <ShoppingCart className="ml-2 h-5 w-5" />
               </Button>
+
             </div>
           </div>
         </div>

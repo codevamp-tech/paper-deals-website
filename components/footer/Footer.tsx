@@ -14,8 +14,8 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-white via-gray-50 to-gray-100 border-t border-gray-200 mt-16">
-      <div className="container mx-auto px-6 lg:px-12 py-14">
+    <footer className="bg-gradient-to-b from-white  mt-16">
+      <div className="container mx-auto px-6 lg:px-12 ">
         {/* ===== Top Section ===== */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
           {/* ===== Logo + About + Social ===== */}
@@ -39,8 +39,7 @@ const Footer = () => {
                   icon: <Facebook className="h-5 w-5" />,
                   href: "https://www.facebook.com/p/Paper-Deals-61554782455824",
                 },
-                { icon: <Twitter className="h-5 w-5" />, href: "#" },
-                { icon: <Instagram className="h-5 w-5" />, href: "#" },
+              
                 {
                   icon: <Linkedin className="h-5 w-5" />,
                   href: "https://www.linkedin.com/company/paper-deals/",

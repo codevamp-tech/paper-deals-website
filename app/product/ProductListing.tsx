@@ -4,6 +4,7 @@ import RequirementModal from "@/components/modal/TellUsModal";
 import Pagination from "@/components/pagination";
 import { useTheme } from "@/hooks/use-theme";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const categories = [
@@ -31,6 +32,12 @@ export default function ProductListing() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
+  const [selectedProductDetail, setSelectedProductDetail] = useState<any | null>(null);
+  const router = useRouter();
+
+
+
 
   const fetchProducts = async (page: number = 1) => {
     try {
@@ -143,8 +150,8 @@ export default function ProductListing() {
     selectedCategory === "all"
       ? products
       : products.filter((p) =>
-          p.category_id?.toLowerCase().includes(selectedCategory)
-        );
+        p.category_id?.toLowerCase().includes(selectedCategory)
+      );
 
   const getImageContent = (item: any) => {
     if (!item.image)
@@ -195,7 +202,7 @@ export default function ProductListing() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
       <div className="mb-12 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-black">
-          Kraft & Board Paper Most Viewed Price
+         Top-Rated Paper Products in the Market
         </h2>
         <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
       </div>
@@ -206,11 +213,10 @@ export default function ProductListing() {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${
-              selectedCategory === cat.id
-                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-200"
-            }`}
+            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id
+              ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+              : "bg-gray-200 text-gray-800 hover:bg-gray-200"
+              }`}
           >
             {cat.name}
           </button>
@@ -265,23 +271,37 @@ export default function ProductListing() {
                   <p className="text-gray-700">{item.category_id}</p>
 
                   <div className="flex gap-3 mt-3">
+
+
                     <button
-                      onClick={handleBuyClick}
+                      onClick={() => setSelectedProductDetail(product)}
                       className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
                     >
                       Buy
                     </button>
-                    <button className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition">
+
+                    <button className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
+                       onClick={(e) => {
+                      e.stopPropagation(); // stop the click from reaching the parent Link
+                      e.preventDefault();
+                      router.push("/subscriptionPlan"); // redirect to subscription plan page
+                      }}>
                       Contact
                     </button>
                   </div>
 
                   <button
                     className="w-full py-2 rounded-lg bg-[#38d200] text-white hover:opacity-90 transition mt-2"
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // stop the click from reaching the parent Link
+                      e.preventDefault();  // prevent the default link behavior
+                      setIsModalOpen(true); // open your modal
+                    }}
                   >
                     Tell Us Your Requirement
                   </button>
+
+
                 </div>
               </div>
             </Link>

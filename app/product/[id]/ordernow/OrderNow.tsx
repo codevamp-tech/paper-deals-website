@@ -18,9 +18,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
   // 🔹 Save cart to localStorage whenever it changes
   useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("paperCart", JSON.stringify(cart));
-    }
+    localStorage.setItem("paperCart", JSON.stringify(cart));
   }, [cart]);
 
   // 🔹 Fetch single product
@@ -64,19 +62,17 @@ const OrderNow = ({ productId }: { productId: string }) => {
     }
   };
 
-  // 🔹 Add to Cart Handler
+  // 🔹 Add to Cart Handler (alerts removed)
   const handleAddToCart = () => {
     if (!product) return;
 
     const existingItemIndex = cart.findIndex((item) => item.id === product.id);
 
     if (existingItemIndex > -1) {
-      // Update quantity if already in cart
       const updatedCart = [...cart];
       updatedCart[existingItemIndex].quantity += quantity;
       setCart(updatedCart);
     } else {
-      // Add new item to cart
       setCart([
         ...cart,
         {
@@ -89,25 +85,29 @@ const OrderNow = ({ productId }: { productId: string }) => {
       ]);
     }
 
-    alert(`Added ${quantity}kg of ${product.product_name} to cart!`);
     setQuantity(1); // Reset quantity
   };
 
-  // 🔹 Order Now Handler
+  // 🔹 Order Now Handler (alerts removed)
   const handleOrderNow = () => {
-    if (!product) return;
-
-    // Add to cart first
     handleAddToCart();
-
-    // Redirect to checkout or cart page
+    // Redirect to checkout if needed
     // window.location.href = "/checkout";
-    alert("Proceeding to checkout...");
   };
 
   // 🔹 Update quantity
   const updateQuantity = (change: number) => {
     setQuantity((prev) => Math.max(1, prev + change));
+  };
+
+  // 🔹 Update cart item quantity from mini cart
+  const updateCartItemQuantity = (itemId: string, change: number) => {
+    const updatedCart = cart
+      .map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity + change } : item
+      )
+      .filter((item) => item.quantity > 0);
+    setCart(updatedCart);
   };
 
   if (loading) return <p className="text-center p-6">Loading...</p>;
@@ -218,9 +218,21 @@ const OrderNow = ({ productId }: { productId: string }) => {
                   />
                   <div>
                     <p className="font-semibold">{item.product_name}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.quantity} kg × ₹{item.price_per_kg}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <button
+                        onClick={() => updateCartItemQuantity(item.id, -1)}
+                        className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
+                      >
+                        -
+                      </button>
+                      <span className="px-2">{item.quantity}</span>
+                      <button
+                        onClick={() => updateCartItemQuantity(item.id, 1)}
+                        className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <p className="font-bold text-lg">
@@ -259,7 +271,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
               onClick={() => (window.location.href = `/order/${p.id}`)}
               style={{
                 boxShadow:
-                  "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+                  "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0 0 1px inset",
               }}
             >
               <div className="relative h-44 overflow-hidden group">
@@ -275,10 +287,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                 </h3>
                 <p className="text-lg font-bold text-black mt-2">
                   ₹{p.price_per_kg}
-                  <span className="text-gray-700 text-sm font-normal">
-                    {" "}
-                    /Kg
-                  </span>
+                  <span className="text-gray-700 text-sm font-normal"> /Kg</span>
                 </p>
               </div>
             </div>

@@ -35,7 +35,7 @@ export default function BuyerSignin() {
   // ✅ Handle Login Submit
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!formData.isRobot) return alert("Please verify you're not a robot.");
+    if (!formData.isRobot) return; // previously alert removed
 
     try {
       const res = await fetch(
@@ -64,7 +64,7 @@ export default function BuyerSignin() {
         localStorage.setItem("user", JSON.stringify(data.user));
         window.location.href = "/buyer3/dashboard";
       } else {
-        alert(data.message || "Invalid credentials");
+        console.log("Login failed:", data.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -74,19 +74,19 @@ export default function BuyerSignin() {
   // ✅ Forgot Password Submit
   const handleForgotPassword = async (e: any) => {
     e.preventDefault();
-    if (!forgotEmail) return alert("Please enter your email");
+    if (!forgotEmail) return; // removed alert
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/forgot-password`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/forgot`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: forgotEmail }),
+          body: JSON.stringify({ email: forgotEmail, user_type: 3 }),
         }
       );
       const data = await res.json();
-      alert(data.message || "Password reset link sent!");
+      console.log(data.message || "Password reset link sent!");
       setIsForgotOpen(false);
       setForgotEmail("");
     } catch (err) {
@@ -234,11 +234,11 @@ export default function BuyerSignin() {
 
             <div className="relative z-10 text-center">
               <h3 className="text-2xl font-semibold mb-4">
-                Create new account for  Buyer
+                Create new account for Buyer
               </h3>
               <p className="text-lg opacity-90 leading-relaxed">
                 Join our platform to access exclusive deals and opportunities
-                for  buyers 
+                for buyers
               </p>
             </div>
           </div>
