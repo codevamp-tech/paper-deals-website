@@ -5,6 +5,7 @@ import { Search, ChevronRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BioImageSec from "../ImageOrBio/ImageAndBio";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/hooks/use-theme";
 
 const images = ["/banner1.png", "/banner2.png", "/banner3.jpg"];
 
@@ -73,6 +74,7 @@ const Hero = () => {
     }
     return null;
   };
+  const { theme } = useTheme();
 
   return (
     <section className="relative py-[12vh] overflow-hidden">
@@ -149,7 +151,12 @@ const Hero = () => {
                 </div>
               </div>
 
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-8 py-6 text-lg ml-4">
+              <Button
+                className="text-white px-8 py-6 text-lg ml-4"
+                style={{
+                  backgroundColor: theme.bg1,
+                }}
+              >
                 Shop Now <ShoppingCart className="ml-2 h-5 w-5" />
               </Button>
             </div>

@@ -597,70 +597,74 @@ export default function LiveStockPage() {
       </main>
       {/* View Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-3xl rounded-2xl shadow-lg bg-white">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
-            <DialogTitle className="text-lg font-semibold text-white text-center">
-              Seller’s Product List
+        <DialogContent className="max-w-3xl rounded-2xl shadow-lg bg-white max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-4">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-white text-center">
+              Seller's Product List
             </DialogTitle>
           </div>
 
           {modalLoading ? (
             <div className="text-center py-6 text-gray-500">Loading...</div>
           ) : (
-            <div className="p-6">
+            <div className="p-4 sm:p-6 overflow-auto flex-1">
               {sellerProducts.length === 0 ? (
                 <p className="text-center text-gray-500">No products found.</p>
               ) : (
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b text-left text-gray-600">
-                      <th className="py-2 px-3">Product</th>
-                      <th className="py-2 px-3">Category</th>
-                      <th className="py-2 px-3">GSM</th>
-                      <th className="py-2 px-3">BF</th>
-                      <th className="py-2 px-3">Shade</th>
-                      <th className="py-2 px-3">Price</th>
-                      <th className="py-2 px-3 text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sellerProducts.map((p) => (
-                      <tr key={p.id} className="border-b hover:bg-gray-50">
-                        <td className="py-2 px-3 font-medium">
-                          {p.product_name || p.name}
-                        </td>
-                        <td className="py-2 px-3">
-                          {p.category?.name || p.category_id || "-"}
-                        </td>
-                        <td className="py-2 px-3">{p.gsm}</td>
-                        <td className="py-2 px-3">{p.bf}</td>
-                        <td className="py-2 px-3">{p.shade}</td>
-                        <td className="py-2 px-3 text-red-600 font-semibold">
-                          {p.price_per_kg || p.price} ₹
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          <button
-                            onClick={() =>
-                              handleProductEnquiry({
-                                id: p.id,
-                                name: p.product_name || p.name,
-                                category: p.category_id || p.category,
-                                gsm: p.gsm,
-                                bf: p.bf,
-                                shade: p.shade,
-                                size: p.size || "-",
-                                price: p.price_per_kg || p.price,
-                              })
-                            }
-                            className="text-purple-600 hover:text-purple-800 font-semibold underline"
-                          >
-                            Enquiry
-                          </button>
-                        </td>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <table className="w-full text-xs sm:text-sm border-collapse min-w-[640px]">
+                    <thead>
+                      <tr className="border-b text-left text-gray-600">
+                        <th className="py-2 px-2 sm:px-3">Product</th>
+                        <th className="py-2 px-2 sm:px-3">Category</th>
+                        <th className="py-2 px-2 sm:px-3">GSM</th>
+                        <th className="py-2 px-2 sm:px-3">BF</th>
+                        <th className="py-2 px-2 sm:px-3">Shade</th>
+                        <th className="py-2 px-2 sm:px-3">Price</th>
+                        <th className="py-2 px-2 sm:px-3 text-center">
+                          Action
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {sellerProducts.map((p) => (
+                        <tr key={p.id} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-2 sm:px-3 font-medium">
+                            {p.product_name || p.name}
+                          </td>
+                          <td className="py-2 px-2 sm:px-3">
+                            {p.category?.name || p.category_id || "-"}
+                          </td>
+                          <td className="py-2 px-2 sm:px-3">{p.gsm}</td>
+                          <td className="py-2 px-2 sm:px-3">{p.bf}</td>
+                          <td className="py-2 px-2 sm:px-3">{p.shade}</td>
+                          <td className="py-2 px-2 sm:px-3 text-red-600 font-semibold">
+                            {p.price_per_kg || p.price} ₹
+                          </td>
+                          <td className="py-2 px-2 sm:px-3 text-center">
+                            <button
+                              onClick={() =>
+                                handleProductEnquiry({
+                                  id: p.id,
+                                  name: p.product_name || p.name,
+                                  category: p.category_id || p.category,
+                                  gsm: p.gsm,
+                                  bf: p.bf,
+                                  shade: p.shade,
+                                  size: p.size || "-",
+                                  price: p.price_per_kg || p.price,
+                                })
+                              }
+                              className="text-purple-600 hover:text-purple-800 font-semibold underline whitespace-nowrap"
+                            >
+                              Enquiry
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
 
               {/* Pagination Controls */}
