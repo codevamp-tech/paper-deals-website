@@ -1,8 +1,7 @@
 "use client";
 import RequirementModal from "@/components/modal/TellUsModal";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";  
-
+import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SellerList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,14 +9,18 @@ export default function SellerList() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const router = useRouter();
-  // ✅ Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // number of sellers per page
-  const totalPages = Math.ceil(sellers.length / itemsPerPage);
 
-  // ✅ Fetch seller data
+  // ✅ Filters
+  const [searchId, setSearchId] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const router = useRouter();
+
+  // ✅ Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  // ✅ Fetch sellers
   useEffect(() => {
     const fetchSellers = async () => {
       try {
@@ -25,7 +28,7 @@ export default function SellerList() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`
         );
         const data = await res.json();
-        setSellers(data.data); // ✅ API returns { data: [] }
+        setSellers(data.data || []);
       } catch (err) {
         console.error("Error fetching sellers:", err);
       } finally {
@@ -36,12 +39,39 @@ export default function SellerList() {
     fetchSellers();
   }, []);
 
-  const handleContactClick = () => {
-    if (!isSignedIn) {
-      setIsContactModalOpen(true);
-    } else {
-      console.log("Proceeding with contact...");
-    }
+  // ✅ Extract unique categories dynamically
+  const categories = useMemo(() => {
+    const allCats = sellers
+      .map((seller) => seller.organization?.materials_used)
+      .filter(Boolean);
+    const unique = Array.from(new Set(allCats));
+    return ["All", ...unique];
+  }, [sellers]);
+
+  // ✅ Filter sellers by ID + Category
+  const filteredSellers = sellers.filter((seller) => {
+    const sellerId = `KPDS_${seller.id}`.toLowerCase();
+    const matchesId = sellerId.includes(searchId.toLowerCase());
+
+    const category =
+      seller.organization?.materials_used?.trim().toLowerCase() || "other";
+    const matchesCategory =
+      selectedCategory === "All" ||
+      category === selectedCategory.toLowerCase();
+
+    return matchesId && matchesCategory;
+  });
+
+  // ✅ Pagination logic
+  const totalPages = Math.ceil(filteredSellers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const selectedSellers = filteredSellers.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
   // ✅ Contact Seller Modal
@@ -127,139 +157,163 @@ export default function SellerList() {
     );
   };
 
-  // ✅ Pagination logic
-  const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedSellers = sellers.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Header */}
       <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-purple-600 to-cyan-500 sm:text-4xl">
+        <h2 className="text-3xl font-bold text-purple-600 sm:text-4xl">
           Sellers Directory
         </h2>
         <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-600 to-cyan-500 mx-auto rounded-full"></div>
       </div>
 
-      {/* Loading */}
-      {loading && <p className="text-center text-white">Loading sellers...</p>}
+      {/* ✅ Filters Section */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+        {/* Search by ID
+        <input
+          type="text"
+          value={searchId}
+          onChange={(e) => {
+            setSearchId(e.target.value);
+            setCurrentPage(1);
+          }}
+          placeholder="Search by Seller ID (e.g. KPDS_5)"
+          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        /> */}
 
-      {/* Seller Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {selectedSellers.map((seller, index) => {
-          const org = seller.organization || {};
-          return (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200"
-            >
-              <div className="flex p-6">
-                {/* Placeholder image */}
-                <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/mainimg.png"
-                    alt="company logo"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Seller Info */}
-                <div className="ml-6 flex-1">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    {`KPDS_${seller.id}`}
-                  </h3>
-
-                  {/* Verified Status */}
-                  <span
-                    className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                      seller.approved === "1"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-500 text-white"
-                    }`}
-                  >
-                    {seller.approved === "1" ? "Verified" : "Not Verified"}
-                  </span>
-
-                  <div className="mt-3 text-sm text-gray-700 space-y-1">
-                    <p>
-                      <strong>Company Id:</strong> {`KPDS_${seller.id}`}
-                    </p>
-                    <p>
-                      <strong>State:</strong>{" "}
-                      {org.city ? org.city.split(",").pop().trim() : "N/A"}
-                    </p>
-                    <p>
-                      <strong>City:</strong> {org.city || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Type of Seller:</strong>{" "}
-                      {seller.user_type === 2 ? "Wholeseller" : "Distributor"}
-                    </p>
-                    <p>
-                      <strong>Deals In:</strong>{" "}
-                      {org.materials_used || "Not Available"}
-                    </p>
-                  </div>
-
-                  <button
-                     onClick={() => router.push(`/B2B/seller/${seller.id}`)}
-                    className="mt-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-colors duration-300"
-                  >
-                    View Profile
-                  </button>
-                  
-                </div>
-                
-              </div>
-            </div>
-          );
-        })}
+        {/* Category Dropdown */}
+        <select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          {categories.map((cat, idx) => (
+            <option key={idx} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* ✅ Pagination UI */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center mt-8 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
+      {/* Loading / No Data */}
+      {loading ? (
+        <p className="text-center text-gray-600">Loading sellers...</p>
+      ) : filteredSellers.length === 0 ? (
+        <p className="text-center text-gray-600">No sellers found.</p>
+      ) : (
+        <>
+          {/* Seller Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {selectedSellers.map((seller, index) => {
+              const org = seller.organization || {};
+              return (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200"
+                >
+                  <div className="flex p-6">
+                    <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                      <img
+                        src="/mainimg.png"
+                        alt="company logo"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-          {[...Array(totalPages)].map((_, index) => {
-            const pageNum = index + 1;
-            return (
+                    <div className="ml-6 flex-1">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {`KPDS_${seller.id}`}
+                      </h3>
+
+                      <span
+                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
+                          seller.approved === "1"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {seller.approved === "1"
+                          ? "Verified"
+                          : "Not Verified"}
+                      </span>
+
+                      <div className="mt-3 text-sm text-gray-700 space-y-1">
+                        <p>
+                          <strong>Company Id:</strong> KPDS_{seller.id}
+                        </p>
+                        <p>
+                          <strong>State:</strong>{" "}
+                          {org.city ? org.city.split(",").pop().trim() : "N/A"}
+                        </p>
+                        <p>
+                          <strong>City:</strong> {org.city || "N/A"}
+                        </p>
+                        <p>
+                          <strong>Type of Seller:</strong>{" "}
+                          {seller.user_type === 2
+                            ? "Wholeseller"
+                            : "Distributor"}
+                        </p>
+                        <p>
+                          <strong>Deals In:</strong>{" "}
+                          {org.materials_used || "Not Available"}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => router.push(`/B2B/seller/${seller.id}`)}
+                        className="mt-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-colors duration-300"
+                      >
+                        View Profile
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center mt-8 space-x-2">
               <button
-                key={pageNum}
-                onClick={() => handlePageChange(pageNum)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === pageNum
-                    ? "bg-blue-500 text-white"
-                    : "hover:bg-gray-200"
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border rounded disabled:opacity-50"
               >
-                {pageNum}
+                Prev
               </button>
-            );
-          })}
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNum = index + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`px-3 py-1 border rounded ${
+                      currentPage === pageNum
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-200"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Modals */}
