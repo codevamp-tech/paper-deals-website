@@ -17,7 +17,7 @@ export default function PaperProductsComparison() {
   const [selectedCompany, setSelectedCompany] = useState<string>("All");
   const [selectedProduct, setSelectedProduct] = useState<string>("All");
   const [cart, setCart] = useState<any[]>([]);
-  const [showCart, setShowCart] = useState(true);
+  const [showCart, setShowCart] = useState(false);
   const router = useRouter();
 
 
@@ -463,47 +463,100 @@ export default function PaperProductsComparison() {
         </div>
       </div>
       {/* Cart Sidebar */}
-      {showCart && (
-        <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 p-4 flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Your Cart</h2>
-            <button onClick={() => setShowCart(false)} className="p-1 hover:bg-gray-200 rounded">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+     {/* Sleek Animated Cart Sidebar */}
+{showCart && (
+  <div
+    className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity"
+    onClick={() => setShowCart(false)} // close when clicking outside
+  >
+    <div
+      onClick={(e) => e.stopPropagation()} // prevent close on inner click
+      className="relative w-96 h-full bg-white/90 backdrop-blur-lg shadow-2xl border-l border-blue-200 p-6 flex flex-col animate-slideIn"
+    >
+      {/* Close Button */}
+      <button
+        onClick={() => setShowCart(false)}
+        className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full shadow-sm transition"
+      >
+        <X className="w-5 h-5 text-gray-700" />
+      </button>
 
-          {cart.length > 0 ? (
-            <div className="flex-1 overflow-y-auto space-y-4">
-              {cart.map((item) => (
-                <div key={item._id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-500">{item.mill}</p>
-                    <p className="text-sm text-gray-500">₹{item.pricePerKg} x {item.quantity}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="flex gap-1">
-                      <Button variant="outline" onClick={() => updateCartQuantity(item._id, item.quantity - 1)}>-</Button>
-                      <span>{item.quantity}</span>
-                      <Button variant="outline" onClick={() => updateCartQuantity(item._id, item.quantity + 1)}>+</Button>
-                    </div>
-                    <Button variant="ghost" onClick={() => removeFromCart(item._id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+      {/* Header */}
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">
+        🛍 Your Comparison Cart
+      </h2>
+
+      {/* Cart Content */}
+      {cart.length > 0 ? (
+        <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
+          {cart.map((item) => (
+            <div
+              key={item._id}
+              className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm hover:shadow-md transition"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
+                  <p className="text-sm text-gray-600">{item.mill}</p>
                 </div>
-              ))}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeFromCart(item._id)}
+                  className="text-gray-500 hover:text-red-500"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="font-semibold text-blue-700">
+                  ₹{item.pricePerKg} /Kg
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => updateCartQuantity(item._id, item.quantity - 1)}
+                  >
+                    -
+                  </Button>
+                  <span className="text-base font-medium">{item.quantity}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => updateCartQuantity(item._id, item.quantity + 1)}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
             </div>
-          ) : (
-            <p className="text-gray-500 text-center mt-8">Cart is empty</p>
-          )}
-
-          <div className="mt-4 pt-4 border-t flex justify-between items-center font-semibold">
-            <span>Total:</span>
-            <span>₹{cartTotal}</span>
-          </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
+          <ShoppingCart className="w-12 h-12 mb-3 text-gray-400" />
+          <p className="text-lg">Your cart is empty</p>
         </div>
       )}
+
+      {/* Cart Total Section */}
+      <div className="mt-6 border-t pt-4 bg-white/60 rounded-lg shadow-inner">
+        <div className="flex justify-between items-center text-lg font-semibold text-gray-800 mb-4">
+          <span>Total</span>
+          <span>₹{cartTotal}</span>
+        </div>
+        <Button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+          onClick={() => router.push("/subscriptionPlan")}
+        >
+          Proceed to Contact
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
 
     </div>
   );

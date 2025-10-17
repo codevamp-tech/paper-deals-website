@@ -237,13 +237,13 @@ const Topbar = () => {
                         >
                           Consultants
                         </Link>
-                        <Link
-                          href="/B2B/seller"
+                        {/* <Link
+                          href="/B2B/seller "
                           className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          Seller
-                        </Link>
+                          Sellers
+                        </Link> */}
                         <Link
                           href="/B2B/become-a-seller"
                           className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
@@ -354,7 +354,7 @@ const Topbar = () => {
                   href="/B2B/seller"
                   className="text-sm hover:text-cyan-300"
                 >
-                  Seller
+                  Sellers
                 </Link>
                 <Link href="/about" className="text-sm hover:text-cyan-300">
                   About Us

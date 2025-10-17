@@ -76,6 +76,9 @@ export default function LiveStockPage() {
   const [modalPage, setModalPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [modalLoading, setModalLoading] = useState(false);
+  // For multi-product enquiry
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+
   // 🟣 Enquiry form state
   const [enquiryForm, setEnquiryForm] = useState({
     name: "",
@@ -122,8 +125,8 @@ export default function LiveStockPage() {
               p.user_type === 2
                 ? "Manufacturer"
                 : p.user_type === 3
-                ? "Distributor"
-                : "Other",
+                  ? "Distributor"
+                  : "Other",
             category: p.category_id || "-",
             productName: p.product_name || "-",
             subProduct: p.sub_product || "-",
@@ -190,6 +193,7 @@ export default function LiveStockPage() {
 
   const handleView = async (row: Row, page = 1) => {
     if (!row.sellerId) return;
+    setSelectedRow(row);
     setSelectedSellerId(row.sellerId);
     setIsModalOpen(true);
     setModalLoading(true);
@@ -231,15 +235,19 @@ export default function LiveStockPage() {
 
   const handleSubmitEnquiry = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRow) return;
+
+    if (selectedProducts.length === 0) {
+      toast.error("Please select at least one product for enquiry.");
+      return;
+    }
 
     try {
       setSubmitting(true);
       const payload = {
-        products: selectedRow.id, // must match model field name
-        spot_price_id: selectedRow.spotPrice || null, // optional, if applicable
+        products: selectedProducts, // ✅ now an array of IDs
+        spot_price_id: null,
         name: enquiryForm.name,
-        phone: enquiryForm.phone, // ✅ added
+        phone: enquiryForm.phone,
         email_id: enquiryForm.email_id,
         message: enquiryForm.message,
         status: 0,
@@ -265,16 +273,16 @@ export default function LiveStockPage() {
         message: "",
         status: 0,
       });
+      setSelectedProducts([]); // ✅ clear after submit
       setIsEnquiryModalOpen(false);
     } catch (err: any) {
       console.error("Error submitting enquiry:", err);
-      toast.error(
-        err.message || "Something went wrong while submitting enquiry"
-      );
+      toast.error(err.message || "Something went wrong while submitting enquiry");
     } finally {
       setSubmitting(false);
     }
   };
+
 
   return (
     <>
@@ -359,13 +367,12 @@ export default function LiveStockPage() {
                           </p>
                         </div>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                            r.sellerType === "Manufacturer"
-                              ? "bg-green-100 text-green-700"
-                              : r.sellerType === "Distributor"
+                          className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${r.sellerType === "Manufacturer"
+                            ? "bg-green-100 text-green-700"
+                            : r.sellerType === "Distributor"
                               ? "bg-yellow-100 text-yellow-700"
                               : "bg-gray-200 text-gray-700"
-                          }`}
+                            }`}
                         >
                           {r.sellerType}
                         </span>
@@ -516,22 +523,20 @@ export default function LiveStockPage() {
                       filteredRows.map((r, i) => (
                         <tr
                           key={i}
-                          className={`${
-                            i % 2 === 0 ? "bg-gray-50" : "bg-white"
-                          } hover:bg-gray-100 transition-colors`}
+                          className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"
+                            } hover:bg-gray-100 transition-colors`}
                         >
                           <td className="py-3 px-3 xl:px-4 text-blue-600 font-medium">
                             {r.ProductNew?.seller?.organization?.city || "N/A"}
                           </td>
                           <td className="py-3 px-3 xl:px-4">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                r.sellerType === "Manufacturer"
-                                  ? "bg-green-100 text-green-700"
-                                  : r.sellerType === "Distributor"
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${r.sellerType === "Manufacturer"
+                                ? "bg-green-100 text-green-700"
+                                : r.sellerType === "Distributor"
                                   ? "bg-yellow-100 text-yellow-700"
                                   : "bg-gray-200 text-gray-700"
-                              }`}
+                                }`}
                             >
                               {r.sellerType}
                             </span>
@@ -621,14 +626,29 @@ export default function LiveStockPage() {
                         <th className="py-2 px-2 sm:px-3">BF</th>
                         <th className="py-2 px-2 sm:px-3">Shade</th>
                         <th className="py-2 px-2 sm:px-3">Price</th>
-                        <th className="py-2 px-2 sm:px-3 text-center">
+                        {/* <th className="py-2 px-2 sm:px-3 text-center">
                           Action
-                        </th>
+                        </th> */}
                       </tr>
                     </thead>
                     <tbody>
                       {sellerProducts.map((p) => (
                         <tr key={p.id} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-2 sm:px-3 text-center">
+                            <input
+                              type="checkbox"
+                              checked={selectedProducts.includes(p.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedProducts((prev) => [...prev, p.id]);
+                                } else {
+                                  setSelectedProducts((prev) =>
+                                    prev.filter((id) => id !== p.id)
+                                  );
+                                }
+                              }}
+                            />
+                          </td>
                           <td className="py-2 px-2 sm:px-3 font-medium">
                             {p.product_name || p.name}
                           </td>
@@ -641,7 +661,7 @@ export default function LiveStockPage() {
                           <td className="py-2 px-2 sm:px-3 text-red-600 font-semibold">
                             {p.price_per_kg || p.price} ₹
                           </td>
-                          <td className="py-2 px-2 sm:px-3 text-center">
+                          {/* <td className="py-2 px-2 sm:px-3 text-center">
                             <button
                               onClick={() =>
                                 handleProductEnquiry({
@@ -659,7 +679,7 @@ export default function LiveStockPage() {
                             >
                               Enquiry
                             </button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                     </tbody>
@@ -686,6 +706,23 @@ export default function LiveStockPage() {
               )}
             </div>
           )}
+
+          {selectedProducts.length > 0 && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsEnquiryModalOpen(true);
+                  handleEnquiry(selectedRow);
+                }}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-6 rounded-md hover:opacity-90 transition"
+              >
+                Enquiry Selected ({selectedProducts.length})
+              </button>
+            </div>
+          )}
+
+
         </DialogContent>
       </Dialog>
 
@@ -702,7 +739,13 @@ export default function LiveStockPage() {
           {selectedRow && (
             <form className="p-6 space-y-4" onSubmit={handleSubmitEnquiry}>
               <p className="text-black">
-                <strong>Product:</strong> {selectedRow.productName}
+                <strong>Products:</strong>{" "}
+                {selectedProducts.length > 0
+                  ? sellerProducts
+                    .filter((p) => selectedProducts.includes(p.id))
+                    .map((p) => p.name || p.product_name)
+                    .join(", ")
+                  : selectedRow?.productName}
               </p>
 
               {/* Name */}
