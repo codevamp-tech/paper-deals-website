@@ -620,6 +620,7 @@ export default function LiveStockPage() {
                   <table className="w-full text-xs sm:text-sm border-collapse min-w-[640px]">
                     <thead>
                       <tr className="border-b text-left text-gray-600">
+                         <th className="py-2 px-2 sm:px-3">Choose</th>
                         <th className="py-2 px-2 sm:px-3">Product</th>
                         <th className="py-2 px-2 sm:px-3">Category</th>
                         <th className="py-2 px-2 sm:px-3">GSM</th>
