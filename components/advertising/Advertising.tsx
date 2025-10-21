@@ -36,13 +36,13 @@ const Advertising = () => {
     fetchAds();
   }, []);
 
-  // ✅ Auto carousel
+  // ✅ Auto carousel logic
   useEffect(() => {
     if (ads.length === 0) return;
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % ads.length);
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
         setIsTransitioning(false);
       }, 500);
     }, 5000);
@@ -60,6 +60,29 @@ const Advertising = () => {
       year: "numeric",
     });
   };
+
+  // ✅ Handle absolute or relative image URLs
+  const getImageUrl = (image: string) => {
+    if (!image) return "";
+    return image.startsWith("http")
+      ? image
+      : `${process.env.NEXT_PUBLIC_API_URL}/${image}`;
+  };
+
+  // ✅ Loading and empty states
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white text-lg">
+        Loading advertisements...
+      </div>
+    );
+
+  if (ads.length === 0)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-red-500 text-lg">
+        No ads found!
+      </div>
+    );
 
   return (
     <div
@@ -109,12 +132,23 @@ const Advertising = () => {
               <div
                 className="w-full h-full bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}/${ads[currentIndex]?.image})`,
+                  backgroundImage: `url(${getImageUrl(ads[currentIndex]?.image)})`,
                 }}
               ></div>
             </div>
           </div>
 
+        </div>
+
+        {/* Optional: bottom indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {ads.map((_, i) => (
+            <div
+              key={i}
+              className={`h-2 w-2 rounded-full transition-all duration-300 ${i === currentIndex ? "bg-white w-4" : "bg-gray-400/50"
+                }`}
+            ></div>
+          ))}
         </div>
       </div>
     </div>
