@@ -134,12 +134,9 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
 
             if (!res.ok) throw new Error(`Error: ${res.status}`);
             const data = await res.json();
-            console.log("Enquiry created:", data);
-
-            alert("Enquiry submitted successfully!");
+            console.log("✅ Enquiry created successfully:", data);
         } catch (err) {
-            console.error("Error submitting enquiry:", err);
-            alert("Something went wrong while submitting your enquiry.");
+            console.error("❌ Error submitting enquiry:", err);
         } finally {
             setLoading(false);
         }
@@ -153,20 +150,16 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                     <div className="flex items-center gap-6">
                         <div className="w-28 h-28 border rounded bg-gray-100 flex items-center justify-center overflow-hidden">
                             <img
-                                src={
-                                    "/placeholder.png"
-                                }
+                                src={"/placeholder.png"}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div>
-                            <p className="text-lg font-semibold text-black">Profile Information</p>
-                            {/* seller id  */}
-                            <p className="text-gray-600 mt-2">
-                                KPDS_{id}
+                            <p className="text-lg font-semibold text-black">
+                                Profile Information
                             </p>
-
+                            <p className="text-gray-600 mt-2">KPDS_{id}</p>
                         </div>
                     </div>
                 </Card>

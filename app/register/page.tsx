@@ -19,10 +19,13 @@ export default function CreateBuyerPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setMessage(""); // Clear message when user edits
   };
 
+  // Send OTP
   const handleSendOtp = async () => {
     if (!form.mobile) {
       setMessage("Please enter mobile number");
@@ -39,6 +42,7 @@ export default function CreateBuyerPage() {
           type: otpSent ? "Resend OTP" : "GET OTP",
         }),
       });
+
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
@@ -54,6 +58,7 @@ export default function CreateBuyerPage() {
     }
   };
 
+  // Verify OTP
   const handleVerifyOtp = async (): Promise<boolean> => {
     setMessage("");
     try {
@@ -62,6 +67,7 @@ export default function CreateBuyerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: form.mobile, otp: form.otp }),
       });
+
       const data = await res.json();
       if (res.ok) {
         setOtpVerified(true);
@@ -78,6 +84,7 @@ export default function CreateBuyerPage() {
     }
   };
 
+  // Submit Buyer Registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const verified = await handleVerifyOtp();
@@ -86,6 +93,7 @@ export default function CreateBuyerPage() {
     try {
       setLoading(true);
       setMessage("");
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/create-buyer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,15 +105,29 @@ export default function CreateBuyerPage() {
           password: form.password,
         }),
       });
+
       const data = await res.json();
+
       if (res.ok) {
+        // ✅ Success
         setMessage(data.message || "Buyer registered successfully!");
         setForm({ name: "", email: "", mobile: "", otp: "", password: "", whatsapp: "" });
         setOtpSent(false);
         setOtpVerified(false);
         setTimeout(() => router.push("/buyer-login"), 1500);
       } else {
-        setMessage(data.message || "Failed to register buyer");
+        // ❌ Specific error messages
+        let errorMessage = "Email already exists";
+
+        if (data?.message?.toLowerCase().includes("email")) {
+          errorMessage = "Email already exists";
+        } else if (data?.message?.toLowerCase().includes("mobile") || data?.message?.toLowerCase().includes("phone")) {
+          errorMessage = "Mobile number already registered";
+        } else if (data?.message?.toLowerCase().includes("whatsapp")) {
+          errorMessage = "WhatsApp number already registered";
+        }
+
+        setMessage(errorMessage);
       }
     } catch (err) {
       console.error("Error registering buyer:", err);
@@ -115,8 +137,9 @@ export default function CreateBuyerPage() {
     }
   };
 
+  // UI
   return (
-    <div className="min-h-screen bg-gray-100 ">
+    <div className="min-h-screen bg-gray-100">
       {/* Header Section */}
       <div className="relative h-48 bg-gradient-to-r from-cyan-700 via-blue-700 to-indigo-700 overflow-hidden">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
@@ -132,7 +155,8 @@ export default function CreateBuyerPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 -mt-12 relative z-20">
         <div className="flex flex-col lg:flex-row items-stretch justify-center max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white min-h-[600px]">
-          {/* Left Side - Form */}
+          
+          {/* Left - Form */}
           <div className="w-full lg:w-1/2 p-12 lg:p-16">
             <div className="max-w-md mx-auto">
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -180,7 +204,7 @@ export default function CreateBuyerPage() {
 
                 {/* WhatsApp */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">WhatsApp Number </label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">WhatsApp Number</label>
                   <input
                     type="number"
                     name="whatsapp"
@@ -232,7 +256,13 @@ export default function CreateBuyerPage() {
 
                 {/* Message */}
                 {message && (
-                  <p className={`text-center text-sm ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
+                  <p
+                    className={`text-center text-sm ${
+                      message.toLowerCase().includes("success")
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     {message}
                   </p>
                 )}
@@ -249,7 +279,7 @@ export default function CreateBuyerPage() {
             </div>
           </div>
 
-          {/* Right Side - Promo Image */}
+          {/* Right - Promo Image */}
           <div className="w-full lg:w-1/2 bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 p-12 lg:p-16 flex flex-col justify-center items-center text-white relative overflow-hidden">
             <div className="relative z-10 mb-12">
               <div className="bg-white bg-opacity-10 rounded-3xl backdrop-blur-sm border border-white border-opacity-20 flex items-center justify-center p-6">
@@ -262,9 +292,7 @@ export default function CreateBuyerPage() {
             </div>
 
             <div className="relative z-10 text-center">
-              <h3 className="text-2xl font-semibold mb-4">
-                Join as Buyer
-              </h3>
+              <h3 className="text-2xl font-semibold mb-4">Join as Buyer</h3>
               <p className="text-lg opacity-90 leading-relaxed">
                 Access exclusive deals and opportunities by creating your buyer account
               </p>

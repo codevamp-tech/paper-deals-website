@@ -422,7 +422,7 @@ export default function PaperProductsComparison() {
                       onClick={() => updateQuantity(product._id, 1)}
                     >
                       +
-                    </Button>
+                    </Button> Kg
                   </div>
 
                   <div className="space-y-2 mb-4">
@@ -483,7 +483,7 @@ export default function PaperProductsComparison() {
 
       {/* Header */}
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">
-        🛍 Your Comparison Cart
+        🛍 Your  Cart
       </h2>
 
       {/* Cart Content */}
@@ -547,7 +547,7 @@ export default function PaperProductsComparison() {
           <span>₹{cartTotal}</span>
         </div>
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-6"
           onClick={() => router.push("/subscriptionPlan")}
         >
           Proceed to Contact

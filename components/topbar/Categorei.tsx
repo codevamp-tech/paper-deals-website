@@ -178,13 +178,13 @@ export default function CategoriesDropdown() {
                   >
                     View Products
                   </Link>
-                  <Link
+                  {/* <Link
                     href={`/category/${activeCategory.id}/sellers`}
                     onClick={() => setIsOpen(false)} // 👈 close dropdown
                     className="block text-blue-400 hover:underline"
                   >
                     Find Sellers
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             )}
