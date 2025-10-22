@@ -547,7 +547,7 @@ export default function PaperProductsComparison() {
           <span>₹{cartTotal}</span>
         </div>
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-6"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-10"
           onClick={() => router.push("/subscriptionPlan")}
         >
           Proceed to Contact
