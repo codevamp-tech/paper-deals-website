@@ -38,7 +38,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
       mobile: "",
       otp: "",
       password: "",
-    whatsapp: ""
+      whatsapp: ""
 
     });
     setOtpSent(false);
@@ -129,9 +129,9 @@ export default function RegisterNow({ visible, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
-          email: form.email,   // match backend
-          mobile: form.mobile,       // match backend
-          whatsapp_no: form.whatsapp,  // add if you have this in form
+          email_address: form.email,
+          phone_no: form.mobile,
+          whatsapp_no: form.whatsapp,
           password: form.password,
         })
 
@@ -144,8 +144,22 @@ export default function RegisterNow({ visible, onClose }: Props) {
         resetForm();
         setTimeout(() => onClose(), 2000);
       } else {
-        setMessage(data.message || "Failed to register seller");
+        // ✅ Specific validation error handling
+        if (
+          data.message?.toLowerCase().includes("email") &&
+          data.message?.toLowerCase().includes("exists")
+        ) {
+          setMessage("This email is already registered. Please try another email.");
+        } else if (
+          data.message?.toLowerCase().includes("phone") &&
+          data.message?.toLowerCase().includes("exists")
+        ) {
+          setMessage("This mobile number is already registered.");
+        } else {
+          setMessage(data.message || "Failed to register seller");
+        }
       }
+
     } catch (error) {
       console.error("Error registering seller:", error);
       setMessage("Something went wrong while registering seller");
@@ -203,15 +217,15 @@ export default function RegisterNow({ visible, onClose }: Props) {
             className="border border-gray-300 rounded px-3 py-2 w-full bg-white text-black"
           />
 
-             <input
-              type="number"
-              name="whatsapp"
-              placeholder="WhatsApp Number"
-              value={form.whatsapp}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded px-3 py-2 flex-1 bg-white text-black"
-            />
+          <input
+            type="number"
+            name="whatsapp"
+            placeholder="WhatsApp Number"
+            value={form.whatsapp}
+            onChange={handleChange}
+            required
+            className="border border-gray-300 rounded px-3 py-2 flex-1 bg-white text-black"
+          />
 
           <div className="flex gap-2">
             <input
@@ -245,7 +259,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
           />
 
           {message && (
-            <p className="text-sm text-center text-gray-600 mt-2">{message}</p>
+            <p className="text-sm text-center text-red-600 mt-2">{message}</p>
           )}
 
           <button

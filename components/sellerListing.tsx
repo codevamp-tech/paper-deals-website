@@ -36,24 +36,27 @@ export default function SellerList() {
     fetchSellers();
   }, []);
 
-  // ✅ Extract unique categories dynamically
+  // ✅ Extract unique categories dynamically (using materials_used_names)
   const categories = useMemo(() => {
     const allCats = sellers
-      .map((seller) => seller.organization?.materials_used)
+      .flatMap((seller) => seller.organization?.materials_used_names || [])
       .filter(Boolean);
     const unique = Array.from(new Set(allCats));
     return ["All", ...unique];
   }, [sellers]);
 
-  // ✅ Filter sellers by category
+
+  // ✅ Filter sellers by selected category
   const filteredSellers = sellers.filter((seller) => {
-    const category =
-      seller.organization?.materials_used?.trim().toLowerCase() || "other";
+    const materials = seller.organization?.materials_used_names || [];
     return (
       selectedCategory === "All" ||
-      category === selectedCategory.toLowerCase()
+      materials.some(
+        (m) => m.toLowerCase() === selectedCategory.toLowerCase()
+      )
     );
   });
+
 
   // ✅ Pagination logic
   const totalPages = Math.ceil(filteredSellers.length / itemsPerPage);
@@ -67,48 +70,50 @@ export default function SellerList() {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
+
+
   // ✅ Fetch ratings for each seller
   const [ratingsData, setRatingsData] = useState<Record<
     number,
     { average: number; reviews: number }
   >>({});
 
-  useEffect(() => {
-    const fetchRatings = async () => {
-      try {
-        const newRatings: Record<number, { average: number; reviews: number }> =
-          {};
+  // useEffect(() => {
+  //   const fetchRatings = async () => {
+  //     try {
+  //       const newRatings: Record<number, { average: number; reviews: number }> =
+  //         {};
 
-        await Promise.all(
-          selectedSellers.map(async (seller) => {
-            try {
-              const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/getbyseller?seller_id=${seller.id}`
-              );
-              const data = await res.json();
+  //       await Promise.all(
+  //         selectedSellers.map(async (seller) => {
+  //           try {
+  //             const res = await fetch(
+  //               `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/getbyseller?seller_id=${seller.id}`
+  //             );
+  //             const data = await res.json();
 
-              if (data.success && data.data) {
-                newRatings[seller.id] = {
-                  average: data.data.average_rating || 0,
-                  reviews: data.data.review_count || 0,
-                };
-              } else {
-                newRatings[seller.id] = { average: 0, reviews: 0 };
-              }
-            } catch {
-              newRatings[seller.id] = { average: 0, reviews: 0 };
-            }
-          })
-        );
+  //             if (data.success && data.data) {
+  //               newRatings[seller.id] = {
+  //                 average: data.data.average_rating || 0,
+  //                 reviews: data.data.review_count || 0,
+  //               };
+  //             } else {
+  //               newRatings[seller.id] = { average: 0, reviews: 0 };
+  //             }
+  //           } catch {
+  //             newRatings[seller.id] = { average: 0, reviews: 0 };
+  //           }
+  //         })
+  //       );
 
-        setRatingsData(newRatings);
-      } catch (err) {
-        console.error("Error fetching ratings:", err);
-      }
-    };
+  //       setRatingsData(newRatings);
+  //     } catch (err) {
+  //       console.error("Error fetching ratings:", err);
+  //     }
+  //   };
 
-    fetchRatings();
-  }, [selectedSellers]);
+  //   fetchRatings();
+  // }, [selectedSellers]);
 
   // ✅ Contact Seller Modal
   const ContactSellerModal = ({ isOpen, onClose }) => {
@@ -215,7 +220,7 @@ export default function SellerList() {
         >
           {categories.map((cat, idx) => (
             <option key={idx} value={cat}>
-              {cat}
+              {cat === "All" ? "All Categories" : cat}
             </option>
           ))}
         </select>
@@ -257,11 +262,10 @@ export default function SellerList() {
                       </h3>
 
                       <span
-                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                          seller.approved === "1"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${seller.approved === "1"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {seller.approved === "1"
                           ? "Verified"
@@ -287,8 +291,11 @@ export default function SellerList() {
                         </p>
                         <p>
                           <strong>Deals In:</strong>{" "}
-                          {org.materials_used || "Not Available"}
+                          {org.materials_used_names && org.materials_used_names.length > 0
+                            ? org.materials_used_names.join(", ")
+                            : "Not Available"}
                         </p>
+
                       </div>
 
                       <button
@@ -348,11 +355,10 @@ export default function SellerList() {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 border rounded ${
-                      currentPage === pageNum
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-200"
-                    }`}
+                    className={`px-3 py-1 border rounded ${currentPage === pageNum
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200"
+                      }`}
                   >
                     {pageNum}
                   </button>
