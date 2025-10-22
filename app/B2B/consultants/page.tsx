@@ -3,36 +3,26 @@
 import { useEffect, useState } from "react";
 import { ConsultantCard } from "./Consultants-Card";
 
-
-
 type APIConsultant = {
   id: number;
   name: string;
-  phone_no: string;
-  consultant_price: number; // ✅ fixed type
-  mills_supported?: number | string;
-  description?: string;
-  organization?: {
-    organizations: string;
-    contact_person: string;
-    city: string;
-    materials_used: string;
-    image_banner?: string; // ✅ added
+  consultantPic?: {
+    prof_pic?: string;
+    years_of_experience?: string;
+    mills_supported?: string;
+    description?: string;
   } | null;
 };
 
 type Consultant = {
   id: string;
   name: string;
-  title: string;
   years: number;
-  millsSupported: number | string;
+  millsSupported: string;
   description: string;
-  specialties: string[];
-  photoUrl?: string;
-  photoAlt?: string;
+  photoUrl: string;
+  photoAlt: string;
 };
-
 
 export default function ConsultantsPage() {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
@@ -42,41 +32,23 @@ export default function ConsultantsPage() {
     async function fetchConsultants() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=5`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallconsultants?user_type=5`
         );
         const json = await res.json();
 
-        // 
-
-        const mapped = json.data.map((c: APIConsultant) => ({
-        id: String(c.id),
+        const mapped: Consultant[] = json.data.map((c: APIConsultant) => ({
+          id: String(c.id),
           name: c.name,
-          title: c.organization?.organizations || "Independent Consultant",
-
-          // years of experience
-          years: Number(c.consultant_price) || 0,
-
-          // mills supported: numeric preferred, fallback to string
-          millsSupported:
-            c.mills_supported && Number(c.mills_supported) > 0
-              ? Number(c.mills_supported)
-              : c.organization?.materials_used || "all",
-
-          // description: prefer API description, fallback to contact person
-          description:
-            c.description || c.organization?.contact_person || "No description available",
-
-          specialties: c.organization ? [c.organization.city].filter(Boolean) : [],
-
-          // ✅ use organization.image_banner if available, else fallback
-          photoUrl: c.organization?.image_banner
-            ? `${process.env.NEXT_PUBLIC_API_URL}/${c.organization.image_banner}`
+          years: Number(c.consultantPic?.years_of_experience) || 0,
+          millsSupported: c.consultantPic?.mills_supported || "N/A",
+          description: c.consultantPic?.description || "No description available",
+          photoUrl: c.consultantPic?.prof_pic
+            ? c.consultantPic.prof_pic.startsWith("http")
+              ? c.consultantPic.prof_pic
+              : `${process.env.NEXT_PUBLIC_API_URL}/${c.consultantPic.prof_pic}`
             : "/placeholder.svg?height=112&width=112&query=consultant",
-
           photoAlt: c.name,
         }));
-
-
 
         setConsultants(mapped);
       } catch (err) {
@@ -96,7 +68,7 @@ export default function ConsultantsPage() {
           Loading consultants...
         </p>
       ) : consultants.length > 0 ? (
-        consultants.map((c) => <ConsultantCard key={c._id} consultant={c} />)
+        consultants.map((c) => <ConsultantCard key={c.id} consultant={c} />)
       ) : (
         <p className="col-span-full text-center text-gray-500">
           No consultants found.

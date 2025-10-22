@@ -113,7 +113,7 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
             {description || "No description available"}
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-2">
+          {/* <div className="flex flex-wrap gap-2 pt-2">
             {specialties.map((sp) => (
               <Badge
                 key={sp}
@@ -123,7 +123,7 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
                 {sp}
               </Badge>
             ))}
-          </div>
+          </div> */}
         </CardContent>
 
         <CardFooter className="pt-4 mt-auto">
