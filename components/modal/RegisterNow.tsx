@@ -185,7 +185,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
           />
 
           <input
-            type="email"
+            type="text"
             name="email"
             placeholder="Your Email"
             value={form.email}
@@ -194,7 +194,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
             className="border border-gray-300 rounded px-3 py-2 w-full bg-white text-black"
           />
           <input
-            type="password"
+            type="text"
             name="password"
             placeholder="Enter your password"
             value={form.password}

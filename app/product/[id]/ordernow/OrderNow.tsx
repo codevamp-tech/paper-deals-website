@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const OrderNow = ({ productId }: { productId: string }) => {
   const [product, setProduct] = useState<any>(null);
@@ -7,6 +8,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
+  
 
   // 🔹 Load cart from localStorage on mount
   useEffect(() => {
@@ -89,11 +91,12 @@ const OrderNow = ({ productId }: { productId: string }) => {
   };
 
   // 🔹 Order Now Handler (alerts removed)
-  const handleOrderNow = () => {
-    handleAddToCart();
-    // Redirect to checkout if needed
-    // window.location.href = "/checkout";
-  };
+// Updated Order Now
+const handleOrderNow = () => {
+  handleAddToCart(); // Add product to cart
+  router.push("/checkout"); // Navigate to checkout page
+};
+
 
   // 🔹 Update quantity
   const updateQuantity = (change: number) => {

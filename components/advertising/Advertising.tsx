@@ -23,7 +23,6 @@ const Advertising = () => {
     const fetchAds = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertisement`);
-        if (!res.ok) throw new Error(`Failed to fetch ads: ${res.status}`);
         const data = await res.json();
         console.log("API Response:", data);
         setAds(data);
@@ -50,7 +49,9 @@ const Advertising = () => {
     return () => clearInterval(interval);
   }, [ads]);
 
-  // ✅ Format date
+  if (loading) return <p className="text-white">Loading advertisements...</p>;
+  if (ads.length === 0) return <p className="text-red-500">No ads found!</p>;
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -90,8 +91,9 @@ const Advertising = () => {
     >
       <div className="relative rounded-3xl w-full max-w-[90vw] xs:max-w-[85vw] sm:max-w-[80vw] md:w-[80vw] h-[60vh] xs:h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[80vh] bg-white/5 backdrop-blur-[16px] border border-white/20 shadow-2xl overflow-hidden group">
         <div className="relative z-10 p-4 xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 h-full flex flex-col md:flex-row justify-between gap-4 xs:gap-5 sm:gap-6 md:gap-8">
-          {/* Left side - Text content */}
-          <div className="relative w-full md:w-[45%] flex flex-col justify-center">
+
+          {/* ✅ Left side - Ad text */}
+          <div className="relative w-full md:w-[45%] flex flex-col justify-center flex-shrink-0">
             <div
               className={`transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"
                 }`}
@@ -100,9 +102,20 @@ const Advertising = () => {
                 {ads[currentIndex]?.page_type || "Advertisement"}
               </span>
 
-              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 xs:mb-5 sm:mb-6 text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-300 bg-clip-text">
+              {/* ✅ Fixed title wrapping */}
+              <h1
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 xs:mb-5 sm:mb-6 text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-300 bg-clip-text leading-relaxed break-words"
+                style={{
+                  whiteSpace: "normal",
+                  overflow: "visible",
+                  wordBreak: "break-word",
+                  lineHeight: 1.2, // ensures descenders are not cut
+                  paddingBottom: '2px', // small padding to prevent clipping
+                }}
+              >
                 {ads[currentIndex]?.advertisement_title || "No Title"}
               </h1>
+
 
               <div className="text-xs xs:text-sm text-gray-400 mt-2 font-poppins">
                 {formatDate(ads[currentIndex]?.created_at)}
@@ -110,7 +123,7 @@ const Advertising = () => {
             </div>
           </div>
 
-          {/* Right side - Image */}
+          {/* ✅ Right side - Image */}
           <div className="relative w-full md:w-[50%] h-[25vh] xs:h-[30vh] sm:h-[35vh] md:h-full flex items-center justify-center">
             <div
               className={`relative w-full h-full rounded-2xl overflow-hidden transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"
@@ -124,6 +137,7 @@ const Advertising = () => {
               ></div>
             </div>
           </div>
+
         </div>
 
         {/* Optional: bottom indicators */}

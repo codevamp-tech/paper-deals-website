@@ -6,12 +6,10 @@ import { useRouter } from "next/navigation";
 export default function SellerList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ✅ Filters
-  const [searchId, setSearchId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const router = useRouter();
@@ -20,7 +18,7 @@ export default function SellerList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  // ✅ Fetch sellers
+  // ✅ Fetch all sellers
   useEffect(() => {
     const fetchSellers = async () => {
       try {
@@ -35,7 +33,6 @@ export default function SellerList() {
         setLoading(false);
       }
     };
-
     fetchSellers();
   }, []);
 
@@ -48,18 +45,14 @@ export default function SellerList() {
     return ["All", ...unique];
   }, [sellers]);
 
-  // ✅ Filter sellers by ID + Category
+  // ✅ Filter sellers by category
   const filteredSellers = sellers.filter((seller) => {
-    const sellerId = `KPDS_${seller.id}`.toLowerCase();
-    const matchesId = sellerId.includes(searchId.toLowerCase());
-
     const category =
       seller.organization?.materials_used?.trim().toLowerCase() || "other";
-    const matchesCategory =
+    return (
       selectedCategory === "All" ||
-      category === selectedCategory.toLowerCase();
-
-    return matchesId && matchesCategory;
+      category === selectedCategory.toLowerCase()
+    );
   });
 
   // ✅ Pagination logic
@@ -73,6 +66,49 @@ export default function SellerList() {
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
+
+  // ✅ Fetch ratings for each seller
+  const [ratingsData, setRatingsData] = useState<Record<
+    number,
+    { average: number; reviews: number }
+  >>({});
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const newRatings: Record<number, { average: number; reviews: number }> =
+          {};
+
+        await Promise.all(
+          selectedSellers.map(async (seller) => {
+            try {
+              const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/getbyseller?seller_id=${seller.id}`
+              );
+              const data = await res.json();
+
+              if (data.success && data.data) {
+                newRatings[seller.id] = {
+                  average: data.data.average_rating || 0,
+                  reviews: data.data.review_count || 0,
+                };
+              } else {
+                newRatings[seller.id] = { average: 0, reviews: 0 };
+              }
+            } catch {
+              newRatings[seller.id] = { average: 0, reviews: 0 };
+            }
+          })
+        );
+
+        setRatingsData(newRatings);
+      } catch (err) {
+        console.error("Error fetching ratings:", err);
+      }
+    };
+
+    fetchRatings();
+  }, [selectedSellers]);
 
   // ✅ Contact Seller Modal
   const ContactSellerModal = ({ isOpen, onClose }) => {
@@ -157,9 +193,9 @@ export default function SellerList() {
     );
   };
 
+  // ✅ Render Section
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
       <div className="mb-10 text-center">
         <h2 className="text-3xl font-bold text-purple-600 sm:text-4xl">
           Sellers Directory
@@ -167,21 +203,8 @@ export default function SellerList() {
         <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-600 to-cyan-500 mx-auto rounded-full"></div>
       </div>
 
-      {/* ✅ Filters Section */}
+      {/* Filters */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
-        {/* Search by ID
-        <input
-          type="text"
-          value={searchId}
-          onChange={(e) => {
-            setSearchId(e.target.value);
-            setCurrentPage(1);
-          }}
-          placeholder="Search by Seller ID (e.g. KPDS_5)"
-          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-        /> */}
-
-        {/* Category Dropdown */}
         <select
           value={selectedCategory}
           onChange={(e) => {
@@ -198,23 +221,28 @@ export default function SellerList() {
         </select>
       </div>
 
-      {/* Loading / No Data */}
+      {/* Sellers */}
       {loading ? (
         <p className="text-center text-gray-600">Loading sellers...</p>
       ) : filteredSellers.length === 0 ? (
         <p className="text-center text-gray-600">No sellers found.</p>
       ) : (
         <>
-          {/* Seller Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {selectedSellers.map((seller, index) => {
               const org = seller.organization || {};
+              const ratingData = ratingsData[seller.id] || {
+                average: 0,
+                reviews: 0,
+              };
+
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200"
+                  className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200 flex justify-between"
                 >
-                  <div className="flex p-6">
+                  {/* Seller Info */}
+                  <div className="flex p-6 flex-1">
                     <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                       <img
                         src="/mainimg.png"
@@ -270,6 +298,33 @@ export default function SellerList() {
                         View Profile
                       </button>
                     </div>
+                  </div>
+
+                  {/* ⭐ Rating Section */}
+                  <div className="p-6 text-right min-w-[120px] flex flex-col items-end ">
+                    <div className="flex items-center justify-end space-x-1">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill={i < Math.round(ratingData.average) ? "#facc15" : "none"}
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="#facc15"
+                          className="w-5 h-5"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M11.48 3.5a.562.562 0 011.04 0l2.125 4.308a.563.563 0 00.424.308l4.753.691a.563.563 0 01.312.96l-3.438 3.35a.563.563 0 00-.162.498l.812 4.736a.563.563 0 01-.817.593l-4.25-2.23a.563.563 0 00-.524 0l-4.25 2.23a.563.563 0 01-.818-.593l.813-4.736a.563.563 0 00-.162-.498L2.866 9.767a.563.563 0 01.312-.96l4.753-.691a.563.563 0 00.424-.308L10.48 3.5z"
+                          />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {ratingData.average.toFixed(1)} ★ ({ratingData.reviews}{" "}
+                      reviews)
+                    </p>
                   </div>
                 </div>
               );

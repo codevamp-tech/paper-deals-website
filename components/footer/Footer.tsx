@@ -14,8 +14,8 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-white  mt-16">
-      <div className="container mx-auto px-6 lg:px-12 ">
+    <footer className="bg-gradient-to-b from-white mt-16">
+      <div className="container mx-auto px-6 lg:px-12">
         {/* ===== Top Section ===== */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
           {/* ===== Logo + About + Social ===== */}
@@ -39,7 +39,6 @@ const Footer = () => {
                   icon: <Facebook className="h-5 w-5" />,
                   href: "https://www.facebook.com/p/Paper-Deals-61554782455824",
                 },
-              
                 {
                   icon: <Linkedin className="h-5 w-5" />,
                   href: "https://www.linkedin.com/company/paper-deals/",
@@ -126,27 +125,43 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* ===== Partners ===== */}
+          {/* ===== Partners (New Association Design) ===== */}
           <div>
             <h3 className="font-semibold mb-5 text-gray-900 text-lg border-l-4 border-blue-600 pl-2">
               Our Partners
             </h3>
-            <div className="flex flex-wrap gap-3">
-              {["/p1.jpeg", "/p2.jpg", "/p3.jpg"].map((src, i) => (
-                <div
-                  key={i}
-                  className="p-2 border border-gray-200 rounded-md bg-white hover:shadow-md transition"
-                >
-                  <img
-                    src={src}
-                    alt={`Partner ${i + 1}`}
-                    className="w-[90px] h-[55px] object-contain"
-                  />
-                </div>
-              ))}
+
+            <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <p className="text-sm text-gray-500 mb-4 text-center uppercase tracking-wider">
+                Trusted & Associated With
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 place-items-center">
+                {[
+                  { src: "/p1.jpeg", name: "Partner 1" },
+                  { src: "/p2.jpg", name: "Partner 2" },
+                  { src: "/p3.jpg", name: "Partner 3" },
+                ].map((partner, i) => (
+                  <div
+                    key={i}
+                    className="group relative p-4 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                  >
+                    <img
+                      src={partner.src}
+                      alt={partner.name}
+                      className="w-[110px] h-[65px] object-contain grayscale group-hover:grayscale-0 transition duration-300"
+                    />
+                    <div className="absolute bottom-2 opacity-0 group-hover:opacity-100 transition text-[13px] text-gray-500">
+                      {partner.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-[15px] text-gray-600 mt-4 font-medium">
-              A Product of Kay Group
+
+            <p className="text-[15px] text-gray-600 mt-6 font-medium text-center">
+              A Proud Association of{" "}
+              <span className="text-blue-600">Kay Group</span>
             </p>
           </div>
         </div>
