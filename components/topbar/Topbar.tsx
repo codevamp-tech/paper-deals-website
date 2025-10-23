@@ -4,13 +4,21 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, User, Store, Menu, X, Search } from "lucide-react";
+import { ChevronDown, User, Store, Menu, X, Search, LogOut } from "lucide-react";
 import RequestCallback from "../modal/RequestCallback";
 import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Cookies from "js-cookie";
 import { getUserFromToken } from "@/hooks/use-token";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Topbar = () => {
   const router = useRouter();
@@ -72,20 +80,14 @@ const Topbar = () => {
     setIsLoggedIn(false);
     router.push("/");
   };
+  console.log("user", user)
+
   // Helper function to get initials from full name
   const getInitials = (fullName: string) => {
     if (!fullName) return "U";
-
     const names = fullName.trim().split(" ");
-    if (names.length === 1) {
-      return names[0].charAt(0).toUpperCase();
-    }
-
-    // Get first letter of first name and first letter of last name
-    const firstName = names[0];
-    const lastName = names[names.length - 1];
-
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
   };
   return (
     <header className="bg-white sticky top-0 z-50 shadow-md">
@@ -172,25 +174,59 @@ const Topbar = () => {
 
             {/* Right Section (Login / User) */}
             <div className="flex items-end justify-end">
-              <div className="flex items-center">
-                {/* Desktop Button */}
-                <Link
-                  href="/buyer-login"
-                  className="hidden md:flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-md"
-                >
-                  <User className="w-4 h-4" />
-                  Login
-                </Link>
+              <div className="flex items-center gap-3 relative">
+                {isLoggedIn ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+                          {getInitials(user?.user_name)}
+                        </div>
+                        <span className="hidden md:inline text-sm font-medium text-gray-800">
+                          {user?.name}
+                        </span>
+                        <ChevronDown className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </DropdownMenuTrigger>
 
-                {/* Mobile/Tablet Button */}
-                <Link
-                  href="/buyer-login"
-                  className="flex md:hidden items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium text-sm"
-                >
-                  <User className="w-4 h-4" />
-                  Login
-                </Link>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-48 rounded-lg border border-gray-200 shadow-md"
+                    >
+                      <DropdownMenuLabel className="text-sm font-medium text-gray-700">
+                        My Account
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/buyer3/dashboard"
+                          className="flex items-center gap-2 w-full text-gray-700 text-sm"
+                        >
+                          <User className="w-4 h-4 text-gray-500" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 text-gray-700 text-sm cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 text-gray-500" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    href="/buyer-login"
+                    className="hidden md:flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-md"
+                  >
+                    <User className="w-4 h-4" />
+                    Login
+                  </Link>
+                )}
+
               </div>
+
             </div>
 
             <nav className="relative">
