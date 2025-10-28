@@ -15,6 +15,7 @@ import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import Hero from "@/components/herohomepage/Heropage";
 import ProductCrousel from "@/components/productForhome/productcrousel";
 import Advertising from "@/components/advertising/Advertising";
+import AssumptionPartner from "@/components/association/association";
 
 
 
@@ -60,6 +61,11 @@ export default function Home() {
 
     {/* Testimonials */}
     <TestimonialsSection />
+
+
+
+    {/* AssumptionPartner */}
+    <AssumptionPartner />
 
     {/* FAQ Section */}
     <FaqSection />
