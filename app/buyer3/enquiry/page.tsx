@@ -1,174 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
+import { getCookie } from "@/components/getcookie";
+import Pagination from "@/components/pagination";
+import React, { useEffect, useState } from "react";
 
-export default function EnquiryShowDummy() {
+export default function EnquiryShow() {
   const [entries, setEntries] = useState(10);
   const [page, setPage] = useState(1);
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const token = getCookie("token");
 
-  const dummyData = [
-    {
-      id: 138,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "tezpur",
-      category: "Duplex Board",
-      product: "prisma",
-      gsm: "200",
-      shade: "grey back",
-      qty: "3600",
-      remarks: "ok",
-      created: "2025-07-31 14:59:15",
-      status: "Pending",
-    },
-    {
-      id: 137,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "tezpur",
-      category: "Cromo Paper",
-      product: "10",
-      gsm: "200",
-      shade: "grey back",
-      qty: "10",
-      remarks: "ok",
-      created: "2025-07-31 14:43:18",
-      status: "Completed",
-    },
-    {
-      id: 136,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "firozabad",
-      category: "Stock lot Papers",
-      product: "duplex",
-      gsm: "0",
-      shade: "white back",
-      qty: "50000",
-      remarks: "mix gsm",
-      created: "2025-07-08 13:03:15",
-      status: "Completed",
-    },
-    {
-      id: 135,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "siliguri",
-      category: "Copier Paper - A4",
-      product: "jk",
-      gsm: "75",
-      shade: "",
-      qty: "10000",
-      remarks: "copier a4",
-      created: "2025-07-08 11:54:27",
-      status: "Completed",
-    },
-    {
-      id: 134,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "ghaziabad",
-      category: "Duplex Board",
-      product: "kraft paper roll",
-      gsm: "450",
-      shade: "golden yellow",
-      qty: "20000",
-      remarks: "kailashi devi",
-      created: "2025-07-03 16:17:25",
-      status: "Completed",
-    },
-    {
-      id: 133,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "ghaziabad",
-      category: "Duplex Board",
-      product: "duplex board",
-      gsm: "450",
-      shade: "grey back",
-      qty: "25000",
-      remarks: "dev product",
-      created: "2025-07-03 12:22:50",
-      status: "Completed",
-    },
-    {
-      id: 132,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "ghaziabad",
-      category: "Duplex Board",
-      product: "prisma",
-      gsm: "500",
-      shade: "grey back",
-      qty: "70000",
-      remarks: "kailashi devi alfa",
-      created: "2025-07-01 15:31:24",
-      status: "Completed",
-    },
-    {
-      id: 131,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "ghaziabad",
-      category: "Duplex Board",
-      product: "prisma",
-      gsm: "250",
-      shade: "white back",
-      qty: "15000",
-      remarks: "duplex board kailashi devi",
-      created: "2025-07-01 15:08:22",
-      status: "Pending",
-    },
-    {
-      id: 128,
-      seller: "KPDS_8",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "meerut",
-      category: "Duplex Board",
-      product: "prisma",
-      gsm: "250",
-      shade: "grey back",
-      qty: "60000",
-      remarks: "dev priya product",
-      created: "2025-06-21 17:26:18",
-      status: "Pending",
-    },
-    {
-      id: 125,
-      seller: "KPDS_75",
-      buyer: "manoj rana",
-      phone: "8445549289",
-      city: "Ghaziabad",
-      category: "Kraft Paper",
-      product: "VIRGIN KRAFT",
-      gsm: "230",
-      shade: "",
-      qty: "50000",
-      remarks: "",
-      created: "2024-12-11 15:36:23",
-      status: "Pending",
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
 
-  const totalPages = 7;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries?page=${page}&limit=${entries}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch enquiries");
+
+        const result = await res.json();
+
+        setData(result.data || result.enquiries || []);
+
+        if (result.totalPages) setTotalPages(result.totalPages);
+        else if (result.totalCount)
+          setTotalPages(Math.ceil(result.totalCount / entries));
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [page, entries]);
+
+  // ✅ Search filter
+  const filteredData = data.filter((item) => {
+    const buyerName = item.buyer?.name?.toLowerCase() || "";
+    const city = item.city?.toLowerCase() || "";
+    const category = item.category?.name?.toLowerCase() || "";
+    const product = item.product?.toLowerCase() || "";
+    return (
+      buyerName.includes(search.toLowerCase()) ||
+      city.includes(search.toLowerCase()) ||
+      category.includes(search.toLowerCase()) ||
+      product.includes(search.toLowerCase())
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 text-black">
-      {" "}
-      {/* <-- yaha add kiya */}
       <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Enquiry Show</h1>{" "}
-        {/* text-gray-800 hata diya */}
+        <h1 className="text-2xl font-semibold">Enquiry Show</h1>
       </header>
+
       <div className="bg-white shadow-sm rounded border p-4">
         {/* Controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-3 md:gap-4">
@@ -177,7 +78,10 @@ export default function EnquiryShowDummy() {
             Show
             <select
               value={entries}
-              onChange={(e) => setEntries(Number(e.target.value))}
+              onChange={(e) => {
+                setEntries(Number(e.target.value));
+                setPage(1);
+              }}
               className="border rounded px-2 py-1 bg-white text-black text-xs md:text-sm"
             >
               <option value={10}>10</option>
@@ -187,30 +91,14 @@ export default function EnquiryShowDummy() {
             entries
           </div>
 
-          {/* Export Buttons */}
-          {/* <div className="flex flex-wrap gap-1 md:gap-2">
-            <button className="px-2 md:px-3 py-1 bg-gray-100 rounded text-xs md:text-sm">
-              Copy
-            </button>
-            <button className="px-2 md:px-3 py-1 bg-gray-100 rounded text-xs md:text-sm">
-              CSV
-            </button>
-            <button className="px-2 md:px-3 py-1 bg-gray-100 rounded text-xs md:text-sm">
-              Excel
-            </button>
-            <button className="px-2 md:px-3 py-1 bg-gray-100 rounded text-xs md:text-sm">
-              PDF
-            </button>
-            <button className="px-2 md:px-3 py-1 bg-gray-100 rounded text-xs md:text-sm">
-              Print
-            </button>
-          </div> */}
-
           {/* Search */}
           <div className="text-sm flex items-center gap-2 bg-white text-black">
             Search:
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
               className="border rounded px-2 py-1 bg-white text-black w-32 md:w-40 text-xs md:text-sm"
             />
           </div>
@@ -218,125 +106,110 @@ export default function EnquiryShowDummy() {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-100">
-              <tr>
-                {[
-                  "ID",
-                  "Seller Id",
-                  "Buyer",
-                  "Phone",
-                  "City",
-                  "Category",
-                  "Product",
-                  "Gsm",
-                  "Shade",
-                  "Quantity in Kg",
-                  "Remarks",
-                  "Created At",
-                  "Status",
-                  "Action",
-                ].map((h, i) => (
-                  <th
-                    key={i}
-                    className="border px-3 py-2 text-left whitespace-nowrap"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {dummyData.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  <td className="border px-3 py-2">{row.id}</td>
-                  <td className="border px-3 py-2">{row.seller}</td>
-                  <td className="border px-3 py-2">{row.buyer}</td>
-                  <td className="border px-3 py-2">{row.phone}</td>
-                  <td className="border px-3 py-2">{row.city}</td>
-                  <td className="border px-3 py-2">{row.category}</td>
-                  <td className="border px-3 py-2">{row.product}</td>
-                  <td className="border px-3 py-2">{row.gsm}</td>
-                  <td className="border px-3 py-2">{row.shade}</td>
-                  <td className="border px-3 py-2">{row.qty}</td>
-                  <td className="border px-3 py-2">{row.remarks}</td>
-                  <td className="border px-3 py-2">{row.created}</td>
-                  <td className="border px-3 py-2">
-                    {row.status === "Completed" ? (
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
-                        Completed ✓
-                      </span>
-                    ) : (
-                      <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">
-                        Pending ⏳
-                      </span>
-                    )}
-                  </td>
-                  <td className="border px-3 py-2 text-blue-600 cursor-pointer">
-                    View
-                  </td>
+          {loading ? (
+            <div className="text-center py-10 text-gray-500 text-sm">
+              Loading enquiries...
+            </div>
+          ) : error ? (
+            <div className="text-center py-10 text-red-500 text-sm">{error}</div>
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-10 text-gray-500 text-sm">
+              No enquiries found.
+            </div>
+          ) : (
+            <table className="w-full text-sm border-collapse">
+              <thead className="bg-gray-100">
+                <tr>
+                  {[
+                    "ID",
+                    "Seller ID",
+                    "Buyer",
+                    "Phone",
+                    "City",
+                    "Category",
+                    "Product",
+                    "GSM",
+                    "Shade",
+                    "Quantity (Kg)",
+                    "Remarks",
+                    "Created At",
+                    "Status",
+                    "Action",
+                  ].map((h, i) => (
+                    <th
+                      key={i}
+                      className="border px-3 py-2 text-left whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredData.map((row: any) => (
+                  <tr key={row.id} className="hover:bg-gray-50">
+                    <td className="border px-3 py-2">{row.id}</td>
+
+                    {/* ✅ Seller ID formatted */}
+                    <td className="border px-3 py-2">
+                      {row.saller ? `KPDS_${row.saller.id}` : "—"}
+                    </td>
+
+                    {/* ✅ Buyer name */}
+                    <td className="border px-3 py-2">
+                      {row.buyer?.name || "—"}
+                    </td>
+
+                    <td className="border px-3 py-2">{row.phone}</td>
+                    <td className="border px-3 py-2">{row.city}</td>
+
+                    {/* ✅ Category name */}
+                    <td className="border px-3 py-2">
+                      {row.category?.name || "—"}
+                    </td>
+
+                    <td className="border px-3 py-2">{row.product}</td>
+                    <td className="border px-3 py-2">{row.gsm}</td>
+                    <td className="border px-3 py-2">{row.shade}</td>
+                    <td className="border px-3 py-2">
+                      {row.quantity_in_kg || "—"}
+                    </td>
+                    <td className="border px-3 py-2">{row.remarks || "—"}</td>
+                    <td className="border px-3 py-2">
+                      {new Date(row.created_at).toLocaleDateString("en-IN")}
+                    </td>
+                    <td className="border px-3 py-2">
+                      {row.status === 1 ? (
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                          Completed
+                        </span>
+                      ) : row.status === 0 ? (
+                        <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">
+                          Pending
+                        </span>
+                      ) : (
+                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                          Unknown
+                        </span>
+                      )}
+                    </td>
+                    <td className="border px-3 py-2 text-blue-600 cursor-pointer">
+                      View
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 text-sm gap-3 sm:gap-0">
-          <div className="text-center sm:text-left text-xs sm:text-sm">
-            Showing 1 to {entries} of 63 entries
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              className="px-2 py-1 border rounded disabled:opacity-50 text-xs sm:text-sm"
-              disabled={page === 1}
-            >
-              ←
-            </button>
-
-            {/* Show limited pages on mobile, full on desktop */}
-            <div className="hidden sm:flex gap-1">
-              {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setPage(n)}
-                  className={`px-3 py-1 border rounded ${
-                    page === n ? "bg-blue-500 text-white" : "bg-white"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-
-            {/* Mobile pagination */}
-            <div className="flex sm:hidden gap-1">
-              {[1, 2, 3].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setPage(n)}
-                  className={`px-2 py-1 border rounded text-xs ${
-                    page === n ? "bg-blue-500 text-white" : "bg-white"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-              <span className="px-1 text-xs">...</span>
-              <button
-                onClick={() => setPage(7)}
-                className={`px-2 py-1 border rounded text-xs ${
-                  page === 7 ? "bg-blue-500 text-white" : "bg-white"
-                }`}
-              >
-                7
-              </button>
-            </div>
-
-            <button className="px-2 py-1 border rounded text-xs sm:text-sm">
-              →
-            </button>
-          </div>
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={(newPage: number) => setPage(newPage)}
+          />
         </div>
       </div>
     </div>

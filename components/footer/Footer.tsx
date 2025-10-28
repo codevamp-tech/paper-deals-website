@@ -138,13 +138,12 @@ const Footer = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap- place-items-center">
                 {[
-                  { src: "/p1.jpeg", link: "https://fptaindia.in/" },
-                  { src: "/p2.jpg", link: "/" },
-                  { src: "/p3.jpg", link: "/" },
+                  { src: "/p1.jpeg", },
+                  { src: "/p2.jpg", },
+                  { src: "/p3.jpg", },
                 ].map((partner, i) => (
                   <a
                     key={i}
-                    href={partner.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group relative p-4 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center"
@@ -162,7 +161,13 @@ const Footer = () => {
 
             <p className="text-[15px] text-gray-600 mt-6 font-medium text-center">
               A Proud Association of{" "}
-              <span className="text-blue-600">Kay Group</span>
+              <Link
+                href="https://kaygroup.co.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="text-blue-600">Kay Group</span>
+              </Link>
             </p>
           </div>
         </div>
