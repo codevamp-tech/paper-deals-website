@@ -208,7 +208,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
             className="border border-gray-300 rounded px-3 py-2 w-full bg-white text-black"
           />
           <input
-            type="text"
+            type="password"
             name="password"
             placeholder="Enter your password"
             value={form.password}

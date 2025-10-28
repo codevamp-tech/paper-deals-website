@@ -14,14 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { getUserFromToken } from "@/hooks/use-token";
-import { useParams } from "next/navigation";
-
-interface SellerEnquiryPageProps {
-    params: {
-        id: string;
-        enuiryid: string;
-    };
-}
+import { useParams, useRouter } from "next/navigation";
 
 interface Category {
     id: number;
@@ -31,35 +24,37 @@ interface Category {
     date: string;
 }
 
-const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
+const SellerEnquiryPage = () => {
     const { id } = useParams();
+    const router = useRouter();
+    const user = getUserFromToken();
+    console.log("userss??", user);
+
     const [formData, setFormData] = useState({
-        company: "",
-        contactPerson: "",
-        mobile: "",
+        company_name: "",
+        name: "",
+        phone: "",
         email: "",
         city: "",
-        category: "",
+        category_id: "",
         product: "",
         gsm: "",
         bf: "",
         shade: "",
         brightness: "",
         rim: "",
-        sheet: "",
+        sheat: "",
         size: "",
-        quantity: "",
+        quantity_in_kg: "",
         remarks: "",
     });
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [buyerData, setBuyerData] = useState<any>(null);
 
-    const user = getUserFromToken();
-    console.log("user??", user);
 
-    // ✅ Fetch buyer and organization info
+
+    // ✅ Fetch Buyer Info
     useEffect(() => {
         const fetchBuyerData = async () => {
             if (!user?.user_id) return;
@@ -71,16 +66,13 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                 const data = await res.json();
 
                 const org = data?.organization || {};
-                setBuyerData(data);
-
-                // ✅ Auto-fill fields from organization
                 setFormData((prev) => ({
                     ...prev,
-                    company: org.organizations || "",
-                    contactPerson: org.contact_person || "",
+                    company_name: org.organizations || "",
+                    name: org.contact_person || "",
                     email: org.email || "",
                     city: org.city || "",
-                    mobile: org.phone ? org.phone.toString() : data.phone_no || "",
+                    phone: org.phone ? org.phone.toString() : data.phone_no || "",
                 }));
             } catch (err) {
                 console.error("Error fetching buyer details:", err);
@@ -90,11 +82,13 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
         fetchBuyerData();
     }, [user?.user_id]);
 
-    // ✅ Fetch categories
+    // ✅ Fetch Categories
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`);
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/categiry`
+                );
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
                 const data = await res.json();
                 setCategories(data.categories || []);
@@ -105,13 +99,22 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
         fetchCategory();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // ✅ Handle Input Change
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // ✅ Handle Submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) {
+            alert("Please login to send an enquiry.");
+            router.push("/buyer-login");
+            return;
+        }
         setLoading(true);
 
         const payload = {
@@ -125,9 +128,7 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                 `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries`,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
                 }
             );
@@ -135,8 +136,34 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
             if (!res.ok) throw new Error(`Error: ${res.status}`);
             const data = await res.json();
             console.log("✅ Enquiry created successfully:", data);
+
+            alert("Enquiry sent successfully!");
+
+            // ✅ Reset form after successful submission
+            setFormData({
+                company_name: "",
+                name: "",
+                phone: "",
+                email: "",
+                city: "",
+                category_id: "",
+                product: "",
+                gsm: "",
+                bf: "",
+                shade: "",
+                brightness: "",
+                rim: "",
+                sheat: "",
+                size: "",
+                quantity_in_kg: "",
+                remarks: "",
+            });
+
+            // ✅ Redirect to seller page
+            router.push("/B2B/seller");
         } catch (err) {
             console.error("❌ Error submitting enquiry:", err);
+            alert("Failed to send enquiry!");
         } finally {
             setLoading(false);
         }
@@ -164,9 +191,11 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                     </div>
                 </Card>
 
-                {/* Business Enquiry Form */}
+                {/* Enquiry Form */}
                 <Card className="p-6 md:p-10">
-                    <h2 className="text-xl font-bold mb-6 text-black">Business Enquiry</h2>
+                    <h2 className="text-xl font-bold mb-6 text-black">
+                        Business Enquiry
+                    </h2>
 
                     <form
                         onSubmit={handleSubmit}
@@ -176,8 +205,8 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                         <div>
                             <Label className="mb-1 block text-gray-700">Company *</Label>
                             <Input
-                                name="company"
-                                value={formData.company}
+                                name="company_name"
+                                value={formData.company_name}
                                 onChange={handleChange}
                                 readOnly
                                 className="bg-gray-100 border border-gray-300 rounded-md text-black"
@@ -189,8 +218,8 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                         <div>
                             <Label className="mb-1 block text-gray-700">Contact Person *</Label>
                             <Input
-                                name="contactPerson"
-                                value={formData.contactPerson}
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 readOnly
                                 className="bg-gray-100 border border-gray-300 rounded-md text-black"
@@ -202,10 +231,10 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                         <div>
                             <Label className="mb-1 block text-gray-700">Mobile No. *</Label>
                             <Input
-                                name="mobile"
-                                value={formData.mobile}
+                                name="phone"
+                                value={formData.phone}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
@@ -231,7 +260,7 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
@@ -240,22 +269,22 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                         <div>
                             <Label className="mb-1 block text-gray-700">Category *</Label>
                             <Select
-                                value={formData.category}
+                                value={formData.category_id}
                                 onValueChange={(val) =>
-                                    setFormData((prev) => ({ ...prev, category: val }))
+                                    setFormData((prev) => ({ ...prev, category_id: val }))
                                 }
                             >
-                                <SelectTrigger className="bg-white border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+                                <SelectTrigger className="bg-white border border-gray-300 rounded-md text-black">
                                     <SelectValue placeholder="--Select Category--" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-white text-black">
                                     {categories.map((cat) => (
                                         <SelectItem
                                             key={cat.id}
-                                            value={cat.name || `category-${cat.id}`}
+                                            value={cat.id.toString()}
                                             className="bg-white text-black hover:bg-gray-100"
                                         >
-                                            {cat.name || `Category ${cat.id}`}
+                                            {cat.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -269,96 +298,36 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                                 name="product"
                                 value={formData.product}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
 
-                        {/* GSM */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">GSM</Label>
-                            <Input
-                                name="gsm"
-                                value={formData.gsm}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* BF */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">BF</Label>
-                            <Input
-                                name="bf"
-                                value={formData.bf}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* Shade */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">Shade</Label>
-                            <Input
-                                name="shade"
-                                value={formData.shade}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* Brightness */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">Brightness</Label>
-                            <Input
-                                name="brightness"
-                                value={formData.brightness}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* Rim */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">Rim</Label>
-                            <Input
-                                name="rim"
-                                value={formData.rim}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* Sheet */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">Sheet</Label>
-                            <Input
-                                name="sheet"
-                                value={formData.sheet}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
-
-                        {/* Size */}
-                        <div>
-                            <Label className="mb-1 block text-gray-700">Size in Inch</Label>
-                            <Input
-                                name="size"
-                                value={formData.size}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                            />
-                        </div>
+                        {/* Other Fields */}
+                        {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
+                            (field) => (
+                                <div key={field}>
+                                    <Label className="mb-1 block text-gray-700 capitalize">
+                                        {field}
+                                    </Label>
+                                    <Input
+                                        name={field}
+                                        value={(formData as any)[field]}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 border border-gray-300 rounded-md text-black"
+                                    />
+                                </div>
+                            )
+                        )}
 
                         {/* Quantity */}
                         <div>
                             <Label className="mb-1 block text-gray-700">Quantity in Kg *</Label>
                             <Input
-                                name="quantity"
-                                value={formData.quantity}
+                                name="quantity_in_kg"
+                                value={formData.quantity_in_kg}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
@@ -370,7 +339,7 @@ const SellerEnquiryPage: React.FC<SellerEnquiryPageProps> = ({ params }) => {
                                 name="remarks"
                                 value={formData.remarks}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200 min-h-[80px]"
+                                className="bg-gray-50 border border-gray-300 rounded-md text-black min-h-[80px]"
                             />
                         </div>
 
