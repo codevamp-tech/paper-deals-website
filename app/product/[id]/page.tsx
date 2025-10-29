@@ -16,19 +16,19 @@ import OrderNow from "./ordernow/OrderNow";
 // import DetailWithCategories from "./Categoreis";
 
 const Detail = () => {
-    const { id } = useParams();
-    console.log("id", id);   
+  const { id } = useParams();
+  console.log("id", id);
   const router = useRouter();
 
   return (
     <div>
-      <OrderNow  productId={id}/>
+      <OrderNow productId={id as string} />
 
       <Categories title="Explore" subtitle="Releted Categories" />
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />
-      
+
     </div>
   );
 };
