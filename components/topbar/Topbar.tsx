@@ -188,32 +188,34 @@ const Topbar = () => {
                         <ChevronDown className="w-4 h-4 text-gray-600" />
                       </button>
                     </DropdownMenuTrigger>
-
                     <DropdownMenuContent
                       align="end"
-                      className="w-48 rounded-lg border border-gray-200 shadow-md"
+                      className="w-48 rounded-lg border border-gray-200 shadow-md bg-white text-black"
                     >
-                      <DropdownMenuLabel className="text-sm font-medium text-gray-700">
+                      <DropdownMenuLabel className="text-sm font-medium bg-white text-black">
                         My Account
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
+
                       <DropdownMenuItem asChild>
                         <Link
                           href="/buyer3/dashboard"
-                          className="flex items-center gap-2 w-full text-gray-700 text-sm"
+                          className="flex items-center gap-2 w-full text-sm text-black hover:bg-gray-100"
                         >
-                          <User className="w-4 h-4 text-gray-500" />
+                          <User className="w-4 h-4 text-gray-600" />
                           Dashboard
                         </Link>
                       </DropdownMenuItem>
+
                       <DropdownMenuItem
                         onClick={handleLogout}
-                        className="flex items-center gap-2 text-gray-700 text-sm cursor-pointer"
+                        className="flex items-center gap-2 text-sm text-black cursor-pointer hover:bg-gray-100"
                       >
-                        <LogOut className="w-4 h-4 text-gray-500" />
+                        <LogOut className="w-4 h-4 text-gray-600" />
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
+
                   </DropdownMenu>
                 ) : (
                   <Link
