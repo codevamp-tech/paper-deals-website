@@ -8,7 +8,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
-  
+
 
   // 🔹 Load cart from localStorage on mount
   useEffect(() => {
@@ -31,11 +31,11 @@ const OrderNow = ({ productId }: { productId: string }) => {
       try {
         setLoading(true);
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/products/${productId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`
         );
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
-        setProduct(data.data);
+        setProduct(data);
 
         if (data.data?.category_id) {
           fetchRelated(data.data.category_id);
@@ -91,11 +91,11 @@ const OrderNow = ({ productId }: { productId: string }) => {
   };
 
   // 🔹 Order Now Handler (alerts removed)
-// Updated Order Now
-const handleOrderNow = () => {
-  handleAddToCart(); // Add product to cart
-  router.push("/checkout"); // Navigate to checkout page
-};
+  // Updated Order Now
+  const handleOrderNow = () => {
+    handleAddToCart(); // Add product to cart
+    router.push("/checkout"); // Navigate to checkout page
+  };
 
 
   // 🔹 Update quantity
@@ -124,10 +124,8 @@ const handleOrderNow = () => {
           <img
             src={product.image || "/paper.jpg"}
             alt={product.product_name}
-            className="max-w-full h-auto object-contain rounded-xl shadow-lg"
+            className="w-full h-[300px] md:h-[350px] object-contain rounded-xl shadow-lg"
           />
-
-          {/* Download Button */}
           <a
             href={product.image || "/paper.jpg"}
             download
@@ -136,6 +134,7 @@ const handleOrderNow = () => {
             ⬇ Download
           </a>
         </div>
+
 
         {/* Info Section */}
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 text-black bg-white">
