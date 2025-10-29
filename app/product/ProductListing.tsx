@@ -43,11 +43,11 @@ export default function ProductListing() {
     try {
       setLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/stocks?page=${page}&limit=10`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product?page=${page}&limit=12`
       );
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
-      setProducts(data.data || []);
+      setProducts(data.products || []);
       setPagination(data.pagination || { total: 0, page: 1, pages: 0 });
     } catch (err) {
       console.error(err);
@@ -154,31 +154,29 @@ export default function ProductListing() {
       );
 
   const getImageContent = (item: any) => {
-    if (!item.image)
+    const imageUrl =
+      item.image && item.image !== "null"
+        ? item.image.startsWith("http")
+          ? item.image
+          : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
+        : "/mainimg.png";
+
+    if (/\.(jpe?g|png|webp)$/i.test(imageUrl)) {
       return (
         <img
-          src="/mainimg.png"
-          alt="No image"
+          src={imageUrl}
+          alt={item.product_name || "Product Image"}
           className="h-40 w-full object-cover rounded-lg"
         />
       );
+    }
 
-    const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`;
-    if (/\.(jpe?g|png|webp)$/i.test(item.image))
-      return (
-        <img
-          src={fullUrl}
-          alt={item.product_name}
-          className="h-40 w-full object-cover rounded-lg"
-        />
-      );
-
-    if (item.image.endsWith(".pdf"))
+    if (item.image?.endsWith(".pdf")) {
       return (
         <div className="flex flex-col items-center">
           <img src="/pdf-icon.png" alt="PDF" className="h-16 w-16 mb-2" />
           <a
-            href={fullUrl}
+            href={imageUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline text-sm"
@@ -187,22 +185,24 @@ export default function ProductListing() {
           </a>
         </div>
       );
+    }
 
     return (
       <img
         src="/mainimg.png"
-        alt="Fallback"
+        alt="No Image"
         className="h-40 w-full object-cover rounded-lg"
       />
     );
   };
+
   const { theme } = useTheme();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
       <div className="mb-12 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-black">
-         Top-Rated Paper Products in the Market
+          Top-Rated Paper Products in the Market
         </h2>
         <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
       </div>
@@ -273,18 +273,18 @@ export default function ProductListing() {
                   <div className="flex gap-3 mt-3">
 
 
-                    <button
-                      onClick={() => setSelectedProductDetail(product)}
+                    {/* <button
+                      onClick={() => setSelectedProductDetail(item)}
                       className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
                     >
                       Buy
-                    </button>
+                    </button> */}
 
                     <button className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
-                       onClick={(e) => {
-                      e.stopPropagation(); // stop the click from reaching the parent Link
-                      e.preventDefault();
-                      router.push("/subscriptionPlan"); // redirect to subscription plan page
+                      onClick={(e) => {
+                        e.stopPropagation(); // stop the click from reaching the parent Link
+                        e.preventDefault();
+                        router.push("/subscriptionPlan"); // redirect to subscription plan page
                       }}>
                       Contact
                     </button>
