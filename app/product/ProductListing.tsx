@@ -7,27 +7,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-const categories = [
-  { id: "all", name: "All" },
-  { id: "kraft-paper", name: "Kraft Paper" },
-  { id: "board-paper", name: "Board Paper" },
-  { id: "tissue-paper", name: "Tissue Paper" },
-  { id: "office-paper", name: "Office Paper" },
-  { id: "premium-paper", name: "Premium Paper" },
-  { id: "stock-lot", name: "Stock Lot Paper" },
-  { id: "writing-printing", name: "Writing & Printing Paper" },
-  { id: "adhesive-paper", name: "Gumming / Adhesive Paper" },
-  { id: "art-paper", name: "Art Paper" },
-  { id: "matt-paper", name: "Matt Paper" },
-  { id: "coated-paper", name: "Coated / Cromo Paper" },
-  { id: "sbs-paper", name: "SBS Paper" },
-  { id: "newsprint", name: "Newsprint Paper" },
-];
+
 
 export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 0 });
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -47,25 +33,53 @@ export default function ProductListing() {
       );
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
+
       setProducts(data.products || []);
       setPagination(data.pagination || { total: 0, page: 1, pages: 0 });
+
+      // ✅ Create category list safely from available data
+      const uniqueCategories = Array.from(
+        new Map(
+          data.products
+            .filter((p: any) => p.category && p.category.id) // only valid ones
+            .map((p: any) => [p.category.id, { id: p.category.id, name: p.category.name }])
+        ).values()
+      );
+
+      // Optional fallback: handle missing categories (category = null)
+      if (uniqueCategories.length === 0) {
+        // fallback using category_id if needed
+        const fallback = Array.from(
+          new Map(
+            data.products
+              .filter((p: any) => p.category_id && p.category_id !== 0)
+              .map((p: any) => [
+                p.category_id,
+                { id: p.category_id, name: `Category ${p.category_id}` },
+              ])
+          ).values()
+        );
+        setCategories(fallback);
+      } else {
+        setCategories(uniqueCategories);
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
 
+
   useEffect(() => {
     fetchProducts(1);
   }, []);
 
-  const handlePageChange = (page: number) => fetchProducts(page);
 
-  const handleBuyClick = () => {
-    if (!isSignedIn) setIsContactModalOpen(true);
-    else console.log("Proceeding with purchase...");
-  };
+  // const handleBuyClick = () => {
+  //   if (!isSignedIn) setIsContactModalOpen(true);
+  //   else console.log("Proceeding with purchase...");
+  // };
 
   const ContactSellerModal = ({ isOpen, onClose }: any) => {
     if (!isOpen) return null;
@@ -146,11 +160,21 @@ export default function ProductListing() {
     );
   };
 
+
+  const handlePageChange = (page: number) => fetchProducts(page);
+
+  const handleCategoryFilter = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
+
+  // ✅ Filter products by category
   const filteredProducts =
     selectedCategory === "all"
       ? products
-      : products.filter((p) =>
-        p.category_id?.toLowerCase().includes(selectedCategory)
+      : products.filter(
+        (p) =>
+          p.category?.id?.toString() === selectedCategory ||
+          p.category_id?.toString() === selectedCategory
       );
 
   const getImageContent = (item: any) => {
@@ -209,11 +233,20 @@ export default function ProductListing() {
 
       {/* Categories */}
       <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <button
+          onClick={() => handleCategoryFilter("all")}
+          className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === "all"
+            ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+            : "bg-gray-200 text-gray-800 hover:bg-gray-200"
+            }`}
+        >
+          All
+        </button>
         {categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id
+            onClick={() => handleCategoryFilter(cat.id.toString())}
+            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id.toString()
               ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
               : "bg-gray-200 text-gray-800 hover:bg-gray-200"
               }`}
@@ -223,9 +256,28 @@ export default function ProductListing() {
         ))}
       </div>
 
+
       {/* Products */}
       {loading ? (
-        <p className="text-center text-gray-200">Loading products...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+            >
+              <div className="h-48 bg-gray-200 w-full"></div>
+              <div className="p-6 space-y-3">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
+                <div className="flex gap-3 mt-4">
+                  <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                  <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((item) => (

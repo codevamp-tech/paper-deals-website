@@ -283,6 +283,33 @@ export default function LiveStockPage() {
     }
   };
 
+  // 🦴 Skeleton Loader
+  const LiveStockSkeleton = () => (
+    <div className="animate-pulse space-y-4 p-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm space-y-3"
+        >
+          <div className="flex justify-between">
+            <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+            <div className="h-4 bg-gray-300 rounded w-16"></div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {Array.from({ length: 8 }).map((_, j) => (
+              <div key={j} className="h-3 bg-gray-200 rounded w-full"></div>
+            ))}
+          </div>
+          <div className="flex justify-between pt-2 border-t border-gray-200">
+            <div className="h-4 bg-gray-300 rounded w-20"></div>
+            <div className="h-4 bg-gray-300 rounded w-20"></div>
+            <div className="h-6 bg-gray-300 rounded w-16"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
 
   return (
     <>
@@ -342,8 +369,8 @@ export default function LiveStockPage() {
             <CardContent className="p-0">
               <div className="block lg:hidden px-4 pb-4 space-y-4">
                 {loading ? (
-                  <div className="py-8 text-center text-gray-500">
-                    Loading stocks...
+                  <div className="p-4">
+                    <LiveStockSkeleton />
                   </div>
                 ) : error ? (
                   <div className="py-8 text-center text-red-500">{error}</div>
@@ -494,11 +521,15 @@ export default function LiveStockPage() {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td
-                          colSpan={15}
-                          className="py-6 text-center text-gray-500"
-                        >
-                          Loading stocks...
+                        <td colSpan={15} className="p-6">
+                          <div className="animate-pulse space-y-3">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="h-6 bg-gray-200 rounded w-full"
+                              ></div>
+                            ))}
+                          </div>
                         </td>
                       </tr>
                     ) : error ? (
@@ -620,7 +651,7 @@ export default function LiveStockPage() {
                   <table className="w-full text-xs sm:text-sm border-collapse min-w-[640px]">
                     <thead>
                       <tr className="border-b text-left text-gray-600">
-                         <th className="py-2 px-2 sm:px-3">Choose</th>
+                        <th className="py-2 px-2 sm:px-3">Choose</th>
                         <th className="py-2 px-2 sm:px-3">Product</th>
                         <th className="py-2 px-2 sm:px-3">Category</th>
                         <th className="py-2 px-2 sm:px-3">GSM</th>

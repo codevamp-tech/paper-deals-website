@@ -7,10 +7,31 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ShoppingCart, Trash2, X } from "lucide-react";
 
-
+function ProductSkeleton() {
+  return (
+    <Card className="bg-white shadow-sm">
+      <CardContent className="p-6 animate-pulse">
+        <div className="flex justify-between items-start mb-4">
+          <div className="h-5 w-20 bg-gray-200 rounded"></div>
+          <div className="h-5 w-16 bg-gray-200 rounded"></div>
+        </div>
+        <div className="h-6 w-3/4 bg-gray-300 rounded mb-3"></div>
+        <div className="h-4 w-1/2 bg-gray-200 rounded mb-6"></div>
+        <div className="h-8 w-1/3 bg-gray-200 rounded mb-4"></div>
+        <div className="flex gap-2 mb-6">
+          <div className="h-10 w-16 bg-gray-200 rounded"></div>
+          <div className="h-10 w-16 bg-gray-200 rounded"></div>
+          <div className="h-10 w-24 bg-gray-300 rounded"></div>
+        </div>
+        <div className="h-4 w-full bg-gray-100 rounded"></div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function PaperProductsComparison() {
   const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [selectedCity, setSelectedCity] = useState<string>("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("All");
@@ -366,7 +387,10 @@ export default function PaperProductsComparison() {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            // 👇 Show 6 skeleton cards
+            Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
+          ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <Card
                 key={product._id}
@@ -432,9 +456,9 @@ export default function PaperProductsComparison() {
                       disabled={isProductAdded(product._id)}
                     >
                       {isProductAdded(product._id) ? "Added" : "Add to Cart"}
-                   
+
                     </Button>
-                     <Button
+                    <Button
                       variant="outline"
                       className="w-full"
                       onClick={() => router.push("/subscriptionPlan")}
@@ -463,99 +487,99 @@ export default function PaperProductsComparison() {
         </div>
       </div>
       {/* Cart Sidebar */}
-     {/* Sleek Animated Cart Sidebar */}
-{showCart && (
-  <div
-    className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity"
-    onClick={() => setShowCart(false)} // close when clicking outside
-  >
-    <div
-      onClick={(e) => e.stopPropagation()} // prevent close on inner click
-      className="relative w-96 h-full bg-white/90 backdrop-blur-lg shadow-2xl border-l border-blue-200 p-6 flex flex-col animate-slideIn"
-    >
-      {/* Close Button */}
-      <button
-        onClick={() => setShowCart(false)}
-        className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full shadow-sm transition"
-      >
-        <X className="w-5 h-5 text-gray-700" />
-      </button>
-
-      {/* Header */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">
-        🛍 Your  Cart
-      </h2>
-
-      {/* Cart Content */}
-      {cart.length > 0 ? (
-        <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
-          {cart.map((item) => (
-            <div
-              key={item._id}
-              className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm hover:shadow-md transition"
+      {/* Sleek Animated Cart Sidebar */}
+      {showCart && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity"
+          onClick={() => setShowCart(false)} // close when clicking outside
+        >
+          <div
+            onClick={(e) => e.stopPropagation()} // prevent close on inner click
+            className="relative w-96 h-full bg-white/90 backdrop-blur-lg shadow-2xl border-l border-blue-200 p-6 flex flex-col animate-slideIn"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowCart(false)}
+              className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full shadow-sm transition"
             >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-600">{item.mill}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeFromCart(item._id)}
-                  className="text-gray-500 hover:text-red-500"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="font-semibold text-blue-700">
-                  ₹{item.pricePerKg} /Kg
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => updateCartQuantity(item._id, item.quantity - 1)}
+              <X className="w-5 h-5 text-gray-700" />
+            </button>
+
+            {/* Header */}
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">
+              🛍 Your  Cart
+            </h2>
+
+            {/* Cart Content */}
+            {cart.length > 0 ? (
+              <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
+                {cart.map((item) => (
+                  <div
+                    key={item._id}
+                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm hover:shadow-md transition"
                   >
-                    -
-                  </Button>
-                  <span className="text-base font-medium">{item.quantity}</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => updateCartQuantity(item._id, item.quantity + 1)}
-                  >
-                    +
-                  </Button>
-                </div>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
+                        <p className="text-sm text-gray-600">{item.mill}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeFromCart(item._id)}
+                        className="text-gray-500 hover:text-red-500"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="font-semibold text-blue-700">
+                        ₹{item.pricePerKg} /Kg
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateCartQuantity(item._id, item.quantity - 1)}
+                        >
+                          -
+                        </Button>
+                        <span className="text-base font-medium">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateCartQuantity(item._id, item.quantity + 1)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
+                <ShoppingCart className="w-12 h-12 mb-3 text-gray-400" />
+                <p className="text-lg">Your cart is empty</p>
+              </div>
+            )}
+
+            {/* Cart Total Section */}
+            <div className="mt-6 border-t pt-4 bg-white/60 rounded-lg shadow-inner">
+              <div className="flex justify-between items-center text-lg font-semibold text-gray-800 mb-4">
+                <span>Total</span>
+                <span>₹{cartTotal}</span>
+              </div>
+              <Button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-10"
+                onClick={() => router.push("/subscriptionPlan")}
+              >
+                Proceed to Contact
+              </Button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
-          <ShoppingCart className="w-12 h-12 mb-3 text-gray-400" />
-          <p className="text-lg">Your cart is empty</p>
+          </div>
         </div>
       )}
-
-      {/* Cart Total Section */}
-      <div className="mt-6 border-t pt-4 bg-white/60 rounded-lg shadow-inner">
-        <div className="flex justify-between items-center text-lg font-semibold text-gray-800 mb-4">
-          <span>Total</span>
-          <span>₹{cartTotal}</span>
-        </div>
-        <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-10"
-          onClick={() => router.push("/subscriptionPlan")}
-        >
-          Proceed to Contact
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
 
 
     </div>

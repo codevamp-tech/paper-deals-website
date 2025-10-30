@@ -35,19 +35,32 @@ export default function AssumptionPartner() {
     fetchPartners()
   }, [])
 
+  const PartnerSkeleton = () => (
+    <div className="flex-shrink-0 w-32 md:w-40 h-32 md:h-40 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center animate-pulse">
+      <div className="w-24 h-24 bg-gray-200 rounded-md"></div>
+    </div>
+  )
+
   return (
     <section className="w-full bg-white">
       {/* Header Section */}
-      <div className="py-16 md:py-20 px-4 md:px-8">
+      <div className="py-2  px-4 md:px-8">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-blue-600 tracking-tight">
           OUR ASSOCIATION PARTNER
         </h1>
       </div>
 
       {/* Partner Logos Section */}
-      <div className="px-4 md:px-8 py-12 md:py-16">
+      <div className="px-4  py-2 md:py-16">
         {loading ? (
-          <p className="text-center text-gray-500">Loading partners...</p>
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-6 md:gap-8 overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center"
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <PartnerSkeleton key={i} />
+            ))}
+          </div>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : partners.length === 0 ? (
@@ -78,7 +91,7 @@ export default function AssumptionPartner() {
       </div>
 
       {/* Company Description Section */}
-      <div className="px-4 md:px-8 py-12 md:py-16">
+      <div className="px-4 py-2 md:py-16">
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center max-w-6xl mx-auto">
           {/* Logo */}
           <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
