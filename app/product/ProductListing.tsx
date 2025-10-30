@@ -320,7 +320,7 @@ export default function ProductListing() {
                   <p className="text-2xl font-extrabold text-blue-600 mt-2">
                     ₹{item.price_per_kg}
                   </p>
-                  <p className="text-gray-700">{item.category_id}</p>
+                  <p className="text-gray-700">{item.category?.name}</p>
 
                   <div className="flex gap-3 mt-3">
 
