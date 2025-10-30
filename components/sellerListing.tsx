@@ -128,6 +128,8 @@ export default function SellerList() {
       onClose();
     };
 
+
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
@@ -198,6 +200,21 @@ export default function SellerList() {
     );
   };
 
+
+  const SellerSkeleton = () => (
+    <div className="bg-white rounded-xl shadow-xl p-6 flex animate-pulse border border-gray-200">
+      <div className="w-32 h-32 bg-gray-200 rounded-lg flex-shrink-0" />
+      <div className="ml-6 flex-1 space-y-3">
+        <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-10 bg-gray-200 rounded w-1/2 mt-4"></div>
+      </div>
+    </div>
+  );
+
   // ✅ Render Section
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -228,7 +245,11 @@ export default function SellerList() {
 
       {/* Sellers */}
       {loading ? (
-        <p className="text-center text-gray-600">Loading sellers...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SellerSkeleton key={i} />
+          ))}
+        </div>
       ) : filteredSellers.length === 0 ? (
         <p className="text-center text-gray-600">No sellers found.</p>
       ) : (

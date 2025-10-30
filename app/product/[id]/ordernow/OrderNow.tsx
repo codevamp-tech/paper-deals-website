@@ -1,5 +1,5 @@
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 
 const OrderNow = ({ productId }: { productId: string }) => {
   const [product, setProduct] = useState<any>(null);
@@ -8,7 +8,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
-
+  const router = useRouter();
 
   // 🔹 Load cart from localStorage on mount
   useEffect(() => {
@@ -37,8 +37,8 @@ const OrderNow = ({ productId }: { productId: string }) => {
         const data = await res.json();
         setProduct(data);
 
-        if (data.data?.category_id) {
-          fetchRelated(data.data.category_id);
+        if (data.category_id) {
+          fetchRelated(data.category_id);
         }
       } catch (err) {
         console.error("❌ Error fetching product:", err);
@@ -54,10 +54,11 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const fetchRelated = async (category_id: string) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/category/${category_id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${category_id}`
       );
       if (!res.ok) throw new Error("Failed to fetch related products");
       const data = await res.json();
+      console.log("data", data);
       setRelatedProducts(data || []);
     } catch (err) {
       console.error("❌ Error fetching related products:", err);
@@ -94,7 +95,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   // Updated Order Now
   const handleOrderNow = () => {
     handleAddToCart(); // Add product to cart
-    router.push("/checkout"); // Navigate to checkout page
+    // router.push("/checkout"); // Navigate to checkout page
   };
 
 
@@ -113,7 +114,40 @@ const OrderNow = ({ productId }: { productId: string }) => {
     setCart(updatedCart);
   };
 
-  if (loading) return <p className="text-center p-6">Loading...</p>;
+  const ProductSkeleton = () => (
+    <div className="min-h-screen bg-white animate-pulse">
+      <div className="flex flex-col md:flex-row">
+        {/* Image Skeleton */}
+        <div className="w-full md:w-1/2 p-6 flex items-center justify-center">
+          <div className="w-full h-[350px] bg-gray-200 rounded-xl"></div>
+        </div>
+
+        {/* Info Skeleton */}
+        <div className="w-full md:w-1/2 p-6 md:p-12 space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+          <div className="h-12 bg-gray-200 rounded w-full mt-4"></div>
+        </div>
+      </div>
+
+      {/* Related Products Skeleton */}
+      <div className="py-12 px-4 md:px-10">
+        <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
+        <div className="flex overflow-x-auto gap-5 px-1">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="min-w-[220px] max-w-[220px] bg-gray-200 h-[300px] rounded-2xl"
+            ></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) return <ProductSkeleton />;
   if (!product) return <p className="text-center p-6">Product not found.</p>;
 
   return (
@@ -262,7 +296,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
       <div className="py-12 px-4 md:px-10 bg-white">
         <h1 className="text-black text-3xl md:text-4xl font-bold text-center mb-10">
           Related Products in{" "}
-          <span className="text-[#38d200]">{product.category_id}</span>
+          <span className="text-[#38d200]">{product.category?.name}</span>
         </h1>
 
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
@@ -270,7 +304,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
             <div
               key={p.id}
               className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#fff] flex-shrink-0 border border-[#38d200] cursor-pointer hover:shadow-xl transition"
-              onClick={() => (window.location.href = `/order/${p.id}`)}
+              onClick={() => router.push(`/product/${p.id}`)}
               style={{
                 boxShadow:
                   "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0 0 1px inset",

@@ -24,6 +24,8 @@ type Consultant = {
   photoUrl?: string;
 };
 
+
+
 export function ConsultantCard({ consultant }: { consultant: Consultant }) {
   const {
     id,

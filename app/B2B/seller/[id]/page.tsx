@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Building } from "lucide-react"
 import Link from "next/link"
+import { Skeleton } from "@/components/ui/skeleton"
 
 type Seller = {
   name?: string
@@ -29,6 +30,53 @@ function Field({
     </div>
   )
 }
+
+function SellerSkeleton() {
+  return (
+    <main className="min-h-screen bg-white">
+      <section className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+        <Card className="border rounded-xl bg-white">
+          <div className="p-5 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 md:gap-8">
+              {/* Skeleton for image */}
+              <div className="w-full">
+                <Skeleton className="aspect-[4/3] w-full rounded-lg" />
+              </div>
+
+              {/* Right side skeleton */}
+              <div className="flex flex-col justify-center">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Skeleton className="h-7 w-48" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </div>
+
+                {/* Grid fields */}
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 space-y-2">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <div className="mt-8 flex justify-center">
+          <Skeleton className="h-11 w-40 rounded-md" />
+        </div>
+      </section>
+    </main>
+  )
+}
+
 
 export default function BuyersPage() {
   const { id } = useParams()
@@ -59,13 +107,7 @@ export default function BuyersPage() {
     }
   }, [id])
 
-  if (loading) {
-    return (
-      <main className="min-h-screen grid place-items-center bg-white">
-        <p className="text-sm font-medium text-gray-600">Loading…</p>
-      </main>
-    )
-  }
+  if (loading) return <SellerSkeleton />
 
   if (!seller) {
     return (

@@ -3,6 +3,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
+
+
+const NewsDetailSkeleton = () => {
+  return (
+    <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6 animate-pulse">
+      <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/3 mb-6"></div>
+      <div className="w-full h-60 bg-gray-200 rounded-md mb-4"></div>
+      <div className="space-y-3">
+        <div className="h-4 bg-gray-200 rounded w-full"></div>
+        <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+        <div className="h-4 bg-gray-200 rounded w-10/12"></div>
+        <div className="h-4 bg-gray-200 rounded w-8/12"></div>
+      </div>
+    </div>
+  );
+};
+
 const NewsDetailPage = () => {
   const params = useParams();
   const [news, setNews] = useState(null);
@@ -25,7 +43,7 @@ const NewsDetailPage = () => {
     fetchNewsDetail();
   }, [params.id]);
 
-  if (loading) return <p>Loading news detail...</p>;
+  if (loading) return <NewsDetailSkeleton />;
   if (error) return <p>{error}</p>;
   if (!news) return <p>News not found.</p>;
 

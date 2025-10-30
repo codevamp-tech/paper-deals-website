@@ -43,9 +43,59 @@ export default function TestimonialSection() {
   }, []);
   const { theme } = useTheme();
 
+  const SkeletonCard = () => (
+    <div
+      className="animate-pulse bg-white rounded-lg p-6 mb-6 inline-block w-full"
+      style={{
+        backdropFilter: "blur(48px)",
+        border: "1px solid #f1f1f1",
+        borderRadius: "12px",
+        boxShadow:
+          "rgba(0, 0, 0, 0.08) 0px 1px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px",
+      }}
+    >
+      <div className="flex items-center mb-4">
+        <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
+        <div className="flex-1">
+          <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+        </div>
+      </div>
+      <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+      <div className="h-3 bg-gray-200 rounded w-5/6 mb-2"></div>
+      <div className="h-3 bg-gray-200 rounded w-4/6"></div>
+    </div>
+  );
+
   if (!mounted) return null;
-  if (loading)
-    return <p className="text-center mt-10">Loading testimonials...</p>;
+  if (loading) {
+    return (
+      <div
+        className="bg-white min-h-screen flex flex-col items-center justify-center"
+        style={{ padding: "40px 20px" }}
+      >
+        <p
+          className="text-[6vh] font-[900] font-[Poppins] mb-10"
+          style={{ color: theme.Text }}
+        >
+          Testimonials
+        </p>
+        <div
+          style={{
+            columnCount: isMobile ? 1 : 3,
+            columnGap: "20px",
+            maxWidth: "1200px",
+            margin: "0 auto",
+          }}
+        >
+          {[...Array(6)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div
