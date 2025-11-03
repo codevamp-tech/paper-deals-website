@@ -14,7 +14,6 @@ export default function AboutUs() {
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-12 lg:py-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Left Column - Text Content */}
             <div className="space-y-8">
               <div
                 className="inline-flex items-center px-4 py-2 rounded-full text-white"
@@ -51,7 +50,6 @@ export default function AboutUs() {
                 </p>
               </div>
 
-              {/* Key Stats */}
               <div className="grid grid-cols-2 gap-6 pt-4">
                 <div>
                   <p className="text-3xl font-bold" style={{ color: theme.Text }}>
@@ -68,7 +66,6 @@ export default function AboutUs() {
               </div>
             </div>
 
-            {/* Right Column - Image */}
             <div className="w-full">
               <img
                 src="/flowimg.png"
@@ -424,7 +421,7 @@ export default function AboutUs() {
         </div>
       </div>
 
-      <InfiniteCarousel />
+      {/* <InfiniteCarousel /> */}
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />

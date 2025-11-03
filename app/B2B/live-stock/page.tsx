@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,19 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowUpDown, Eye } from "lucide-react";
-
-import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
-import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
-import FaqSection from "@/components/faqSection/FaqSection";
-
+import { ArrowUpDown, Eye, ShoppingCart, Trash2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader as UIDialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Pagination from "@/components/pagination";
 import { toast } from "sonner";
 
 type Row = {
@@ -45,12 +38,26 @@ type Row = {
 type SellerProduct = {
   id: number;
   name: string;
+  product_name?: string;
+  category: string;
+  category_id?: string;
+  gsm: string;
+  bf: string;
+  shade: string;
+  size?: string;
+  price: string | number;
+  price_per_kg?: string | number;
+};
+
+type CartItem = {
+  id: number;
+  name: string;
   category: string;
   gsm: string;
   bf: string;
   shade: string;
-  size: string;
   price: string | number;
+  sellerId: string | number | null;
 };
 
 export default function LiveStockPage() {
@@ -67,6 +74,7 @@ export default function LiveStockPage() {
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   // modal states
   const [selectedSellerId, setSelectedSellerId] = useState<
@@ -76,10 +84,12 @@ export default function LiveStockPage() {
   const [modalPage, setModalPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [modalLoading, setModalLoading] = useState(false);
-  // For multi-product enquiry
+
+  // Cart state
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
 
-  // 🟣 Enquiry form state
+  // Enquiry form state
   const [enquiryForm, setEnquiryForm] = useState({
     name: "",
     email_id: "",
@@ -88,6 +98,23 @@ export default function LiveStockPage() {
     status: 0,
   });
   const [submitting, setSubmitting] = useState(false);
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem("paperStockCart");
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("paperStockCart", JSON.stringify(cart));
+  }, [cart]);
 
   const handleEnquiryChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -99,6 +126,46 @@ export default function LiveStockPage() {
   const handleEnquiry = (row: Row) => {
     setSelectedRow(row);
     setIsEnquiryModalOpen(true);
+  };
+
+  // Add to cart function
+  const addToCart = (product: SellerProduct) => {
+    const cartItem: CartItem = {
+      id: product.id,
+      name: product.product_name || product.name,
+      category: product.category_id || product.category,
+      gsm: product.gsm,
+      bf: product.bf,
+      shade: product.shade,
+      price: product.price_per_kg || product.price,
+      sellerId: selectedSellerId,
+    };
+
+    // Check if already in cart
+    if (cart.some((item) => item.id === product.id)) {
+      toast.info("Product already in cart");
+      return;
+    }
+
+    setCart((prev) => [...prev, cartItem]);
+    toast.success("Added to cart!");
+  };
+
+  // Remove from cart
+  const removeFromCart = (productId: number) => {
+    setCart((prev) => prev.filter((item) => item.id !== productId));
+    toast.success("Removed from cart");
+  };
+
+  // Clear cart
+  const clearCart = () => {
+    setCart([]);
+    toast.success("Cart cleared");
+  };
+
+  // Open cart modal
+  const openCartModal = () => {
+    setIsCartModalOpen(true);
   };
 
   useEffect(() => {
@@ -119,7 +186,7 @@ export default function LiveStockPage() {
         const mapped: Row[] = json.data.map((item: any) => {
           const p = item.ProductNew || {};
           return {
-            sellerId: p.seller_id || null, // 👈 Add this
+            sellerId: p.seller_id || null,
             location: p.shade || "-",
             sellerType:
               p.user_type === 2
@@ -214,37 +281,20 @@ export default function LiveStockPage() {
     }
   };
 
-  const handleProductEnquiry = (product: SellerProduct) => {
-    setSelectedRow({
-      id: product.id,
-      location: "-",
-      sellerType: "-",
-      category: product.category,
-      productName: product.name,
-      bf: product.bf,
-      gsm: product.gsm,
-      shade: product.shade,
-      size: "-",
-      wl: "-",
-      pricePerKg: product.price,
-      quantity: "-",
-      sellerId: selectedSellerId,
-    });
-    setIsEnquiryModalOpen(true);
-  };
-
   const handleSubmitEnquiry = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (selectedProducts.length === 0) {
-      toast.error("Please select at least one product for enquiry.");
+    const productIds = cart.map((item) => item.id);
+
+    if (productIds.length === 0) {
+      toast.error("Please add at least one product to cart for enquiry.");
       return;
     }
 
     try {
       setSubmitting(true);
       const payload = {
-        products: selectedProducts, // ✅ now an array of IDs
+        products: productIds,
         spot_price_id: null,
         name: enquiryForm.name,
         phone: enquiryForm.phone,
@@ -273,8 +323,9 @@ export default function LiveStockPage() {
         message: "",
         status: 0,
       });
-      setSelectedProducts([]); // ✅ clear after submit
+      clearCart();
       setIsEnquiryModalOpen(false);
+      setIsCartModalOpen(false);
     } catch (err: any) {
       console.error("Error submitting enquiry:", err);
       toast.error(err.message || "Something went wrong while submitting enquiry");
@@ -283,7 +334,6 @@ export default function LiveStockPage() {
     }
   };
 
-  // 🦴 Skeleton Loader
   const LiveStockSkeleton = () => (
     <div className="animate-pulse space-y-4 p-4">
       {Array.from({ length: 6 }).map((_, i) => (
@@ -310,36 +360,67 @@ export default function LiveStockPage() {
     </div>
   );
 
-
   return (
     <>
       <main className="w-full min-h-screen bg-[#fafafa] px-4 sm:px-6 lg:px-8">
+        {/* Floating Cart Button */}
+
+
         {/* Hero */}
-        <section className="space-y-4 text-center py-8 sm:py-12 md:py-16 max-w-7xl mx-auto">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#22d3ee] text-white">
-            <span className="font-medium text-sm sm:text-base">Live Stock</span>
+        <section className="relative border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
+            {/* Badge */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#22d3ee] text-white">
+                <span className="textfont-medium text-sm sm:text-base">Live Stock </span>
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="text-center space-y-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                <span className="block text-foreground">Paper & Packaging</span>
+                <span className="block text-muted-foreground">Market Watch</span>
+              </h1>
+
+              <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground leading-relaxed">
+                Real-time market insights for major paper and packaging companies.
+                <br className="hidden sm:block" />
+                Data delivered directly from the server with live updates.
+              </p>
+
+              {/* Cart Button */}
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={openCartModal}
+                  className="relative inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary hover:bg-accent text-primary-foreground font-semibold transition-colors duration-200 group"
+                >
+                  <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="ml-2 text-sm">Shopping Cart</span>
+                  {cart.length > 0 && (
+                    <span className="absolute -top-2 -right-2 inline-flex items-center justify-center w-6 h-6 text-xs font-bold bg-destructive text-white rounded-full">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-primary/5 to-accent/5 rounded-full blur-3xl -z-10"></div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight px-4">
-            <span className="text-black">Paper & Packaging</span>{" "}
-            <span className="text-gray-700">Market Watch</span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base px-4">
-            Real-time styled view of major paper and packaging companies. Data
-            comes directly from the server.
-          </p>
         </section>
 
         {/* Table */}
         <section className="max-w-7xl mx-auto pb-8 sm:pb-12 md:pb-16">
           <Card
-            className="w-full border-0  rounded-lg sm:rounded-xl overflow-hidden"
+            className="w-full border-0 rounded-lg sm:rounded-xl overflow-hidden"
             style={{
               boxShadow:
                 "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
             }}
           >
             <CardHeader className="flex flex-col gap-4 px-4 sm:px-6">
-              {/* Search + Filter */}
               <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <div className="flex items-center w-full sm:flex-1 relative">
                   <Input
@@ -367,11 +448,10 @@ export default function LiveStockPage() {
             </CardHeader>
 
             <CardContent className="p-0">
+              {/* Mobile View */}
               <div className="block lg:hidden px-4 pb-4 space-y-4">
                 {loading ? (
-                  <div className="p-4">
-                    <LiveStockSkeleton />
-                  </div>
+                  <LiveStockSkeleton />
                 ) : error ? (
                   <div className="py-8 text-center text-red-500">{error}</div>
                 ) : filteredRows.length === 0 ? (
@@ -407,12 +487,6 @@ export default function LiveStockPage() {
 
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
-                          <span className="text-gray-500">Location:</span>
-                          <span className="ml-1 text-blue-600 font-medium">
-                            {r.ProductNew?.seller?.organization?.city || "N/A"}
-                          </span>
-                        </div>
-                        <div>
                           <span className="text-gray-500">Category:</span>
                           <span className="ml-1 text-orange-600">
                             {r.category}
@@ -431,14 +505,6 @@ export default function LiveStockPage() {
                           <span className="ml-1 text-purple-600">
                             {r.shade}
                           </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Size:</span>
-                          <span className="ml-1 text-amber-600">{r.size}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">WL:</span>
-                          <span className="ml-1 text-cyan-600">{r.wl}</span>
                         </div>
                         <div>
                           <span className="text-gray-500">Quantity:</span>
@@ -463,20 +529,12 @@ export default function LiveStockPage() {
                             {r.spotPrice}
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleView(r)}
-                            className="p-2 hover:bg-gray-100 rounded-full text-blue-500 hover:text-blue-600"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => handleEnquiry(r)}
-                            className="text-purple-600 hover:text-purple-800 font-semibold text-sm underline px-2"
-                          >
-                            Enquiry
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => handleView(r)}
+                          className="p-2 hover:bg-gray-100 rounded-full text-blue-500 hover:text-blue-600"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
                       </div>
                     </div>
                   ))
@@ -484,12 +542,11 @@ export default function LiveStockPage() {
               </div>
 
               {/* Desktop Table View */}
-              <div className="hidden lg:block w-full overflow-x-auto">
-                <table className="w-full text-sm border-collapse min-w-[1400px]">
+              <div className="hidden lg:block w-full overflow-hidden">
+                <table className="w-full text-sm border-collapse table-auto">
                   <thead>
                     <tr className="text-gray-600 text-left border-b border-gray-200">
                       {[
-                        "location",
                         "sellerType",
                         "category",
                         "productName",
@@ -497,17 +554,14 @@ export default function LiveStockPage() {
                         "bf",
                         "gsm",
                         "shade",
-                        "size",
-                        "wl",
                         "pricePerKg",
                         "spotPrice",
                         "quantity",
                         "view",
-                        // "Enquiry",
                       ].map((col) => (
                         <th
                           key={col}
-                          onClick={() => handleSort(col)}
+                          onClick={() => handleSort(col as keyof Row)}
                           className="py-3 px-3 xl:px-4 font-medium cursor-pointer select-none hover:text-gray-900 whitespace-nowrap"
                         >
                           <div className="flex items-center gap-1">
@@ -521,7 +575,7 @@ export default function LiveStockPage() {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan={15} className="p-6">
+                        <td colSpan={11} className="p-6">
                           <div className="animate-pulse space-y-3">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <div
@@ -535,7 +589,7 @@ export default function LiveStockPage() {
                     ) : error ? (
                       <tr>
                         <td
-                          colSpan={15}
+                          colSpan={11}
                           className="py-6 text-center text-red-500"
                         >
                           {error}
@@ -544,7 +598,7 @@ export default function LiveStockPage() {
                     ) : filteredRows.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={15}
+                          colSpan={11}
                           className="py-6 text-center text-gray-500"
                         >
                           No stock data available
@@ -557,9 +611,6 @@ export default function LiveStockPage() {
                           className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"
                             } hover:bg-gray-100 transition-colors`}
                         >
-                          <td className="py-3 px-3 xl:px-4 text-blue-600 font-medium">
-                            {r.ProductNew?.seller?.organization?.city || "N/A"}
-                          </td>
                           <td className="py-3 px-3 xl:px-4">
                             <span
                               className={`px-2 py-1 rounded-full text-xs font-semibold ${r.sellerType === "Manufacturer"
@@ -590,12 +641,6 @@ export default function LiveStockPage() {
                           <td className="py-3 px-3 xl:px-4 text-purple-600">
                             {r.shade}
                           </td>
-                          <td className="py-3 px-3 xl:px-4 text-amber-600">
-                            {r.size}
-                          </td>
-                          <td className="py-3 px-3 xl:px-4 text-cyan-600">
-                            {r.wl}
-                          </td>
                           <td className="py-3 px-3 xl:px-4 font-bold text-red-600">
                             {r.pricePerKg}
                           </td>
@@ -613,14 +658,6 @@ export default function LiveStockPage() {
                               <Eye />
                             </button>
                           </td>
-                          {/* <td className="py-3 px-4 font-bold text-violet-700">
-                            <button
-                              onClick={() => handleEnquiry(r)}
-                              className="text-purple-600 hover:text-purple-800 font-semibold underline"
-                            >
-                              Enquiry now
-                            </button>
-                          </td> */}
                         </tr>
                       ))
                     )}
@@ -631,7 +668,8 @@ export default function LiveStockPage() {
           </Card>
         </section>
       </main>
-      {/* View Modal */}
+
+      {/* View Modal - Seller Products */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-3xl rounded-2xl shadow-lg bg-white max-h-[90vh] overflow-hidden flex flex-col">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-4">
@@ -651,36 +689,20 @@ export default function LiveStockPage() {
                   <table className="w-full text-xs sm:text-sm border-collapse min-w-[640px]">
                     <thead>
                       <tr className="border-b text-left text-gray-600">
-                        <th className="py-2 px-2 sm:px-3">Choose</th>
                         <th className="py-2 px-2 sm:px-3">Product</th>
                         <th className="py-2 px-2 sm:px-3">Category</th>
                         <th className="py-2 px-2 sm:px-3">GSM</th>
                         <th className="py-2 px-2 sm:px-3">BF</th>
                         <th className="py-2 px-2 sm:px-3">Shade</th>
                         <th className="py-2 px-2 sm:px-3">Price</th>
-                        {/* <th className="py-2 px-2 sm:px-3 text-center">
+                        <th className="py-2 px-2 sm:px-3 text-center">
                           Action
-                        </th> */}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {sellerProducts.map((p) => (
                         <tr key={p.id} className="border-b hover:bg-gray-50">
-                          <td className="py-2 px-2 sm:px-3 text-center">
-                            <input
-                              type="checkbox"
-                              checked={selectedProducts.includes(p.id)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedProducts((prev) => [...prev, p.id]);
-                                } else {
-                                  setSelectedProducts((prev) =>
-                                    prev.filter((id) => id !== p.id)
-                                  );
-                                }
-                              }}
-                            />
-                          </td>
                           <td className="py-2 px-2 sm:px-3 font-medium">
                             {p.product_name || p.name}
                           </td>
@@ -693,174 +715,233 @@ export default function LiveStockPage() {
                           <td className="py-2 px-2 sm:px-3 text-red-600 font-semibold">
                             {p.price_per_kg || p.price} ₹
                           </td>
-                          {/* <td className="py-2 px-2 sm:px-3 text-center">
+                          <td className="py-2 px-2 sm:px-3 text-center">
                             <button
-                              onClick={() =>
-                                handleProductEnquiry({
-                                  id: p.id,
-                                  name: p.product_name || p.name,
-                                  category: p.category_id || p.category,
-                                  gsm: p.gsm,
-                                  bf: p.bf,
-                                  shade: p.shade,
-                                  size: p.size || "-",
-                                  price: p.price_per_kg || p.price,
-                                })
-                              }
-                              className="text-purple-600 hover:text-purple-800 font-semibold underline whitespace-nowrap"
+                              onClick={() => addToCart(p)}
+                              disabled={cart.some((item) => item.id === p.id)}
+                              className={`px-3 py-1 rounded-md text-xs font-semibold transition ${cart.some((item) => item.id === p.id)
+                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                : "bg-purple-600 text-white hover:bg-purple-700"
+                                }`}
                             >
-                              Enquiry
+                              {cart.some((item) => item.id === p.id)
+                                ? "Added"
+                                : "Add to Cart"}
                             </button>
-                          </td> */}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               )}
-
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <Pagination
-                  totalPages={totalPages}
-                  currentPage={modalPage}
-                  onPageChange={(page: number) =>
-                    handleView(
-                      {
-                        ...filteredRows.find(
-                          (r) => r.sellerId === selectedSellerId
-                        )!,
-                      },
-                      page
-                    )
-                  }
-                />
-              )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
 
-          {selectedProducts.length > 0 && (
-            <div className="mt-4 flex justify-center">
+      {/* Cart Modal */}
+      <Dialog open={isCartModalOpen} onOpenChange={setIsCartModalOpen}>
+        <DialogContent className="max-w-3xl rounded-2xl shadow-2xl bg-white max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-4 flex justify-between items-center">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-white">
+              Your Cart ({cart.length} items)
+            </DialogTitle>
+            {cart.length > 0 && (
+              <button
+                onClick={clearCart}
+                className="text-white hover:text-red-200 text-sm underline"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          <div className="p-4 sm:p-6 overflow-auto flex-1">
+            {cart.length === 0 ? (
+              <div className="text-center py-12">
+                <ShoppingCart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <p className="text-gray-500 text-lg">Your cart is empty</p>
+                <p className="text-gray-400 text-sm mt-2">
+                  Add products from the seller's list
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {cart.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 mb-2">
+                          {item.name}
+                        </h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium">Category:</span>{" "}
+                            {item.category}
+                          </div>
+                          <div>
+                            <span className="font-medium">GSM:</span> {item.gsm}
+                          </div>
+                          <div>
+                            <span className="font-medium">BF:</span> {item.bf}
+                          </div>
+                          <div>
+                            <span className="font-medium">Shade:</span>{" "}
+                            {item.shade}
+                          </div>
+                        </div>
+                        <div className="mt-2 text-red-600 font-bold">
+                          Price: {item.price} ₹/kg
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {cart.length > 0 && (
+            <div className="border-t p-4 sm:p-6 bg-gray-50">
               <button
                 onClick={() => {
-                  setIsModalOpen(false);
+                  setIsCartModalOpen(false);
                   setIsEnquiryModalOpen(true);
-                  handleEnquiry(selectedRow);
                 }}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-6 rounded-md hover:opacity-90 transition"
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:opacity-90 transition font-semibold text-lg shadow-lg"
               >
-                Enquiry Selected ({selectedProducts.length})
+                Proceed to Enquiry
               </button>
             </div>
           )}
-
-
         </DialogContent>
       </Dialog>
 
       {/* Enquiry Modal */}
       <Dialog open={isEnquiryModalOpen} onOpenChange={setIsEnquiryModalOpen}>
-        <DialogContent className="max-w-lg rounded-2xl shadow-2xl p-0 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
-          {/* Gradient Header */}
+        <DialogContent className="max-w-lg rounded-2xl shadow-2xl p-0 overflow-y-scroll h-[90vh] bg-gradient-to-b from-purple-50 to-white">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
             <DialogTitle className="text-lg font-semibold text-white text-center">
-              Enquiry Now
+              Submit Enquiry
             </DialogTitle>
           </div>
 
-          {selectedRow && (
-            <form className="p-6 space-y-4" onSubmit={handleSubmitEnquiry}>
-              <p className="text-black">
-                <strong>Products:</strong>{" "}
-                {selectedProducts.length > 0
-                  ? sellerProducts
-                    .filter((p) => selectedProducts.includes(p.id))
-                    .map((p) => p.name || p.product_name)
-                    .join(", ")
-                  : selectedRow?.productName}
-              </p>
-
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  Name
-                </label>
-                <Input
-                  name="name"
-                  value={enquiryForm.name}
-                  onChange={handleEnquiryChange}
-                  className="bg-white text-black border border-gray-300"
-                  placeholder="Enter your name"
-                  required
-                />
+          <form className="p-6 space-y-4" onSubmit={handleSubmitEnquiry}>
+            {/* Cart Summary */}
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <h4 className="font-semibold text-gray-800 mb-2">
+                Selected Products ({cart.length})
+              </h4>
+              <div className="space-y-1 max-h-32 overflow-y-auto">
+                {cart.map((item, idx) => (
+                  <div
+                    key={item.id}
+                    className="text-sm text-gray-700 flex justify-between"
+                  >
+                    <span>
+                      {idx + 1}. {item.name}
+                    </span>
+                    <span className="text-red-600 font-semibold">
+                      {item.price} ₹
+                    </span>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  Email
-                </label>
-                <Input
-                  name="email_id"
-                  type="email"
-                  value={enquiryForm.email_id}
-                  onChange={handleEnquiryChange}
-                  className="bg-white text-black border border-gray-300"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">
+                Name <span className="text-red-500">*</span>
+              </label>
+              <Input
+                name="name"
+                value={enquiryForm.name}
+                onChange={handleEnquiryChange}
+                className="bg-white text-black border border-gray-300"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
 
-              {/* Mobile */}
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  Mobile
-                </label>
-                <Input
-                  name="phone"
-                  type="tel"
-                  value={enquiryForm.phone}
-                  onChange={handleEnquiryChange}
-                  className="bg-white text-black border border-gray-300"
-                  placeholder="Enter your mobile number"
-                  required
-                />
-              </div>
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <Input
+                name="email_id"
+                type="email"
+                value={enquiryForm.email_id}
+                onChange={handleEnquiryChange}
+                className="bg-white text-black border border-gray-300"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
 
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  Message
-                </label>
-                <textarea
-                  name="message"
-                  value={enquiryForm.message}
-                  onChange={handleEnquiryChange}
-                  className="w-full border border-gray-300 rounded-md p-2 text-sm bg-white text-black"
-                  placeholder="Write your enquiry..."
-                  rows={3}
-                  required
-                />
-              </div>
+            {/* Mobile */}
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">
+                Mobile <span className="text-red-500">*</span>
+              </label>
+              <Input
+                name="phone"
+                type="tel"
+                value={enquiryForm.phone}
+                onChange={handleEnquiryChange}
+                className="bg-white text-black border border-gray-300"
+                placeholder="Enter your mobile number"
+                required
+              />
+            </div>
 
-              {/* Submit Button */}
+            {/* Message */}
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">
+                Message <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="message"
+                value={enquiryForm.message}
+                onChange={handleEnquiryChange}
+                className="w-full border border-gray-300 rounded-md p-2 text-sm bg-white text-black"
+                placeholder="Write your enquiry message..."
+                rows={4}
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setIsEnquiryModalOpen(false)}
+                className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition disabled:opacity-50 font-semibold"
               >
                 {submitting ? "Submitting..." : "Submit Enquiry"}
               </button>
-            </form>
-          )}
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
-
-      <div className="mt-12">
-        <ReadyToOrder />
-        <PartnerWithUs isaboutpage />
-        <FaqSection />
-      </div>
     </>
   );
 }
