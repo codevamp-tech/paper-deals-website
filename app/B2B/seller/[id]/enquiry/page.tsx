@@ -15,6 +15,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { getUserFromToken } from "@/hooks/use-token";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Category {
     id: number;
@@ -135,9 +136,8 @@ const SellerEnquiryPage = () => {
 
             if (!res.ok) throw new Error(`Error: ${res.status}`);
             const data = await res.json();
-            console.log("✅ Enquiry created successfully:", data);
 
-            alert("Enquiry sent successfully!");
+            toast.success("Enquiry sent successfully!");
 
             // ✅ Reset form after successful submission
             setFormData({

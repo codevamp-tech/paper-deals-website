@@ -9,71 +9,19 @@ export default function AboutUs() {
   const { theme } = useTheme()
 
   return (
-    <section className="w-full">
+    <section className="w-full bg-[#F8FDFB]">
       {/* Hero Section */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-12 lg:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <div className="space-y-8">
-              <div
-                className="inline-flex items-center px-4 py-2 rounded-full text-white"
-                style={{
-                  backgroundColor: theme.bg1,
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 16v-4" />
-                  <path d="M12 8h.01" />
-                </svg>
-                <span className="font-medium text-sm">Kay Paper Deals</span>
-              </div>
-
-              <div className="space-y-4">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-balance">
-                  <span className="text-black">Transforming Paper Trade</span>
-                  <br />
-                  <span style={{ color: theme.Text }}>Digitally and Sustainably</span>
-                </h1>
-                <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                  A next-generation B2B digital marketplace connecting paper buyers and sellers across India through
-                  transparency, efficiency, and sustainable practices.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 pt-4">
-                <div>
-                  <p className="text-3xl font-bold" style={{ color: theme.Text }}>
-                    2022
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Year Established</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold" style={{ color: theme.Text }}>
-                    20+
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Years of Legacy</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full">
-              <img
-                src="/flowimg.png"
-                alt="Kay Paper Deals - Digital marketplace"
-                className="w-full h-auto object-contain"
-              />
-            </div>
-          </div>
+      <div className="w-full px-4 py-12">
+        <div className="relative rounded-2xl overflow-hidden shadow-lg">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-300 to-cyan-300 -z-10"></div>
+          <img
+            src="/about-us2.png"
+            alt="Paper Deals B2B E-commerce Platform - Supply chain workflow visualization showing raw materials, manufacturing, quality checking, platform, logistics, and buyer orders"
+            loading="lazy"
+            width={1200}
+            height={200}
+            className="w-full h-auto object-contain  rounded-2xl"
+          />
         </div>
       </div>
 
