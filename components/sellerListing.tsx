@@ -297,10 +297,10 @@ export default function SellerList() {
                         <p>
                           <strong>Company Id:</strong> KPDS_{seller.id}
                         </p>
-                        <p>
+                        {/* <p>
                           <strong>State:</strong>{" "}
                           {org.city ? org.city.split(",").pop().trim() : "N/A"}
-                        </p>
+                        </p> */}
                         <p>
                           <strong>City:</strong> {org.city || "N/A"}
                         </p>
