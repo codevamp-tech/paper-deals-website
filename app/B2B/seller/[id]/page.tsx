@@ -9,6 +9,46 @@ import { Building } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 
+
+const states = [
+  { id: "1", name: "Andaman and Nicobar Islands" },
+  { id: "2", name: "Andhra Pradesh" },
+  { id: "3", name: "Arunachal Pradesh" },
+  { id: "4", name: "Assam" },
+  { id: "5", name: "Bihar" },
+  { id: "6", name: "Chhattisgarh" },
+  { id: "7", name: "Chandigarh" },
+  { id: "8", name: "Daman and Diu" },
+  { id: "9", name: "Delhi" },
+  { id: "10", name: "Goa" },
+  { id: "11", name: "Gujarat" },
+  { id: "12", name: "Haryana" },
+  { id: "13", name: "Himachal Pradesh" },
+  { id: "14", name: "Jammu and Kashmir" },
+  { id: "15", name: "Jharkhand" },
+  { id: "16", name: "Karnataka" },
+  { id: "17", name: "Kerala" },
+  { id: "18", name: "Ladakh" },
+  { id: "19", name: "Lakshadweep" },
+  { id: "20", name: "Madhya Pradesh" },
+  { id: "21", name: "Maharashtra" },
+  { id: "22", name: "Manipur" },
+  { id: "23", name: "Meghalaya" },
+  { id: "24", name: "Mizoram" },
+  { id: "25", name: "Nagaland" },
+  { id: "26", name: "Odisha" },
+  { id: "27", name: "Puducherry" },
+  { id: "28", name: "Punjab" },
+  { id: "29", name: "Rajasthan" },
+  { id: "30", name: "Sikkim" },
+  { id: "31", name: "Tamil Nadu" },
+  { id: "32", name: "Telangana" },
+  { id: "33", name: "Tripura" },
+  { id: "34", name: "Uttar Pradesh" },
+  { id: "35", name: "Uttarakhand" },
+  { id: "36", name: "West Bengal" },
+]
+
 type Seller = {
   name?: string
   email_address?: string
@@ -120,14 +160,17 @@ export default function BuyersPage() {
   const org = seller.organization || {}
   const isVerified = Boolean(org?.verified)
   const orgName = org?.organizations || seller.name || "Seller"
+  const stateName =
+    states.find((s) => s.id === String(org?.state))?.name || "N/A"
 
   // Normalize optional fields
   const typeOfSeller = org?.type_of_seller || "Seller"
   const capacity =
     org?.production_capacity_tpm || org?.production_capacity || ""
-  const dealsIn = Array.isArray(org?.deals_in)
-    ? org.deals_in.join(", ")
-    : org?.deals_in || ""
+  const dealsIn = org?.materials_used_names && org.materials_used_names.length > 0
+    ? org.materials_used_names.join(", ")
+    : "Not Available"
+
   const description = org?.description || org?.descriptions || ""
 
   const email = seller.email_address || org?.email || ""
@@ -183,7 +226,7 @@ export default function BuyersPage() {
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <Field label="City" value={org?.city} />
                   <Field label="Type of Seller" value={typeOfSeller} />
-                  <Field label="State" value={org?.state} />
+                  <Field label="State" value={stateName} />
                   <Field label="Productions Capacity (TPM)" value={capacity} />
                   <Field label="Deals In" value={dealsIn} />
                   <Field label="Description" value={org?.contact_person} />
