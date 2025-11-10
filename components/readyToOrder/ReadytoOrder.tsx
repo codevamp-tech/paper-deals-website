@@ -34,12 +34,12 @@ export default function ReadyToOrder() {
         </p>
 
         <div className="flex justify-center gap-4 flex-wrap">
-          <button
+          {/* <button
             onClick={handleDemoClick}
             className="border border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-teal-700 transition"
           >
             Schedule a Demo
-          </button>
+          </button> */}
 
           <button
             onClick={handleOrderClick}

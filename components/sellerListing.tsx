@@ -9,12 +9,9 @@ export default function SellerList() {
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Filters
   const [selectedCategory, setSelectedCategory] = useState("All");
-
   const router = useRouter();
 
-  // ✅ Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -36,7 +33,7 @@ export default function SellerList() {
     fetchSellers();
   }, []);
 
-  // ✅ Extract unique categories dynamically (using materials_used_names)
+  // ✅ Unique categories dynamically
   const categories = useMemo(() => {
     const allCats = sellers
       .flatMap((seller) => seller.organization?.materials_used_names || [])
@@ -45,8 +42,7 @@ export default function SellerList() {
     return ["All", ...unique];
   }, [sellers]);
 
-
-  // ✅ Filter sellers by selected category
+  // ✅ Filter sellers by category
   const filteredSellers = sellers.filter((seller) => {
     const materials = seller.organization?.materials_used_names || [];
     return (
@@ -56,7 +52,6 @@ export default function SellerList() {
       )
     );
   });
-
 
   // ✅ Pagination logic
   const totalPages = Math.ceil(filteredSellers.length / itemsPerPage);
@@ -70,50 +65,54 @@ export default function SellerList() {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
   };
 
-
-
-  // ✅ Fetch ratings for each seller
+  // ✅ Ratings state
   const [ratingsData, setRatingsData] = useState<Record<
     number,
     { average: number; reviews: number }
   >>({});
 
-  // useEffect(() => {
-  //   const fetchRatings = async () => {
-  //     try {
-  //       const newRatings: Record<number, { average: number; reviews: number }> =
-  //         {};
+  // ✅ Fetch Ratings for Each Seller (Dynamic) — ✅ FIXED ROUTE
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const newRatings: Record<number, { average: number; reviews: number }> =
+          {};
 
-  //       await Promise.all(
-  //         selectedSellers.map(async (seller) => {
-  //           try {
-  //             const res = await fetch(
-  //               `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/getbyseller?seller_id=${seller.id}`
-  //             );
-  //             const data = await res.json();
+        await Promise.all(
+          selectedSellers.map(async (seller) => {
+            try {
+              const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/RatingReview/get?seller_id=${seller.id}`
+              );
 
-  //             if (data.success && data.data) {
-  //               newRatings[seller.id] = {
-  //                 average: data.data.average_rating || 0,
-  //                 reviews: data.data.review_count || 0,
-  //               };
-  //             } else {
-  //               newRatings[seller.id] = { average: 0, reviews: 0 };
-  //             }
-  //           } catch {
-  //             newRatings[seller.id] = { average: 0, reviews: 0 };
-  //           }
-  //         })
-  //       );
+              const data = await res.json();
 
-  //       setRatingsData(newRatings);
-  //     } catch (err) {
-  //       console.error("Error fetching ratings:", err);
-  //     }
-  //   };
+              if (data.success && data.data) {
+                newRatings[seller.id] = {
+                  average: data.data.average_rating || 0,
+                  reviews: data.data.review_count || 0,
+                };
+              } else {
+                newRatings[seller.id] = { average: 0, reviews: 0 };
+              }
+            } catch (error) {
+              console.error(
+                `Error fetching rating for seller ${seller.id}:`,
+                error
+              );
+              newRatings[seller.id] = { average: 0, reviews: 0 };
+            }
+          })
+        );
 
-  //   fetchRatings();
-  // }, [selectedSellers]);
+        setRatingsData(newRatings);
+      } catch (err) {
+        console.error("Error fetching ratings:", err);
+      }
+    };
+
+    fetchRatings();
+  }, [selectedSellers]);
 
   // ✅ Contact Seller Modal
   const ContactSellerModal = ({ isOpen, onClose }) => {
@@ -127,8 +126,6 @@ export default function SellerList() {
       console.log("Contact form submitted");
       onClose();
     };
-
-
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -199,7 +196,6 @@ export default function SellerList() {
       </div>
     );
   };
-
 
   const SellerSkeleton = () => (
     <div className="bg-white rounded-xl shadow-xl p-6 flex animate-pulse border border-gray-200">
@@ -283,14 +279,13 @@ export default function SellerList() {
                       </h3>
 
                       <span
-                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${seller.approved === "1"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-500 text-white"
-                          }`}
+                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
+                          seller.approved === "1"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-500 text-white"
+                        }`}
                       >
-                        {seller.approved === "1"
-                          ? "Verified"
-                          : "Not Verified"}
+                        {seller.approved === "1" ? "Verified" : "Not Verified"}
                       </span>
 
                       <div className="mt-3 text-sm text-gray-700 space-y-1">
@@ -312,11 +307,11 @@ export default function SellerList() {
                         </p>
                         <p>
                           <strong>Deals In:</strong>{" "}
-                          {org.materials_used_names && org.materials_used_names.length > 0
+                          {org.materials_used_names &&
+                          org.materials_used_names.length > 0
                             ? org.materials_used_names.join(", ")
                             : "Not Available"}
                         </p>
-
                       </div>
 
                       <button
@@ -328,14 +323,18 @@ export default function SellerList() {
                     </div>
                   </div>
 
-                  {/* ⭐ Rating Section */}
+                  {/* ⭐ Rating */}
                   <div className="p-6 text-right min-w-[120px] flex flex-col items-end ">
                     <div className="flex items-center justify-end space-x-1">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
                           xmlns="http://www.w3.org/2000/svg"
-                          fill={i < Math.round(ratingData.average) ? "#facc15" : "none"}
+                          fill={
+                            i < Math.round(ratingData.average)
+                              ? "#facc15"
+                              : "none"
+                          }
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="#facc15"
@@ -376,10 +375,11 @@ export default function SellerList() {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 border rounded ${currentPage === pageNum
-                      ? "bg-blue-500 text-white"
-                      : "hover:bg-gray-200"
-                      }`}
+                    className={`px-3 py-1 border rounded ${
+                      currentPage === pageNum
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-200"
+                    }`}
                   >
                     {pageNum}
                   </button>

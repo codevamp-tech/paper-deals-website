@@ -200,8 +200,9 @@ const ConsultantBookingPage: React.FC = () => {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                className="bg-gray-50 border border-gray-300 rounded-md text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-              >
+                className="bg- bg-[#0f7aed] hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-2.5 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md"
+          >
+              
                 Book Now
               </Button>
             </div>

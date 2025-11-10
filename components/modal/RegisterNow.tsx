@@ -199,7 +199,7 @@ export default function RegisterNow({ visible, onClose }: Props) {
           />
 
           <input
-            type="text"
+            type="email"
             name="email"
             placeholder="Your Email"
             value={form.email}
