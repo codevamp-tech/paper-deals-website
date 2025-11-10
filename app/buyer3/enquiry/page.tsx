@@ -134,7 +134,7 @@ export default function EnquiryShow() {
                     "Remarks",
                     "Created At",
                     "Status",
-                    "Action",
+                    
                   ].map((h, i) => (
                     <th
                       key={i}
@@ -193,9 +193,9 @@ export default function EnquiryShow() {
                         </span>
                       )}
                     </td>
-                    <td className="border px-3 py-2 text-blue-600 cursor-pointer">
+                    {/* <td className="border px-3 py-2 text-blue-600 cursor-pointer">
                       View
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

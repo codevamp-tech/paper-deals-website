@@ -330,7 +330,254 @@ export default function DealForm() {
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 0: // Deal Details
+      case 0: // Deal Detailscase 0: // Deal Details
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Deal Id</label>
+            <Input value={form.dealId || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Buyer</label>
+            <Select value={form.buyerId || ""} disabled>
+              <SelectTrigger className="bg-gray-100 text-gray-500 border border-gray-300">
+                <SelectValue placeholder="Select Buyer" />
+              </SelectTrigger>
+            </Select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Seller</label>
+            <Select value={form.sellerId || ""} disabled>
+              <SelectTrigger className="bg-gray-100 text-gray-500 border border-gray-300">
+                <SelectValue placeholder="Select Seller" />
+              </SelectTrigger>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Information */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Person</label>
+            <Input value={form.contactPerson || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Mobile Number</label>
+            <Input value={form.mobile || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <Input value={form.email || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Remarks</label>
+            <Input value={form.remarks || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Technical Data Sheet</label>
+            <input
+              type="file"
+              disabled
+              className="block w-full text-sm !text-black border border-gray-300 rounded-lg cursor-not-allowed bg-gray-100"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Products Details */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Products Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            "product",
+            "subProduct",
+            "brightness",
+            "gsm",
+            "bf",
+            "shade",
+            "hsnNo",
+            "grain",
+            "sheet",
+            "wl",
+            "noOfBundle",
+            "noOfRim",
+            "rimWeight",
+            "sizeInch",
+            "stockKg",
+            "quantityKg",
+            "priceKg",
+            "totalAmount",
+          ].map((field) => (
+            <div key={field}>
+              <label className="block text-sm font-medium mb-2 capitalize">{field}</label>
+              <Input value={form[field] || ""} disabled />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+
+case 1: // Sampling
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <label className="block text-sm font-medium mb-2">Date Of Sample</label>
+          <Input type="date" value={form.dateOfSample || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Sample Verification</label>
+          <Input value={form.sampleVerification || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Lab Report</label>
+          <Input type="date" value={form.labReport || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Remarks</label>
+          <Input value={form.samplingRemarks || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Upload Document</label>
+          <Input type="file"  />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Sampling Status</label>
+          <select
+            value={form.samplingStatus || 0}
+            
+            className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+          >
+            <option value={0}>Pending</option>
+            <option value={1}>Approved</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  )
+
+case 2: // Verification
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium mb-2">Date of Validation</label>
+        <Input type="date" disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Sample</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Stock Approved</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Upload Document</label>
+        <Input type="file" disabled />
+      </div>
+    </div>
+  )
+
+case 3: // Order Confirmation
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium mb-2">Clearance Date</label>
+        <Input type="date" disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Product Price</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Remarks</label>
+        <Input disabled />
+      </div>
+    </div>
+  )
+
+case 4: // Payment
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "transactionDate",
+        "transactionId",
+        "detail",
+        "accountNumber",
+        "bank",
+        "branch",
+        "amount",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
+case 5: // Transportation
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "transportationDate",
+        "transporterName",
+        "modeOfTransport",
+        "vehicleNo",
+        "freight",
+        "billNo",
+        "distance",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
+case 6: // Closed
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "closedDate",
+        "product",
+        "remarks",
+        "productReceivedBy",
+        "commission",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
         return (
           <div className="space-y-6">
             <div>
@@ -338,11 +585,12 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Deal Id</label>
-                  <Input value={form.dealId || ""} onChange={(e) => handleChange("dealId", e.target.value)} />
+                  <Input value={form.dealId || ""} onChange={(e) => handleChange("dealId", e.target.value)} disabled/>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Buyer</label>
+                  
                   <Select value={form.buyerId || ""} onValueChange={(v) => handleChange("buyerId", v)}>
                     <SelectTrigger className="bg-white text-black border border-gray-300">
                       <SelectValue placeholder="Select Buyer" />
@@ -594,7 +842,7 @@ export default function DealForm() {
                   <option value={0}>Pending</option>
                   <option value={1}>Approved</option>
                 </select>
-              </div>
+              </div>|
             </div>
           </div>
         )
@@ -809,9 +1057,9 @@ export default function DealForm() {
             </Button>
 
             <div className="flex items-center space-x-3">
-              <Button className="bg-white text-black border">
+              {/* <Button className="bg-white text-black border">
                 Update {FORM_STEPS[currentStep].title}
-              </Button>
+              </Button> */}
 
               <Button
                 onClick={nextStep}
