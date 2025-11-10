@@ -25,122 +25,6 @@ export default function AboutUs() {
         </div>
       </div>
 
-      {/* Mission & Vision Section */}
-      <div className="w-full bg-gradient-to-b from-gray-50 to-white py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="space-y-12">
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Mission & Vision</h2>
-              <p className="text-lg text-gray-600">
-                Digitizing India's paper supply chain while empowering manufacturers, traders, and recyclers
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-              {/* Mission Card */}
-              <div className="space-y-4 p-8 rounded-2xl border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300">
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white"
-                  style={{ backgroundColor: theme.bg1 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                    <polyline points="13 2 13 9 20 9" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold">Our Mission</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  To digitize India's paper supply chain while empowering manufacturers, traders, and recyclers with
-                  tools to expand their reach, enhance productivity, and promote sustainable practices.
-                </p>
-              </div>
-
-              {/* Vision Card */}
-              <div className="space-y-4 p-8 rounded-2xl border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300">
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white"
-                  style={{ backgroundColor: theme.bg1 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold">Our Vision</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  To make the paper industry smarter, greener, and globally competitive by blending technology with
-                  tradition, creating a seamless online ecosystem for the entire paper and packaging community.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Core Values Section */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto">
-          <div className="space-y-12">
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Core Values</h2>
-              <p className="text-lg text-gray-600">
-                The principles that guide every decision and action at Kay Paper Deals
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  title: "Transparency",
-                  description: "Building trust through honest and open trade",
-                  icon: "🔍",
-                },
-                {
-                  title: "Sustainability",
-                  description: "Promoting eco-friendly and recycled paper products",
-                  icon: "🌱",
-                },
-                {
-                  title: "Innovation",
-                  description: "Leveraging technology to simplify business processes",
-                  icon: "⚡",
-                },
-                {
-                  title: "Community",
-                  description: "Connecting stakeholders across the paper value chain",
-                  icon: "🤝",
-                },
-              ].map((value, index) => (
-                <div
-                  key={index}
-                  className="group p-6 rounded-xl border border-gray-200 bg-white hover:border-gray-300 transition-all duration-300 hover:shadow-md"
-                >
-                  <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                    {value.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{value.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Company Background Section */}
       <div className="w-full bg-[#111111] rounded-tl-3xl rounded-tr-3xl">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
@@ -216,6 +100,123 @@ export default function AboutUs() {
           </div>
         </div>
       </div>
+
+      {/* Mission & Vision Section */}
+      <div className="w-full bg-gradient-to-b from-gray-50 to-white py-8 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="space-y-12">
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Mission & Vision</h2>
+              <p className="text-lg text-gray-600">
+                Digitizing India's paper supply chain while empowering manufacturers, traders, and recyclers
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+              {/* Mission Card */}
+              <div className="space-y-4 p-8 rounded-2xl border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300">
+                <div
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white"
+                  style={{ backgroundColor: theme.bg1 }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold">Our Mission</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  To digitize India's paper supply chain while empowering manufacturers, traders, and recyclers with
+                  tools to expand their reach, enhance productivity, and promote sustainable practices.
+                </p>
+              </div>
+
+              {/* Vision Card */}
+              <div className="space-y-4 p-8 rounded-2xl border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300">
+                <div
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white"
+                  style={{ backgroundColor: theme.bg1 }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold">Our Vision</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  To make the paper industry smarter, greener, and globally competitive by blending technology with
+                  tradition, creating a seamless online ecosystem for the entire paper and packaging community.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Core Values Section */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="space-y-12">
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Core Values</h2>
+              <p className="text-lg text-gray-600">
+                The principles that guide every decision and action at Kay Paper Deals
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  title: "Transparency",
+                  description: "Building trust through honest and open trade",
+                  icon: "🔍",
+                },
+                {
+                  title: "Sustainability",
+                  description: "Promoting eco-friendly and recycled paper products",
+                  icon: "🌱",
+                },
+                {
+                  title: "Innovation",
+                  description: "Leveraging technology to simplify business processes",
+                  icon: "⚡",
+                },
+                {
+                  title: "Community",
+                  description: "Connecting stakeholders across the paper value chain",
+                  icon: "🤝",
+                },
+              ].map((value, index) => (
+                <div
+                  key={index}
+                  className="group p-6 rounded-xl border border-gray-200 bg-white hover:border-gray-300 transition-all duration-300 hover:shadow-md"
+                >
+                  <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                    {value.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{value.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       {/* Founder's Legacy Section */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">

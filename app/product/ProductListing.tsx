@@ -1,29 +1,49 @@
 "use client";
 
-import RequirementModal from "@/components/modal/TellUsModal";
-import Pagination from "@/components/pagination";
-import { useTheme } from "@/hooks/use-theme";
+import { useState, useEffect, useRef } from "react";
+import { ShoppingCart, X, Plus, Minus, Trash2, Send } from "lucide-react";
+import EnquiryModal from "@/components/enquiryModal";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-
-
+import { toast } from "sonner";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 0 });
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
-  const [selectedProductDetail, setSelectedProductDetail] = useState<any | null>(null);
-  const router = useRouter();
+  const [cart, setCart] = useState<any[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
+  const [enquiryData, setEnquiryData] = useState({
+    company_name: "",
+    name: "",
+    email: "",
+    mobile: "",
+    city: "",
+    remarks: "",
+    message: "",
+  });
 
+  const [productEdits, setProductEdits] = useState<Record<
+    number,
+    {
+      quantity_in_kg?: string;
+      remarks?: string;
+      shade?: string;
+      gsm?: string;
+      size?: string;
+      bf?: string;
+      rim?: string;
+      sheat?: string;
+      brightness?: string;
+      weight?: number | string;
+    }
+  >>({});
 
+  const setProductEdit = (productId: number, patch: Partial<(typeof productEdits)[number]>) =>
+    setProductEdits(prev => ({ ...prev, [productId]: { ...(prev[productId] || {}), ...patch } }));
 
   const fetchProducts = async (page: number = 1) => {
     try {
@@ -37,18 +57,15 @@ export default function ProductListing() {
       setProducts(data.products || []);
       setPagination(data.pagination || { total: 0, page: 1, pages: 0 });
 
-      // ✅ Create category list safely from available data
       const uniqueCategories = Array.from(
         new Map(
           data.products
-            .filter((p: any) => p.category && p.category.id) // only valid ones
+            .filter((p: any) => p.category && p.category.id)
             .map((p: any) => [p.category.id, { id: p.category.id, name: p.category.name }])
         ).values()
       );
 
-      // Optional fallback: handle missing categories (category = null)
       if (uniqueCategories.length === 0) {
-        // fallback using category_id if needed
         const fallback = Array.from(
           new Map(
             data.products
@@ -70,94 +87,147 @@ export default function ProductListing() {
     }
   };
 
-
   useEffect(() => {
     fetchProducts(1);
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
-  // const handleBuyClick = () => {
-  //   if (!isSignedIn) setIsContactModalOpen(true);
-  //   else console.log("Proceeding with purchase...");
-  // };
+  const addToCart = (product: any) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
 
-  const ContactSellerModal = ({ isOpen, onClose }: any) => {
-    if (!isOpen) return null;
-    const [mobileNumber, setMobileNumber] = useState("");
-    const [country, setCountry] = useState("India");
-
-    const handleSubmit = (e: any) => {
-      e.preventDefault();
-      console.log({ mobileNumber, country });
-      onClose();
-    };
-    const { theme } = useTheme();
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Contact Seller
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Get product details on your mobile quickly
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Mobile Number
-                </label>
-                <div className="flex rounded-lg overflow-hidden border border-gray-300">
-                  <div className="px-4 py-3 bg-gray-100 flex items-center">
-                    +91
-                  </div>
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    placeholder="Enter mobile number"
-                    className="flex-1 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Country
-                </label>
-                <select
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option>India</option>
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Australia</option>
-                  <option>Canada</option>
-                </select>
-              </div>
-
-              <button className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-semibold rounded-lg hover:opacity-90 transition">
-                Submit
-              </button>
-            </form>
-          </div>
-
-          <div className="bg-gray-100 px-6 py-4 flex justify-end">
-            <button
-              onClick={onClose}
-              className="text-gray-600 hover:text-gray-900 font-medium"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
+  const updateQuantity = (productId: number, delta: number) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          item.id === productId
+            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
     );
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  };
+
+  const isInCart = (productId: number) => {
+    return cart.some((item) => item.id === productId);
+  };
+
+  const getCartQuantity = (productId: number) => {
+    const item = cart.find((item) => item.id === productId);
+    return item ? item.quantity : 0;
+  };
+
+  const getTotalItems = () => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  };
+
+  const groupCartBySeller = () => {
+    const grouped: { [key: string]: any[] } = {};
+    cart.forEach((item) => {
+      const sellerId = item.seller_id || "unknown";
+      if (!grouped[sellerId]) {
+        grouped[sellerId] = [];
+      }
+      grouped[sellerId].push(item);
+    });
+    return grouped;
+  };
+
+  const handleEnquirySubmit = async (): Promise<void> => {
+    const groupedCart = groupCartBySeller();
+
+    // Build enquiries array - one enquiry per seller
+    const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => {
+      // Extract product IDs for this seller
+      const product_ids = items.map((item: any) => item.id);
+
+      // Build detailed product info
+      const products = items.map((item: any) => {
+        const edit = productEdits[item.id] || {};
+        return {
+          product_id: item.id,
+          product_name: item.product_name,
+          category_id: item.category?.id ?? item.category_id ?? null,
+          quantity_in_kg: edit.quantity_in_kg || String(item.quantity || ""),
+          remarks: edit.remarks || "",
+          shade: edit.shade || item.shade || "",
+          gsm: edit.gsm || (item.gsm ? String(item.gsm) : ""),
+          size: edit.size || item.size || "",
+          bf: edit.bf || item.bf || "",
+          rim: edit.rim || item.rim || "",
+          sheat: edit.sheat || item.sheat || "",
+          brightness: edit.brightness || item.brightness || "",
+          weight: edit.weight || item.weight || null,
+        };
+      });
+
+      return {
+        seller_id: Number(sellerId),
+        product_ids, // Array of product IDs
+        products, // Array of detailed product objects
+        customer_details: {
+          company_name: enquiryData.company_name,
+          name: enquiryData.name,
+          email: enquiryData.email,
+          mobile: enquiryData.mobile,
+          city: enquiryData.city,
+          remarks: enquiryData.remarks,
+          message: enquiryData.message,
+        },
+      };
+    });
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enquiries }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText);
+      }
+
+      toast.success(`Successfully sent ${enquiries.length} enquiry batch(es) to seller(s)!`);
+      setCart([]);
+      setIsEnquiryModalOpen(false);
+      setIsCartOpen(false);
+      setEnquiryData({
+        company_name: "",
+        name: "",
+        email: "",
+        mobile: "",
+        city: "",
+        remarks: "",
+        message: "",
+      });
+      setProductEdits({});
+    } catch (error) {
+      console.error("Error submitting enquiry:", error);
+      toast.error("Failed to submit enquiry. Please try again.");
+    }
   };
 
 
@@ -167,7 +237,6 @@ export default function ProductListing() {
     setSelectedCategory(categoryId);
   };
 
-  // ✅ Filter products by category
   const filteredProducts =
     selectedCategory === "all"
       ? products
@@ -195,22 +264,6 @@ export default function ProductListing() {
       );
     }
 
-    if (item.image?.endsWith(".pdf")) {
-      return (
-        <div className="flex flex-col items-center">
-          <img src="/pdf-icon.png" alt="PDF" className="h-16 w-16 mb-2" />
-          <a
-            href={imageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline text-sm"
-          >
-            View PDF
-          </a>
-        </div>
-      );
-    }
-
     return (
       <img
         src="/mainimg.png"
@@ -220,77 +273,198 @@ export default function ProductListing() {
     );
   };
 
-  const { theme } = useTheme();
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ">
-      <div className="mb-12 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-black">
-          Top-Rated Paper Products in the Market
-        </h2>
-        <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 z-40 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-lg"
+          >
+            <ShoppingCart size={24} />
+            {getTotalItems() > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                {getTotalItems()}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Categories */}
-      <div className="flex flex-wrap justify-center gap-3 mb-10">
-        <button
-          onClick={() => handleCategoryFilter("all")}
-          className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === "all"
-            ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-            : "bg-gray-200 text-gray-800 hover:bg-gray-200"
-            }`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsCartOpen(false)} />
+          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-900">Shopping Cart</h2>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                  <ShoppingCart size={64} className="mb-4 opacity-50" />
+                  <p className="text-lg">Your cart is empty</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(groupCartBySeller()).map(([sellerId, items]) => (
+                    <div key={sellerId} className="border-b pb-4 mb-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 bg-gray-100 px-3 py-2 rounded-lg">
+                        🏪 Seller {sellerId} ({items.length} product{items.length > 1 ? "s" : ""})
+                      </h3>
+                      {items.map((item: any) => (
+                        <div
+                          key={item.id}
+                          className="flex gap-4 p-4 bg-gray-50 rounded-lg mb-2"
+                        >
+                          <img
+                            src={
+                              item.image && item.image !== "null"
+                                ? item.image.startsWith("http")
+                                  ? item.image
+                                  : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
+                                : "/mainimg.png"
+                            }
+                            alt={item.product_name}
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 mb-1">
+                              {item.product_name}
+                            </h3>
+                            <p className="text-blue-600 font-bold mb-2">
+                              ₹{item.price_per_kg}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => updateQuantity(item.id, -1)}
+                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
+                              >
+                                <Minus size={16} />
+                              </button>
+                              <span className="font-semibold px-3">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(item.id, 1)}
+                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
+                              >
+                                <Plus size={16} />
+                              </button>
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="ml-auto p-1 text-red-500 hover:bg-red-50 rounded"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {cart.length > 0 && (
+              <div className="border-t p-6 bg-white">
+                <div className="mb-4 text-sm text-gray-600">
+                  {Object.keys(groupCartBySeller()).length} Seller{Object.keys(groupCartBySeller()).length > 1 ? "s" : ""} • {getTotalItems()} Item{getTotalItems() > 1 ? "s" : ""}
+                </div>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    setIsEnquiryModalOpen(true);
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Send size={20} />
+                  Send Enquiry
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {isEnquiryModalOpen && (
+        <EnquiryModal
+          isOpen={isEnquiryModalOpen}
+          onClose={() => setIsEnquiryModalOpen(false)}
+          enquiryData={enquiryData}
+          setEnquiryData={setEnquiryData}
+          productEdits={productEdits}
+          setProductEdit={setProductEdit}
+          groupedCart={groupCartBySeller()}
+          onSubmit={handleEnquirySubmit}
+        />
+      )}
+
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-black">
+            Top-Rated Paper Products in the Market
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
           <button
-            key={cat.id}
-            onClick={() => handleCategoryFilter(cat.id.toString())}
-            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id.toString()
+            onClick={() => handleCategoryFilter("all")}
+            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === "all"
               ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-              : "bg-gray-200 text-gray-800 hover:bg-gray-200"
+              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
               }`}
           >
-            {cat.name}
+            All
           </button>
-        ))}
-      </div>
-
-
-      {/* Products */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryFilter(cat.id.toString())}
+              className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id.toString()
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
             >
-              <div className="h-48 bg-gray-200 w-full"></div>
-              <div className="p-6 space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
-                <div className="flex gap-3 mt-4">
-                  <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
-                  <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
-                </div>
-              </div>
-            </div>
+              {cat.name}
+            </button>
           ))}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.map((item) => (
-            <Link key={item.id} href={`/product/${item.id}`}>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
               <div
-                className="relative bg-[#fff] rounded-2xl  overflow-hidden  transition transform hover:-translate-y-2"
-                style={{
-                  boxShadow:
-                    "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-                }}
+                key={i}
+                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
               >
-                {/* Top-right Rating */}
-                <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white bg-opacity-90 px-3 py-1 rounded-lg shadow-md">
+                <div className="h-48 bg-gray-200 w-full"></div>
+                <div className="p-6 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
+                  <div className="flex gap-3 mt-4">
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProducts.map((item) => (
+              <div
+                key={item.id}
+                className="relative bg-white rounded-2xl overflow-hidden transition transform hover:-translate-y-2 shadow-lg"
+              >
+                <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white bg-opacity-90 px-3 py-1 rounded-lg shadow-md z-10">
                   <span className="text-yellow-400 font-bold">
                     {item.rating ? item.rating.toFixed(1) : "0.0"}
                   </span>
@@ -310,73 +484,42 @@ export default function ProductListing() {
                   <h3 className="text-lg font-semibold text-gray-900">
                     {item.product_name}
                   </h3>
-                  {/* <span className="text-sm text-gray-500">{item.created_at}</span>
-                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">
-                    {item.sub_product}
-                  </span> */}
-
-                  {getImageContent(item)}
-
+                  <Link href={`/product/${item.id}`} className="block">
+                    {getImageContent(item)}
+                  </Link>
                   <p className="text-2xl font-extrabold text-blue-600 mt-2">
                     ₹{item.price_per_kg}
                   </p>
                   <p className="text-gray-700">{item.category?.name}</p>
 
                   <div className="flex gap-3 mt-3">
-
-
-                    {/* <button
-                      onClick={() => setSelectedProductDetail(item)}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = "/subscriptionPlan";
+                      }}
                       className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
                     >
-                      Buy
-                    </button> */}
-
-                    <button className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
-                      onClick={(e) => {
-                        e.stopPropagation(); // stop the click from reaching the parent Link
-                        e.preventDefault();
-                        router.push("/subscriptionPlan"); // redirect to subscription plan page
-                      }}>
                       Contact
                     </button>
                   </div>
 
                   <button
-                    className="w-full py-2 rounded-lg bg-[#38d200] text-white hover:opacity-90 transition mt-2"
-                    onClick={(e) => {
-                      e.stopPropagation(); // stop the click from reaching the parent Link
-                      e.preventDefault();  // prevent the default link behavior
-                      setIsModalOpen(true); // open your modal
-                    }}
+                    onClick={() => addToCart(item)}
+                    className={`w-full py-2 rounded-lg text-white hover:opacity-90 transition mt-2 flex items-center justify-center gap-2 ${isInCart(item.id)
+                      ? "bg-orange-500"
+                      : "bg-[#38d200]"
+                      }`}
                   >
-                    Tell Us Your Requirement
+                    <ShoppingCart size={18} />
+                    {isInCart(item.id) ? `Added (${getCartQuantity(item.id)})` : "Add to Cart"}
                   </button>
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      <div className="mt-12 flex justify-center">
-        <Pagination
-          totalPages={pagination.pages}
-          currentPage={pagination.page}
-          onPageChange={handlePageChange}
-        />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Modals */}
-      <RequirementModal
-        visible={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-      <ContactSellerModal
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-      />
     </div>
   );
 }

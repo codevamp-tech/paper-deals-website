@@ -25,11 +25,27 @@ interface Category {
     date: string;
 }
 
+interface Product {
+    id: number;
+    seller_id: number;
+    category_id: number;
+    product_name: string;
+    gsm: string;
+    shade: string;
+    sizes: string;
+    brightness?: string;
+    bf?: string;
+    image?: string;
+    category?: {
+        id: number;
+        name: string;
+    };
+}
+
 const SellerEnquiryPage = () => {
-    const { id } = useParams();
+    const { id } = useParams(); // seller_id
     const router = useRouter();
     const user = getUserFromToken();
-    console.log("userss??", user);
 
     const [formData, setFormData] = useState({
         company_name: "",
@@ -38,7 +54,7 @@ const SellerEnquiryPage = () => {
         email: "",
         city: "",
         category_id: "",
-        product: "",
+        product_id: "", // ✅ product_id instead of product name
         gsm: "",
         bf: "",
         shade: "",
@@ -52,8 +68,7 @@ const SellerEnquiryPage = () => {
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
-
-
+    const [products, setProducts] = useState<Product[]>([]);
 
     // ✅ Fetch Buyer Info
     useEffect(() => {
@@ -87,9 +102,7 @@ const SellerEnquiryPage = () => {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/categiry`
-                );
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`);
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
                 const data = await res.json();
                 setCategories(data.categories || []);
@@ -100,12 +113,46 @@ const SellerEnquiryPage = () => {
         fetchCategory();
     }, []);
 
+    // ✅ Fetch Products by Seller ID
+    useEffect(() => {
+        const fetchProducts = async () => {
+            if (!id) return;
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/product/seller/${id}`
+                );
+                if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
+                const data = await res.json();
+                setProducts(data || []);
+            } catch (err) {
+                console.error("Error fetching seller products:", err);
+            }
+        };
+
+        fetchProducts();
+    }, [id]);
+
     // ✅ Handle Input Change
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // ✅ Handle Product Selection — save product_id and auto-fill related fields
+    const handleProductSelect = (productId: string) => {
+        const selected = products.find((p) => p.id.toString() === productId);
+        if (selected) {
+            setFormData((prev) => ({
+                ...prev,
+                product_id: selected.id.toString(),
+                category_id: selected.category?.id?.toString() || "",
+                gsm: selected.gsm || "",
+                shade: selected.shade || "",
+                size: selected.sizes || "",
+            }));
+        }
     };
 
     // ✅ Handle Submit
@@ -135,11 +182,10 @@ const SellerEnquiryPage = () => {
             );
 
             if (!res.ok) throw new Error(`Error: ${res.status}`);
-            const data = await res.json();
+            await res.json();
 
             toast.success("Enquiry sent successfully!");
 
-            // ✅ Reset form after successful submission
             setFormData({
                 company_name: "",
                 name: "",
@@ -147,7 +193,7 @@ const SellerEnquiryPage = () => {
                 email: "",
                 city: "",
                 category_id: "",
-                product: "",
+                product_id: "",
                 gsm: "",
                 bf: "",
                 shade: "",
@@ -159,7 +205,6 @@ const SellerEnquiryPage = () => {
                 remarks: "",
             });
 
-            // ✅ Redirect to seller page
             router.push("/B2B/seller");
         } catch (err) {
             console.error("❌ Error submitting enquiry:", err);
@@ -183,9 +228,7 @@ const SellerEnquiryPage = () => {
                             />
                         </div>
                         <div>
-                            <p className="text-lg font-semibold text-black">
-                                Profile Information
-                            </p>
+                            <p className="text-lg font-semibold text-black">Profile Information</p>
                             <p className="text-gray-600 mt-2">KPDS_{id}</p>
                         </div>
                     </div>
@@ -193,97 +236,86 @@ const SellerEnquiryPage = () => {
 
                 {/* Enquiry Form */}
                 <Card className="p-6 md:p-10">
-                    <h2 className="text-xl font-bold mb-6 text-black">
-                        Business Enquiry
-                    </h2>
+                    <h2 className="text-xl font-bold mb-6 text-black">Business Enquiry</h2>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Company */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Company *</Label>
+                            <Label>Company *</Label>
                             <Input
                                 name="company_name"
                                 value={formData.company_name}
                                 onChange={handleChange}
                                 readOnly
-                                className="bg-gray-100 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-100 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* Contact Person */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Contact Person *</Label>
+                            <Label>Contact Person *</Label>
                             <Input
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 readOnly
-                                className="bg-gray-100 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-100 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* Mobile */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Mobile No. *</Label>
+                            <Label>Mobile No. *</Label>
                             <Input
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-50 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* Email */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Email *</Label>
+                            <Label>Email *</Label>
                             <Input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 readOnly
-                                className="bg-gray-100 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-100 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* City */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">City *</Label>
+                            <Label>City *</Label>
                             <Input
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-50 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* Category */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Category *</Label>
+                            <Label>Category *</Label>
                             <Select
                                 value={formData.category_id}
-                                onValueChange={(val) =>
-                                    setFormData((prev) => ({ ...prev, category_id: val }))
-                                }
+                                onValueChange={(val) => setFormData((prev) => ({ ...prev, category_id: val }))}
                             >
-                                <SelectTrigger className="bg-white border border-gray-300 rounded-md text-black">
+                                <SelectTrigger className="bg-white border border-gray-300 text-black">
                                     <SelectValue placeholder="--Select Category--" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white text-black">
+                                <SelectContent>
                                     {categories.map((cat) => (
-                                        <SelectItem
-                                            key={cat.id}
-                                            value={cat.id.toString()}
-                                            className="bg-white text-black hover:bg-gray-100"
-                                        >
+                                        <SelectItem key={cat.id} value={cat.id.toString()}>
                                             {cat.name}
                                         </SelectItem>
                                     ))}
@@ -291,55 +323,63 @@ const SellerEnquiryPage = () => {
                             </Select>
                         </div>
 
-                        {/* Product */}
+                        {/* ✅ Product Dropdown — saves product_id */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Product *</Label>
-                            <Input
-                                name="product"
-                                value={formData.product}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
-                                required
-                            />
+                            <Label>Product *</Label>
+                            <Select
+                                value={formData.product_id}
+                                onValueChange={handleProductSelect}
+                            >
+                                <SelectTrigger className="bg-white border border-gray-300 text-black">
+                                    <SelectValue placeholder="--Select Product--" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {products.length > 0 ? (
+                                        products.map((p) => (
+                                            <SelectItem key={p.id} value={p.id.toString()}>
+                                                {p.product_name} ({p.category?.name})
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <p className="px-2 text-gray-500 text-sm">No products found</p>
+                                    )}
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         {/* Other Fields */}
-                        {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
-                            (field) => (
-                                <div key={field}>
-                                    <Label className="mb-1 block text-gray-700 capitalize">
-                                        {field}
-                                    </Label>
-                                    <Input
-                                        name={field}
-                                        value={(formData as any)[field]}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 border border-gray-300 rounded-md text-black"
-                                    />
-                                </div>
-                            )
-                        )}
+                        {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map((field) => (
+                            <div key={field}>
+                                <Label className="capitalize">{field}</Label>
+                                <Input
+                                    name={field}
+                                    value={(formData as any)[field]}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 border border-gray-300 text-black"
+                                />
+                            </div>
+                        ))}
 
                         {/* Quantity */}
                         <div>
-                            <Label className="mb-1 block text-gray-700">Quantity in Kg *</Label>
+                            <Label>Quantity in Kg *</Label>
                             <Input
                                 name="quantity_in_kg"
                                 value={formData.quantity_in_kg}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black"
+                                className="bg-gray-50 border border-gray-300 text-black"
                                 required
                             />
                         </div>
 
                         {/* Remarks */}
                         <div className="md:col-span-2">
-                            <Label className="mb-1 block text-gray-700">Remarks</Label>
+                            <Label>Remarks</Label>
                             <Textarea
                                 name="remarks"
                                 value={formData.remarks}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 rounded-md text-black min-h-[80px]"
+                                className="bg-gray-50 border border-gray-300 text-black min-h-[80px]"
                             />
                         </div>
 

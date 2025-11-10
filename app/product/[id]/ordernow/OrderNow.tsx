@@ -1,56 +1,63 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getUserFromToken } from "@/hooks/use-token";
+
+interface Category {
+  id: number;
+  name: string;
+}
 
 const OrderNow = ({ productId }: { productId: string }) => {
-  const [product, setProduct] = useState<any>(null);
-  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
-  const [cart, setCart] = useState<any[]>([]);
-  const [showCart, setShowCart] = useState(false);
   const router = useRouter();
+  const user = getUserFromToken();
 
-  // 🔹 Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem("paperCart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
+  const [product, setProduct] = useState<any>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [formData, setFormData] = useState({
+    company_name: "",
+    name: "",
+    phone: "",
+    email: "",
+    city: "",
+    category_id: "",
+    product_id: "",
+    gsm: "",
+    bf: "",
+    shade: "",
+    brightness: "",
+    rim: "",
+    sheat: "",
+    size: "",
+    quantity_in_kg: "",
+    remarks: "",
+  });
 
-  // 🔹 Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("paperCart", JSON.stringify(cart));
-  }, [cart]);
-
-  // 🔹 Fetch single product
-  useEffect(() => {
-    if (!productId) return;
-
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch product");
-        const data = await res.json();
-        setProduct(data);
-
-        if (data.category_id) {
-          fetchRelated(data.category_id);
-        }
-      } catch (err) {
-        console.error("❌ Error fetching product:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [productId]);
-
-  // 🔹 Fetch related products by category
+  // 🔹 Fetch Related Products
   const fetchRelated = async (category_id: string) => {
     try {
       const res = await fetch(
@@ -58,239 +65,286 @@ const OrderNow = ({ productId }: { productId: string }) => {
       );
       if (!res.ok) throw new Error("Failed to fetch related products");
       const data = await res.json();
-      console.log("data", data);
       setRelatedProducts(data || []);
     } catch (err) {
       console.error("❌ Error fetching related products:", err);
     }
   };
 
-  // 🔹 Add to Cart Handler (alerts removed)
-  const handleAddToCart = () => {
-    if (!product) return;
+  // 🔹 Fetch buyer details from token
+  useEffect(() => {
+    const fetchBuyer = async () => {
+      if (!user?.user_id) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/buyerbyid/${user.user_id}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch buyer");
+        const data = await res.json();
+        const org = data?.organization || {};
 
-    const existingItemIndex = cart.findIndex((item) => item.id === product.id);
+        setFormData((prev) => ({
+          ...prev,
+          company_name: org.organizations || "",
+          name: org.contact_person || "",
+          email: org.email || "",
+          city: org.city || "",
+          phone: org.phone?.toString() || data.phone_no || "",
+        }));
+      } catch (err) {
+        console.error("❌ Buyer fetch error:", err);
+      }
+    };
+    fetchBuyer();
+  }, [user?.user_id]);
 
-    if (existingItemIndex > -1) {
-      const updatedCart = [...cart];
-      updatedCart[existingItemIndex].quantity += quantity;
-      setCart(updatedCart);
-    } else {
-      setCart([
-        ...cart,
-        {
-          id: product.id,
-          product_name: product.product_name,
-          price_per_kg: product.price_per_kg,
-          image: product.image,
-          quantity: quantity,
-        },
-      ]);
+  // 🔹 Fetch product details
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!productId) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch product");
+        const data = await res.json();
+        setProduct(data);
+
+        setFormData((prev) => ({
+          ...prev,
+          product_id: data.id?.toString() || "",
+          category_id: data.category?.id?.toString() || "",
+          gsm: data.gsm || "",
+          bf: data.bf || "",
+          shade: data.shade || "",
+          size: data.sizes || "",
+          brightness: data.brightness || "",
+        }));
+      } catch (err) {
+        console.error("❌ Product fetch error:", err);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
+
+  // 🔹 Fetch related products when product changes
+  useEffect(() => {
+    if (product?.category?.id) {
+      fetchRelated(product.category.id);
     }
+  }, [product?.category?.id]);
 
-    setQuantity(1); // Reset quantity
+  // 🔹 Fetch all categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry`
+        );
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const data = await res.json();
+        setCategories(data.categories || []);
+      } catch (err) {
+        console.error("❌ Category fetch error:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // 🔹 Handle input
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Order Now Handler (alerts removed)
-  // Updated Order Now
-  const handleOrderNow = () => {
-    handleAddToCart(); // Add product to cart
-    // router.push("/checkout"); // Navigate to checkout page
+  // 🔹 Quantity adjust
+  const updateQuantity = (delta: number) => {
+    setQuantity((prev) => Math.max(1, prev + delta));
+    setFormData((prev) => ({
+      ...prev,
+      quantity_in_kg: Math.max(1, quantity + delta).toString(),
+    }));
   };
 
+  // 🔹 Submit Enquiry
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please login to send enquiry.");
+      router.push("/buyer-login");
+      return;
+    }
+    setLoading(true);
+    const sellerId = product?.seller_id;
 
-  // 🔹 Update quantity
-  const updateQuantity = (change: number) => {
-    setQuantity((prev) => Math.max(1, prev + change));
+    const payload = {
+      ...formData,
+      quantity_in_kg: formData.quantity_in_kg || quantity.toString(),
+      buyer_id: user?.user_id,
+      user_id: sellerId,
+    };
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to send enquiry");
+      toast.success("Enquiry sent successfully!");
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("❌ Enquiry submit error:", err);
+      toast.error("Failed to send enquiry!");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 🔹 Update cart item quantity from mini cart
-  const updateCartItemQuantity = (itemId: string, change: number) => {
-    const updatedCart = cart
-      .map((item) =>
-        item.id === itemId ? { ...item, quantity: item.quantity + change } : item
-      )
-      .filter((item) => item.quantity > 0);
-    setCart(updatedCart);
-  };
-
-  const ProductSkeleton = () => (
-    <div className="min-h-screen bg-white animate-pulse">
-      <div className="flex flex-col md:flex-row">
-        {/* Image Skeleton */}
-        <div className="w-full md:w-1/2 p-6 flex items-center justify-center">
-          <div className="w-full h-[350px] bg-gray-200 rounded-xl"></div>
-        </div>
-
-        {/* Info Skeleton */}
-        <div className="w-full md:w-1/2 p-6 md:p-12 space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          <div className="h-12 bg-gray-200 rounded w-full mt-4"></div>
-        </div>
-      </div>
-
-      {/* Related Products Skeleton */}
-      <div className="py-12 px-4 md:px-10">
-        <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
-        <div className="flex overflow-x-auto gap-5 px-1">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="min-w-[220px] max-w-[220px] bg-gray-200 h-[300px] rounded-2xl"
-            ></div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  if (loading) return <ProductSkeleton />;
-  if (!product) return <p className="text-center p-6">Product not found.</p>;
+  if (!product) return <p className="text-center py-10">Loading product...</p>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
+      {/* Product Display */}
       <div className="flex flex-col md:flex-row">
-        {/* Image Section */}
-        <div className="w-full md:w-1/2 flex flex-col items-start justify-center p-6 relative">
+        <div className="w-full md:w-1/2 p-6 flex items-center justify-center">
           <img
             src={product.image || "/paper.jpg"}
             alt={product.product_name}
-            className="w-full h-[300px] md:h-[350px] object-contain rounded-xl shadow-lg"
+            className="w-full h-[350px] object-contain rounded-xl shadow-lg"
           />
-          <a
-            href={product.image || "/paper.jpg"}
-            download
-            className="mt-3 bg-[#0f7aed] text-white px-5 py-2 rounded-full text-sm hover:opacity-90 transition"
-          >
-            ⬇ Download
-          </a>
         </div>
 
-
-        {/* Info Section */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 text-black bg-white">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            {product.product_name}
-          </h1>
-          <p className="text-xl md:text-2xl font-semibold text-green-600 mb-4">
+        <div className="w-full md:w-1/2 p-6 md:p-10">
+          <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
+          <p className="text-xl text-green-600 font-semibold mb-3">
             ₹{product.price_per_kg} / Kg
           </p>
-          <p className="text-gray-700 mb-4">{product.description}</p>
+          <p className="text-gray-700 mb-6">{product.description}</p>
 
-          {/* Quantity Selector */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Quantity (Kg)
-            </label>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => updateQuantity(-1)}
-                className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 text-lg font-semibold"
+          {/* Enquiry Now Button */}
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-[#38d200] hover:bg-[#2fb600] text-white px-6 py-3 rounded-full text-lg"
               >
-                -
-              </button>
-              <span className="text-lg font-semibold w-12 text-center">
-                {quantity}
-              </span>
-              <button
-                onClick={() => updateQuantity(1)}
-                className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 text-lg font-semibold"
-              >
-                +
-              </button>
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Total: ₹{(product.price_per_kg * quantity).toFixed(2)}
-            </p>
-          </div>
+                Enquiry Now
+              </Button>
+            </DialogTrigger>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={handleOrderNow}
-              className="bg-[#38d200] text-white px-6 py-3 w-full sm:w-1/2 rounded-full text-lg hover:bg-[#2fb600] transition"
-            >
-              Order Now
-            </button>
-            <button
-              onClick={handleAddToCart}
-              className="bg-transparent border border-[#0f7aed] text-[#0f7aed] px-6 py-3 w-full sm:w-1/2 rounded-full text-lg hover:bg-blue-50 transition"
-            >
-              Add To Cart
-            </button>
-          </div>
+            {/* Enquiry Modal */}
+            <DialogContent className="max-w-3xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-center mb-3">
+                  Enquiry for {product.product_name}
+                </DialogTitle>
+              </DialogHeader>
 
-          {/* Cart Count Badge */}
-          {cart.length > 0 && (
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => setShowCart(!showCart)}
-                className="text-[#0f7aed] font-semibold underline"
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
-                View Cart ({cart.length} items)
-              </button>
-            </div>
-          )}
+                {/* Company / Name */}
+                <div>
+                  <Label>Company *</Label>
+                  <Input name="company_name" value={formData.company_name} readOnly />
+                </div>
+                <div>
+                  <Label>Contact Person *</Label>
+                  <Input name="name" value={formData.name} readOnly />
+                </div>
+
+                {/* Contact Info */}
+                <div>
+                  <Label>Phone *</Label>
+                  <Input name="phone" value={formData.phone} onChange={handleChange} />
+                </div>
+                <div>
+                  <Label>Email *</Label>
+                  <Input name="email" value={formData.email} readOnly />
+                </div>
+
+                <div>
+                  <Label>City *</Label>
+                  <Input name="city" value={formData.city} onChange={handleChange} />
+                </div>
+
+                {/* Category */}
+                <div>
+                  <Label>Category *</Label>
+                  <Select
+                    value={formData.category_id}
+                    onValueChange={(val) =>
+                      setFormData((prev) => ({ ...prev, category_id: val }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Product Details */}
+                {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
+                  (f) => (
+                    <div key={f}>
+                      <Label className="capitalize">{f}</Label>
+                      <Input
+                        name={f}
+                        value={(formData as any)[f]}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  )
+                )}
+
+                <div>
+                  <Label>Quantity (Kg)</Label>
+                  <Input
+                    name="quantity_in_kg"
+                    value={formData.quantity_in_kg || quantity.toString()}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Label>Remarks</Label>
+                  <Textarea
+                    name="remarks"
+                    value={formData.remarks}
+                    onChange={handleChange}
+                    placeholder="Add any extra details..."
+                  />
+                </div>
+
+                <div className="md:col-span-2 flex justify-center mt-4">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500 text-white px-8"
+                  >
+                    {loading ? "Sending..." : "Send Enquiry"}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-
-      {/* Mini Cart Display */}
-      {showCart && cart.length > 0 && (
-        <div className="bg-gray-50 border-t border-gray-200 p-6">
-          <h3 className="text-xl font-bold mb-4">Your Cart</h3>
-          <div className="space-y-3">
-            {cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={item.image || "/paper.jpg"}
-                    alt={item.product_name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                  <div>
-                    <p className="font-semibold">{item.product_name}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <button
-                        onClick={() => updateCartItemQuantity(item.id, -1)}
-                        className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
-                      >
-                        -
-                      </button>
-                      <span className="px-2">{item.quantity}</span>
-                      <button
-                        onClick={() => updateCartItemQuantity(item.id, 1)}
-                        className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <p className="font-bold text-lg">
-                  ₹{(item.quantity * item.price_per_kg).toFixed(2)}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex justify-between items-center border-t pt-4">
-            <span className="text-lg font-bold">Total:</span>
-            <span className="text-2xl font-bold text-[#38d200]">
-              ₹
-              {cart
-                .reduce(
-                  (total, item) => total + item.quantity * item.price_per_kg,
-                  0
-                )
-                .toFixed(2)}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Related Products */}
       <div className="py-12 px-4 md:px-10 bg-white">
@@ -298,17 +352,12 @@ const OrderNow = ({ productId }: { productId: string }) => {
           Related Products in{" "}
           <span className="text-[#38d200]">{product.category?.name}</span>
         </h1>
-
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
           {relatedProducts.map((p: any) => (
             <div
               key={p.id}
               className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#fff] flex-shrink-0 border border-[#38d200] cursor-pointer hover:shadow-xl transition"
               onClick={() => router.push(`/product/${p.id}`)}
-              style={{
-                boxShadow:
-                  "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0 0 1px inset",
-              }}
             >
               <div className="relative h-44 overflow-hidden group">
                 <img
