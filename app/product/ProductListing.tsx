@@ -381,11 +381,12 @@ export default function ProductListing() {
                     setIsCartOpen(false);
                     setIsEnquiryModalOpen(true);
                   }}
-                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2"
+                  className="w-full py-2 mb-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2"
                 >
                   <Send size={20} />
                   Send Enquiry
                 </button>
+
               </div>
             )}
           </div>

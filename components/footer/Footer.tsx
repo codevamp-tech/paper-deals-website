@@ -136,25 +136,23 @@ const Footer = () => {
                 Trusted & Associated With
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap- place-items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 place-items-center">
                 {[
-                  { src: "/p1.jpeg", },
-                  { src: "/p2.jpg", },
-                  { src: "/p3.jpg", },
+                  { src: "/p1.jpeg" },
+                  { src: "/p2.jpg" },
+                  { src: "/p3.jpg" },
                 ].map((partner, i) => (
                   <a
                     key={i}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative p-4 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                    className="group relative p-4 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center w-20 h-20"
                   >
                     <img
                       src={partner.src}
-                      className="  object-contain grayscale group-hover:grayscale-0 transition duration-300"
+                      className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition duration-300"
                     />
-
                   </a>
-
                 ))}
               </div>
             </div>

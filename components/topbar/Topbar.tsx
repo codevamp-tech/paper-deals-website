@@ -55,24 +55,57 @@ const Topbar = () => {
 
   useEffect(() => {
     if (!query.trim()) {
+      console.log("inside")
       setResults([]);
       return;
     }
+
     const fetchResults = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/search?query=${query}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/search?query=${encodeURIComponent(
+            query
+          )}`
         );
-        if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        setResults(data.data || []);
+        console.log("search data", data)
+
+        if (data?.success && Array.isArray(data.data)) {
+          // ✅ Filter products where product_name or category matches query
+          const filtered = data.data.filter((item: any) => {
+            const productName = item.product_name?.toLowerCase() || "";
+            const categoryName =
+              item.category?.name?.toLowerCase() ||
+              item.category_id?.toLowerCase() ||
+              "";
+            return (
+              productName.includes(query.toLowerCase()) ||
+              categoryName.includes(query.toLowerCase())
+            );
+          });
+
+          // Tag as product type for UI
+          const withType = filtered.map((p: any) => ({
+            ...p,
+            _type: "product",
+          }));
+          setResults(withType);
+        } else {
+          setResults([]);
+        }
       } catch (err) {
-        console.error("Search error:", err);
+        console.error("Error fetching products:", err);
         setResults([]);
       }
     };
+
     fetchResults();
   }, [query]);
+
+  // 🧭 Handle click on search result
+  const handleSelect = (item: any) => {
+    router.push(`/product/${item.id}`); // Go directly to product details
+  };
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -80,6 +113,8 @@ const Topbar = () => {
     setIsLoggedIn(false);
     router.push("/");
   };
+
+
   console.log("user", user)
 
   // Helper function to get initials from full name
@@ -145,7 +180,7 @@ const Topbar = () => {
                   <div className="relative w-full max-w-md">
                     <input
                       type="text"
-                      placeholder="Search sellers, buyers or products..."
+                      placeholder="Search by product or category..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
@@ -154,18 +189,34 @@ const Topbar = () => {
                     {/* 🔹 Search Icon on Right */}
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
 
+                    {/* 🔽 Dropdown Results */}
                     {results.length > 0 && (
-                      <div className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
-                        {results.map((item: any) => (
-                          <Link
+                      <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
+                        {results.map((item) => (
+                          <li
                             key={item.id}
-                            href={`/user/${item.id}`}
-                            className="block px-4 py-2 hover:bg-cyan-50 text-gray-700 text-sm"
+                            onClick={() => handleSelect(item)}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
                           >
-                            {item.user_name || item.name}
-                          </Link>
+                            {/* 🏷️ Product Name */}
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-gray-800">
+                                {item.product_name}
+                              </span>
+                              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                                Product
+                              </span>
+                            </div>
+
+                            {/* 📦 Category Name */}
+                            {(item.category?.name || item.category_id) && (
+                              <div className="text-sm text-gray-500 mt-1">
+                                Category: {item.category?.name || item.category_id}
+                              </div>
+                            )}
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     )}
                   </div>
                 </div>
