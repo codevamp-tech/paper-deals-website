@@ -112,7 +112,7 @@ export default function SellerList() {
     };
 
     fetchRatings();
-  }, [selectedSellers]);
+  }, []);
 
   // ✅ Contact Seller Modal
   const ContactSellerModal = ({ isOpen, onClose }) => {
