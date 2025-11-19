@@ -279,11 +279,10 @@ export default function SellerList() {
                       </h3>
 
                       <span
-                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                          seller.approved === "1"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${seller.approved === "1"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {seller.approved === "1" ? "Verified" : "Not Verified"}
                       </span>
@@ -308,7 +307,7 @@ export default function SellerList() {
                         <p>
                           <strong>Deals In:</strong>{" "}
                           {org.materials_used_names &&
-                          org.materials_used_names.length > 0
+                            org.materials_used_names.length > 0
                             ? org.materials_used_names.join(", ")
                             : "Not Available"}
                         </p>
@@ -375,11 +374,10 @@ export default function SellerList() {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 border rounded ${
-                      currentPage === pageNum
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-200"
-                    }`}
+                    className={`px-3 py-1 border rounded ${currentPage === pageNum
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200"
+                      }`}
                   >
                     {pageNum}
                   </button>
@@ -395,6 +393,7 @@ export default function SellerList() {
               </button>
             </div>
           )}
+
         </>
       )}
 
