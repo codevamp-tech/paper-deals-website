@@ -1,4 +1,5 @@
 "use client";
+import { useTheme } from "@/hooks/use-theme";
 import { motion } from "framer-motion";
 
 const stats = [
@@ -35,16 +36,20 @@ const stats = [
 ];
 
 export default function PartnerWithUs({ isaboutpage }) {
+  const { theme } = useTheme();
+
   return (
-    <section
-      className="bg-[#111] text-white py-16 px-6 md:px-20 "
-      style={{
-        borderRadius: isaboutpage ? "" : "1rem",
-      }}
-    >
+    <section className="bg-[#111] text-white py-16 px-6 md:px-20 rounded-none">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-5xl font-bold  leading-tight text-primary-white mb-4">
-          Partner With Us <span className="text-[#8143e7]">To Enjoy</span>
+          Partner With Us{" "}
+          <span
+            style={{
+              color: theme.Text,
+            }}
+          >
+            To Enjoy
+          </span>
         </h2>
         <p className="text-gray-400 max-w-xl mx-auto text-lg">
           Find the best deals worldwide from trusted suppliers. Our network
@@ -61,10 +66,18 @@ export default function PartnerWithUs({ isaboutpage }) {
             whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 30 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="relative group bg-white text-black rounded-2xl shadow-lg p-6 border-t-8 border-[#8143e7] overflow-hidden"
+            className="relative group bg-white text-black rounded-2xl shadow-lg p-6  overflow-hidden"
+            style={{
+              borderTop: `8px solid ${theme.Text}`,
+            }}
           >
             {/* Stat content */}
-            <div className="text-3xl font-extrabold text-[#8143e7]">
+            <div
+              className="text-3xl font-extrabold "
+              style={{
+                color: theme.Text,
+              }}
+            >
               {item.value}
             </div>
             <div className="mt-2 font-semibold">{item.title}</div>

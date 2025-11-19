@@ -1,276 +1,526 @@
 "use client";
-import RequirementModal from "@/components/modal/TellUsModal";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";  
 
+import { useState, useEffect, useRef } from "react";
+import { ShoppingCart, X, Plus, Minus, Trash2, Send } from "lucide-react";
+import EnquiryModal from "@/components/enquiryModal";
+import Link from "next/link";
+import { toast } from "sonner";
 
-export default function SellerList() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [sellers, setSellers] = useState<any[]>([]);
+export default function ProductListing() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 0 });
   const [loading, setLoading] = useState(true);
-  
-  const router = useRouter();
-  // ✅ Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // number of sellers per page
-  const totalPages = Math.ceil(sellers.length / itemsPerPage);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [cart, setCart] = useState<any[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
-  // ✅ Fetch seller data
-  useEffect(() => {
-    const fetchSellers = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`
+  const [enquiryData, setEnquiryData] = useState({
+    company_name: "",
+    name: "",
+    email: "",
+    mobile: "",
+    city: "",
+    remarks: "",
+    message: "",
+  });
+
+  const [productEdits, setProductEdits] = useState<Record<
+    number,
+    {
+      quantity_in_kg?: string;
+      remarks?: string;
+      shade?: string;
+      gsm?: string;
+      size?: string;
+      bf?: string;
+      rim?: string;
+      sheat?: string;
+      brightness?: string;
+      weight?: number | string;
+    }
+  >>({});
+
+  const setProductEdit = (productId: number, patch: Partial<(typeof productEdits)[number]>) =>
+    setProductEdits(prev => ({ ...prev, [productId]: { ...(prev[productId] || {}), ...patch } }));
+
+  const fetchProducts = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product?page=${page}&limit=12`
+      );
+      if (!res.ok) throw new Error("Failed to fetch products");
+      const data = await res.json();
+
+      setProducts(data.products || []);
+      setPagination(data.pagination || { total: 0, page: 1, pages: 0 });
+
+      const uniqueCategories = Array.from(
+        new Map(
+          data.products
+            .filter((p: any) => p.category && p.category.id)
+            .map((p: any) => [p.category.id, { id: p.category.id, name: p.category.name }])
+        ).values()
+      );
+
+      if (uniqueCategories.length === 0) {
+        const fallback = Array.from(
+          new Map(
+            data.products
+              .filter((p: any) => p.category_id && p.category_id !== 0)
+              .map((p: any) => [
+                p.category_id,
+                { id: p.category_id, name: `Category ${p.category_id}` },
+              ])
+          ).values()
         );
-        const data = await res.json();
-        setSellers(data.data); // ✅ API returns { data: [] }
-      } catch (err) {
-        console.error("Error fetching sellers:", err);
-      } finally {
-        setLoading(false);
+        setCategories(fallback);
+      } else {
+        setCategories(uniqueCategories);
       }
-    };
-
-    fetchSellers();
-  }, []);
-
-  const handleContactClick = () => {
-    if (!isSignedIn) {
-      setIsContactModalOpen(true);
-    } else {
-      console.log("Proceeding with contact...");
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ Contact Seller Modal
-  const ContactSellerModal = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+  useEffect(() => {
+    fetchProducts(1);
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
 
-    const [mobileNumber, setMobileNumber] = useState("");
-    const [country, setCountry] = useState("India");
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log("Contact form submitted");
-      onClose();
-    };
+  const addToCart = (product: any) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Contact Seller
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Get details on your mobile quickly
-            </p>
-
-            <form onSubmit={handleSubmit}>
-              <div className="mb-5">
-                <label className="block text-gray-700 mb-2 font-medium">
-                  Mobile Number
-                </label>
-                <div className="flex">
-                  <div className="flex items-center justify-center px-4 bg-gray-100 rounded-l-lg border border-r-0 border-gray-300">
-                    +91
-                  </div>
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="Enter your mobile"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-gray-700 mb-2 font-medium">
-                  Your Country
-                </label>
-                <select
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option>India</option>
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Australia</option>
-                  <option>Canada</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-
-          <div className="bg-gray-100 px-6 py-4 flex justify-end">
-            <button
-              onClick={onClose}
-              className="text-gray-600 hover:text-gray-800 font-medium"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
+  const updateQuantity = (productId: number, delta: number) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          item.id === productId
+            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
     );
   };
 
-  // ✅ Pagination logic
-  const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  };
+
+  const isInCart = (productId: number) => {
+    return cart.some((item) => item.id === productId);
+  };
+
+  const getCartQuantity = (productId: number) => {
+    const item = cart.find((item) => item.id === productId);
+    return item ? item.quantity : 0;
+  };
+
+  const getTotalItems = () => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  };
+
+  const groupCartBySeller = () => {
+    const grouped: { [key: string]: any[] } = {};
+    cart.forEach((item) => {
+      const sellerId = item.seller_id || "unknown";
+      if (!grouped[sellerId]) {
+        grouped[sellerId] = [];
+      }
+      grouped[sellerId].push(item);
+    });
+    return grouped;
+  };
+
+  const handleEnquirySubmit = async (): Promise<void> => {
+    const groupedCart = groupCartBySeller();
+
+    // Build enquiries array - one enquiry per seller
+    const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => {
+      // Extract product IDs for this seller
+      const product_ids = items.map((item: any) => item.id);
+
+      // Build detailed product info
+      const products = items.map((item: any) => {
+        const edit = productEdits[item.id] || {};
+        return {
+          product_id: item.id,
+          product_name: item.product_name,
+          category_id: item.category?.id ?? item.category_id ?? null,
+          quantity_in_kg: edit.quantity_in_kg || String(item.quantity || ""),
+          remarks: edit.remarks || "",
+          shade: edit.shade || item.shade || "",
+          gsm: edit.gsm || (item.gsm ? String(item.gsm) : ""),
+          size: edit.size || item.size || "",
+          bf: edit.bf || item.bf || "",
+          rim: edit.rim || item.rim || "",
+          sheat: edit.sheat || item.sheat || "",
+          brightness: edit.brightness || item.brightness || "",
+          weight: edit.weight || item.weight || null,
+        };
+      });
+
+      return {
+        seller_id: Number(sellerId),
+        product_ids, // Array of product IDs
+        products, // Array of detailed product objects
+        customer_details: {
+          company_name: enquiryData.company_name,
+          name: enquiryData.name,
+          email: enquiryData.email,
+          mobile: enquiryData.mobile,
+          city: enquiryData.city,
+          remarks: enquiryData.remarks,
+          message: enquiryData.message,
+        },
+      };
+    });
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enquiries }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText);
+      }
+
+      toast.success(`Successfully sent ${enquiries.length} enquiry batch(es) to seller(s)!`);
+      setCart([]);
+      setIsEnquiryModalOpen(false);
+      setIsCartOpen(false);
+      setEnquiryData({
+        company_name: "",
+        name: "",
+        email: "",
+        mobile: "",
+        city: "",
+        remarks: "",
+        message: "",
+      });
+      setProductEdits({});
+    } catch (error) {
+      console.error("Error submitting enquiry:", error);
+      toast.error("Failed to submit enquiry. Please try again.");
     }
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedSellers = sellers.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+
+  const handlePageChange = (page: number) => fetchProducts(page);
+
+  const handleCategoryFilter = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
+
+  const filteredProducts =
+    selectedCategory === "all"
+      ? products
+      : products.filter(
+        (p) =>
+          p.category?.id?.toString() === selectedCategory ||
+          p.category_id?.toString() === selectedCategory
+      );
+
+  const getImageContent = (item: any) => {
+    const imageUrl =
+      item.image && item.image !== "null"
+        ? item.image.startsWith("http")
+          ? item.image
+          : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
+        : "/mainimg.png";
+
+    if (/\.(jpe?g|png|webp)$/i.test(imageUrl)) {
+      return (
+        <img
+          src={imageUrl}
+          alt={item.product_name || "Product Image"}
+          className="h-40 w-full object-cover rounded-lg"
+        />
+      );
+    }
+
+    return (
+      <img
+        src="/mainimg.png"
+        alt="No Image"
+        className="h-40 w-full object-cover rounded-lg"
+      />
+    );
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-white sm:text-4xl">
-          Sellers Directory
-        </h2>
-        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-600 to-cyan-500 mx-auto rounded-full"></div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 z-40 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-lg"
+          >
+            <ShoppingCart size={24} />
+            {getTotalItems() > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                {getTotalItems()}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Loading */}
-      {loading && <p className="text-center text-white">Loading sellers...</p>}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsCartOpen(false)} />
+          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-900">Shopping Cart</h2>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition"
+              >
+                <X size={24} />
+              </button>
+            </div>
 
-      {/* Seller Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {selectedSellers.map((seller, index) => {
-          const org = seller.organization || {};
-          return (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200"
+            <div className="flex-1 overflow-y-auto p-6">
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                  <ShoppingCart size={64} className="mb-4 opacity-50" />
+                  <p className="text-lg">Your cart is empty</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(groupCartBySeller()).map(([sellerId, items]) => (
+                    <div key={sellerId} className="border-b pb-4 mb-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 bg-gray-100 px-3 py-2 rounded-lg">
+                        🏪 Seller {sellerId} ({items.length} product{items.length > 1 ? "s" : ""})
+                      </h3>
+                      {items.map((item: any) => (
+                        <div
+                          key={item.id}
+                          className="flex gap-4 p-4 bg-gray-50 rounded-lg mb-2"
+                        >
+                          <img
+                            src={
+                              item.image && item.image !== "null"
+                                ? item.image.startsWith("http")
+                                  ? item.image
+                                  : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
+                                : "/mainimg.png"
+                            }
+                            alt={item.product_name}
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 mb-1">
+                              {item.product_name}
+                            </h3>
+                            <p className="text-blue-600 font-bold mb-2">
+                              ₹{item.price_per_kg}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => updateQuantity(item.id, -1)}
+                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
+                              >
+                                <Minus size={16} />
+                              </button>
+                              <span className="font-semibold px-3">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(item.id, 1)}
+                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
+                              >
+                                <Plus size={16} />
+                              </button>
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="ml-auto p-1 text-red-500 hover:bg-red-50 rounded"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {cart.length > 0 && (
+              <div className="border-t p-6 bg-white">
+                <div className="mb-4 text-sm text-gray-600">
+                  {Object.keys(groupCartBySeller()).length} Seller{Object.keys(groupCartBySeller()).length > 1 ? "s" : ""} • {getTotalItems()} Item{getTotalItems() > 1 ? "s" : ""}
+                </div>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    setIsEnquiryModalOpen(true);
+                  }}
+                  className="w-full py-2 mb-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Send size={20} />
+                  Send Enquiry
+                </button>
+
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {isEnquiryModalOpen && (
+        <EnquiryModal
+          isOpen={isEnquiryModalOpen}
+          onClose={() => setIsEnquiryModalOpen(false)}
+          enquiryData={enquiryData}
+          setEnquiryData={setEnquiryData}
+          productEdits={productEdits}
+          setProductEdit={setProductEdit}
+          groupedCart={groupCartBySeller()}
+          onSubmit={handleEnquirySubmit}
+        />
+      )}
+
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-black">
+            Top-Rated Paper Products in the Market
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          <button
+            onClick={() => handleCategoryFilter("all")}
+            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === "all"
+              ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryFilter(cat.id.toString())}
+              className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id.toString()
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
             >
-              <div className="flex p-6">
-                {/* Placeholder image */}
-                <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/mainimg.png"
-                    alt="company logo"
-                    className="w-full h-full object-cover"
-                  />
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+              >
+                <div className="h-48 bg-gray-200 w-full"></div>
+                <div className="p-6 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
+                  <div className="flex gap-3 mt-4">
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProducts.map((item) => (
+              <div
+                key={item.id}
+                className="relative bg-white rounded-2xl overflow-hidden transition transform hover:-translate-y-2 shadow-lg"
+              >
+                <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white bg-opacity-90 px-3 py-1 rounded-lg shadow-md z-10">
+                  <span className="text-yellow-400 font-bold">
+                    {item.rating ? item.rating.toFixed(1) : "0.0"}
+                  </span>
+                  <svg
+                    className="w-4 h-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.15c.969 0 1.371 1.24.588 1.81l-3.36 2.44a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.36-2.44a1 1 0 00-1.176 0l-3.36 2.44c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.078 9.382c-.783-.57-.38-1.81.588-1.81h4.15a1 1 0 00.95-.69l1.286-3.955z" />
+                  </svg>
+                  <span className="text-gray-600 text-xs">
+                    ({item.reviews_count || 0})
+                  </span>
                 </div>
 
-                {/* Seller Info */}
-                <div className="ml-6 flex-1">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    {`KPDS_${seller.id}`}
+                <div className="p-6 flex flex-col space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {item.product_name}
                   </h3>
+                  <Link href={`/product/${item.id}`} className="block">
+                    {getImageContent(item)}
+                  </Link>
+                  <p className="text-2xl font-extrabold text-blue-600 mt-2">
+                    ₹{item.price_per_kg}
+                  </p>
+                  <p className="text-gray-700">{item.category?.name}</p>
 
-                  {/* Verified Status */}
-                  <span
-                    className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                      seller.approved === "1"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-500 text-white"
-                    }`}
-                  >
-                    {seller.approved === "1" ? "Verified" : "Not Verified"}
-                  </span>
-
-                  <div className="mt-3 text-sm text-gray-700 space-y-1">
-                    <p>
-                      <strong>Company Id:</strong> {`KPDS_${seller.id}`}
-                    </p>
-                    <p>
-                      <strong>State:</strong>{" "}
-                      {org.city ? org.city.split(",").pop().trim() : "N/A"}
-                    </p>
-                    <p>
-                      <strong>City:</strong> {org.city || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Type of Seller:</strong>{" "}
-                      {seller.user_type === 2 ? "Wholeseller" : "Distributor"}
-                    </p>
-                    <p>
-                      <strong>Deals In:</strong>{" "}
-                      {org.materials_used || "Not Available"}
-                    </p>
+                  <div className="flex gap-3 mt-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = "/subscriptionPlan";
+                      }}
+                      className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
+                    >
+                      Contact
+                    </button>
                   </div>
 
                   <button
-                     onClick={() => router.push(`/seller/${seller.id}`)}
-                    className="mt-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-colors duration-300"
+                    onClick={() => addToCart(item)}
+                    className={`w-full py-2 rounded-lg text-white hover:opacity-90 transition mt-2 flex items-center justify-center gap-2 ${isInCart(item.id)
+                      ? "bg-orange-500"
+                      : "bg-[#38d200]"
+                      }`}
                   >
-                    View Profile
+                    <ShoppingCart size={18} />
+                    {isInCart(item.id) ? `Added (${getCartQuantity(item.id)})` : "Add to Cart"}
                   </button>
-                  
                 </div>
-                
               </div>
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* ✅ Pagination UI */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center mt-8 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
-
-          {[...Array(totalPages)].map((_, index) => {
-            const pageNum = index + 1;
-            return (
-              <button
-                key={pageNum}
-                onClick={() => handlePageChange(pageNum)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === pageNum
-                    ? "bg-blue-500 text-white"
-                    : "hover:bg-gray-200"
-                }`}
-              >
-                {pageNum}
-              </button>
-            );
-          })}
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
-
-      {/* Modals */}
-      <RequirementModal
-        visible={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-      <ContactSellerModal
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-      />
     </div>
   );
 }

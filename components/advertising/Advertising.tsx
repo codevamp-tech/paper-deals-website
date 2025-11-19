@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@/hooks/use-theme";
 import { useState, useEffect } from "react";
 
 interface Advertisement {
@@ -15,17 +16,16 @@ const Advertising = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   // ✅ Fetch API
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertisement`); // 👈 API
-        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertisement`);
         const data = await res.json();
         console.log("API Response:", data);
         setAds(data);
-
       } catch (err) {
         console.error("Error fetching ads:", err);
       } finally {
@@ -36,13 +36,13 @@ const Advertising = () => {
     fetchAds();
   }, []);
 
-  // ✅ Auto carousel
+  // ✅ Auto carousel logic
   useEffect(() => {
     if (ads.length === 0) return;
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % ads.length);
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
         setIsTransitioning(false);
       }, 500);
     }, 5000);
@@ -52,7 +52,6 @@ const Advertising = () => {
   if (loading) return <p className="text-white">Loading advertisements...</p>;
   if (ads.length === 0) return <p className="text-red-500">No ads found!</p>;
 
-  // ✅ Date formatting function
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -62,45 +61,94 @@ const Advertising = () => {
     });
   };
 
+  // ✅ Handle absolute or relative image URLs
+  const getImageUrl = (image: string) => {
+    if (!image) return "";
+    return image.startsWith("http")
+      ? image
+      : `${process.env.NEXT_PUBLIC_API_URL}/${image}`;
+  };
+
+  // ✅ Loading and empty states
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white text-lg">
+        Loading advertisements...
+      </div>
+    );
+
+  if (ads.length === 0)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-red-500 text-lg">
+        No ads found!
+      </div>
+    );
+
   return (
-    <div className="flex justify-center items-center min-h-screen font-inter overflow-hidden relative">
-      <div className="relative rounded-3xl w-[90vw] md:w-[80vw] h-[80vh] bg-white/5 backdrop-blur-[16px] border border-white/20 shadow-2xl overflow-hidden group">
-        <div className="relative z-10 p-6 md:p-12 h-full flex flex-col md:flex-row justify-between gap-8">
-          {/* Left side - Ads text */}
-          <div className="relative w-full md:w-[45%] flex flex-col justify-center">
+    <div
+      className="flex justify-center items-center min-h-screen font-inter overflow-hidden relative px-4 xs:px-6 sm:px-8"
+      style={{ backgroundColor: theme.bg1 }}
+    >
+      <div className="relative rounded-3xl w-full max-w-[90vw] xs:max-w-[85vw] sm:max-w-[80vw] md:w-[80vw] h-[60vh] xs:h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[80vh] bg-white/5 backdrop-blur-[16px] border border-white/20 shadow-2xl overflow-hidden group">
+        <div className="relative z-10 p-4 xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 h-full flex flex-col md:flex-row justify-between gap-4 xs:gap-5 sm:gap-6 md:gap-8">
+
+          {/* ✅ Left side - Ad text */}
+          <div className="relative w-full md:w-[45%] flex flex-col justify-center flex-shrink-0">
             <div
-              className={`transition-opacity duration-500 ${
-                isTransitioning ? "opacity-0" : "opacity-100"
-              }`}
+              className={`transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"
+                }`}
             >
-              <span className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-200 uppercase rounded-full bg-white/10">
+              <span className="inline-block mb-3 xs:mb-4 px-2 xs:px-3 py-1 text-xs font-semibold tracking-wider text-indigo-200 uppercase rounded-full bg-white/10">
                 {ads[currentIndex]?.page_type || "Advertisement"}
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-300 bg-clip-text">
+
+              {/* ✅ Fixed title wrapping */}
+              <h1
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 xs:mb-5 sm:mb-6 text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-300 bg-clip-text leading-relaxed break-words"
+                style={{
+                  whiteSpace: "normal",
+                  overflow: "visible",
+                  wordBreak: "break-word",
+                  lineHeight: 1.2, // ensures descenders are not cut
+                  paddingBottom: '2px', // small padding to prevent clipping
+                }}
+              >
                 {ads[currentIndex]?.advertisement_title || "No Title"}
               </h1>
 
-              <div className="text-sm text-gray-400 mt-2 font-poppins">
+
+              <div className="text-xs xs:text-sm text-gray-400 mt-2 font-poppins">
                 {formatDate(ads[currentIndex]?.created_at)}
               </div>
             </div>
           </div>
 
-          {/* Right side - Image */}
-          <div className="relative w-full md:w-[50%] h-[40vh] md:h-full flex items-center justify-center">
+          {/* ✅ Right side - Image */}
+          <div className="relative w-full md:w-[50%] h-[25vh] xs:h-[30vh] sm:h-[35vh] md:h-full flex items-center justify-center">
             <div
-              className={`relative w-full h-full rounded-2xl overflow-hidden transition-opacity duration-500 ${
-                isTransitioning ? "opacity-0" : "opacity-100"
-              }`}
+              className={`relative w-full h-full rounded-2xl overflow-hidden transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"
+                }`}
             >
               <div
                 className="w-full h-full bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}/${ads[currentIndex]?.image})`,
+                  backgroundImage: `url(${getImageUrl(ads[currentIndex]?.image)})`,
                 }}
               ></div>
             </div>
           </div>
+
+        </div>
+
+        {/* Optional: bottom indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {ads.map((_, i) => (
+            <div
+              key={i}
+              className={`h-2 w-2 rounded-full transition-all duration-300 ${i === currentIndex ? "bg-white w-4" : "bg-gray-400/50"
+                }`}
+            ></div>
+          ))}
         </div>
       </div>
     </div>

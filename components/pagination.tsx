@@ -13,13 +13,11 @@ export default function Pagination({
   currentPage,
   onPageChange,
 }: PaginationProps) {
-  // ❌ Pehle tha: if (totalPages <= 1) return null;
-  // ✅ Ab sirf 0 pages pe null return karega
   if (totalPages < 1) return null;
 
   const getPages = () => {
     const pages: (number | string)[] = [];
-    const delta = 1; // how many pages to show around current
+    const delta = 1;
 
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -49,19 +47,25 @@ export default function Pagination({
 
   return (
     <div className="mt-4 flex justify-center">
-      <div className="flex flex-wrap items-center justify-center gap-2 bg-white p-2 rounded-md shadow">
+      <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2 bg-gray-200 p-2 sm:p-3 rounded-md shadow w-full max-w-xs sm:max-w-md mx-auto">
+        {/* Previous Button */}
         <Button
           variant="outline"
-          className="bg-white text-black border-gray-300 hover:bg-gray-100"
+          className="bg-white text-black border-gray-300 hover:bg-gray-100 text-xs sm:text-sm px-2 sm:px-3 py-1 h-8 sm:h-9"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          Prev
+          <span className="hidden xs:inline">Prev</span>
+          <span className="xs:hidden">‹</span>
         </Button>
 
+        {/* Page Numbers */}
         {getPages().map((page, idx) =>
           page === "…" ? (
-            <span key={`ellipsis-${idx}`} className="px-2 text-black">
+            <span
+              key={`ellipsis-${idx}`}
+              className="px-1 sm:px-2 text-black text-xs sm:text-sm"
+            >
               …
             </span>
           ) : (
@@ -70,8 +74,8 @@ export default function Pagination({
               variant={page === currentPage ? "default" : "outline"}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
-                  : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                  ? "bg-blue-500 text-white hover:bg-blue-600 text-xs sm:text-sm px-2 sm:px-3 py-1 h-8 sm:h-9 min-w-[32px] sm:min-w-[40px]"
+                  : "bg-white text-black border-gray-300 hover:bg-gray-100 text-xs sm:text-sm px-2 sm:px-3 py-1 h-8 sm:h-9 min-w-[32px] sm:min-w-[40px]"
               }
               onClick={() => onPageChange(Number(page))}
             >
@@ -80,13 +84,15 @@ export default function Pagination({
           )
         )}
 
+        {/* Next Button */}
         <Button
           variant="outline"
-          className="bg-white text-black border-gray-300 hover:bg-gray-100"
+          className="bg-white text-black border-gray-300 hover:bg-gray-100 text-xs sm:text-sm px-2 sm:px-3 py-1 h-8 sm:h-9"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
         >
-          Next
+          <span className="hidden xs:inline">Next</span>
+          <span className="xs:hidden">›</span>
         </Button>
       </div>
     </div>

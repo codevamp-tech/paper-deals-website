@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 
@@ -13,26 +13,46 @@ import ProductInsights from "@/components/insight/Insight";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import Hero from "@/components/herohomepage/Heropage";
+import ProductCrousel from "@/components/productForhome/productcrousel";
+import Advertising from "@/components/advertising/Advertising";
+import AssumptionPartner from "@/components/association/association";
+
+
 
 export default function Home() {
-  return (<div className="min-h-screen text-white"> {/* Hero Section P2 and add intro below*/}
+  const [enabled, setEnabled] = useState(false)
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("mode")
+    setEnabled(savedMode === "B2B" ? true : false)
+
+  }, [])
+  return (<div className="min-h-screen"> {/* Hero Section P2 and add intro below*/}
 
 
     {/* Hero Section */}
     <Hero />
 
     {/* Insight  */}
+
     <ProductInsights />
 
+
     {/* Categories */}
-    <Categoreie />
+    {/* <Categoreie /> */}
+
 
     {/* Products Section */}
-    <SellerOrBuyer />
-
+    {enabled &&
+      <SellerOrBuyer />
+    }
+    <Advertising />
+    {/* <ProductCrousel /> */}
     {/* Our Services */}
     <ServicesGrid />
-
+    {!enabled &&
+      <ProductCrousel />
+    }
     {/* Ready To Order */}
     <ReadyToOrder />
 
@@ -41,6 +61,11 @@ export default function Home() {
 
     {/* Testimonials */}
     <TestimonialsSection />
+
+
+
+    {/* AssumptionPartner */}
+    <AssumptionPartner />
 
     {/* FAQ Section */}
     <FaqSection />

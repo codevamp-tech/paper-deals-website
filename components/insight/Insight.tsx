@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, MapPin } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function ProductInsights() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // ✅ Fetch API Data
   useEffect(() => {
@@ -33,7 +35,11 @@ export default function ProductInsights() {
       } catch (error) {
         console.error("Error fetching insights:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
+
 
     fetchData();
   }, []);
@@ -61,13 +67,19 @@ export default function ProductInsights() {
 
     return () => cancelAnimationFrame(animationId);
   }, [products]);
+  const { theme } = useTheme();
 
   return (
-    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32">
+    <div
+      className={`w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32  ${theme.Bg}`}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
-          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mb-3">
+          <h2
+            className=" text-[6vh] font-[900] mb-3"
+            style={{ color: theme.Text }}
+          >
             Paper Industry Insights
           </h2>
           <p className="flex justify-center text-[3vh]">
@@ -79,7 +91,8 @@ export default function ProductInsights() {
         <div className="flex justify-end mb-6">
           <a href="/insights-comparison">
             <button
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-blue-600 border border-cyan-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{ color: theme.Text }}
             >
               View all Insights
               <ArrowRight className="w-5 h-5" />
@@ -89,8 +102,8 @@ export default function ProductInsights() {
 
         {/* Product Cards */}
         <div className="relative overflow-hidden">
-          <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
-          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div>
+          {/* <div className="hidden md:block absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-[#31a8de] to-transparent z-10"></div>
+          <div className="hidden md:block absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-[#31a8de] to-transparent z-10"></div> */}
 
           <div className="overflow-hidden py-4">
             <div
@@ -98,23 +111,26 @@ export default function ProductInsights() {
               className="flex gap-4 transition-transform"
               style={{ width: "fit-content" }}
             >
-              {[...Array(2)].map((_, dupeIndex) => (
-                <div key={dupeIndex} className="flex gap-4">
-                  {products.map((p) => (
-                    <ProductCard
-                      key={p.id + dupeIndex}
-                      title={p.title}
-                      subtitle={p.subtitle}
-                      price={p.price}
-                      change={p.change}
-                      isPositive={p.isPositive}
-                      date={p.date}
-                      location={p.location}
-                      type={p.type}
-                    />
-                  ))}
-                </div>
-              ))}
+              {loading
+                ? // ✅ Skeleton while loading
+                [...Array(5)].map((_, i) => <ProductCardSkeleton key={i} />)
+                : [...Array(2)].map((_, dupeIndex) => (
+                  <div key={dupeIndex} className="flex gap-4">
+                    {products.map((p) => (
+                      <ProductCard
+                        key={p.id + dupeIndex}
+                        title={p.title}
+                        subtitle={p.subtitle}
+                        price={p.price}
+                        change={p.change}
+                        isPositive={p.isPositive}
+                        date={p.date}
+                        location={p.location}
+                        type={p.type}
+                      />
+                    ))}
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -173,13 +189,12 @@ function ProductCard({
           <span className="text-slate-600 text-sm">/ kg</span>
 
           <div
-            className={`flex items-center ml-auto text-xs font-medium ${
-              isPositive
-                ? "text-green-600"
-                : change === 0
+            className={`flex items-center ml-auto text-xs font-medium ${isPositive
+              ? "text-green-600"
+              : change === 0
                 ? "text-slate-500"
                 : "text-red-600"
-            }`}
+              }`}
           >
             {isPositive ? (
               <ArrowUp className="w-3 h-3 mr-0.5" />
@@ -197,6 +212,30 @@ function ProductCard({
           <MapPin className="w-3 h-3 mr-1 text-slate-400" />
           {location}
         </div>
+      </div>
+    </div>
+  );
+}
+
+
+function ProductCardSkeleton() {
+  return (
+    <div className="w-[300px] h-[220px] rounded-xl overflow-hidden shadow-md bg-white border border-slate-100 animate-pulse flex flex-col">
+      <div className="flex justify-between items-center p-4 border-b border-slate-100">
+        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+        <div className="h-4 bg-slate-200 rounded w-10"></div>
+      </div>
+      <div className="p-4 flex-1 space-y-3">
+        <div className="h-3 bg-slate-200 rounded w-3/4"></div>
+        <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+        <div className="flex justify-between items-center mt-4">
+          <div className="h-6 bg-slate-200 rounded w-24"></div>
+          <div className="h-4 bg-slate-200 rounded w-10"></div>
+        </div>
+      </div>
+      <div className="bg-slate-50 p-3 flex justify-between items-center">
+        <div className="h-3 bg-slate-200 rounded w-16"></div>
+        <div className="h-3 bg-slate-200 rounded w-20"></div>
       </div>
     </div>
   );

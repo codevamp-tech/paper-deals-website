@@ -246,8 +246,8 @@ export default function DealForm() {
       // 6️⃣ Construct the API URL
       const url =
         endpoint === "dashboard"
-          ? `https://paper-deal-server.onrender.com/api/dashboard/${dealId}`
-          : `https://paper-deal-server.onrender.com/api/${endpoint}`
+          ? `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/${dealId}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/api/${endpoint}`
       console.log("options", options)
       // 7️⃣ Call the API
       const res = await fetch(url, options)
@@ -286,7 +286,7 @@ export default function DealForm() {
 
   const fetchDeal = async () => {
     try {
-      const res = await fetch(`https://paper-deal-server.onrender.com/api/dashboard/dealbyid/${dealId}`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/dealbyid/${dealId}`)
       const data = await res.json()
       setForm(mapApiToForm(data))
       console.log("[v0] Deal data loaded from API")
@@ -297,7 +297,7 @@ export default function DealForm() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("https://paper-deal-server.onrender.com/api/categiry")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`)
       const data = await res.json()
       setCategories(data.categories || data.data || []) // <-- only array goes into state
       console.log("[v0] Categories loaded from API", data)
@@ -309,8 +309,8 @@ export default function DealForm() {
   const fetchBuyersAndSellers = async () => {
     try {
       const [buyerRes, sellerRes] = await Promise.all([
-        fetch("https://paper-deal-server.onrender.com/api/users/getBuyer"),
-        fetch("https://paper-deal-server.onrender.com/api/users/getallsellers?user_type=2"),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/getBuyer`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`),
       ])
       const buyersData = await buyerRes.json()
       const sellersData = await sellerRes.json()
@@ -330,7 +330,254 @@ export default function DealForm() {
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 0: // Deal Details
+      case 0: // Deal Detailscase 0: // Deal Details
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Deal Id</label>
+            <Input value={form.dealId || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Buyer</label>
+            <Select value={form.buyerId || ""} disabled>
+              <SelectTrigger className="bg-gray-100 text-gray-500 border border-gray-300">
+                <SelectValue placeholder="Select Buyer" />
+              </SelectTrigger>
+            </Select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Seller</label>
+            <Select value={form.sellerId || ""} disabled>
+              <SelectTrigger className="bg-gray-100 text-gray-500 border border-gray-300">
+                <SelectValue placeholder="Select Seller" />
+              </SelectTrigger>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Information */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Contact Person</label>
+            <Input value={form.contactPerson || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Mobile Number</label>
+            <Input value={form.mobile || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <Input value={form.email || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Remarks</label>
+            <Input value={form.remarks || ""} disabled />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Technical Data Sheet</label>
+            <input
+              type="file"
+              disabled
+              className="block w-full text-sm !text-black border border-gray-300 rounded-lg cursor-not-allowed bg-gray-100"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Products Details */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Products Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            "product",
+            "subProduct",
+            "brightness",
+            "gsm",
+            "bf",
+            "shade",
+            "hsnNo",
+            "grain",
+            "sheet",
+            "wl",
+            "noOfBundle",
+            "noOfRim",
+            "rimWeight",
+            "sizeInch",
+            "stockKg",
+            "quantityKg",
+            "priceKg",
+            "totalAmount",
+          ].map((field) => (
+            <div key={field}>
+              <label className="block text-sm font-medium mb-2 capitalize">{field}</label>
+              <Input value={form[field] || ""} disabled />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+
+case 1: // Sampling
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <label className="block text-sm font-medium mb-2">Date Of Sample</label>
+          <Input type="date" value={form.dateOfSample || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Sample Verification</label>
+          <Input value={form.sampleVerification || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Lab Report</label>
+          <Input type="date" value={form.labReport || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Remarks</label>
+          <Input value={form.samplingRemarks || ""} disabled />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Upload Document</label>
+          <Input type="file"  />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Sampling Status</label>
+          <select
+            value={form.samplingStatus || 0}
+            
+            className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+          >
+            <option value={0}>Pending</option>
+            <option value={1}>Approved</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  )
+
+case 2: // Verification
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium mb-2">Date of Validation</label>
+        <Input type="date" disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Sample</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Stock Approved</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Upload Document</label>
+        <Input type="file" disabled />
+      </div>
+    </div>
+  )
+
+case 3: // Order Confirmation
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium mb-2">Clearance Date</label>
+        <Input type="date" disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Product Price</label>
+        <Input disabled />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Remarks</label>
+        <Input disabled />
+      </div>
+    </div>
+  )
+
+case 4: // Payment
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "transactionDate",
+        "transactionId",
+        "detail",
+        "accountNumber",
+        "bank",
+        "branch",
+        "amount",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
+case 5: // Transportation
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "transportationDate",
+        "transporterName",
+        "modeOfTransport",
+        "vehicleNo",
+        "freight",
+        "billNo",
+        "distance",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
+case 6: // Closed
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        "closedDate",
+        "product",
+        "remarks",
+        "productReceivedBy",
+        "commission",
+      ].map((field) => (
+        <div key={field}>
+          <label className="block text-sm font-medium mb-2 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <Input disabled />
+        </div>
+      ))}
+    </div>
+  )
+
         return (
           <div className="space-y-6">
             <div>
@@ -338,15 +585,17 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Deal Id</label>
-                  <Input value={form.dealId || ""} onChange={(e) => handleChange("dealId", e.target.value)} />
+                  <Input value={form.dealId || ""} onChange={(e) => handleChange("dealId", e.target.value)} disabled/>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Buyer</label>
+                  
                   <Select value={form.buyerId || ""} onValueChange={(v) => handleChange("buyerId", v)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white text-black border border-gray-300">
                       <SelectValue placeholder="Select Buyer" />
                     </SelectTrigger>
+
                     <SelectContent>
                       {buyers.map((b) => (
                         <SelectItem key={b.id} value={b.id}>
@@ -360,9 +609,10 @@ export default function DealForm() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Seller</label>
                   <Select value={form.sellerId || ""} onValueChange={(v) => handleChange("sellerId", v)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Seller" />
+                    <SelectTrigger className="bg-white text-black border border-gray-300">
+                      <SelectValue placeholder="Select Buyer" />
                     </SelectTrigger>
+
                     <SelectContent>
                       {sellers.map((s) => (
                         <SelectItem key={s.id} value={s.id}>
@@ -404,9 +654,9 @@ export default function DealForm() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Technical Data Sheet</label>
-                  <Input
+                  <input
                     type="file"
-                    onChange={(e) => handleChange("technicalDataSheet", e.target.files?.[0] || null)}
+                    className="block w-full text-sm !text-black border border-gray-300 rounded-lg cursor-pointer !bg-white"
                   />
                 </div>
               </div>
@@ -418,22 +668,16 @@ export default function DealForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Category</label>
-                  <Select value={form.category || ""} onValueChange={(v) => handleChange("category", v)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Category" />
+                  <Select>
+                    <SelectTrigger className="bg-white text-black border border-gray-300">
+                      <SelectValue placeholder="Select Buyer" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {Array.isArray(categories) && categories.length > 0 ? (
-                        categories.map((c: any) => (
-                          <SelectItem key={c.id} value={c.id.toString()}>
-                            {c.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <div className="p-2 text-gray-500">No categories found</div>
-                      )}
+                    <SelectContent className="bg-white text-black border border-gray-300">
+                      <SelectItem value="buyer1">Buyer 1</SelectItem>
+                      <SelectItem value="buyer2">Buyer 2</SelectItem>
                     </SelectContent>
                   </Select>
+
                 </div>
 
                 <div>
@@ -598,7 +842,7 @@ export default function DealForm() {
                   <option value={0}>Pending</option>
                   <option value={1}>Approved</option>
                 </select>
-              </div>
+              </div>|
             </div>
           </div>
         )
@@ -756,8 +1000,8 @@ export default function DealForm() {
     <div className="max-w-7xl mx-auto p-6">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Deal Management</h1>
-          <Badge variant="outline">
+          <h1 className="text-2xl font-bold text-black" >Deal Management</h1>
+          <Badge variant="default">
             Step {currentStep + 1} of {FORM_STEPS.length}
           </Badge>
         </div>
@@ -793,10 +1037,10 @@ export default function DealForm() {
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-white text-black border">
         <CardHeader>
           <CardTitle>{FORM_STEPS[currentStep].title}</CardTitle>
-          <p className="text-sm text-muted-foreground">{FORM_STEPS[currentStep].description}</p>
+          <p className="text-sm">{FORM_STEPS[currentStep].description}</p>
         </CardHeader>
         <CardContent>
           {renderStepContent()}
@@ -806,19 +1050,22 @@ export default function DealForm() {
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 0}
-              className="flex items-center bg-transparent"
+              className="flex items-center bg-white text-black border"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Previous
             </Button>
 
             <div className="flex items-center space-x-3">
-              <Button onClick={handleSubmit}>
+              {/* <Button className="bg-white text-black border">
                 Update {FORM_STEPS[currentStep].title}
-              </Button>
+              </Button> */}
 
-
-              <Button onClick={nextStep} disabled={currentStep === FORM_STEPS.length - 1} className="flex items-center">
+              <Button
+                onClick={nextStep}
+                disabled={currentStep === FORM_STEPS.length - 1}
+                className="flex items-center bg-white text-black border"
+              >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>

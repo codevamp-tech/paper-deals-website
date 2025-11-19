@@ -53,14 +53,8 @@
   }
 
   body {
-    background: #00d4ff;
-    background: radial-gradient(
-      circle,
-      rgba(0, 212, 255, 0.65) 0%,
-      rgba(112, 112, 179, 1) 35%,
-      rgba(0, 212, 255, 1) 100%
-    );
-    @apply text-foreground font-poppins;
+    background: #fff;
+    @apply text-black font-poppins;
   }
 }
 
@@ -94,3 +88,24 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+/* ✅ Fix inputs, selects, textarea background + text */
+input,
+select,
+textarea {
+  background-color: white !important;
+  color: black !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important; /* Tailwind gray-500 */
+}
+
+/* ✅ Fix shadcn / Radix Select trigger */
+[data-radix-select-trigger] {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #d1d5db !important; /* gray-300 */
+}
+

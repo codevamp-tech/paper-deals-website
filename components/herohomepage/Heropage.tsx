@@ -5,6 +5,7 @@ import { Search, ChevronRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BioImageSec from "../ImageOrBio/ImageAndBio";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/hooks/use-theme";
 
 const images = ["/banner1.png", "/banner2.png", "/banner3.jpg"];
 
@@ -13,8 +14,9 @@ const Hero = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const router = useRouter();
+  const { theme } = useTheme();
 
-  // background slider
+  // 🖼️ Background slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
@@ -22,61 +24,62 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // fetch search results
+  // 🔍 Fetch Product Search Results (Paper Deal)
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
       return;
     }
+
     const fetchResults = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/search?query=${query}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/search?query=${encodeURIComponent(
+            query
+          )}`
         );
-        if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        setResults(data.data || []);
+
+        if (data?.success && Array.isArray(data.data)) {
+          // ✅ Filter products where product_name or category matches query
+          const filtered = data.data.filter((item: any) => {
+            const productName = item.product_name?.toLowerCase() || "";
+            const categoryName =
+              item.category?.name?.toLowerCase() ||
+              item.category_id?.toLowerCase() ||
+              "";
+            return (
+              productName.includes(query.toLowerCase()) ||
+              categoryName.includes(query.toLowerCase())
+            );
+          });
+
+          // Tag as product type for UI
+          const withType = filtered.map((p: any) => ({
+            ...p,
+            _type: "product",
+          }));
+          setResults(withType);
+        } else {
+          setResults([]);
+        }
       } catch (err) {
-        console.error("Search error:", err);
+        console.error("Error fetching products:", err);
         setResults([]);
       }
     };
+
     fetchResults();
   }, [query]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
-
-  // ✅ navigate on click
+  // 🧭 Handle click on search result
   const handleSelect = (item: any) => {
-    if (item.user_type === 2) {
-      router.push(`/seller/${item.id}`);
-    } else if (item.user_type === 3) {
-      router.push(`/buyers/profile/${item.id}`);
-    }
-  };
-
-  const getUserTypeBadge = (userType: number) => {
-    if (userType === 2) {
-      return (
-        <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-          Seller
-        </span>
-      );
-    } else if (userType === 3) {
-      return (
-        <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-          Buyer
-        </span>
-      );
-    }
-    return null;
+    router.push(`/product/${item.id}`); // Go directly to product details
   };
 
   return (
     <section className="relative py-[12vh] overflow-hidden">
-      {/* Background */}
+      {/* 🖼️ Background */}
       <div className="absolute inset-0 z-0">
         {images.map((src, index) => (
           <img
@@ -91,6 +94,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
+      {/* 🧾 Hero Content */}
       <div className="h-[60vh] relative z-30">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center mb-12">
@@ -105,25 +109,27 @@ const Hero = () => {
               modern B2B needs.
             </p>
 
-            {/* Search */}
+            {/* 🔍 Search Bar */}
             <div className="flex justify-center relative w-full max-w-xl mx-auto">
               <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
                 <div className="relative group w-full">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400" />
                   </div>
+
                   <input
                     type="text"
-                    placeholder="Search samples..."
+                    placeholder="Search by product or category..."
                     value={query}
-                    onChange={handleSearch}
+                    onChange={(e) => setQuery(e.target.value)}
                     className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg"
                   />
+
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
 
-                  {/* Dropdown */}
+                  {/* 🔽 Dropdown Results */}
                   {results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
                       {results.map((item) => (
@@ -132,16 +138,22 @@ const Hero = () => {
                           onClick={() => handleSelect(item)}
                           className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
                         >
+                          {/* 🏷️ Product Name */}
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">{item.name}</span>
-                            {getUserTypeBadge(item.user_type)}
+                            <span className="font-medium text-gray-800">
+                              {item.product_name}
+                            </span>
+                            <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                              Product
+                            </span>
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {item.email_address}
-                          </div>
-                          <div className="text-sm text-gray-400">
-                            {/* 📞 {item.phone_no} */}
-                          </div>
+
+                          {/* 📦 Category Name */}
+                          {(item.category?.name || item.category_id) && (
+                            <div className="text-sm text-gray-500 mt-1">
+                              Category: {item.category?.name || item.category_id}
+                            </div>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -149,7 +161,14 @@ const Hero = () => {
                 </div>
               </div>
 
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-8 py-6 text-lg ml-4">
+              {/* 🛒 Shop Now Button */}
+              <Button
+                onClick={() => router.push("/product")}
+                className="text-white px-8 py-6 text-lg ml-4"
+                style={{
+                  backgroundColor: theme.bg1,
+                }}
+              >
                 Shop Now <ShoppingCart className="ml-2 h-5 w-5" />
               </Button>
             </div>

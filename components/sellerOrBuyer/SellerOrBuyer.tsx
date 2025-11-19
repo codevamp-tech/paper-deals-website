@@ -1,88 +1,41 @@
 "use client";
 import React from "react";
 import Advertising from "../advertising/Advertising";
+import { useTheme } from "@/hooks/use-theme";
+import { useRouter } from "next/navigation";
 
 const SellerOrBuyer = () => {
+  const { theme } = useTheme();
+  const router = useRouter();
+
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-center items-center min-h-screen gap-6 md:gap-8 py-10 px-4">
-        {/* BUYER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[auto] flex flex-col">
-          <div className="mb-6">
-            <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
-              Become a <span className="text-black">Buyer</span>
-            </h1>
-            <p className="text-gray-800">
-              Join as a buyer and unlock exclusive paper deals for your
-              business.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              {
-                icon: "/buyer4.png",
-                title: "Get Lowest Price",
-                desc: "Rates 1% lower than market",
-              },
-              {
-                icon: "/getcredit.png",
-                title: "Get Credit",
-                desc: "Grow with working capital",
-              },
-              {
-                icon: "/panindia.png",
-                title: "Pan India & Global",
-                desc: "Worldwide fulfillment",
-              },
-              {
-                icon: "/brandsku.png",
-                title: "Multi Brand SKUs",
-                desc: "300,000+ SKUs available",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="bg-[#fff] p-4 rounded-lg "
-                style={{
-                  boxShadow:
-                    "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
-                }}
-              >
-                <img
-                  src={item.icon}
-                  alt={item.title}
-                  className="w-auto h-10 mx-auto mb-3"
-                />
-                <h3 className="text-gray-800 text-center font-medium">
-                  {item.title}
-                </h3>
-                <p className="text-gray-800 text-xs text-center mt-1">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-          <a href="/buyers">
-            <div className="flex justify-center">
-              <button className="mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-                Become A Seller
-              </button>
-            </div>
-          </a>
-        </div>
-
-        {/* SELLER CARD */}
-        <div className="w-full max-w-md md:w-[40vw] bg-white  border border-none  rounded-xl p-6  transition-colors h-[70vh] sm:h-[45vh] md:h-[auto] flex flex-col">
-          <div className="mb-6">
-            <h1 className="text-[#8143e7] text-3xl md:text-4xl font-semibold mb-2">
+      <div className="min-h-screen w-full bg-white flex items-center justify-center py-10 px-4">
+        {/* SELLER CARD - Full Viewport Design */}
+        <div
+          className="w-full max-w-6xl mx-auto bg-white rounded-2xl p-6 md:p-8 transition-all duration-300"
+          style={{
+            boxShadow:
+              "rgba(0, 0, 0, 0.1) 0px 10px 25px, rgba(0, 0, 0, 0.04) 0px 5px 10px",
+            border: "1px solid rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          {/* Header Section */}
+          <div className="text-center mb-10">
+            <h1
+              className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-3"
+              style={{ color: theme.Text }}
+            >
               Become a <span className="text-black">Seller</span>
             </h1>
-            <p className="text-gray-800">
-              Expand your reach with our global buyer <br /> network.
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+              Expand your reach with our global buyer network and grow your
+              business exponentially
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
             {[
               {
                 icon: "/growbusiness.png",
@@ -107,36 +60,37 @@ const SellerOrBuyer = () => {
             ].map((item, index) => (
               <div
                 key={index}
-                className="bg-[#fff] p-4 rounded-lg "
+                className="bg-white p-5 rounded-xl text-center hover:-translate-y-1 transition-all duration-300"
                 style={{
                   boxShadow:
-                    "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
+                    "rgba(0, 0, 0, 0.05) 0px 4px 12px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
                 }}
               >
                 <img
                   src={item.icon}
                   alt={item.title}
-                  className="w-10 h-10 mx-auto mb-3"
+                  className="w-12 h-12 mx-auto mb-3"
                 />
-                <h3 className="text-gray-800 text-center font-medium">
+                <h3 className="text-gray-800 font-medium text-base mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-800 text-xs text-center mt-1">
-                  {item.desc}
-                </p>
+                <p className="text-gray-600 text-sm">{item.desc}</p>
               </div>
             ))}
           </div>
-          <a href="/become-a-seller">
-            <div className="flex justify-center">
-              <button className="mt-4 flex justify-center items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
-                Become A Seller
-              </button>
-            </div>
-          </a>
+
+          {/* CTA Button */}
+          <div className="text-center">
+            <button
+              onClick={() => router.push("/B2B/become-a-seller")}
+              className="text-white font-medium px-8 py-3 rounded-lg hover:opacity-90 transition-all duration-300 text-base"
+              style={{ backgroundColor: theme.bg1 }}
+            >
+              Become A Seller
+            </button>
+          </div>
         </div>
       </div>
-      <Advertising />
     </>
   );
 };

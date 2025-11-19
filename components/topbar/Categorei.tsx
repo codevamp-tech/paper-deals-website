@@ -27,7 +27,7 @@ export default function CategoriesDropdown() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch categories from API
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -40,7 +40,7 @@ export default function CategoriesDropdown() {
 
         if (Array.isArray(data.categories) && data.categories.length > 0) {
           setCategoriesData(data.categories);
-          setActiveCategory(data.categories[0]); // default active
+          setActiveCategory(data.categories[0]);
           setTotalPages(data.totalPages);
         }
       } catch (error) {
@@ -74,7 +74,7 @@ export default function CategoriesDropdown() {
     <div className="relative">
       {/* Categories Button */}
       <button
-        className="flex items-center gap-2 px-4 py-4 hover:text-black text-gray-700 font-medium"
+        className="flex items-center gap-2 px-4 py-4 text-white font-medium"
         onMouseEnter={handleOpenDropdown}
         onMouseLeave={() => setIsOpen(false)}
       >
@@ -82,7 +82,7 @@ export default function CategoriesDropdown() {
         <span className="sm:hidden">Categories</span>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown */}
       {isOpen && categoriesData.length > 0 && (
         <div
           className="absolute left-0 top-full bg-black text-white shadow-lg z-50 
@@ -92,7 +92,7 @@ export default function CategoriesDropdown() {
           onMouseLeave={() => setIsOpen(false)}
         >
           <div className="flex flex-col sm:flex-row border-t border-gray-200 h-full">
-            {/* Left Sidebar - Categories */}
+            {/* Left Categories */}
             <div className="w-full sm:w-64 md:w-72 lg:w-64 bg-black py-2 overflow-y-auto">
               {categoriesData.map((category) => (
                 <button
@@ -102,7 +102,6 @@ export default function CategoriesDropdown() {
                   }`}
                   onMouseEnter={() => handleCategoryHover(category)}
                 >
-                  {/* Image (fallback if empty) */}
                   {category.image ? (
                     <img
                       src={category.image}
@@ -114,14 +113,13 @@ export default function CategoriesDropdown() {
                       {category.name.charAt(0)}
                     </div>
                   )}
-
                   <span className="text-white text-sm sm:text-base flex-1">
                     {category.name}
                   </span>
                 </button>
               ))}
 
-              {/* Pagination Controls */}
+              {/* Pagination */}
               <div className="flex justify-between items-center px-4 py-2 text-sm text-gray-300">
                 <button
                   disabled={page === 1}
@@ -149,7 +147,7 @@ export default function CategoriesDropdown() {
               </div>
             </div>
 
-            {/* Right Content Area */}
+            {/* Right Content */}
             {activeCategory && (
               <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto">
                 <h2 className="text-lg font-semibold mb-3">
@@ -160,7 +158,8 @@ export default function CategoriesDropdown() {
                   {activeCategory.status === 1 ? "Active ✅" : "Inactive ❌"}
                 </p>
                 <p className="text-sm text-gray-400">
-                  Added on: {new Date(activeCategory.date).toLocaleDateString()}
+                  Added on:{" "}
+                  {new Date(activeCategory.date).toLocaleDateString()}
                 </p>
                 {activeCategory.image && (
                   <img
@@ -174,16 +173,18 @@ export default function CategoriesDropdown() {
                 <div className="mt-6 space-y-2">
                   <Link
                     href={`/category/${activeCategory.id}`}
+                    onClick={() => setIsOpen(false)} // 👈 close dropdown
                     className="block text-blue-400 hover:underline"
                   >
                     View Products
                   </Link>
-                  <Link
+                  {/* <Link
                     href={`/category/${activeCategory.id}/sellers`}
+                    onClick={() => setIsOpen(false)} // 👈 close dropdown
                     className="block text-blue-400 hover:underline"
                   >
                     Find Sellers
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             )}

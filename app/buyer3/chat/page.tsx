@@ -1,168 +1,126 @@
-"use client";
+"use client"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { getUserFromToken } from "@/hooks/use-token"
+import Pagination from "@/components/pagination"
 
-import { getCookie } from "@/components/getcookie"
-import { useState, useEffect } from "react";
-
-interface ChatUser {
-  id: number;
-  buyer: string;
-  consultant: string;
-  message: string;
-  incoming_msg_id: number;
-  outgoing_msg_id: number;
+interface User {
+  id: string
+  name: string
+  avatar?: string
+  organization?: {
+    image_banner?: string
+  }
 }
 
-interface Message {
-  msg_id: number;
-  incoming_msg_id: number;
-  outgoing_msg_id: number;
-  message: string;
-  created_at: string;
-  incomingUser?: { name: string };
-  outgoingUser?: { name: string };
-}
+type UserType = "seller" | "consultant"
 
-export default function ChatUsersPage() {
-  const [search, setSearch] = useState("");
-  const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const token = getCookie("token")
-  const [selectedThread, setSelectedThread] = useState<ChatUser | null>(null);
-  const [conversation, setConversation] = useState<Message[]>([]);
-  const [convLoading, setConvLoading] = useState(false);
+export default function UserList() {
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<UserType>("seller")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
-  // Fetch chat threads
   useEffect(() => {
-    const fetchChatThreads = async () => {
+    async function fetchUsers() {
+      setLoading(true)
+      setError(null)
       try {
-        const res = await fetch("https://paper-deal-server.onrender.com/api/message/list",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            credentials: "include",
-          }
-        );
-        if (!res.ok) throw new Error("Failed to fetch chat threads");
-        const data = await res.json();
-        setChatUsers(data);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
+        let url = ""
+        if (activeTab === "seller") {
+          url = `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2&page=${currentPage}&limit=9`
+        } else if (activeTab === "consultant") {
+          url = `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=5&page=${currentPage}&limit=9`
+        }
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        setUsers(data.data || [])
+        setTotalPages(data.totalPages || 1)
+      } catch (e: any) {
+        setError(e.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchChatThreads();
-  }, []);
-
-  // Fetch conversation for a selected thread
-  const handleThreadClick = async (thread: ChatUser) => {
-    setSelectedThread(thread);
-    setConvLoading(true);
-    setConversation([]);
-    try {
-      const res = await fetch(
-        `https://paper-deal-server.onrender.com/api/message/conversation?senderId=${thread.incoming_msg_id}&receiverId=${thread.outgoing_msg_id}`
-      );
-      if (!res.ok) throw new Error("Failed to fetch conversation");
-      const data = await res.json();
-      setConversation(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setConvLoading(false);
     }
-  };
-
-  // Filter chat threads
-  const filtered = chatUsers.filter(
-    (u) =>
-      u.buyer.toLowerCase().includes(search.toLowerCase()) ||
-      u.consultant.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) return <p className="p-6">Loading chat users...</p>;
-  if (error) return <p className="p-6 text-red-500">{error}</p>;
+    fetchUsers()
+  }, [activeTab, currentPage])
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen text-black">
-      <h1 className="text-2xl font-semibold mb-4">Chat Users</h1>
+    <div className="w-full space-y-6 bg-blue-600- text-black p-4 rounded-lg">
+      {/* Tab Buttons */}
+     <div className="flex justify-start space-x-4">
+        <div className="flex gap-2">
 
-      {/* Top Bar */}
-      <div className="flex justify-between mb-4">
-        <div>
-          <label className="mr-2">Search:</label>
-          <input
-            type="text"
-            className="border p-1 rounded bg-white text-black"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
 
-      {/* Chat Threads Table */}
-      <table className="w-full border border-gray-300 bg-white rounded shadow-sm text-black">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border">ID</th>
-            <th className="p-2 border">Buyer</th>
-            <th className="p-2 border">Consultant</th>
-            <th className="p-2 border">Last Message</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map((thread) => (
-            <tr
-              key={thread.id}
-              className="hover:bg-gray-50 cursor-pointer"
-              onClick={() => handleThreadClick(thread)}
+            <Button
+              variant={activeTab === "consultant" ? "default" : "outline"}
+              onClick={() => setActiveTab("seller")}
+              className="transition-all duration-200 ease-in-out text-black bg-white"
             >
-              <td className="p-2 border">{thread.id}</td>
-              <td className="p-2 border">{thread.buyer}</td>
-              <td className="p-2 border">{thread.consultant}</td>
-              <td className="p-2 border text-blue-500">{thread.message}</td>
-            </tr>
+             seller
+            </Button>
+            {/* <Button
+              variant={activeTab === "seller" ? "default" : "outline"}
+              onClick={() => setActiveTab("consultant")}
+              className="transition-all duration-200 ease-in-out text-black bg-white"
+            >
+              consultant
+            </Button> */}
+            
+          </div>
+</div>
+
+
+      {/* Loading / Error States */}
+      {loading && <div className="text-center text-black">Loading {activeTab}s...</div>}
+      {error && <div className="text-center text-red-500">{error}</div>}
+
+      {/* User Cards */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+          {users.map((user) => (
+            <Link key={user.id} href={`/buyer3/chat/${user.id}`} passHref>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-white text-black border">
+                <CardHeader className="flex flex-row items-center space-x-4">
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        user.organization?.image_banner ||
+                        `/placeholder.svg?height=40&width=40&query=${user.name}`
+                      }
+                      alt={user.name}
+                    />
+                    <AvatarFallback className="bg-gray-200 text-black">
+                      {user.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <CardTitle className="text-black">{user.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-black">Click to chat</p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
-        </tbody>
-      </table>
-
-      {/* Conversation Panel */}
-      {selectedThread && (
-        <div className="mt-6 p-4 bg-white rounded shadow">
-          <h2 className="text-xl font-semibold mb-2">
-            Chat between {selectedThread.buyer} and {selectedThread.consultant}
-          </h2>
-          {convLoading ? (
-            <p>Loading conversation...</p>
-          ) : conversation.length === 0 ? (
-            <p className="text-gray-500">No messages yet.</p>
-          ) : (
-            <div className="flex flex-col gap-2 max-h-96 overflow-y-auto">
-              {conversation.map((msg) => (
-                <div
-                  key={msg.msg_id}
-                  className={`p-2 rounded ${msg.outgoing_msg_id === selectedThread.outgoing_msg_id
-                    ? "bg-blue-100 self-end"
-                    : "bg-gray-100 self-start"
-                    }`}
-                >
-                  <strong>{msg.outgoingUser?.name || "Unknown"}: </strong>
-                  {msg.msg}
-                  <div className="text-xs text-gray-400">
-                    {new Date(msg.created_at).toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-
-          )}
         </div>
       )}
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={(page: number) => setCurrentPage(page)}
+        />
+      </div>
     </div>
-  );
+  )
 }

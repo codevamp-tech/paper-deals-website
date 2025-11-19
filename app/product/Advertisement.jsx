@@ -4,13 +4,6 @@ export default function Advertisement() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentImage, setCurrentImage] = useState(0);
 
-  const categories = [
-    { id: "abs", name: "ABS" },
-    { id: "cpvc", name: "CPVC" },
-    { id: "hdpe", name: "HDPE" },
-    { id: "ldpe", name: "LDPE" },
-    { id: "lldpe", name: "LLDPE" },
-  ];
 
   const images = [
     "/adimg.webp",

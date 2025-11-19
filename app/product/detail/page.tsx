@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Categoreis from "@/components/categories/Categories";
 import { motion } from "framer-motion";
-import OrderNow from "./ordernow/OrderNow";
+import OrderNow from "../[id]/ordernow/OrderNow";
 import Categories from "@/components/categories/Categories";
 import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";

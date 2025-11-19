@@ -1,140 +1,200 @@
-// components/Footer.tsx
+"use client";
 import React from "react";
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Phone,
+  Mail,
+  MapPin,
+} from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="pt-16 pb-8 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+    <footer className="bg-gradient-to-b from-white mt-16">
+      <div className="container mx-auto px-6 lg:px-12">
+        {/* ===== Top Section ===== */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
+          {/* ===== Logo + About + Social ===== */}
           <div>
-            <Link href="/">
+            <Link href="/" className="inline-block">
               <img
                 src="/logomain.png"
-                alt="LOGO"
-                style={{
-                  height: "auto",
-                  width: "12vw",
-                }}
+                alt="PaperDeals Logo"
+                className="w-[170px] md:w-[200px] h-auto mb-5"
               />
             </Link>
-            <p className="text-gray-700 mb-6">
-              Premium solutions for modern businesses. Quality, reliability, and
-              innovation.
+
+            <p className="text-gray-600 text-[15px] leading-relaxed mb-6">
+              Premium paper solutions for modern businesses — built on quality,
+              trust, and innovation.
             </p>
+
             <div className="flex gap-4">
-              <a
-                href="#"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
+              {[
+                {
+                  icon: <Facebook className="h-5 w-5" />,
+                  href: "https://www.facebook.com/p/Paper-Deals-61554782455824",
+                },
+                {
+                  icon: <Linkedin className="h-5 w-5" />,
+                  href: "https://www.linkedin.com/company/paper-deals/",
+                },
+                {
+                  icon: <Youtube className="h-5 w-5" />,
+                  href: "https://youtube.com/@paperdeals-123?si=4yfKosAds2egj6lU",
+                },
+              ].map((social, idx) => (
+                <a
+                  key={idx}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
 
+          {/* ===== Company Links ===== */}
           <div>
-            <h3 className="font-bold mb-4 text-black">Products</h3>
-            <ul className="space-y-2">
-              {[
-                "Copy Paper",
-                "Specialty Paper",
-                "Recycled Paper",
-                "Packaging Solutions",
-                "Custom Orders",
-              ].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-700 hover:text-gray-800 transition-colors"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-bold mb-4 text-black">Company</h3>
-            <ul className="space-y-2">
+            <h3 className="font-semibold mb-5 text-gray-900 text-lg border-l-4 border-blue-600 pl-2">
+              Company
+            </h3>
+            <ul className="space-y-2 text-gray-600 text-[15px]">
               {[
                 { name: "About Us", href: "/about" },
-                { name: "Sustainability", href: "/sustainability" },
-                { name: "Careers", href: "/careers" },
-                { name: "Press", href: "/press" },
-                { name: "Contact", href: "/contact" },
+                { name: "Live Stock", href: "/B2B/live-stock" },
+                { name: "Products", href: "/product" },
+                { name: "News", href: "/News" },
               ].map((item) => (
                 <li key={item.name}>
-                  <a
+                  <Link
                     href={item.href}
-                    className="text-gray-700 hover:text-gray-800 transition-colors"
+                    className="hover:text-blue-600 transition-colors duration-150"
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* ===== Contact Info ===== */}
           <div>
-            <h3 className="font-bold mb-4 text-black">Resources</h3>
-            <ul className="space-y-2">
-              {["Blog", "Guides", "FAQ", "Support", "Partners"].map((item) => (
-                <li key={item}>
+            <h3 className="font-semibold mb-5 text-gray-900 text-lg border-l-4 border-blue-600 pl-2">
+              Contact Us
+            </h3>
+
+            <div className="space-y-4 text-gray-600 text-[15px]">
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 mt-1 text-blue-600" />
+                <p>
+                  <strong>Registered Office:</strong>
+                  <br />
+                  Kay Paper Deals Pvt. Ltd.
+                  <br />
+                  B-9, F/F, Housing Society,
+                  <br />
+                  N.D.S.E - 1, New Delhi - 110049
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Phone className="h-5 w-5 mt-1 text-blue-600" />
+                <div>
+                  <p>+91 9837093712</p>
+                  <p>+91 7017744883</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-blue-600" />
+                <a
+                  href="mailto:support@paperdeals.in"
+                  className="hover:text-blue-600 transition-colors duration-150"
+                >
+                  support@paperdeals.in
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ===== Partners (New Association Design) ===== */}
+          <div>
+            <h3 className="font-semibold mb-5 text-gray-900 text-lg border-l-4 border-blue-600 pl-2">
+              Our Association partners
+            </h3>
+
+            <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <p className="text-sm text-gray-500 mb-4 text-center uppercase tracking-wider">
+                Trusted & Associated With
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 place-items-center">
+                {[
+                  { src: "/p1.jpeg" },
+                  { src: "/p2.jpg" },
+                  { src: "/p3.jpg" },
+                ].map((partner, i) => (
                   <a
-                    href="#"
-                    className="text-gray-700 hover:text-gray-800 transition-colors"
+                    key={i}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative p-4 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center w-20 h-20"
                   >
-                    {item}
+                    <img
+                      src={partner.src}
+                      className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition duration-300"
+                    />
                   </a>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-[15px] text-gray-600 mt-6 font-medium text-center">
+              A Proud Association of{" "}
+              <Link
+                href="https://kaygroup.co.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="text-blue-600">Kay Group</span>
+              </Link>
+            </p>
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-zinc-500 text-sm">
-            © 2025 PaperDeals. All rights reserved.
+        {/* ===== Bottom Section ===== */}
+        <div className="border-t border-gray-300 pt-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+          <p className="text-gray-500 text-sm">
+            © {new Date().getFullYear()}{" "}
+            <span className="font-medium text-gray-700">PaperDeals</span>. All
+            rights reserved.
           </p>
-          <div className="flex gap-6 mt-4 md:mt-0 items-center">
-            <p className="text-[3px] text-zinc-500">H4554N</p>
+          <div className="flex flex-wrap justify-center md:justify-end gap-6 mt-4 md:mt-0 items-center">
             <a
-              href="#"
+              href="/privacy-policy"
               className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
               Privacy Policy
             </a>
             <a
-              href="#"
+              href="/term"
               className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
               Terms of Service
             </a>
             <a
-              href="#"
+              href="/payment-policy"
               className="text-zinc-500 hover:text-gray-800 text-sm transition-colors"
             >
-              Cookie Policy
+              Payment Policy
             </a>
           </div>
         </div>

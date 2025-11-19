@@ -14,7 +14,7 @@ export default function EnquiryDetailPage() {
   useEffect(() => {
     async function fetchEnquiry() {
       try {
-        const res = await fetch(`http://localhost:5000/api/enquiry/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/${id}`);
         if (!res.ok) throw new Error("Failed to fetch enquiry");
         const json = await res.json();
         setEnquiry(json.data || null);
