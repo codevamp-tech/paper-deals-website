@@ -15,7 +15,7 @@ export default function AboutUs() {
         <div className="relative rounded-2xl overflow-hidden shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-300 to-cyan-300 -z-10"></div>
           <img
-            src="/about-us.png"
+            src="/about-us1.png"
             alt="Paper Deals B2B E-commerce Platform - Supply chain workflow visualization showing raw materials, manufacturing, quality checking, platform, logistics, and buyer orders"
             loading="lazy"
             width={1200}
