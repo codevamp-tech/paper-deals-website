@@ -97,9 +97,8 @@ export default function CategoriesDropdown() {
               {categoriesData.map((category) => (
                 <button
                   key={category.id}
-                  className={`flex items-center gap-3 w-full text-left px-3 sm:px-4 py-3 hover:bg-[#333] ${
-                    activeCategory?.id === category.id ? "bg-[#333]" : ""
-                  }`}
+                  className={`flex items-center gap-3 w-full text-left px-3 sm:px-4 py-3 hover:bg-[#333] ${activeCategory?.id === category.id ? "bg-[#333]" : ""
+                    }`}
                   onMouseEnter={() => handleCategoryHover(category)}
                 >
                   {category.image ? (
@@ -124,9 +123,8 @@ export default function CategoriesDropdown() {
                 <button
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className={`px-2 py-1 rounded ${
-                    page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-[#333]"
-                  }`}
+                  className={`px-2 py-1 rounded ${page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-[#333]"
+                    }`}
                 >
                   Prev
                 </button>
@@ -136,11 +134,10 @@ export default function CategoriesDropdown() {
                 <button
                   disabled={page === totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className={`px-2 py-1 rounded ${
-                    page === totalPages
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-[#333]"
-                  }`}
+                  className={`px-2 py-1 rounded ${page === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-[#333]"
+                    }`}
                 >
                   Next
                 </button>
@@ -153,14 +150,14 @@ export default function CategoriesDropdown() {
                 <h2 className="text-lg font-semibold mb-3">
                   {activeCategory.name}
                 </h2>
-                <p className="text-sm text-gray-300">
+                {/* <p className="text-sm text-gray-300">
                   Status:{" "}
                   {activeCategory.status === 1 ? "Active ✅" : "Inactive ❌"}
-                </p>
-                <p className="text-sm text-gray-400">
+                </p> */}
+                {/* <p className="text-sm text-gray-400">
                   Added on:{" "}
                   {new Date(activeCategory.date).toLocaleDateString()}
-                </p>
+                </p> */}
                 {activeCategory.image && (
                   <img
                     src={activeCategory.image}

@@ -28,7 +28,7 @@ export default function CategoryProducts() {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/category/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${id}`
         );
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
@@ -81,54 +81,36 @@ export default function CategoryProducts() {
             key={product.id}
             className="border rounded-lg shadow-md p-4 hover:shadow-lg transition"
           >
-            {product.image ? (
-              product.image.endsWith(".pdf") ? (
-                <a
-                  href={`${process.env.NEXT_PUBLIC_API_URL}/${product.image}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline mb-4 block"
-                >
-                  View PDF
-                </a>
-              ) : (
-                <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL}/${product.image}`}
-                  alt={product.product_name}
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
-              )
-            ) : (
-              <div className="w-full h-48 flex items-center justify-center bg-gray-200 rounded-md mb-4 text-gray-500">
-                No Image Available
-              </div>
-            )}
+            <img
+              src={product.image || "/no-image.png"}
+              alt={product.product_name}
+              className="w-full h-48 object-cover rounded-md mb-4"
+            />
 
             <h2 className="text-xl font-semibold mb-2">
               {product.product_name}
             </h2>
-            <p className="text-gray-600 text-sm mb-2">
+
+            {/* <p className="text-gray-600 text-sm mb-2">
               Sub Product: {product.sub_product}
-            </p>
+            </p> */}
+
             <p className="text-gray-600 text-sm mb-2">
               Quantity: {product.quantity_in_kg} kg
             </p>
-            <p className="text-lg font-bold text-purple-600 mb-4">
+
+            <p className="text-lg font-bold text-blue-600 mb-4">
               ₹{product.price_per_kg} per kg
             </p>
-            <p className="text-sm text-gray-500 mb-4">
-              {formatSellerId(product.seller.id)} |{" "}
-              {maskPhoneNumber(product.seller.phone_no)}
-            </p>
 
-            {/* ✅ Correct Link inside product card */}
             <Link
-              href={`/viewproduct/${product.id}`}
-              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 block text-center"
+              href={`/product/${product.id}`}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 block text-center"
             >
               View Product
             </Link>
           </div>
+
         ))}
       </div>
     </div>

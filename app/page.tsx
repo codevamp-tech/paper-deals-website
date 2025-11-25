@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label"
 
 import TestimonialsSection from "@/components/testimonial";
 import FaqSection from "../components/faqSection/FaqSection";
-import Categoreie from "@/components/categories/Categories";
 import SellerOrBuyer from "@/components/sellerOrBuyer/SellerOrBuyer";
 import ServicesGrid from "@/components/services/Services";
 import ProductInsights from "@/components/insight/Insight";
@@ -16,6 +15,7 @@ import Hero from "@/components/herohomepage/Heropage";
 import ProductCrousel from "@/components/productForhome/productcrousel";
 import Advertising from "@/components/advertising/Advertising";
 import AssumptionPartner from "@/components/association/association";
+import Categories from "@/components/categories/Categories";
 
 
 
@@ -35,18 +35,20 @@ export default function Home() {
 
     {/* Insight  */}
 
-    <ProductInsights />
-
-
-    {/* Categories */}
-    {/* <Categoreie /> */}
-
-
-    {/* Products Section */}
     {enabled &&
       <SellerOrBuyer />
     }
+
+    <ProductInsights />
+
     <Advertising />
+
+    {/* Categories */}
+    {enabled &&
+      <Categories />
+    }
+
+
     {/* <ProductCrousel /> */}
     {/* Our Services */}
     <ServicesGrid />
@@ -57,7 +59,9 @@ export default function Home() {
     <ReadyToOrder />
 
     {/* Partner with us */}
-    <PartnerWithUs />
+    {enabled &&
+      <PartnerWithUs />
+    }
 
     {/* Testimonials */}
     <TestimonialsSection />
