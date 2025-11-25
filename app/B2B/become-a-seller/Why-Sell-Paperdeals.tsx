@@ -15,8 +15,8 @@ export default function WhySellpaperdeals() {
           Why Sell With <span className="text-gray-100">PaperDeals?</span>
         </h2>
         <p className="text-gray-200 max-w-2xl mx-auto">
-          We provide everything you need to start, run, and grow your online
-          business
+          A powerful platform built exclusively for the paper & packaging
+          industry — helping mills, wholesalers, and distributors grow faster.
         </p>
       </div>
 
@@ -24,28 +24,28 @@ export default function WhySellpaperdeals() {
         {[
           {
             icon: <Users className="h-8 w-8 text-blue-600" />,
-            title: "45 crore+ Flipkart customers",
-            desc: "Reach customers across India",
+            title: "Verified Buyers Network",
+            desc: "Connect with trusted B2B & B2C buyers from across India.",
           },
           {
             icon: <Calendar className="h-8 w-8 text-blue-600" />,
-            title: "7+ days secure payments",
-            desc: "Reliable payment processing",
+            title: "Fast & Secure Payments",
+            desc: "Hassle-free transactions with timely payout cycles.",
           },
           {
             icon: <TrendingDown className="h-8 w-8 text-blue-600" />,
-            title: "Low business costs",
-            desc: "Minimize operational expenses",
+            title: "Lower Selling Costs",
+            desc: "Better margins with minimal commission and zero hidden fees.",
           },
           {
             icon: <HeadphonesIcon className="h-8 w-8 text-blue-600" />,
-            title: "24/7 Seller Support",
-            desc: "One-click assistance for sellers",
+            title: "Dedicated Seller Support",
+            desc: "Get assistance anytime from our expert support team.",
           },
           {
             icon: <ShoppingBag className="h-8 w-8 text-blue-600" />,
-            title: "Big Billion Days Access",
-            desc: "Participate in major sale events",
+            title: "Industry-Focused Marketplace",
+            desc: "Sell Kraft Paper, Duplex Board, Tissue, Copier Paper & more.",
           },
         ].map((feature, index) => (
           <div

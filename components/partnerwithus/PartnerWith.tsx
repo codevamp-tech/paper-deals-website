@@ -4,34 +4,34 @@ import { motion } from "framer-motion";
 
 const stats = [
   {
-    value: "1500+",
-    title: "Global Suppliers",
-    desc: "Access global network of 1500+ suppliers",
+    value: "1200+",
+    title: "Paper Mills & Manufacturers",
+    desc: "Connect with verified mills, converters, and large-scale producers.",
   },
   {
-    value: "1000+",
-    title: "Total SKUs Served",
-    desc: "Order from range of 1000+ SKUs",
+    value: "850+",
+    title: "Active Product SKUs",
+    desc: "From Kraft to Duplex to Copier, choose from our wide SKU catalog.",
   },
   {
-    value: "350k+ MT",
-    title: "Material Delivered",
-    desc: "Successfully delivered 350k+ MT till date",
+    value: "300k+ MT",
+    title: "Paper Supplied Nationwide",
+    desc: "End-to-end trade handling with massive supply capability.",
   },
   {
-    value: "10+",
-    title: "Lending Partners",
-    desc: "Onboarded 10+ lending partners",
+    value: "15+",
+    title: "Financing Providers",
+    desc: "Simplified credit access for smoother bulk transactions.",
   },
   {
-    value: "60+",
-    title: "Logistics Partners",
-    desc: "Extensive network of 60+ 3PL partners",
+    value: "70+",
+    title: "Logistics & Warehouse Partners",
+    desc: "Pan-India logistics for mill-to-doorstep delivery.",
   },
   {
-    value: "2500+",
-    title: "SMEs & Enterprises Powered",
-    desc: "Empowered 2500+ businesses till date",
+    value: "2000+",
+    title: "Businesses Empowered",
+    desc: "Serving SMEs, retailers, distributors & large buyers across India.",
   },
 ];
 
@@ -41,20 +41,20 @@ export default function PartnerWithUs({ isaboutpage }) {
   return (
     <section className="bg-[#111] text-white py-16 px-6 md:px-20 rounded-none">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-5xl font-bold  leading-tight text-primary-white mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold leading-tight text-primary-white mb-4">
           Partner With Us{" "}
           <span
             style={{
               color: theme.Text,
             }}
           >
-            To Enjoy
+            To Grow
           </span>
         </h2>
         <p className="text-gray-400 max-w-xl mx-auto text-lg">
-          Find the best deals worldwide from trusted suppliers. Our network
-          makes buying and selling simpler, with trusted logistical operations
-          and attractive financing deals.
+          Join India’s most trusted digital marketplace for the paper &
+          packaging industry. We simplify sourcing, logistics, payments and
+          supply chain — helping both sellers and buyers scale efficiently.
         </p>
       </div>
 
@@ -66,14 +66,13 @@ export default function PartnerWithUs({ isaboutpage }) {
             whileInView={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 30 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="relative group bg-white text-black rounded-2xl shadow-lg p-6  overflow-hidden"
+            className="relative group bg-white text-black rounded-2xl shadow-lg p-6 overflow-hidden"
             style={{
               borderTop: `8px solid ${theme.Text}`,
             }}
           >
-            {/* Stat content */}
             <div
-              className="text-3xl font-extrabold "
+              className="text-3xl font-extrabold"
               style={{
                 color: theme.Text,
               }}
@@ -83,7 +82,6 @@ export default function PartnerWithUs({ isaboutpage }) {
             <div className="mt-2 font-semibold">{item.title}</div>
             <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
 
-            {/* Hover Image */}
             <img
               src="/getcredit.png"
               alt="Hover Visual"
