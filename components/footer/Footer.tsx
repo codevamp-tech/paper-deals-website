@@ -128,7 +128,7 @@ const Footer = () => {
           {/* ===== Partners (New Association Design) ===== */}
           <div>
             <h3 className="font-semibold mb-5 text-gray-900 text-lg border-l-4 border-blue-600 pl-2">
-              Our Partners
+              Our Association partners
             </h3>
 
             <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-sm">

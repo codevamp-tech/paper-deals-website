@@ -46,7 +46,7 @@ export default function AssumptionPartner() {
       {/* Header Section */}
       <div className="py-2  px-4 md:px-8">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-blue-600 tracking-tight">
-          OUR ASSOCIATION PARTNER
+          Our Brands
         </h1>
       </div>
 
