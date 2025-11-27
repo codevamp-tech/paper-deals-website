@@ -98,6 +98,7 @@ export default function LiveStockPage() {
     status: 0,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [userMode, setUserMode] = useState<string | null>(null);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -109,6 +110,8 @@ export default function LiveStockPage() {
         console.error("Failed to parse cart from localStorage", e);
       }
     }
+    const mode = localStorage.getItem("mode");
+    setUserMode(mode);
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -223,6 +226,14 @@ export default function LiveStockPage() {
   const filteredRows = useMemo(() => {
     let data = [...rows];
 
+    if (userMode === "B2B") {
+      // B2B mode: Show ONLY Manufacturers
+      data = data.filter((r) => r.sellerType === "Manufacturer");
+    } else if (userMode === "B2C") {
+      // B2C mode: Show all EXCEPT Manufacturers (Distributors and Others)
+      data = data.filter((r) => r.sellerType !== "Manufacturer");
+    }
+
     if (search) {
       data = data.filter((r) =>
         Object.values(r).some((val) =>
@@ -247,7 +258,7 @@ export default function LiveStockPage() {
     }
 
     return data;
-  }, [rows, search, filter, sortConfig]);
+  }, [rows, search, filter, sortConfig, userMode]);
 
   const handleSort = (key: keyof Row) => {
     setSortConfig((prev) => {
@@ -372,7 +383,9 @@ export default function LiveStockPage() {
             {/* Badge */}
             <div className="flex justify-center mb-6">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#22d3ee] text-white">
-                <span className="textfont-medium text-sm sm:text-base">Live Stock </span>
+                <span className="text-sm sm:text-base font-medium">
+                  Live Stock {userMode ? `- ${userMode} ` : ""}
+                </span>
               </div>
             </div>
 
@@ -456,7 +469,7 @@ export default function LiveStockPage() {
                   <div className="py-8 text-center text-red-500">{error}</div>
                 ) : filteredRows.length === 0 ? (
                   <div className="py-8 text-center text-gray-500">
-                    No stock data available
+                    No stock data available for {userMode || "current"} mode
                   </div>
                 ) : (
                   filteredRows.map((r, i) => (

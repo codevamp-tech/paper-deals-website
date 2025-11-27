@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Building } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
+import SellerProductCrousel from "@/components/sellerProductCrousel"
 
 
 const states = [
@@ -257,7 +258,12 @@ export default function BuyersPage() {
             </Button>
           </Link>
         </div>
+
       </section>
+      <SellerProductCrousel sellerId={id} />
     </main>
   )
 }
+
+
+

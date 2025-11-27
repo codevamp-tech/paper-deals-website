@@ -71,14 +71,14 @@ export default function ProductInsights() {
 
   return (
     <div
-      className={`w-full py-2 px-4 sm:px-6 lg:px-8 overflow-hidden pt-2  ${theme.Bg}`}
+      className={`w-full py-2 px-4 sm:px-6 lg:px-8 overflow-hidden pt-6  ${theme.Bg}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
           <h2
-            className=" text-[6vh] font-[900] mb-3"
-            style={{ color: theme.Text }}
+            className={`${theme.Text} text-[6vh] font-[900] mb-3`}
+          // style={{ color: theme.Text }}
           >
             Paper Industry Insights
           </h2>
@@ -91,8 +91,8 @@ export default function ProductInsights() {
         <div className="flex justify-end mb-6">
           <a href="/insights-comparison">
             <button
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md"
-              style={{ color: theme.Text }}
+              className={`${theme.Text} flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-600 rounded-2xl font-medium hover:bg-cyan-50 transition-all duration-200 shadow-sm hover:shadow-md`}
+            // style={{ color: theme.Text }}
             >
               View all Insights
               <ArrowRight className="w-5 h-5" />

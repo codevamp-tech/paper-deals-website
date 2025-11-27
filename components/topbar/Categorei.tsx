@@ -75,9 +75,9 @@ export default function CategoriesDropdown() {
       {/* Categories Button */}
       <button
         className="flex items-center gap-2 px-4 py-4 text-white font-medium"
-        onMouseEnter={handleOpenDropdown}
-        onMouseLeave={() => setIsOpen(false)}
+        onClick={() => setIsOpen((prev) => !prev)}   // 👈 toggle on click
       >
+
         <span className="hidden sm:inline">All Categories</span>
         <span className="sm:hidden">Categories</span>
       </button>
@@ -86,11 +86,10 @@ export default function CategoriesDropdown() {
       {isOpen && categoriesData.length > 0 && (
         <div
           className="absolute left-0 top-full bg-black text-white shadow-lg z-50 
-          w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
-          -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
-          onMouseEnter={() => setIsOpen(true)}
-          onMouseLeave={() => setIsOpen(false)}
+  w-screen h-screen sm:w-[90vw] sm:h-[80vh] md:w-[85vw] md:h-[75vh] lg:w-[80vw] lg:h-[70vh]
+  -ml-4 sm:-ml-8 md:-ml-12 lg:-ml-0"
         >
+
           <div className="flex flex-col sm:flex-row border-t border-gray-200 h-full">
             {/* Left Categories */}
             <div className="w-full sm:w-64 md:w-72 lg:w-64 bg-black py-2 overflow-y-auto">

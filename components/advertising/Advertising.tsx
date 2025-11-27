@@ -16,14 +16,28 @@ const Advertising = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const { theme } = useTheme();
 
+  // ✅ Fetch & filter ads by B2C / B2B mode
   useEffect(() => {
     const fetchAds = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertisement`);
         const data = await res.json();
-        setAds(data);
+
+        // Read mode from localStorage
+        const mode = localStorage.getItem("mode");
+
+        let filteredAds = data;
+
+        if (mode === "B2C") {
+          filteredAds = data.filter((ad: Advertisement) => ad.page_type === "buyer");
+        } else if (mode === "B2B") {
+          filteredAds = data.filter((ad: Advertisement) => ad.page_type === "seller");
+        }
+
+        setAds(filteredAds);
       } catch (err) {
         console.error("Error fetching ads:", err);
       } finally {
@@ -34,15 +48,19 @@ const Advertising = () => {
     fetchAds();
   }, []);
 
+  // Auto-slide
   useEffect(() => {
     if (ads.length === 0) return;
+
     const interval = setInterval(() => {
       setIsTransitioning(true);
+
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % ads.length);
         setIsTransitioning(false);
       }, 500);
     }, 4000);
+
     return () => clearInterval(interval);
   }, [ads]);
 

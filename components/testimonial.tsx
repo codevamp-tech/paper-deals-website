@@ -71,12 +71,12 @@ export default function TestimonialSection() {
   if (loading) {
     return (
       <div
-        className="bg-white min-h-screen flex flex-col items-center justify-center"
+        className="bg-white min-h-screen flex flex-col items-center justify-center "
         style={{ padding: "40px 20px" }}
       >
         <p
-          className="text-[6vh] font-[900] font-[Poppins] mb-10"
-          style={{ color: theme.Text }}
+          className={`${theme.Text} text-[6vh] font-[900] font-[Poppins] mb-10`}
+        // style={{ color: theme.Text }}
         >
           Testimonials
         </p>
@@ -111,9 +111,9 @@ export default function TestimonialSection() {
     >
       <div>
         <p
-          className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mt-1 font-[Poppins]
-           flex  justify-center mt-10"
-          style={{ color: theme.Text }}
+          className={` bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mt-1 font-[Poppins]
+           flex  justify-center  ${theme.Text}`}
+        // style={{ color: theme.Text }}
         >
           Testimonials
         </p>

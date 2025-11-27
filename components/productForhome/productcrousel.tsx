@@ -79,8 +79,8 @@ export default function ProductCrousel() {
         {/* Heading */}
         <div className="text-center mb-12">
           <h2
-            className="text-[6vh] font-[900] mb-3"
-            style={{ color: theme.Text }}
+            className={`${theme.Text} text-[6vh] font-[900] mb-3`}
+          // style={{ color: theme.Text }}
           >
             Products
           </h2>
@@ -209,13 +209,12 @@ function ProductCard({
           </div>
 
           <div
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg font-semibold text-sm ${
-              isPositive
-                ? "bg-green-50 text-green-700"
-                : change === 0
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg font-semibold text-sm ${isPositive
+              ? "bg-green-50 text-green-700"
+              : change === 0
                 ? "bg-slate-50 text-slate-600"
                 : "bg-red-50 text-red-700"
-            }`}
+              }`}
           >
             {isPositive ? (
               <ArrowUp className="w-4 h-4" />
