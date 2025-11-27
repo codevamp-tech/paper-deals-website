@@ -47,8 +47,8 @@ export default function AssumptionPartner() {
       {/* Header Section */}
       <div>
         <p
-          className="text-[6vh] text-center font-[900] font-[Poppins] mb-10"
-          style={{ color: theme.Text }}
+          className={` ${theme.Text} text-[6vh] text-center font-[900] font-[Poppins] mb-10`}
+        // style={{ color: theme.Text }}
         >
           Our Brands
         </p>

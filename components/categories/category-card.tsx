@@ -54,7 +54,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
                         text-category-accent font-medium transition-all duration-300 
                         hover:text-category-accent-hover group-hover:gap-3">
           <span className="text-sm">View All</span>
-          <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+          <ChevronRight size={18} className=" transition-transform duration-300 group-hover:translate-x-1" />
         </div>
       </Link>
     </article>

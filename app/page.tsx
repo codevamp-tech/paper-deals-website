@@ -35,6 +35,12 @@ export default function Home() {
 
     {/* Insight  */}
 
+    {/* Categories */}
+    {enabled &&
+      <Categories />
+    }
+
+
     {enabled &&
       <SellerOrBuyer />
     }
@@ -43,10 +49,7 @@ export default function Home() {
 
     <Advertising />
 
-    {/* Categories */}
-    {enabled &&
-      <Categories />
-    }
+
 
 
     {/* <ProductCrousel /> */}
