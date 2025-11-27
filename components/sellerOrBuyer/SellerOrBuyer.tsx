@@ -23,10 +23,11 @@ const SellerOrBuyer = () => {
           {/* Header Section */}
           <div className="text-center mb-10">
             <h1
-              className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-3"
-              style={{ color: theme.Text }}
+              className={`text-2xl md:text-3xl  lg:text-4xl font-semibold mb-3 ${theme.Text}`}
+            // style={{ color: theme.Text }}
+
             >
-              Become a <span className="text-black">Seller</span>
+              Become a Seller
             </h1>
             <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
               Expand your reach with our global buyer network and grow your

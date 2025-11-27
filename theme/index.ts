@@ -9,7 +9,7 @@ export const themes = {
     bg1: "#2c6e49",
     gradeint: "bg-gradient-to-r from-[#31a8de] to-transparent",
     descColor: "text-gray-800",
-    Text: "#38d200",
+    Text: "bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent",
     green: "#38d200",
   },
 
@@ -20,7 +20,8 @@ export const themes = {
     iconBg: "bg-blue-500",
     gradeint: "#31de5a",
     descColor: "text-gray-800",
-    Text: "#0f7aed",
+    Text: "text-blue-500",
     mintblue: "#0f7aed",
   },
 };
+    

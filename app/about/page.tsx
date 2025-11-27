@@ -39,7 +39,7 @@ export default function AboutUs() {
                   About Our Company
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight text-balance">
-                  Pioneering <span style={{ color: theme.Text }}>Sustainable</span> Paper Solutions
+                  Pioneering <span className={`${theme.Text}`}>Sustainable</span> Paper Solutions
                 </h2>
                 <p className="text-lg text-gray-300 leading-relaxed max-w-3xl">
                   Established in 2022 under the renowned Kay Group, Kay Paper Deals is a next-generation B2B digital
@@ -269,11 +269,11 @@ export default function AboutUs() {
                   ].map((achievement, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <svg
-                        className="h-5 w-5 flex-shrink-0 mt-0.5"
+                        className={`h-5 w-5 flex-shrink-0 mt-0.5 ${theme.Text}`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        style={{ color: theme.Text }}
+                      // style={{ color: theme.Text }}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>

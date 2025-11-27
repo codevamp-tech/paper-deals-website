@@ -15,7 +15,7 @@ export default function ProductListing() {
   const [cart, setCart] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
-
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
   const [enquiryData, setEnquiryData] = useState({
     company_name: "",
     name: "",
@@ -89,29 +89,42 @@ export default function ProductListing() {
 
   useEffect(() => {
     fetchProducts(1);
-    const savedCart = localStorage.getItem("cart");
+
+    const savedMode = localStorage.getItem("mode") as "B2B" | "B2C";
+    if (savedMode) setMode(savedMode);
+
+    const savedCart = localStorage.getItem(`cart_${savedMode || "B2B"}`);
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
   }, []);
 
+
+
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    const savedCart = localStorage.getItem(`cart_${mode}`);
+    setCart(savedCart ? JSON.parse(savedCart) : []);
+  }, [mode]);
+
+  useEffect(() => {
+    localStorage.setItem(`cart_${mode}`, JSON.stringify(cart));
+  }, [cart, mode]);
+
 
   const addToCart = (product: any) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === product.id);
       if (existingItem) {
-        return prevCart.map((item) =>
+        return prevCart.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [...prevCart, { ...product, quantity: 1, mode }];
     });
   };
+
 
   const updateQuantity = (productId: number, delta: number) => {
     setCart((prevCart) =>
@@ -338,6 +351,14 @@ export default function ProductListing() {
                             <h3 className="font-semibold text-gray-900 mb-1">
                               {item.product_name}
                             </h3>
+                            <div className="mt-2 flex justify-between text-gray-700 text-sm">
+                              <p>
+                                <span className="font-semibold">GSM:</span> {item.gsm || "-"}
+                              </p>
+                              <p>
+                                <span className="font-semibold">Size:</span> {item.sizes || item.size || "-"}
+                              </p>
+                            </div>
                             <p className="text-blue-600 font-bold mb-2">
                               ₹{item.price_per_kg}
                             </p>
@@ -481,13 +502,22 @@ export default function ProductListing() {
                   </span>
                 </div>
 
-                <div className="p-6 flex flex-col space-y-4">
+                <div className="p-6 flex flex-col space-y-3">
                   <h3 className="text-lg font-semibold text-gray-900">
                     {item.product_name}
                   </h3>
                   <Link href={`/product/${item.id}`} className="block">
                     {getImageContent(item)}
                   </Link>
+                  <div className="mt-2 flex justify-between text-gray-700 text-sm">
+                    <p>
+                      <span className="font-semibold">GSM:</span> {item.gsm || "-"}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Size:</span> {item.sizes || item.size || "-"}
+                    </p>
+                  </div>
+
                   <p className="text-2xl font-extrabold text-blue-600 mt-2">
                     ₹{item.price_per_kg}
                   </p>

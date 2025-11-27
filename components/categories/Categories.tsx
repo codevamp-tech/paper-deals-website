@@ -70,8 +70,8 @@ export default function Categories({
         {/* Header */}
         <div className="text-center mb-12">
           <h2
-            className="text-[6vh] font-[900] mb-3"
-            style={{ color: theme.Text }}
+            className={`${theme.Text} text-[6vh] font-[900] mb-3`}
+          // style={{ color: theme.Text }}
           >
             {title}
           </h2>
@@ -85,10 +85,10 @@ export default function Categories({
           <button
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 1}
-            className="absolute left-0 z-20 p-3 rounded-full border shadow-md bg-white disabled:opacity-40"
-            style={{ color: theme.Text }}
+            className={`${theme.Text} absolute left-0 z-20 p-3 rounded-full border shadow-md bg-white disabled:opacity-40`}
+          // style={{ color: theme.Text }}
           >
-            <ChevronLeft size={26} />
+            <ChevronLeft size={26} className="text-green-400" />
           </button>
 
           {/* GRID */}
@@ -108,10 +108,10 @@ export default function Categories({
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={page === totalPages}
-            className="absolute right-0 z-20 p-3 rounded-full border shadow-md bg-white disabled:opacity-40"
-            style={{ color: theme.Text }}
+            className={`${theme.Text} absolute right-0 z-20 p-3 rounded-full border shadow-md bg-white disabled:opacity-40`}
+          // style={{ color: theme.Text }}
           >
-            <ChevronRight size={26} />
+            <ChevronRight size={26} className="text-green-400" />
           </button>
         </div>
 
