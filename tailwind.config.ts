@@ -10,6 +10,14 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    "bg-gradient-to-r",
+    "from-blue-600",
+    "to-green-600",
+    "bg-clip-text",
+    "text-transparent",
+    "inline-block",
+  ],
   theme: {
     container: {
       center: true,

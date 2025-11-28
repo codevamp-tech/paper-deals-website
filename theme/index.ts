@@ -4,7 +4,7 @@ export const themes = {
   //   using green  large scale
 
   B2B: {
-    Bg: "bg-white text-black border-gray-200",
+    Bg: "bg-white border-gray-200",
     iconBg: "bg-green-500",
     bg1: "#2c6e49",
     gradeint: "bg-gradient-to-r from-[#31a8de] to-transparent",
