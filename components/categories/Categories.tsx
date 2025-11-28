@@ -70,8 +70,7 @@ export default function Categories({
         {/* Header */}
         <div className="text-center mb-12">
           <h2
-            className={`${theme.Text} text-[6vh] font-[900] mb-3`}
-          // style={{ color: theme.Text }}
+            className={`${theme.Text} inline-block text-[6vh] font-[900] mb-3`}
           >
             {title}
           </h2>
