@@ -13,50 +13,86 @@ interface CategoryCardProps {
   }
 }
 
+// Image now takes prominent position with enhanced styling and responsiveness
 export default function CategoryCard({ category }: CategoryCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  const handleImageError = () => {
+    setImageError(true)
+  }
 
   return (
     <article
-      className="group relative bg-white rounded-xl border-2 border-category-border p-6 
-                 transition-all duration-300 ease-out hover:shadow-lg 
-                 hover:border-category-accent hover:translate-y-[-4px] cursor-pointer
-                 flex flex-col items-center text-center"
+      className="group relative bg-white rounded-2xl border border-border/50 
+                 transition-all duration-300 ease-out 
+                 hover:shadow-2xl hover:border-accent 
+                 hover:scale-105 cursor-pointer
+                 flex flex-col h-full overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       role="link"
       tabIndex={0}
+      aria-label={`${category.name} category`}
     >
-
-      {/* Category Name on Top */}
-      <h3 className="text-lg sm:text-xl font-semibold text-category-heading mb-4">
-        {category.name}
-      </h3>
-
-      {/* Image in Middle */}
-      <div className="w-20 h-20 bg-category-icon-bg rounded-lg flex items-center justify-center 
-                      overflow-hidden shadow-sm mb-4">
-        <img
-          src={category.image || "/placeholder.svg"}
-          alt={`${category.name} icon`}
-          className="w-full h-full object-contain p-2"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src =
-              'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"%3E%3Cpath d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/%3E%3C/svg%3E'
-          }}
-        />
-      </div>
-
-      {/* View All Button at Bottom */}
-      <Link href={`/category/${category.id}`}>
-        <div className="flex items-center justify-center gap-2 
-                        text-category-accent font-medium transition-all duration-300 
-                        hover:text-category-accent-hover group-hover:gap-3">
-          <span className="text-sm">View All</span>
-          <ChevronRight size={18} className=" transition-transform duration-300 group-hover:translate-x-1" />
+      {/* Mobile: 140px, Tablet: 160px, Desktop: 180px */}
+      <figure
+        className="relative w-full pt-6 px-6 flex justify-center 
+                   bg-gradient-to-b from-accent/5 to-transparent"
+      >
+        <div
+          className="relative w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32
+             rounded-2xl flex items-center justify-center 
+             overflow-hidden 
+             transition-all duration-300 group"
+        >
+          <img
+            src={imageError ? "/placeholder.svg" : category.image}
+            alt={`${category.name} category icon`}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+            onError={handleImageError}
+          />
         </div>
-      </Link>
+
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent 
+                     opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"
+          aria-hidden="true"
+        />
+      </figure>
+
+      {/* Content container with semantic spacing */}
+      <div className="flex flex-col flex-1 px-6 py-4 text-center">
+        <h3
+          className="text-base sm:text-lg lg:text-xl font-bold text-foreground 
+                      mb-3 line-clamp-2 transition-colors duration-300 group-hover:text-accent"
+        >
+          {category.name}
+        </h3>
+
+        {category.description && (
+          <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{category.description}</p>
+        )}
+
+        <Link
+          href={`/category/${category.id}`}
+          className="mt-auto pt-2"
+          aria-label={`View all items in ${category.name}`}
+        >
+          <div
+            className="inline-flex items-center justify-center gap-2 
+                       px-3 py-2 rounded-lg
+                       text-accent font-semibold text-sm
+                       bg-accent/10 hover:bg-accent/20
+                       transition-all duration-300 
+                       group-hover:gap-3 group-hover:translate-x-0.5"
+          >
+            <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">View All</span>
+            <ChevronRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
+        </Link>
+      </div>
     </article>
   )
 }
