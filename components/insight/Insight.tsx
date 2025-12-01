@@ -71,18 +71,18 @@ export default function ProductInsights() {
 
   return (
     <div
-      className={`w-full py-2 px-4 sm:px-6 lg:px-8 overflow-hidden pt-6  ${theme.Bg}`}
+      className={`w-full  pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden pt-6  ${theme.Bg}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
           <h2
-            className={`${theme.Text} text-[6vh] font-[900] mb-3`}
+            className={`${theme.Text} text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center`}
           // style={{ color: theme.Text }}
           >
             Paper Industry Insights
           </h2>
-          <p className="flex justify-center text-[3vh]">
+          <p className="flex justify-center text-[3vh] text-center pb-4 pt-4 ">
             Keep up to date with Paper Industry News and Commodity Prices.
           </p>
         </div>

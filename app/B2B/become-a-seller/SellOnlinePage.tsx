@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import WhySellpaperdeals from "./Why-Sell-Paperdeals";
 import RegisterNow from "@/components/modal/RegisterNow";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function SellOnlinePage() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const { theme } = useTheme();
 
   const handleSellerLogin = () => {
     window.location.href = "https://paper-deals-admin.netlify.app/";
@@ -41,7 +43,7 @@ export default function SellOnlinePage() {
           <div className="md:w-1/2 mb-8 md:mb-0 space-y-6 animate-fadeInUp">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight">
               Sell Paper Products on{" "}
-              <span className="text-[#0f7aed]">PaperDeals</span>
+              <span className={`${theme.Text}`}>PaperDeals</span>
             </h1>
 
             <p className="text-lg text-gray-800 max-w-lg leading-relaxed">
@@ -97,7 +99,7 @@ export default function SellOnlinePage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
             Ready to Grow Your{" "}
-            <span className="text-[#0f7aed]">Paper Business?</span>
+            <span className={`${theme.Text}`}>Paper Business?</span>
           </h2>
 
           <p className="text-gray-800 max-w-2xl mx-auto mb-8 text-lg font-semibold">

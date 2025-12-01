@@ -396,7 +396,7 @@ export default function LiveStockPage() {
                 <span className="block text-muted-foreground">Market Watch</span>
               </h1>
 
-              <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground leading-relaxed">
+              <p className="max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
                 Real-time market insights for major paper and packaging companies.
                 <br className="hidden sm:block" />
                 Data delivered directly from the server with live updates.

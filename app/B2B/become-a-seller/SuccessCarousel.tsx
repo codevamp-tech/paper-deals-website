@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 type SellerStory = {
   id: number;
@@ -40,6 +41,7 @@ const sellerStories: SellerStory[] = [
 ];
 
 export function StoryCarousel() {
+  const { theme } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -113,7 +115,7 @@ export function StoryCarousel() {
           <div className=" md:pl-8">
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
               {sellerStories[currentIndex].name},{" "}
-              <span className="text-blue-600">
+              <span className={`${theme.Text}`}>
                 {sellerStories[currentIndex].business}
               </span>
             </h3>
@@ -132,11 +134,10 @@ export function StoryCarousel() {
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2.5 w-2.5 rounded-full transition-all duration-300 focus:outline-none ${
-              index === currentIndex
-                ? "bg-blue-600 w-8"
-                : "bg-gray-300 hover:bg-gray-400"
-            }`}
+            className={`h-2.5 w-2.5 rounded-full transition-all duration-300 focus:outline-none ${index === currentIndex
+              ? "bg-blue-600 w-8"
+              : "bg-gray-300 hover:bg-gray-400"
+              }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}

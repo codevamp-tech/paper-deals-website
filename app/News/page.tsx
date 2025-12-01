@@ -1,6 +1,7 @@
 // pages/news.js
 "use client";
 
+import { useTheme } from "@/hooks/use-theme";
 import React, { useEffect, useState } from "react";
 
 
@@ -28,6 +29,7 @@ const NewsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { theme } = useTheme();
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -65,7 +67,7 @@ const NewsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Paper Deal News</h1>
+      <h1 className={`text-3xl font-bold mb-6 text-center ${theme.Text}`}>Paper Deal News</h1>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {newsData.map((news) => (
@@ -91,7 +93,7 @@ const NewsPage = () => {
             </p>
             <a
               href={`/News/${news.id}`} // id-based link
-              className="text-blue-600 hover:underline font-medium"
+              className={`${theme.Text} hover:underline font-medium`}
             >
               Read more
             </a>

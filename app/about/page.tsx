@@ -106,8 +106,8 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
           <div className="space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Mission & Vision</h2>
-              <p className="text-lg text-gray-600">
+              <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold text-balance ${theme.Text}`}>Our Mission & Vision</h2>
+              <p className="text-lg ">
                 Digitizing India's paper supply chain while empowering manufacturers, traders, and recyclers
               </p>
             </div>
@@ -172,8 +172,8 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto">
           <div className="space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-balance">Our Core Values</h2>
-              <p className="text-lg text-gray-600">
+              <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold text-balance ${theme.Text}`}>Our Core Values</h2>
+              <p className="text-lg ">
                 The principles that guide every decision and action at Kay Paper Deals
               </p>
             </div>
@@ -231,7 +231,7 @@ export default function AboutUs() {
                 >
                   Founder's Legacy
                 </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-balance">
+                <h2 className={`text-3xl sm:text-4xl pb-2 lg:text-5xl font-bold leading-tight ${theme.Text} text-balance`}>
                   Late Shri Ravi Kumar Agarwal
                 </h2>
                 <p className="text-lg font-semibold text-gray-700">Founder, Kay Group</p>
@@ -322,7 +322,7 @@ export default function AboutUs() {
                 >
                   Leadership
                 </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-balance">
+                <h2 className={`text-3xl  pb-2 sm:text-4xl lg:text-5xl ${theme.Text} font-bold leading-tight text-balance`}>
                   Mr. Tanuj Agarwal
                 </h2>
                 <p className="text-lg font-semibold text-gray-700">Managing Director, Kay Paper Deals Pvt. Ltd.</p>
