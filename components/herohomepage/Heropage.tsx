@@ -185,7 +185,7 @@ const Hero = () => {
 
       {/* ⭐ SHOW STATS BASED ON MODE */}
       {mode === "B2C" ? (
-        <div className="w-full bg-black/50 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
+        <div className="w-full  bg-blue-600/70 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
           <div>
             <h3 className="text-xl font-bold">500K+</h3>
             <p>Happy Customers</p>
@@ -223,6 +223,7 @@ const Hero = () => {
           </div>
         </div>
       )}
+
 
       {/* <BioImageSec /> */}
     </section>

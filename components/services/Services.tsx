@@ -38,7 +38,7 @@ export default function ServicesGrid() {
   ];
 
   return (
-    <div className={`py-8 ${theme.Bg}`}>
+    <div className={`py-10 ${theme.Bg}`}>
       <p
         className={`text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center ${theme.Text}`}
       >

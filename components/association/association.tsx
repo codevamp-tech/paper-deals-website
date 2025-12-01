@@ -42,15 +42,20 @@ export default function AssumptionPartner() {
   )
 
   return (
-    <section className="w-full bg-white">
+    <section className="w-full bg-white py-[20px]">
 
       {/* Header Section */}
-      <div>
-        <p
-          className={` ${theme.Text} text-[6vh] text-center font-[900] font-[Poppins] mb-10`}
-        // style={{ color: theme.Text }}
+      <div className="max-w-4xl mx-auto text-center px-4">
+        <h2
+          className={`text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center ${theme.Text}`}
         >
           Our Brands
+        </h2>
+
+        <p className=" flex justify-center text-[3vh] text-center pb-4 pt-4 ">
+          Kay Paper Deals Pvt Ltd is working as a sourcing agent for Paper Industries.
+          We collaborate with leading paper mills across India and export globally
+          to major paper manufacturers.
         </p>
       </div>
 
@@ -72,7 +77,7 @@ export default function AssumptionPartner() {
         ) : (
           <div
             ref={scrollContainerRef}
-            className="flex gap-6 md:gap-8 overflow-hidden pb-4 md:pb-0 md:flex-wrap md:justify-center"
+            className="flex gap-6 md:gap-8 pt-12 overflow-hidden mb-10 md:pb-0 md:flex-wrap md:justify-center"
           >
             {partners.map((partner) => (
               <div
@@ -97,7 +102,7 @@ export default function AssumptionPartner() {
       </div>
 
       {/* Company Description Section */}
-      <div className="px-4 py-2 md:py-16">
+      {/* <div className="px-4 py-2 md:py-16">
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center max-w-6xl mx-auto">
 
           <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
@@ -120,7 +125,7 @@ export default function AssumptionPartner() {
           </div>
 
         </div>
-      </div>
+      </div> */}
 
       {/* Bottom Accent Bar */}
       <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"></div>
