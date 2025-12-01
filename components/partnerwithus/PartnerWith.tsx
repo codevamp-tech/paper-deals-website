@@ -43,11 +43,7 @@ export default function PartnerWithUs({ isaboutpage }) {
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-5xl font-bold leading-tight text-primary-white mb-4">
           Partner With Us{" "}
-          <span
-            style={{
-              color: theme.Text,
-            }}
-          >
+          <span className={`${theme.Text}`}>
             To Grow
           </span>
         </h2>

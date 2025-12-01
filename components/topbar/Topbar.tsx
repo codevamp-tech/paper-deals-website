@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/hooks/use-theme";
 
 const Topbar = () => {
   const router = useRouter();
@@ -34,6 +35,7 @@ const Topbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const mode = localStorage.getItem("mode") === "B2B";
@@ -271,7 +273,8 @@ const Topbar = () => {
                 ) : (
                   <Link
                     href="/buyer-login"
-                    className="hidden md:flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-md"
+                    className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md `}
+                    style={{ backgroundColor: theme.bg1 }}
                   >
                     <User className="w-4 h-4" />
                     Login

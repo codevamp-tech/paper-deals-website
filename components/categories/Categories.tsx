@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useTheme } from "@/hooks/use-theme"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import CategoryCard from "./category-card"
 
 interface Category {
@@ -19,15 +18,8 @@ interface CategoriesProps {
 }
 
 const PAGINATION_CONFIG = {
-  limit: 8,
+  limit: 16, // Increased to show more items in carousels
   minPage: 1,
-}
-
-const RESPONSIVE_GRID_CLASSES = {
-  mobile: "grid-cols-1",
-  tablet: "md:grid-cols-2",
-  desktop: "lg:grid-cols-4",
-  gap: "gap-6 sm:gap-8 lg:gap-10",
 }
 
 export default function Categories({
@@ -37,8 +29,6 @@ export default function Categories({
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
 
   const { theme } = useTheme()
 
@@ -49,7 +39,7 @@ export default function Categories({
         setError(null)
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=${page}&limit=${PAGINATION_CONFIG.limit}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=1&limit=${PAGINATION_CONFIG.limit}`,
         )
 
         if (!res.ok) throw new Error("Failed to fetch categories")
@@ -58,10 +48,6 @@ export default function Categories({
         const catArray = Array.isArray(data.categories) ? data.categories : []
 
         setCategories(catArray)
-
-        if (data.total) {
-          setTotalPages(Math.ceil(data.total / PAGINATION_CONFIG.limit))
-        }
       } catch (err) {
         console.error("Error fetching categories:", err)
         setError("Failed to load categories. Please try again.")
@@ -71,31 +57,23 @@ export default function Categories({
     }
 
     fetchCategories()
-  }, [page])
+  }, [])
 
-  const handlePreviousPage = () => {
-    setPage((p) => Math.max(p - 1, PAGINATION_CONFIG.minPage))
-  }
-
-  const handleNextPage = () => {
-    setPage((p) => Math.min(p + 1, totalPages))
-  }
-
-  const handlePageSelect = (pageNum: number) => {
-    setPage(pageNum)
-  }
+  // Split categories into two groups for the two carousels
+  const midpoint = Math.ceil(categories.length / 2)
+  const firstRowCategories = categories.slice(0, midpoint)
+  const secondRowCategories = categories.slice(midpoint)
 
   return (
-    <section className="w-full overflow-x-hidden py-12 sm:py-16 lg:py-20 px-1 sm:px-2 lg:px-4 bg-background">
+    <section className="w-full overflow-hidden py-3 sm:py-4 lg:py-5 px-1 sm:px-2 lg:px-4 bg-background">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-12 sm:mb-16">
           <h2
-            className={`${theme.Text} text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4 text-balance p-2`}
-          // style={{ color: theme.Text }}
+            className={`${theme.Text} text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center`}
           >
             {title}
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground text-balance max-w-2xl mx-auto">{description}</p>
+          <p className="flex justify-center text-[3vh] text-center pb-4 pt-4">{description}</p>
         </header>
 
         {error && (
@@ -107,88 +85,81 @@ export default function Categories({
           </div>
         )}
 
-        {/* Grid Container with pagination controls */}
-        <div className="relative">
-          <button
-            onClick={handlePreviousPage}
-            disabled={page === PAGINATION_CONFIG.minPage}
-            className="absolute -left-16 sm:-left-12 top-1/2 transform -translate-y-1/2 z-20
-                       p-2 rounded-full border border-border bg-card hover:bg-accent/10
-                       transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
-                       focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
-                       hidden sm:flex items-center justify-center"
-            aria-label="Previous page"
-            aria-disabled={page === PAGINATION_CONFIG.minPage}
-          >
-            <ChevronLeft size={24} className="text-foreground text-green-400" />
-          </button>
-
+        {loading ? (
           <div
-            className={`grid ${RESPONSIVE_GRID_CLASSES.mobile} ${RESPONSIVE_GRID_CLASSES.tablet} 
-              ${RESPONSIVE_GRID_CLASSES.desktop} ${RESPONSIVE_GRID_CLASSES.gap} 
-              w-full`}
+            className="flex justify-center items-center py-20"
+            role="status"
+            aria-label="Loading categories"
           >
-
-            {loading ? (
-              <div
-                className="col-span-full flex justify-center items-center py-20"
-                role="status"
-                aria-label="Loading categories"
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-accent/20 border-t-accent" />
-                  <p className="text-sm text-muted-foreground">Loading categories...</p>
-                </div>
-              </div>
-            ) : categories.length > 0 ? (
-              categories.map((category) => <CategoryCard key={category.id} category={category} />)
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground">No categories available</p>
-              </div>
-            )}
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-accent/20 border-t-accent" />
+              <p className="text-sm text-muted-foreground">Loading categories...</p>
+            </div>
           </div>
+        ) : categories.length > 0 ? (
+          <div className="space-y-4">
+            {/* First Carousel - Right to Left */}
+            <div className="relative py-4 overflow-hidden">
+              <style jsx>{`
+                @keyframes scroll-left {
+                  0% {
+                    transform: translateX(0);
+                  }
+                  100% {
+                    transform: translateX(-50%);
+                  }
+                }
+                .animate-scroll-left {
+                  animation: scroll-left 30s linear infinite;
+                }
+                .animate-scroll-left:hover {
+                  animation-play-state: paused;
+                }
+              `}</style>
 
-          <button
-            onClick={handleNextPage}
-            disabled={page === totalPages}
-            className="absolute -right-16 sm:-right-12 top-1/2 transform -translate-y-1/2 z-20
-                       p-2 rounded-full border border-border bg-card hover:bg-accent/10
-                       transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
-                       focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
-                       hidden sm:flex items-center justify-center"
-            aria-label="Next page"
-            aria-disabled={page === totalPages}
-          >
-            <ChevronRight size={24} className="text-foreground text-green-400" />
-          </button>
-        </div>
+              <div className="flex animate-scroll-left">
+                {/* Duplicate items for seamless loop */}
+                {[...firstRowCategories, ...firstRowCategories].map((category, index) => (
+                  <div key={`first-${category.id}-${index}`} className="flex-shrink-0 w-64 px-3">
+                    <CategoryCard category={category} />
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {totalPages > 1 && (
-          <nav className="mt-10 sm:mt-12 flex justify-center gap-2 sm:gap-3" aria-label="Pagination">
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const pageNum = i + 1
-              const isActive = page === pageNum
+            {/* Second Carousel - Left to Right */}
+            <div className="relative  py-4 overflow-hidden">
+              <style jsx>{`
+                @keyframes scroll-right {
+                  0% {
+                    transform: translateX(-50%);
+                  }
+                  100% {
+                    transform: translateX(0);
+                  }
+                }
+                .animate-scroll-right {
+                  animation: scroll-right 30s linear infinite;
+                }
+                .animate-scroll-right:hover {
+                  animation-play-state: paused;
+                }
+              `}</style>
 
-              return (
-                <button
-                  key={i}
-                  onClick={() => handlePageSelect(pageNum)}
-                  className={`h-3 w-3 rounded-full transition-all duration-200
-                            focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
-                            ${isActive
-                      ? "bg-foreground w-8 shadow-md"
-                      : "bg-muted hover:bg-muted-foreground cursor-pointer"
-                    }`}
-                  style={{
-                    backgroundColor: isActive ? theme.Text : "#ccc",
-                  }}
-                  aria-label={`Go to page ${pageNum}`}
-                  aria-current={isActive ? "page" : undefined}
-                />
-              )
-            })}
-          </nav>
+              <div className="flex animate-scroll-right">
+                {/* Duplicate items for seamless loop */}
+                {[...secondRowCategories, ...secondRowCategories].map((category, index) => (
+                  <div key={`second-${category.id}-${index}`} className="flex-shrink-0 w-64 px-3">
+                    <CategoryCard category={category} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No categories available</p>
+          </div>
         )}
       </div>
     </section>
