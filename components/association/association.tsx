@@ -42,7 +42,7 @@ export default function AssumptionPartner() {
   )
 
   return (
-    <section className="w-full bg-white py-[20px]">
+    <section className="w-full bg-white my-[20px]">
 
       {/* Header Section */}
       <div className="max-w-4xl mx-auto text-center px-4">
