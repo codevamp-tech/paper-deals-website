@@ -13,7 +13,7 @@ export default function SellerList() {
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
 
   // ✅ Fetch all sellers
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function SellerList() {
     { average: number; reviews: number }
   >>({});
 
-  // ✅ Fetch Ratings for Each Seller (Dynamic) — ✅ FIXED ROUTE
+  // ✅ Fetch Ratings for Each Seller (Dynamic)
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -198,16 +198,17 @@ export default function SellerList() {
   };
 
   const SellerSkeleton = () => (
-    <div className="bg-white rounded-xl shadow-xl p-6 flex animate-pulse border border-gray-200">
-      <div className="w-32 h-32 bg-gray-200 rounded-lg flex-shrink-0" />
-      <div className="ml-6 flex-1 space-y-3">
-        <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-        <div className="h-10 bg-gray-200 rounded w-1/2 mt-4"></div>
+    <div className="bg-white rounded-xl shadow-lg p-5 animate-pulse border border-gray-200 max-w-md mx-auto">
+      <div className="flex items-start gap-4">
+        <div className="w-24 h-24 bg-gray-200 rounded-lg flex-shrink-0" />
+        <div className="flex-1 space-y-2.5">
+          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        </div>
       </div>
+      <div className="mt-4 h-9 bg-gray-200 rounded"></div>
     </div>
   );
 
@@ -215,10 +216,10 @@ export default function SellerList() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-purple-600 sm:text-4xl">
+        <h2 className="text-3xl font-bold text-blue-500 sm:text-4xl">
           Sellers Directory
         </h2>
-        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-600 to-cyan-500 mx-auto rounded-full"></div>
+        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-blue-600 to-green-500 mx-auto rounded-full"></div>
       </div>
 
       {/* Filters */}
@@ -229,7 +230,7 @@ export default function SellerList() {
             setSelectedCategory(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {categories.map((cat, idx) => (
             <option key={idx} value={cat}>
@@ -241,7 +242,7 @@ export default function SellerList() {
 
       {/* Sellers */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <SellerSkeleton key={i} />
           ))}
@@ -250,7 +251,7 @@ export default function SellerList() {
         <p className="text-center text-gray-600">No sellers found.</p>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
             {selectedSellers.map((seller, index) => {
               const org = seller.organization || {};
               const ratingData = ratingsData[seller.id] || {
@@ -261,96 +262,92 @@ export default function SellerList() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-200 flex justify-between"
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden max-w-md mx-auto flex flex-col h-full"
+
                 >
-                  {/* Seller Info */}
-                  <div className="flex p-6 flex-1">
-                    <div className="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                      <img
-                        src="/mainimg.png"
-                        alt="company logo"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="ml-6 flex-1">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {`KPDS_${seller.id}`}
-                      </h3>
-
-                      <span
-                        className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold ${seller.approved === "1"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-500 text-white"
-                          }`}
-                      >
-                        {seller.approved === "1" ? "Verified" : "Not Verified"}
-                      </span>
-
-                      <div className="mt-3 text-sm text-gray-700 space-y-1">
-                        <p>
-                          <strong>Company Id:</strong> KPDS_{seller.id}
-                        </p>
-                        {/* <p>
-                          <strong>State:</strong>{" "}
-                          {org.city ? org.city.split(",").pop().trim() : "N/A"}
-                        </p> */}
-                        <p>
-                          <strong>City:</strong> {org.city || "N/A"}
-                        </p>
-                        <p>
-                          <strong>Type of Seller:</strong>{" "}
-                          {seller.user_type === 2
-                            ? "Wholeseller"
-                            : "Distributor"}
-                        </p>
-                        <p>
-                          <strong>Deals In:</strong>{" "}
-                          {org.materials_used_names &&
-                            org.materials_used_names.length > 0
-                            ? org.materials_used_names.join(", ")
-                            : "Not Available"}
-                        </p>
+                  {/* Card Content */}
+                  <div className="p-5">
+                    {/* Top Section: Logo + Info */}
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img
+                          src="/mainimg.png"
+                          alt="company logo"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
 
-                      <button
-                        onClick={() => router.push(`/B2B/seller/${seller.id}`)}
-                        className="mt-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-colors duration-300"
-                      >
-                        View Profile
-                      </button>
-                    </div>
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-bold text-gray-900 truncate">
+                          {`KPDS_${seller.id}`}
+                        </h3>
 
-                  {/* ⭐ Rating */}
-                  <div className="p-6 text-right min-w-[120px] flex flex-col items-end ">
-                    <div className="flex items-center justify-end space-x-1">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill={
-                            i < Math.round(ratingData.average)
-                              ? "#facc15"
-                              : "none"
-                          }
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="#facc15"
-                          className="w-5 h-5"
+                        <span
+                          className={`inline-block mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${seller.approved === "1"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-500 text-white"
+                            }`}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M11.48 3.5a.562.562 0 011.04 0l2.125 4.308a.563.563 0 00.424.308l4.753.691a.563.563 0 01.312.96l-3.438 3.35a.563.563 0 00-.162.498l.812 4.736a.563.563 0 01-.817.593l-4.25-2.23a.563.563 0 00-.524 0l-4.25 2.23a.563.563 0 01-.818-.593l.813-4.736a.563.563 0 00-.162-.498L2.866 9.767a.563.563 0 01.312-.96l4.753-.691a.563.563 0 00.424-.308L10.48 3.5z"
-                          />
-                        </svg>
-                      ))}
+                          {seller.approved === "1" ? "Verified" : "Not Verified"}
+                        </span>
+
+                        {/* Rating Stars */}
+                        <div className="flex items-center mt-2 space-x-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill={
+                                i < Math.round(ratingData.average)
+                                  ? "#facc15"
+                                  : "none"
+                              }
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="#facc15"
+                              className="w-4 h-4"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M11.48 3.5a.562.562 0 011.04 0l2.125 4.308a.563.563 0 00.424.308l4.753.691a.563.563 0 01.312.96l-3.438 3.35a.563.563 0 00-.162.498l.812 4.736a.563.563 0 01-.817.593l-4.25-2.23a.563.563 0 00-.524 0l-4.25 2.23a.563.563 0 01-.818-.593l.813-4.736a.563.563 0 00-.162-.498L2.866 9.767a.563.563 0 01.312-.96l4.753-.691a.563.563 0 00.424-.308L10.48 3.5z"
+                              />
+                            </svg>
+                          ))}
+                          <span className="text-xs text-gray-600 ml-1">
+                            {ratingData.average.toFixed(1)} ({ratingData.reviews})
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {ratingData.average.toFixed(1)} ★ ({ratingData.reviews}{" "}
-                      reviews)
-                    </p>
+
+                    {/* Details Section */}
+                    <div className="text-sm text-gray-700 space-y-1.5 mb-4">
+                      <p>
+                        <span className="font-semibold">Company ID:</span> KPDS_{seller.id}
+                      </p>
+                      <p>
+                        <span className="font-semibold">City:</span> {org.city || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Type:</span>{" "}
+                        {seller.user_type === 2 ? "Wholeseller" : "Distributor"}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Deals In:</span>{" "}
+                        {org.materials_used_names && org.materials_used_names.length > 0
+                          ? org.materials_used_names.join(", ")
+                          : "Not Available"}
+                      </p>
+                    </div>
+
+                    {/* Action Button */}
+                    <button
+                      onClick={() => router.push(`/B2B/seller/${seller.id}`)}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-300"
+                    >
+                      View Profile
+                    </button>
                   </div>
                 </div>
               );
@@ -393,7 +390,6 @@ export default function SellerList() {
               </button>
             </div>
           )}
-
         </>
       )}
 

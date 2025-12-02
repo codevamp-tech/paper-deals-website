@@ -65,7 +65,7 @@ export default function Categories({
   const secondRowCategories = categories.slice(midpoint)
 
   return (
-    <section className="w-full overflow-hidden py-3 sm:py-4 lg:py-5 px-1 sm:px-2 lg:px-4 bg-background">
+    <section className="w-full overflow-hidden py-10 px-1 sm:px-2 lg:px-4 bg-background">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-12 sm:mb-16">
           <h2
@@ -86,14 +86,22 @@ export default function Categories({
         )}
 
         {loading ? (
-          <div
-            className="flex justify-center items-center py-20"
-            role="status"
-            aria-label="Loading categories"
-          >
-            <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-accent/20 border-t-accent" />
-              <p className="text-sm text-muted-foreground">Loading categories...</p>
+          <div className="space-y-4">
+            {/* First Row Skeleton */}
+            <div className="relative py-4 overflow-hidden">
+              <div className="flex">
+                {[...Array(6)].map((_, i) => (
+                  <CategorySkeleton key={`sk-first-${i}`} />
+                ))}
+              </div>
+            </div>
+            {/* Second Row Skeleton */}
+            <div className="relative py-4 overflow-hidden">
+              <div className="flex">
+                {[...Array(6)].map((_, i) => (
+                  <CategorySkeleton key={`sk-second-${i}`} />
+                ))}
+              </div>
             </div>
           </div>
         ) : categories.length > 0 ? (
@@ -163,5 +171,17 @@ export default function Categories({
         )}
       </div>
     </section>
+  )
+}
+
+function CategorySkeleton() {
+  return (
+    <div className="w-64 px-3 flex-shrink-0">
+      <div className="animate-pulse">
+        <div className="w-full h-40 bg-muted rounded-xl mb-3"></div>
+        <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+        <div className="h-3 bg-muted rounded w-1/2"></div>
+      </div>
+    </div>
   )
 }
