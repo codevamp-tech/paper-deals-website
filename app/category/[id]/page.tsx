@@ -43,6 +43,9 @@ export default function CategoryProducts() {
     if (id) fetchProducts();
   }, [id]);
 
+  const categoryName = products[0]?.category?.name || "";
+
+
   const maskPhoneNumber = (number: string) => {
     if (!number) return "";
     const visible = number.slice(0, 3);
@@ -72,9 +75,10 @@ export default function CategoryProducts() {
 
   return (
     <div className="container mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        Products in Category {id}
+      <h1 className="text-xl font-bold mb-8 text-center">
+        {categoryName ? `Products in ${categoryName}` : "Products"}
       </h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {products.map((product) => (
           <div

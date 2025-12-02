@@ -246,7 +246,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
                 type="button"
                 onClick={handleSendOtp}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white py-2 rounded-md font-semibold"
+                className="w-full bg-gradient-to-r from-blue-600 to-green-600  text-white py-2 rounded-md font-semibold"
               >
                 {loading ? "Please wait..." : "Send OTP"}
               </button>
@@ -267,7 +267,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white py-2 rounded-md font-semibold"
+              className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-2 rounded-md font-semibold"
             >
               {loading ? "Submitting..." : "Submit Requirement"}
             </button>

@@ -223,7 +223,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
         <div className="w-full md:w-1/2 p-6 md:p-10">
           <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
-          <p className="text-xl text-green-600 font-semibold mb-3">
+          <p className="text-xl text-blue-500 font-semibold mb-3">
             ₹{product.price_per_kg} / Kg
           </p>
           <p className="text-gray-700 mb-6">{product.description}</p>
@@ -233,7 +233,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
             <DialogTrigger asChild>
               <Button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-[#38d200] hover:bg-[#2fb600] text-white px-6 py-3 rounded-full text-lg"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg"
               >
                 Enquiry Now
               </Button>
@@ -350,13 +350,13 @@ const OrderNow = ({ productId }: { productId: string }) => {
       <div className="py-12 px-4 md:px-10 bg-white">
         <h1 className="text-black text-3xl md:text-4xl font-bold text-center mb-10">
           Related Products in{" "}
-          <span className="text-[#38d200]">{product.category?.name}</span>
+          <span className="text-blue-500">{product.category?.name}</span>
         </h1>
         <div className="flex overflow-x-auto scroll-smooth space-x-5 scrollbar-hide px-1">
           {relatedProducts.map((p: any) => (
             <div
               key={p.id}
-              className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#fff] flex-shrink-0 border border-[#38d200] cursor-pointer hover:shadow-xl transition"
+              className="min-w-[220px] max-w-[220px] rounded-2xl shadow-md overflow-hidden bg-[#fff] flex-shrink-0 border border-blue-500 cursor-pointer hover:shadow-xl transition"
               onClick={() => router.push(`/product/${p.id}`)}
             >
               <div className="relative h-44 overflow-hidden group">
