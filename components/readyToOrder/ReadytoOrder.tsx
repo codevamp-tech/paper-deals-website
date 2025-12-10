@@ -43,7 +43,7 @@ export default function ReadyToOrder() {
 
           <button
             onClick={handleOrderClick}
-            className="bg-gradient-to-r from-blue-600 to-green-600  font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
+            className="border border-white  font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
           >
             Order Now
           </button>

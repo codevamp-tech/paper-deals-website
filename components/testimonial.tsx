@@ -99,7 +99,7 @@ export default function TestimonialSection() {
 
   return (
     <div
-      className="bg-white"
+      className="bg-white border-b border-gray-600"
       style={{
         padding: "40px 20px",
         width: "100%",
@@ -107,6 +107,7 @@ export default function TestimonialSection() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+       
       }}
     >
       <div>

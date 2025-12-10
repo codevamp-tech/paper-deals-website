@@ -65,20 +65,20 @@ export default function Categories({
   const secondRowCategories = categories.slice(midpoint)
 
   return (
-    <section className="w-full overflow-hidden py-10 px-1 sm:px-2 lg:px-4 bg-background">
+  <section className="w-full overflow-hidden py-16 px-1 sm:px-2 lg:px-4 bg-gradient-to-b from-background via-background to-muted/20">
       <div className="max-w-7xl mx-auto">
-        <header className="text-center mb-12 sm:mb-16">
+        <header className="text-center mb-16 sm:mb-20">
           <h2
-            className={`${theme.Text} text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center`}
+            className={`${theme.Text} text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent`}
           >
             {title}
           </h2>
-          <p className="flex justify-center text-[3vh] text-center pb-4 pt-4">{description}</p>
+          <p className="flex justify-center text-[3vh] text-center pb-4 pt-4 text-muted-foreground max-w-2xl mx-auto">{description}</p>
         </header>
 
         {error && (
           <div
-            className="mb-8 p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm"
+            className="mb-8 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm backdrop-blur-sm shadow-lg"
             role="alert"
           >
             {error}
@@ -86,7 +86,7 @@ export default function Categories({
         )}
 
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {/* First Row Skeleton */}
             <div className="relative py-4 overflow-hidden">
               <div className="flex">
@@ -105,9 +105,12 @@ export default function Categories({
             </div>
           </div>
         ) : categories.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {/* First Carousel - Right to Left */}
-            <div className="relative py-4 overflow-hidden">
+            <div className="relative py-6 overflow-hidden ">
+              <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+              
               <style jsx>{`
                 @keyframes scroll-left {
                   0% {
@@ -125,10 +128,10 @@ export default function Categories({
                 }
               `}</style>
 
-              <div className="flex animate-scroll-left">
+              <div className="flex animate-scroll-left gap-6 ">
                 {/* Duplicate items for seamless loop */}
                 {[...firstRowCategories, ...firstRowCategories].map((category, index) => (
-                  <div key={`first-${category.id}-${index}`} className="flex-shrink-0 w-64 px-3">
+                  <div key={`first-${category.id}-${index}`} className="flex-shrink-0 w-80 h-52 transform transition-transform duration-300 hover:scale-105 ">
                     <CategoryCard category={category} />
                   </div>
                 ))}
@@ -136,7 +139,10 @@ export default function Categories({
             </div>
 
             {/* Second Carousel - Left to Right */}
-            <div className="relative  py-4 overflow-hidden">
+            <div className="relative py-6 overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+              
               <style jsx>{`
                 @keyframes scroll-right {
                   0% {
@@ -154,10 +160,10 @@ export default function Categories({
                 }
               `}</style>
 
-              <div className="flex animate-scroll-right">
+              <div className="flex animate-scroll-right gap-6">
                 {/* Duplicate items for seamless loop */}
                 {[...secondRowCategories, ...secondRowCategories].map((category, index) => (
-                  <div key={`second-${category.id}-${index}`} className="flex-shrink-0 w-64 px-3">
+                  <div key={`second-${category.id}-${index}`} className="flex-shrink-0 w-80 h-52 transform transition-transform duration-300 hover:scale-105">
                     <CategoryCard category={category} />
                   </div>
                 ))}
@@ -165,8 +171,8 @@ export default function Categories({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No categories available</p>
+          <div className="text-center py-16">
+            <p className="text-muted-foreground text-lg">No categories available</p>
           </div>
         )}
       </div>

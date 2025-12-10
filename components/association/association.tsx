@@ -82,11 +82,11 @@ export default function AssumptionPartner() {
             {partners.map((partner) => (
               <div
                 key={partner.id}
-                className="flex-shrink-0 w-32 md:w-40 h-32 md:h-40 bg-gray-50 rounded-lg border border-gray-200 
-                           flex items-center justify-center hover:shadow-lg hover:scale-105 
-                           transition-all duration-300 cursor-pointer"
+                className="flex-shrink-0 w-32 md:w-40 h-32 md:h-40   border border-gray-200 
+                           flex items-center justify-center  5 
+                             cursor-pointer " style={{borderRadius:'50%'}}
               >
-                <div className="relative w-24 h-24 md:w-32 md:h-32">
+                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-3xl">
                   <Image
                     src={partner.logo_picture || "/placeholder.svg"}
                     alt={partner.alt || partner.logo_name}
@@ -128,7 +128,7 @@ export default function AssumptionPartner() {
       </div> */}
 
       {/* Bottom Accent Bar */}
-      <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"></div>
+      {/* <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"></div> */}
     </section>
   )
 }
