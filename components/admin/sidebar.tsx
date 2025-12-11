@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -11,22 +11,23 @@ import {
   FileBadge,
   Pi,
   MessageSquareText,
-  
+
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 // ✅ Main Navigation Items (only single-link pages)
 const navigation = [
-    { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
-    { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
-    { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
-    { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
-    { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
-    { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
-    { name: "Chat", href: "/buyer3/chat", icon: Pi },
-    { name: "Change Password", href: "/buyer3/changepassword", icon: MessageSquareText },
-     { name: "Order", href: "/buyer3/order", icon: MessageSquareText },
+  { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
+  { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
+  { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
+  { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
+  { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
+  { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
+  { name: "Chat", href: "/buyer3/chat", icon: Pi },
+  { name: "Change Password", href: "/buyer3/changepassword", icon: MessageSquareText },
+  { name: "Order", href: "/buyer3/order", icon: MessageSquareText },
+
 
 ]
 
@@ -35,6 +36,14 @@ const navigation = [
 export default function AdminSidebar({ onClose }) {
   const pathname = usePathname();
   const router = useRouter();
+
+
+  const [mode, setMode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const m = localStorage.getItem("mode");
+    setMode(m);
+  }, []);
 
 
   const handleLogout = async () => {
@@ -70,22 +79,31 @@ export default function AdminSidebar({ onClose }) {
       </div>
 
       {/* Scrollable Navigation */}
-      <div className="flex-1 overflow-y-auto md:overflow-y-hidden space-y-2 pr-2 mt-4 md:mt-0">
+      <div className="flex-1 overflow-y-auto max-h-[calc(100vh-150px)] space-y-2 pr-2 mt-4 md:mt-0 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent">
         {/* Static Single Links */}
         {navigation.map((item) => (
           <Link
             key={item.name}
             href={item.href}
-            className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-              isActive(item.href)
-                ? "bg-white-600 text-white" // Active link ka background orange
-                : "text-gray-300 hover:bg-white-700 hover:text-white" // Hover bhi orange shade
-            }`}
+            className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive(item.href)
+              ? "bg-white-600 text-white" // Active link ka background orange
+              : "text-gray-300 hover:bg-white-700 hover:text-white" // Hover bhi orange shade
+              }`}
           >
             <item.icon className="mr-3 h-5 w-5" />
             {item.name}
           </Link>
         ))}
+
+        {mode !== "B2B" && (
+          <Link
+            href="/buyer3/product"
+            className="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-300 hover:bg-white-700 hover:text-white"
+          >
+            <Package className="mr-3 h-5 w-5" />
+            Products
+          </Link>
+        )}
       </div>
 
       {/* Logout */}
