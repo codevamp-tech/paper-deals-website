@@ -71,7 +71,7 @@ export default function ProductInsights() {
 
   return (
     <div
-      className={`w-full  pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden pt-6  ${theme.Bg}`}
+      className={`w-full   my-16  ${theme.Bg}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}

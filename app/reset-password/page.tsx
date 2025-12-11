@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 interface TokenPayload {
   id: number;
@@ -121,20 +121,18 @@ function ResetPasswordInner() {
           <button
             type="submit"
             disabled={loading}
-            className={`mt-4 w-full py-3 rounded-xl text-white font-semibold transition shadow-lg ${
-              loading
+            className={`mt-4 w-full py-3 rounded-xl text-white font-semibold transition shadow-lg ${loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-gradient-to-r from-purple-700 to-sky-200 hover:opacity-90"
-            }`}
+              }`}
           >
             {loading ? "Updating..." : "Update Password"}
           </button>
 
           {message && (
             <p
-              className={`mt-4 text-center text-sm ${
-                message.startsWith("✅") ? "text-green-600" : "text-red-600"
-              }`}
+              className={`mt-4 text-center text-sm ${message.startsWith("✅") ? "text-green-600" : "text-red-600"
+                }`}
             >
               {message}
             </p>

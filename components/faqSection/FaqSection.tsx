@@ -36,48 +36,52 @@ export default function FaqSection() {
   const { theme } = useTheme();
 
   return (
-    <section
-      className="py-20"
-      id="faq"
-      style={{
-        backgroundColor: theme.bg1,
-      }}
-    >
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4  text-white">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-gray-100 max-w-2xl mx-auto">
-            Everything you need to know about our paper products and services
-          </p>
-        </div>
+<section
+  className="py-20"
+  id="faq"
+  style={{
+    backgroundColor: "#ffffff", // Changed to white
+  }}
+>
+  <div className="container mx-auto px-4">
+    <div className="text-center mb-16">
+      <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"> {/* Changed to dark text */}
+        Frequently Asked <span 
+        style={{
+          color:theme.buttoncolor
+        }
+        }>Questions</span> 
+      </h2>
+      <p className="text-gray-600 max-w-2xl mx-auto"> {/* Changed to dark text */}
+        Everything you need to know about our paper products and services
+      </p>
+    </div>
 
-        <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => (
-            <div key={index} className="mb-4 border-b border-white pb-4">
-              <button
-                className="flex justify-between items-center w-full text-left py-4"
-                onClick={() => toggleFaq(index)}
-              >
-                <span className="text-lg font-medium text-white">
-                  {faq.question}
-                </span>
-                <ChevronDown
-                  className={`h-5 w-5 text-white transition-transform duration-300 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {openIndex === index && (
-                <div className="pb-4">
-                  <p className="text-gray-200 font-normal">{faq.answer}</p>
-                </div>
-              )}
+    <div className="max-w-3xl mx-auto">
+      {faqs.map((faq, index) => (
+        <div key={index} className="mb-4 border-b border-gray-200 pb-4"> {/* Changed border color */}
+          <button
+            className="flex justify-between items-center w-full text-left py-4"
+            onClick={() => toggleFaq(index)}
+          >
+            <span className="text-lg font-medium text-gray-900"> {/* Changed to dark text */}
+              {faq.question}
+            </span>
+            <ChevronDown
+              className={`h-5 w-5 text-gray-700 transition-transform duration-300 ${ /* Changed icon color */
+                openIndex === index ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          {openIndex === index && (
+            <div className="pb-4">
+              <p className="text-gray-700 font-normal">{faq.answer}</p> {/* Changed to dark text */}
             </div>
-          ))}
+          )}
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
+  </div>
+</section>
   );
 }

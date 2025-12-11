@@ -172,7 +172,7 @@ const Hero = () => {
             <Button
               onClick={() => router.push("/product")}
               className="text-white px-8 py-6 text-lg whitespace-nowrap"
-              style={{ backgroundColor: theme.bg1 }}
+              style={{ backgroundColor: theme.buttoncolor }}
             >
               {mode === "B2C" ? "Shop Now" : "Order Now"}
               <ShoppingCart className="ml-2" />
@@ -185,7 +185,7 @@ const Hero = () => {
 
       {/* ⭐ SHOW STATS BASED ON MODE */}
       {mode === "B2C" ? (
-        <div className="w-full  bg-blue-600/70 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
+       <div className="w-full bg-black/50 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
           <div>
             <h3 className="text-xl font-bold">500K+</h3>
             <p>Happy Customers</p>

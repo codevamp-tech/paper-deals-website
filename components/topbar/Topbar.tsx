@@ -274,7 +274,7 @@ const Topbar = () => {
                   <Link
                     href="/buyer-login"
                     className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md `}
-                    style={{ backgroundColor: theme.bg1 }}
+                    style={{ backgroundColor: theme.buttoncolor }}
                   >
                     <User className="w-4 h-4" />
                     Login

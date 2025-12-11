@@ -10,7 +10,7 @@ const SellerOrBuyer = () => {
 
   return (
     <>
-      <div className="min-h-screen w-full bg-white flex items-center justify-center  pb-4 px-4">
+      <div className=" w-full   white flex items-center justify-center  pb-4 px-4 my-12">
         {/* SELLER CARD - Full Viewport Design */}
         <div
           className="w-full max-w-6xl mx-auto bg-white rounded-2xl p-2 md:p-8 transition-all duration-300"
@@ -85,7 +85,7 @@ const SellerOrBuyer = () => {
             <button
               onClick={() => router.push("/B2B/become-a-seller")}
               className="text-white font-medium px-8 py-3 rounded-lg hover:opacity-90 transition-all duration-300 text-base"
-              style={{ backgroundColor: theme.bg1 }}
+              style={{ backgroundColor: theme.buttoncolor }}
             >
               Become A Seller
             </button>
