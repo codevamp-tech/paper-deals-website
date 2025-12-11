@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User, X } from "lucide-react";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
@@ -71,6 +71,15 @@ export default function BuyerSignin() {
     }
   };
 
+  const [mode, setMode] = useState(""); // default
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("mode");
+    if (savedMode) setMode(savedMode);
+  }, []);
+
+
+
   // ✅ Forgot Password Submit
   const handleForgotPassword = async (e: any) => {
     e.preventDefault();
@@ -120,21 +129,23 @@ export default function BuyerSignin() {
 
               <div className="space-y-6">
                 {/* Login Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">
-                    Login as
-                  </label>
-                  <div className="flex items-center bg-gray-50 border-2 border-gray-200 rounded-lg px-4 py-3">
-                    <User className="w-5 h-5 text-cyan-500 mr-2" />
-                    <input
-                      type="text"
-                      name="loginType"
-                      value="buyer"
-                      readOnly
-                      className="w-full bg-transparent outline-none text-gray-700"
-                    />
+                {mode !== "B2C" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                      Login as
+                    </label>
+                    <div className="flex items-center bg-gray-50 border-2 border-gray-200 rounded-lg px-4 py-3">
+                      <User className="w-5 h-5 text-cyan-500 mr-2" />
+                      <input
+                        type="text"
+                        name="loginType"
+                        value="buyer"
+                        readOnly
+                        className="w-full bg-transparent outline-none text-gray-700"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Email */}
                 <div>
@@ -234,12 +245,19 @@ export default function BuyerSignin() {
 
             <div className="relative z-10 text-center">
               <h3 className="text-2xl font-semibold mb-4">
-                Create new account for Buyer
+                {mode === "B2C" ? "Buyer & Seller Features" : "Create new Buyer Account"}
               </h3>
-              <p className="text-lg opacity-90 leading-relaxed">
-                Join our platform to access exclusive deals and opportunities
-                for buyers
-              </p>
+
+              {mode === "B2C" ? (
+                <p className="text-lg opacity-90 leading-relaxed">
+                  You can buy products and you can sell products both.
+                </p>
+              ) : (
+                <p className="text-lg opacity-90 leading-relaxed">
+                  Join our platform to access exclusive buyer deals.
+                </p>
+              )}
+
             </div>
           </div>
         </div>
