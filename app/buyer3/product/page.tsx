@@ -177,39 +177,39 @@ export default function ProductPage() {
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <div className="overflow-auto rounded-md border">
-              <table className="min-w-full text-sm text-left">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-4 py-2 border">ID</th>
-                    <th className="px-4 py-2 border">Seller Name</th>
-                    <th className="px-4 py-2 border">Product Name</th>
-                    <th className="px-4 py-2 border">Category</th>
-                    <th className="px-4 py-2 border">Price</th>
-                    <th className="px-4 py-2 border">Weight </th>
-                    <th className="px-4 py-2 border">Stock</th>
-                    <th className="px-4 py-2 border">Shade</th>
-                    <th className="px-4 py-2 border">Created At</th>
-                    <th className="px-4 py-2 border">Edit</th>
-                    <th className="px-4 py-2 border">Delete</th>
+            <div className="overflow-auto ">
+              <table className="w-full border-collapse border border-gray-300 bg-white min-w-[800px]">
+                <thead >
+                  <tr className="bg-gray-100">
+                    <th className="p-2 border">ID</th>
+                    <th className="p-2 border">Seller Name</th>
+                    <th className="p-2 border">Product Name</th>
+                    <th className="p-2 border">Category</th>
+                    <th className="p-2 border">Price</th>
+                    <th className="p-2 border">Weight </th>
+                    <th className="p-2 border">Stock</th>
+                    <th className="p-2 border">Shade</th>
+                    <th className="p-2 border">Created At</th>
+                    <th className="p-2 border">Edit</th>
+                    <th className="p-2 border">Delete</th>
                   </tr>
                 </thead>
                 <tbody>
                   {products.length > 0 ? (
                     products.map((product) => (
                       <tr key={product.id} className="border-t">
-                        <td className="px-4 py-2 border">{product.id}</td>
-                        <td className="px-4 py-2 border">{product.seller?.name || "Seller not found"}</td>
-                        <td className="px-4 py-2 border">{product.product_name || "-"}</td>
-                        <td className="px-4 py-2 border">{product.category?.name || "-"}</td>
-                        <td className="px-4 py-2 border">{product.price_per_kg || "-"}</td>
-                        <td className="px-4 py-2 border">{product.weights || "-"}</td>
-                        <td className="px-4 py-2 border">{product.stock_in_kg || "-"}</td>
-                        <td className="px-4 py-2 border">{product.shade || "-"}</td>
-                        <td className="px-4 py-2 border">
+                        <td className="p-2 border">{product.id}</td>
+                        <td className="p-2 border">{product.seller?.name || "Seller not found"}</td>
+                        <td className="p-2 border">{product.product_name || "-"}</td>
+                        <td className="p-2 border">{product.category?.name || "-"}</td>
+                        <td className="p-2 border">{product.price_per_kg || "-"}</td>
+                        <td className="p-2 border">{product.weights || "-"}</td>
+                        <td className="p-2 border">{product.stock_in_kg || "-"}</td>
+                        <td className="p-2 border">{product.shade || "-"}</td>
+                        <td className="p-2 border">
                           {new Date(product.created_at).toLocaleString()}
                         </td>
-                        <td className="px-4 py-2 border">
+                        <td className="p-2 border">
                           <Button
                             size="sm"
                             className="bg-green-500 hover:bg-green-600 text-white"
@@ -218,7 +218,7 @@ export default function ProductPage() {
                             Edit
                           </Button>
                         </td>
-                        <td className="px-4 py-2 border flex gap-2">
+                        <td className=" p-2 border ">
                           <Button
                             size="sm"
                             className="bg-red-500 hover:bg-red-600 text-white"
@@ -231,7 +231,7 @@ export default function ProductPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={10} className="px-4 py-6 text-center">
+                      <td colSpan={10} className=" p-6 text-center">
                         No products found
                       </td>
                     </tr>
