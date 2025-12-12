@@ -21,24 +21,22 @@ export default function DealsPage() {
             <div className="flex justify-center mb-8">
               <div className="flex bg-white-100 rounded-lg p-1 gap-1"> {/* ✅ toggle bg light */}
                 <Button
-                  variant={selectedDealType === "current" ? "default" : "ghost"}
+                  variant={selectedDealType === "current" ? "default" : "outline"}
                   onClick={() => setSelectedDealType("current")}
-                  className={`transition-all duration-200 ease-in-out ${
-                    selectedDealType === "current"
+                  className={`transition-all duration-200 ease-in-out ${selectedDealType === "current"
                       ? "bg-black text-white"
                       : "bg-white text-black"
-                  }`}
+                    }`}
                 >
                   Current Direct Deals
                 </Button>
                 <Button
-                  variant={selectedDealType === "closed" ? "default" : "ghost"}
+                  variant={selectedDealType === "closed" ? "default" : "outline"}
                   onClick={() => setSelectedDealType("closed")}
-                  className={`transition-all duration-200 ease-in-out ${
-                    selectedDealType === "closed"
+                  className={`transition-all duration-200 ease-in-out ${selectedDealType === "closed"
                       ? "bg-black text-white"
                       : "bg-white text-black"
-                  }`}
+                    }`}
                 >
                   Closed Direct Deals
                 </Button>
@@ -59,7 +57,7 @@ export default function DealsPage() {
               )}
             </div>
 
-            
+
           </div>
         </div>
       </div>
