@@ -14,8 +14,6 @@ import {
   Lock,
   ArrowLeft,
 } from "lucide-react";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
 import { Button } from "@/components/ui/button";
 
 type NavItem = {
@@ -26,16 +24,16 @@ type NavItem = {
 
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
-  { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
-  { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
-  { name: "Products", href: "/buyer3/product", icon: Package },
-  { name: "Products Enquiry", href: "/buyer3/productEnquiry", icon: Package },
+  { name: "My Enquiry", href: "/buyer3/enquiry", icon: Package },
   { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
-  { name: "Chat", href: "/buyer3/chat", icon: MessageSquareText },
-  { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
-  { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
-  { name: "Change Password", href: "/buyer3/changepassword", icon: Lock },
+  { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
+  { name: "Products", href: "/buyer3/product", icon: Package },
+  { name: "Product's Enquiry", href: "/buyer3/productEnquiry", icon: Package },
+  // { name: "Chat", href: "/buyer3/chat", icon: MessageSquareText },
+  // { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
+  // { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
+  // { name: "Change Password", href: "/buyer3/changepassword", icon: Lock },
 ];
 
 export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
@@ -117,30 +115,24 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
 
       {/* Scrollable Navigation */}
       <div className="flex-1 overflow-y-auto max-h-[calc(100vh-150px)] space-y-2 pr-2 mt-4 md:mt-0 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent">
-        <SimpleBar style={{ maxHeight: 'calc(100vh - 150px)' }}>
-          {/* Render nav items in the new order, but hide product links if B2B */}
-          {navigation.map((item) => {
-            if (mode === "B2B" &&
-              (item.href === "/buyer3/product" || item.href === "/buyer3/productEnquiry")) {
-              return null;
-            }
+        {/* Render nav items in the new order, but hide product links if B2B */}
+        {navigation.map((item) => {
+          if (mode === "B2B" &&
+            (item.href === "/buyer3/product" || item.href === "/buyer3/productEnquiry")) {
+            return null;
+          }
 
-            if (mode !== "B2B" && item.href === "/buyer3/pdbulkdeal") {
-              return null;
-            }
+          if (mode !== "B2B" && item.href === "/buyer3/pdbulkdeal") {
+            return null;
+          }
 
-            return (
-              <NavLink key={item.name} href={item.href} Icon={item.icon}>
-                {item.name}
-              </NavLink>
-            );
-          })}
-        </SimpleBar>
+          return (
+            <NavLink key={item.name} href={item.href} Icon={item.icon}>
+              {item.name}
+            </NavLink>
+          );
+        })}
         <hr className="my-3 border-white/10" />
-      </div>
-
-      {/* Logout */}
-      <div className="pt-6 mt-auto">
         <Button
           onClick={handleLogout}
           variant="ghost"

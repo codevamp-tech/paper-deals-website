@@ -336,7 +336,7 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
 
         {/* Submit Button */}
         <div className="flex justify-center pt-6">
-          <Button type="submit" disabled={loading} className="w-full md:w-auto">
+          <Button disabled={loading} className="w-full md:w-auto bg-blue-500">
             {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</> : "Add Product"}
           </Button>
         </div>
