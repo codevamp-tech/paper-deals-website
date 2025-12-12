@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -10,10 +9,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Upload } from "lucide-react"
+import { CalendarIcon, Upload, X } from "lucide-react" // Added X
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { getUserFromToken } from "@/hooks/use-token"
+import { motion } from "framer-motion" // Added motion
+import { Badge } from "@/components/ui/badge" // Added Badge
 
 const states = [
   { id: "1", name: "Andaman and Nicobar Islands" },
@@ -63,7 +64,6 @@ interface FormData {
   whatsappNo: string
   status: string
 
-
   // Company Information
   company: string
   contactPerson: string
@@ -75,7 +75,7 @@ interface FormData {
   state: string
   pincode: string
   productionCapacity: string
-  dealsIn: string
+  dealsIn: string | number[] // Updated to handle array or string
   typeOfSeller: string
   description: string
 
@@ -103,7 +103,6 @@ interface FileUploads {
 }
 
 const initialFormData: FormData = {
-
   name: "",
   email: "",
   mobile: "",
@@ -142,17 +141,40 @@ const initialFileUploads: FileUploads = {
   gstCertificate: null,
 }
 
-
-
 export default function SellerEditForm() {
   const [activeSection, setActiveSection] = useState("seller-edit")
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [fileUploads, setFileUploads] = useState<FileUploads>(initialFileUploads)
   const [loading, setLoading] = useState(false)
   const user = getUserFromToken()
-  console.log("user????", user);
   const userId = user?.user_id
 
+  // -- NEW STATE FOR CATEGORIES --
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
+
+  // -- NEW EFFECT: FETCH CATEGORIES --
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // Using env variable for consistency with your existing code
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`)
+        if (res.ok) {
+          const data = await res.json()
+          setCategories(data.categories)
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error)
+      }
+    }
+    fetchCategories()
+  }, [])
+
+  // -- NEW EFFECT: SYNC SELECTED CATEGORIES WITH FORM DATA --
+  useEffect(() => {
+    // Sync the array of IDs to the formData "dealsIn" field
+    updateFormData("dealsIn", selectedCategories)
+  }, [selectedCategories])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -238,7 +260,7 @@ export default function SellerEditForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: userId,
-          organizations: formData.company, // was company
+          organizations: formData.company,
           contact_person: formData.contactPerson,
           email: formData.companyEmail,
           phone: formData.companyMobile,
@@ -248,11 +270,11 @@ export default function SellerEditForm() {
           state: formData.state,
           pincode: formData.pincode,
           production_capacity: formData.productionCapacity,
-          materials_used: formData.dealsIn, // was dealsIn
-          organization_type: formData.typeOfSeller, // was typeOfSeller
+          materials_used: formData.dealsIn,
+          organization_type: formData.typeOfSeller,
           description: formData.description,
-          price_range: "", // optional
-          production_specification: "", // optional
+          price_range: "",
+          production_specification: "",
           verified: 0,
           vip: 0,
           image_banner: fileUploads.logo ? fileUploads.logo.name : null,
@@ -282,7 +304,7 @@ export default function SellerEditForm() {
           gst_number: formData.gstNumber,
           export_import_licence: formData.exportImportLicense,
           pan_card_img: fileUploads.panCard ? fileUploads.panCard.name : null,
-          voter_id_img: null, // optional
+          voter_id_img: null,
           cert_of_incorp: fileUploads.certificateOfIncorporation ? fileUploads.certificateOfIncorporation.name : null,
           gst_cert: fileUploads.gstCertificate ? fileUploads.gstCertificate.name : null,
           doc_status: 1,
@@ -345,23 +367,67 @@ export default function SellerEditForm() {
     { id: "documents", title: "Documents Upload" },
   ]
 
+  // -- NEW LOGIC: PROFILE COMPLETION PERCENTAGE --
+  const requiredFields = [
+    "company", "contactPerson", "companyEmail", "companyMobile",
+    "address", "city", "state", "pincode",
+    "ownerName", "designation", "ownerAddress",
+    "gstNumber", "exportImportLicense"
+  ]
+
+  // Calculate filled fields
+  const filledCount = requiredFields.filter(field => {
+    const value = formData[field as keyof FormData]
+    return value !== "" && value !== null && value !== undefined
+  }).length
+
+  const completionPercent = Math.round((filledCount / requiredFields.length) * 100)
+
 
   return (
     <div className="container mx-auto p-4 max-w-6xl bg-white text-black">
       {/* Navigation */}
       <div className="mb-6">
-        <div className="flex flex-wrap gap-2 mb-4">
-          {allSections.map((section) => (
-            <Button
-              key={section.id}
-              variant={activeSection === section.id ? "default" : "outline"}
-              onClick={() => setActiveSection(section.id)}
-              className="text-sm text-black bg-white border-gray-300 hover:bg-gray-100"
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {allSections.map((section) => (
+              <Button
+                key={section.id}
+                variant={activeSection === section.id ? "default" : "outline"}
+                onClick={() => setActiveSection(section.id)}
+                className="text-sm text-black bg-white border-gray-300 hover:bg-gray-100"
 
-            >
-              {section.title}
-            </Button>
-          ))}
+              >
+                {section.title}
+              </Button>
+            ))}
+          </div>
+
+          {/* -- NEW VISUAL: Profile Completion Circle -- */}
+          <div className="relative flex items-center justify-center w-16 h-16">
+            <svg className="w-16 h-16 transform -rotate-90">
+              <circle
+                cx="32"
+                cy="32"
+                r="28"
+                stroke="#e5e7eb"
+                strokeWidth="6"
+                fill="transparent"
+              />
+              <motion.circle
+                cx="32"
+                cy="32"
+                r="28"
+                stroke="#3b82f6"
+                strokeWidth="6"
+                fill="transparent"
+                strokeDasharray="175"
+                strokeDashoffset={175 - (175 * completionPercent) / 100}
+                strokeLinecap="round"
+              />
+            </svg>
+            <span className="absolute text-sm font-semibold text-blue-600">{completionPercent}%</span>
+          </div>
         </div>
       </div>
 
@@ -369,7 +435,7 @@ export default function SellerEditForm() {
       {activeSection === "seller-edit" && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-black font-medium">Profile</CardTitle>
+            <CardTitle className="text-blue-500 font-medium">Profile</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Seller Profile (role 2) */}
@@ -574,15 +640,54 @@ export default function SellerEditForm() {
                   className="bg-white text-black border-gray-300"
                 />
               </div>
+
+              {/* -- NEW: Deals In Dropdown with Badges -- */}
               <div>
-                <Label htmlFor="dealsIn">Deals in</Label>
-                <Input
-                  id="dealsIn"
-                  value={formData.dealsIn}
-                  onChange={(e) => updateFormData("dealsIn", e.target.value)}
-                  className="bg-white text-black border-gray-300"
-                />
+                <Label htmlFor="dealsIn">Deals In (Select Multiple)</Label>
+                <Select
+                  onValueChange={(value) => {
+                    const id = parseInt(value)
+                    setSelectedCategories((prev) =>
+                      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+                    )
+                  }}
+                >
+                  <SelectTrigger className="bg-white text-black border-gray-300">
+                    <SelectValue placeholder="Select categories" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white text-black">
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id.toString()}>
+                        {selectedCategories.includes(cat.id) ? "✅ " : ""} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Show selected category badges */}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedCategories.map((id) => {
+                    const cat = categories.find((c) => c.id === id)
+                    if (!cat) return null
+                    return (
+                      <Badge
+                        key={id}
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
+                        {cat.name}
+                        <X
+                          className="w-3 h-3 cursor-pointer"
+                          onClick={() =>
+                            setSelectedCategories((prev) => prev.filter((v) => v !== id))
+                          }
+                        />
+                      </Badge>
+                    )
+                  })}
+                </div>
               </div>
+              {/* -- END NEW SECTION -- */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
