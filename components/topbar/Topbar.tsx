@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, User, Store, Menu, X, Search, LogOut } from "lucide-react";
+import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock } from "lucide-react";
 import RequestCallback from "../modal/RequestCallback";
 import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
@@ -250,16 +250,56 @@ const Topbar = () => {
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
 
+
                       <DropdownMenuItem asChild>
                         <Link
                           href="/buyer3/dashboard"
-                          className="flex items-center gap-2 w-full text-sm text-black hover:bg-gray-100"
+                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
                         >
-                          <User className="w-4 h-4 text-gray-600" />
+                          <LayoutDashboard className="w-4 h-4 text-gray-600" />
                           Dashboard
                         </Link>
                       </DropdownMenuItem>
 
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/buyer3/profile"
+                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                        >
+                          <User className="w-4 h-4 text-gray-600" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/buyer3/chat"
+                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                        >
+                          <MessageCircle className="w-4 h-4 text-gray-600" />
+                          Chat
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/buyer3/subscriptions"
+                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                        >
+                          <CreditCard className="w-4 h-4 text-gray-600" />
+                          Subscription
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/buyer3/changepassword"
+                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                        >
+                          <Lock className="w-4 h-4 text-gray-600" />
+                          Change Password
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleLogout}
                         className="flex items-center gap-2 text-sm text-black cursor-pointer hover:bg-gray-100"
