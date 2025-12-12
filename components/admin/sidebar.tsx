@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -9,101 +9,134 @@ import {
   ImageIcon,
   Megaphone,
   FileBadge,
-  Pi,
   MessageSquareText,
-
+  ShoppingCart,
+  Lock,
+  ArrowLeft,
 } from "lucide-react";
-
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 import { Button } from "@/components/ui/button";
 
-// ✅ Main Navigation Items (only single-link pages)
-const navigation = [
+type NavItem = {
+  name: string;
+  href: string;
+  icon: any;
+};
+
+const navigation: NavItem[] = [
   { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
+  { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
   { name: "Enquiry", href: "/buyer3/enquiry", icon: Package },
+  { name: "Products", href: "/buyer3/product", icon: Package },
+  { name: "Products Enquiry", href: "/buyer3/productEnquiry", icon: Package },
   { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
-  { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
+  { name: "Chat", href: "/buyer3/chat", icon: MessageSquareText },
   { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
-  { name: "Chat", href: "/buyer3/chat", icon: Pi },
-  { name: "Change Password", href: "/buyer3/changepassword", icon: MessageSquareText },
-  { name: "Order", href: "/buyer3/order", icon: MessageSquareText },
+  { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
+  { name: "Change Password", href: "/buyer3/changepassword", icon: Lock },
+];
 
-
-]
-
-
-
-export default function AdminSidebar({ onClose }) {
-  const pathname = usePathname();
+export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
+  const pathname = usePathname() ?? "/";
   const router = useRouter();
-
 
   const [mode, setMode] = useState<string | null>(null);
 
   useEffect(() => {
-    const m = localStorage.getItem("mode");
-    setMode(m);
+    // Safely read localStorage (client-only)
+    try {
+      const m = typeof window !== "undefined" ? localStorage.getItem("mode") : null;
+      setMode(m);
+    } catch (e) {
+      setMode(null);
+    }
   }, []);
-
 
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      // push to home and refresh
       router.push("/");
-      router.refresh();
+      // next/navigation router.refresh may be optional depending on next version; keep for safety
+      try {
+        router.refresh();
+      } catch (e) {
+        // ignore if not available
+      }
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
-  const isActive = (href) => pathname === href;
+  const isActive = (href: string) => {
+    // Mark link active if pathname equals or starts with href (handles nested routes)
+    if (!href) return false;
+    return pathname === href || pathname.startsWith(href + "/") || pathname.startsWith(href);
+  };
+
+  // Reusable nav link
+  const NavLink = ({ href, Icon, children }: { href: string; Icon: any; children: React.ReactNode }) => {
+    const active = isActive(href);
+    const baseClasses = "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors";
+    const activeClasses = "bg-white/20 text-white";
+    const inactiveClasses = "text-gray-200 hover:bg-white/10 hover:text-white";
+
+    return (
+      <Link
+        href={href}
+        aria-current={active ? "page" : undefined}
+        className={`${baseClasses} ${active ? activeClasses : inactiveClasses}`}
+      >
+        <Icon className="mr-3 h-5 w-5" />
+        <span className="truncate">{children}</span>
+      </Link>
+    );
+  };
 
   return (
-    <div className="h-full flex flex-col p-4 text-black bg-sky-500 md:pt-4">
+    <aside className="h-full flex flex-col p-4 text-black bg-sky-500 md:pt-4">
       {/* Mobile Close Button */}
       <div className="flex justify-between items-center md:hidden mb-6 text-white pt-4">
-        {/* <div className="text-lg font-bold">Demo Buyer</div> */}
-        <button onClick={onClose}>
-          <div className="w-6 h-6" />
+        <div className="text-lg font-semibold">Buyer</div>
+        <button
+          onClick={() => onClose && onClose()}
+          aria-label="Close sidebar"
+          className="p-2 rounded-md hover:bg-white/10"
+        >
+          <ArrowLeft className="h-5 w-5 text-white" />
         </button>
       </div>
 
-      {/* Logo */}
-      <div className="hidden md:flex items-center space-x-2 mb-8 pt-4">
-        {/* <div className="bg-blue-600 text-white p-2 rounded-lg font-bold text-xl">PD</div> */}
-        <div>
-          {/* <Link href="/" className="flex-shrink-0">
-          <img className="h-10 w-auto md:h-12" src="/logomain.png" alt="LOGO" />
-        </Link> */}
-        </div>
+      {/* Logo (desktop) */}
+      <div className="hidden md:flex items-center space-x-2 mb-4 pt-2">
+
+        <div className="text-white font-bold text-xl">PD Buyer</div>
       </div>
 
       {/* Scrollable Navigation */}
       <div className="flex-1 overflow-y-auto max-h-[calc(100vh-150px)] space-y-2 pr-2 mt-4 md:mt-0 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent">
-        {/* Static Single Links */}
-        {navigation.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive(item.href)
-              ? "bg-white-600 text-white" // Active link ka background orange
-              : "text-gray-300 hover:bg-white-700 hover:text-white" // Hover bhi orange shade
-              }`}
-          >
-            <item.icon className="mr-3 h-5 w-5" />
-            {item.name}
-          </Link>
-        ))}
+        <SimpleBar style={{ maxHeight: 'calc(100vh - 150px)' }}>
+          {/* Render nav items in the new order, but hide product links if B2B */}
+          {navigation.map((item) => {
+            if (mode === "B2B" &&
+              (item.href === "/buyer3/product" || item.href === "/buyer3/productEnquiry")) {
+              return null;
+            }
 
-        {mode !== "B2B" && (
-          <Link
-            href="/buyer3/product"
-            className="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-300 hover:bg-white-700 hover:text-white"
-          >
-            <Package className="mr-3 h-5 w-5" />
-            Products
-          </Link>
-        )}
+            if (mode !== "B2B" && item.href === "/buyer3/pdbulkdeal") {
+              return null;
+            }
+
+            return (
+              <NavLink key={item.name} href={item.href} Icon={item.icon}>
+                {item.name}
+              </NavLink>
+            );
+          })}
+        </SimpleBar>
+        <hr className="my-3 border-white/10" />
       </div>
 
       {/* Logout */}
@@ -111,11 +144,11 @@ export default function AdminSidebar({ onClose }) {
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start text-gray-300 hover:bg-gray-800 hover:text-white"
+          className="w-full justify-start text-gray-200 hover:bg-white/10 hover:text-white"
         >
           Logout
         </Button>
       </div>
-    </div>
+    </aside>
   );
 }

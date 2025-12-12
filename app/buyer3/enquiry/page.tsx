@@ -70,7 +70,7 @@ export default function EnquiryShow() {
         <h1 className="text-2xl font-semibold">Enquiry Show</h1>
       </header>
 
-      <div className="bg-white shadow-sm rounded border p-4">
+      <div className=" p-4">
         {/* Controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-3 md:gap-4">
           {/* Entries Select */}
@@ -134,7 +134,7 @@ export default function EnquiryShow() {
                     "Remarks",
                     "Created At",
                     "Status",
-                    
+
                   ].map((h, i) => (
                     <th
                       key={i}

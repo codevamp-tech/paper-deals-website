@@ -82,7 +82,7 @@ export default function ChatInterface() {
   return (
     <Card className="w-full h-full  flex flex-col bg-white text-black">
       <CardHeader>
-        <CardTitle className="text-black">Chat</CardTitle>
+        <CardTitle className="text-black flex justify-center">Chat</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden p-0">
         <ScrollArea className="h-full p-4" ref={scrollRef}>
@@ -95,11 +95,10 @@ export default function ChatInterface() {
                 className={`flex mb-4 ${message.senderId === userId ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[70%] p-3 rounded-lg ${
-                    message.senderId === userId
-                      ? "bg-gray-200 text-black"
-                      : "bg-gray-100 text-black"
-                  }`}
+                  className={`max-w-[70%] p-3 rounded-lg ${message.senderId === userId
+                    ? "bg-gray-200 text-black"
+                    : "bg-gray-100 text-black"
+                    }`}
                 >
                   {message.text}
                 </div>
