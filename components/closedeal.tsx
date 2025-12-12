@@ -107,20 +107,19 @@ export default function CloseDealsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Closed Deals</h1>
-
+    <div className="p-4 bg-white text-black min-h-screen">
+      <h2 className="text-xl font-semibold mb-4">Closed  Deals</h2>
       <div>
         {loading ? (
           <div className="text-center py-6 text-gray-500">Loading...</div>
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full border border-gray-200">
+              <table className="w-full border-collapse border border-gray-300 bg-white min-w-[800px]">
                 <thead>
-                  <tr className="bg-gray-50">
+                  <tr className="bg-gray-100">
                     <th
-                      className="p-2 border border-gray-200 text-left cursor-pointer"
+                      className="p-2 border text-left cursor-pointer"
                       onClick={() => handleSort("deal_id")}
                     >
                       Deal ID
@@ -128,28 +127,28 @@ export default function CloseDealsPage() {
 
                     {/* 👇 Conditional Columns */}
 
-                    <th className="p-2 border border-gray-200">Buyer ID</th>
+                    <th className="p-2 border">Buyer ID</th>
 
                     <>
-                      <th className="p-2 border border-gray-200">Buyer Name</th>
-                      <th className="p-2 border border-gray-200">
+                      <th className="p-2 border">Buyer Name</th>
+                      <th className="p-2 border">
                         Seller Name
                       </th>
                     </>
 
-                    <th className="p-2 border border-gray-200">
+                    <th className="p-2 border">
                       Product Description
                     </th>
-                    <th className="p-2 border border-gray-200">Price in Kg</th>
-                    <th className="p-2 border border-gray-200">
+                    <th className="p-2 border">Price in Kg</th>
+                    <th className="p-2 border">
                       Quantity in Kg
                     </th>
-                    <th className="p-2 border border-gray-200">Total Amount</th>
-                    <th className="p-2 border border-gray-200">Remarks</th>
-                    <th className="p-2 border border-gray-200">Date</th>
+                    <th className="p-2 border">Total Amount</th>
+                    <th className="p-2 border">Remarks</th>
+                    <th className="p-2 border">Date</th>
 
                     <>
-                      <th className="p-2 border border-gray-200">Action</th>
+                      <th className="p-2 border">Action</th>
                     </>
                   </tr>
                 </thead>
@@ -159,41 +158,41 @@ export default function CloseDealsPage() {
                       key={deal.id}
                       className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                     >
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.deal_id}
                       </td>
 
                       {/* 👇 Conditional Cells */}
 
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         KPDB_{deal.buyer_id}
                       </td>
 
                       <>
-                        <td className="p-2 border border-gray-200">
+                        <td className="p-2 border ">
                           {deal.buyerUser?.name || "Unknown"}
                         </td>
-                        <td className="p-2 border border-gray-200">
+                        <td className="p-2 border ">
                           {deal.sellerUser?.name || "Unknown"}
                         </td>
                       </>
 
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.product_description}
                       </td>
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.price_per_kg}
                       </td>
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.quantity_in_kg?.toLocaleString()}
                       </td>
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.deal_amount?.toLocaleString()}
                       </td>
-                      <td className="p-2 border border-gray-200">
+                      <td className="p-2 border ">
                         {deal.remarks}
                       </td>
-                      <td className="p-2 border border-gray-200 text-xs">
+                      <td className="p-2 border ">
                         {new Date(deal.created_on).toLocaleString()}
                       </td>
 

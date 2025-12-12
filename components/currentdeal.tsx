@@ -82,7 +82,7 @@ const DealsTable: React.FC = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-4 bg-white text-black min-h-screen">
+    <div className=" text-black min-h-screen">
       <h2 className="text-xl font-semibold mb-4">Current Deals</h2>
 
       {/* Scrollable container for mobile */}
@@ -124,9 +124,8 @@ const DealsTable: React.FC = () => {
                   </td>
                   <td className="border p-2">
                     <span
-                      className={`px-2 py-1 rounded text-white ${
-                        deal.status === "Closed" ? "bg-red-500" : "bg-green-500"
-                      }`}
+                      className={`px-2 py-1 rounded text-white ${deal.status === "Closed" ? "bg-red-500" : "bg-green-500"
+                        }`}
                     >
                       {deal.status}
                     </span>
