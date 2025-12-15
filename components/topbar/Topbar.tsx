@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock } from "lucide-react";
+import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock, Building2, ShoppingBag } from "lucide-react";
 import RequestCallback from "../modal/RequestCallback";
 import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
@@ -142,37 +142,69 @@ const Topbar = () => {
                 />
               </Link>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-gray-300 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 shadow-sm">
-                <Label
-                  htmlFor="mode-toggle"
-                  className={`cursor-pointer font-semibold text-xs sm:text-sm transition-colors ${enabled ? "text-green-600" : "text-black"
-                    }`}
-                >
-                  {enabled ? "B2B" : "B2C"}
-                </Label>
+              <div className="hidden lg:flex items-center gap-6">
+                <TopbarWithCategories />
+                {enabled ? (
+                  <>
+                    <Link
+                      href="/B2B/consultants"
+                      className="text-sm hover:text-cyan-300"
+                    >
+                      Consultants
+                    </Link>
 
-                <button
-                  id="mode-toggle"
-                  onClick={async () => {
-                    const newValue = !enabled;
-                    setEnabled(newValue);
-                    localStorage.setItem("mode", newValue ? "B2B" : "B2C");
-                    router.push("/");
-                    setTimeout(() => {
-                      window.location.reload();
-                    }, 500);
-                  }}
-                  className={`relative inline-flex h-5 w-10 sm:h-6 sm:w-12 items-center rounded-full transition-colors duration-300 ${enabled ? "bg-green-600" : "bg-black"
-                    }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${enabled
-                      ? "translate-x-5 sm:translate-x-6"
-                      : "translate-x-0.5 sm:translate-x-1"
-                      }`}
-                  />
-                </button>
+                    <Link
+                      href="/B2B/become-a-seller"
+                      className="text-sm hover:text-cyan-300"
+                    >
+                      Become a Seller
+                    </Link>
+                    <Link href="/product" className="text-sm hover:text-cyan-300">
+                      Products
+                    </Link>
+                    <Link
+                      href="/B2B/live-stock"
+                      className="text-sm hover:text-cyan-300"
+                    >
+                      Live Stock
+                    </Link>
+                    <Link href="/about" className="text-sm hover:text-cyan-300">
+                      About Us
+                    </Link>
+                    <Link href="/News" className="text-sm hover:text-cyan-300">
+                      News
+                    </Link>
+
+
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/B2B/live-stock"
+                      className="text-sm hover:text-cyan-300"
+                    >
+                      Live Stock
+                    </Link>
+                    <Link href="/product" className="text-sm hover:text-cyan-300">
+                      Products
+                    </Link>
+                    <Link
+                      href="/B2B/seller"
+                      className="text-sm hover:text-cyan-300"
+                    >
+                      Sellers
+                    </Link>
+                    <Link href="/about" className="text-sm hover:text-cyan-300">
+                      About Us
+                    </Link>
+                    <Link href="/News" className="text-sm hover:text-cyan-300">
+                      News
+                    </Link>
+
+                  </>
+                )}
               </div>
+
             </div>
 
             {/* Search Bar */}
@@ -226,105 +258,156 @@ const Topbar = () => {
             </div>
 
             {/* Right Section (Login / User) */}
-            <div className="flex items-end justify-end">
-              <div className="flex items-center gap-3 relative">
-                {isLoggedIn ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
-                          {getInitials(user?.user_name)}
-                        </div>
-                        <span className="hidden md:inline text-sm font-medium text-gray-800">
-                          {user?.name}
-                        </span>
-                        <ChevronDown className="w-4 h-4 text-gray-600" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-48 rounded-lg border border-gray-200 shadow-md bg-white text-black"
-                    >
-                      <DropdownMenuLabel className="text-sm font-medium bg-white text-black">
-                        My Account
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
+            <div className="flex gap-4">
+              <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
+                {/* B2C Button (Active when enabled is false) */}
+                <button
+                  onClick={() => {
+                    if (!enabled) return;
+                    setEnabled(false);
+                    localStorage.setItem("mode", "B2C");
+                    router.push("/");
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
+                  }}
+                  // We use inline style for the background color to utilize theme.bg1 dynamically
+                  style={{
+                    backgroundColor: !enabled ? theme.toggle : "transparent"
+                  }}
+                  className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${!enabled
+                    ? "text-white shadow-sm" // Active State (bg handled by style)
+                    : "text-gray-500 hover:text-gray-900" // Inactive State
+                    }`}
+                >
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  B2C
+                </button>
 
-
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/buyer3/dashboard"
-                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                        >
-                          <LayoutDashboard className="w-4 h-4 text-gray-600" />
-                          Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/buyer3/profile"
-                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                        >
-                          <User className="w-4 h-4 text-gray-600" />
-                          Profile
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/buyer3/chat"
-                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                        >
-                          <MessageCircle className="w-4 h-4 text-gray-600" />
-                          Chat
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/buyer3/subscriptions"
-                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                        >
-                          <CreditCard className="w-4 h-4 text-gray-600" />
-                          Subscription
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/buyer3/changepassword"
-                          className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                        >
-                          <Lock className="w-4 h-4 text-gray-600" />
-                          Change Password
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-sm text-black cursor-pointer hover:bg-gray-100"
-                      >
-                        <LogOut className="w-4 h-4 text-gray-600" />
-                        Logout
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-
-                  </DropdownMenu>
-                ) : (
-                  <Link
-                    href="/buyer-login"
-                    className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md `}
-                    style={{ backgroundColor: theme.buttoncolor }}
-                  >
-                    <User className="w-4 h-4" />
-                    Login
-                  </Link>
-                )}
-
+                {/* B2B Button (Active when enabled is true) */}
+                <button
+                  onClick={() => {
+                    if (enabled) return;
+                    setEnabled(true);
+                    localStorage.setItem("mode", "B2B");
+                    router.push("/");
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
+                  }}
+                  // We use inline style for the background color to utilize theme.bg1 dynamically
+                  style={{
+                    backgroundColor: enabled ? theme.toggle : "transparent"
+                  }}
+                  className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${enabled
+                    ? "text-white shadow-sm" // Active State (bg handled by style)
+                    : "text-gray-500 hover:text-gray-900" // Inactive State
+                    }`}
+                >
+                  <Building2 className="mr-2 h-4 w-4" />
+                  B2B
+                </button>
               </div>
 
-            </div>
+              <div className="flex items-end justify-end">
+                <div className="flex items-center gap-3 relative">
+                  {isLoggedIn ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                          <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+                            {getInitials(user?.user_name)}
+                          </div>
+                          <span className="hidden md:inline text-sm font-medium text-gray-800">
+                            {user?.name}
+                          </span>
+                          <ChevronDown className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-48 rounded-lg border border-gray-200 shadow-md bg-white text-black"
+                      >
+                        <DropdownMenuLabel className="text-sm font-medium bg-white text-black">
+                          My Account
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
 
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/buyer3/dashboard"
+                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                          >
+                            <LayoutDashboard className="w-4 h-4 text-gray-600" />
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/buyer3/profile"
+                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                          >
+                            <User className="w-4 h-4 text-gray-600" />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/buyer3/chat"
+                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                          >
+                            <MessageCircle className="w-4 h-4 text-gray-600" />
+                            Chat
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/buyer3/subscriptions"
+                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                          >
+                            <CreditCard className="w-4 h-4 text-gray-600" />
+                            Subscription
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/buyer3/changepassword"
+                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
+                          >
+                            <Lock className="w-4 h-4 text-gray-600" />
+                            Change Password
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 text-sm text-black cursor-pointer hover:bg-gray-100"
+                        >
+                          <LogOut className="w-4 h-4 text-gray-600" />
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+
+                    </DropdownMenu>
+                  ) : (
+                    <Link
+                      href="/buyer-login"
+                      className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md `}
+                      style={{ backgroundColor: theme.buttoncolor }}
+                    >
+                      <User className="w-4 h-4" />
+                      Login
+                    </Link>
+                  )}
+
+                </div>
+
+              </div>
+            </div>
             <nav className="relative">
               {/* Your regular desktop navigation */}
 
@@ -435,7 +518,7 @@ const Topbar = () => {
       {/* 🔹 Category Navbar */}
       <div className="bg-slate-800 text-white">
         <div className="container mx-auto px-4">
-          <div className="hidden lg:flex items-center gap-6">
+          {/* <div className="hidden lg:flex items-center gap-6">
             <TopbarWithCategories />
             {enabled ? (
               <>
@@ -468,7 +551,6 @@ const Topbar = () => {
                   News
                 </Link>
 
-                {/* ✅ Show only if buyer logged in */}
 
               </>
             ) : (
@@ -495,15 +577,14 @@ const Topbar = () => {
                   News
                 </Link>
 
-                {/* ✅ Show only if buyer logged in */}
-                {/* {isLoggedIn && (
+                {isLoggedIn && (
                   <Link href="/order" className="text-sm hover:text-cyan-300">
                     My Orders
                   </Link>
-                )} */}
+                )}
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
 
