@@ -71,7 +71,7 @@ export default function ProductInsights() {
 
   return (
     <div
-      className={`w-full   my-16  ${theme.Bg}`}
+      className={`w-full   my-10  ${theme.Bg}`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
@@ -161,61 +161,79 @@ function ProductCard({
   type,
 }: ProductCardProps) {
   const typeColors = {
-    Premium: "bg-blue-50 text-blue-600",
-    Standard: "bg-green-50 text-green-600",
-    Industrial: "bg-amber-50 text-amber-600",
-    Specialty: "bg-purple-50 text-purple-600",
-    Packaging: "bg-red-50 text-red-600",
+    Premium: "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200",
+    Standard: "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-emerald-200",
+    Industrial: "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-amber-200",
+    Specialty: "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-purple-200",
+    Packaging: "bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-rose-200",
   };
 
+  const { theme } = useTheme();
+
   return (
-    <div className="w-[300px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white border border-slate-100 flex flex-col">
-      <div className="flex justify-between items-center p-4 border-b border-slate-100">
-        <h3 className="font-bold text-slate-800 text-lg">{title}</h3>
-        <span className={`text-xs px-2 py-1 rounded-full ${typeColors[type]}`}>
-          {type}
-        </span>
+    <div className="group w-[320px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-white border-2 border-slate-200 hover:border-cyan-400 flex flex-col hover:scale-105 hover:-translate-y-1">
+      {/* Header with gradient background */}
+      <div className="relative   p-5"
+        style={{
+          backgroundColor: theme.bg1,
+        }}>
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-bold text-white text-xl leading-tight flex-1 pr-2">
+            {title}
+          </h3>
+          <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${typeColors[type]} `}>
+            {type}
+          </span>
+        </div>
+        {/* <p className="text-sm text-slate-300 line-clamp-1">
+          {subtitle}
+        </p> */}
+
+        {/* Decorative element */}
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-cyan-500/10 to-transparent rounded-tl-full"></div>
       </div>
 
-      <div className="p-4 flex-1">
-        <p className="text-sm text-slate-500 mb-3 line-clamp-2 h-10">
-          {subtitle}
-        </p>
-
-        <div className="flex items-end gap-2 mb-1">
-          <span className="text-2xl font-bold text-slate-800">
+      {/* Price Section */}
+      <div className="p-6 flex-1 bg-gradient-to-br from-white to-slate-50">
+        <div className="flex items-end gap-2 mb-2">
+          <span className="text-4xl font-black text-slate-800">
             ₹{price.toFixed(2)}
           </span>
-          <span className="text-slate-600 text-sm">/ kg</span>
-
-          <div
-            className={`flex items-center ml-auto text-xs font-medium ${isPositive
-              ? "text-green-600"
-              : change === 0
-                ? "text-slate-500"
-                : "text-red-600"
-              }`}
-          >
-            {isPositive ? (
-              <ArrowUp className="w-3 h-3 mr-0.5" />
-            ) : change === 0 ? null : (
-              <ArrowDown className="w-3 h-3 mr-0.5" />
-            )}
-            {change === 0 ? "0.00 %" : `${change.toFixed(2)} %`}
-          </div>
+          <span className="text-slate-500 text-base font-medium mb-1">/ kg</span>
         </div>
+
+        {/* Change indicator with enhanced styling */}
+        {/* <div
+          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold ${isPositive
+            ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-200"
+            : change === 0
+              ? "bg-slate-200 text-slate-600"
+              : "bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-lg shadow-red-200"
+            }`}
+        >
+          {isPositive ? (
+            <ArrowUp className="w-4 h-4" />
+          ) : change === 0 ? null : (
+            <ArrowDown className="w-4 h-4" />
+          )}
+          {change === 0 ? "No Change" : `${change > 0 ? '+' : ''}${change.toFixed(2)}%`}
+        </div> */}
       </div>
 
-      <div className="bg-slate-50 p-3 text-xs text-slate-600 flex justify-between items-center">
-        <span>{date}</span>
-        <div className="flex items-center">
-          <MapPin className="w-3 h-3 mr-1 text-slate-400" />
-          {location}
+      {/* Footer */}
+      <div className="bg-gradient-to-r from-slate-100 to-slate-200 p-4 text-sm font-medium text-slate-700 flex justify-between items-center border-t-2 border-slate-300">
+        {/* <span className="flex items-center gap-1">
+          📅 {date}
+        </span> */}
+        <div className="flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow-sm">
+          <MapPin className="w-3.5 h-3.5 text-cyan-600" />
+          <span className="text-slate-800 font-semibold">{location}</span>
         </div>
       </div>
     </div>
   );
 }
+
 
 
 function ProductCardSkeleton() {

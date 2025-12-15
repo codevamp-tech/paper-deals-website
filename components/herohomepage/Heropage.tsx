@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, ChevronRight, ShoppingCart } from "lucide-react";
+import { Search, ChevronRight, ShoppingCart, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import BioImageSec from "../ImageOrBio/ImageAndBio";
+import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/hooks/use-theme";
-
-const b2cImages = ["/banner2.png", "/banner3.jpg"];
-const b2bImages = ["/banner1.png"];
+import Link from "next/link";
 
 const Hero = () => {
-  const [current, setCurrent] = useState(0);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
@@ -24,18 +21,6 @@ const Hero = () => {
     const stored = localStorage.getItem("mode");
     if (stored === "B2C") setMode("B2C");
   }, []);
-
-  const images = mode === "B2C" ? b2cImages : b2bImages;
-
-  // Slider only for B2C
-  useEffect(() => {
-    if (mode === "B2C") {
-      const interval = setInterval(() => {
-        setCurrent((prev) => (prev + 1) % images.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [mode, images.length]);
 
   // Search API
   useEffect(() => {
@@ -81,152 +66,237 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative py-[12vh] overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        {images.map((src, index) => (
-          <img
-            key={index}
-            src={src}
-            className={`absolute w-full h-full object-cover transition-opacity duration-700 ${index === current ? "opacity-100" : "opacity-0"
-              }`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-black/40 z-10" />
-      </div>
+    <>
+      {mode === "B2C" ? (
+        // B2C HERO SECTION
+        <section className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <div className="absolute inset-0 bg-[url('/abstract-paper-texture-pattern.jpg')] opacity-10" />
+          <div className="container relative mx-auto px-4 py-20 md:py-28">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6 animate-fade-in">
+                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  Premium Paper Products
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                  Quality Paper Products for Every Need
+                </h1>
+                <p className="text-lg md:text-xl text-white/90">
+                  From everyday printing to professional projects, discover our wide range of premium paper products
+                  delivered right to your door.
+                </p>
 
-      {/* HERO CONTENT */}
-      <div className="relative z-30">
-        <div className="container mx-auto px-4 text-center max-w-4xl">
+                {/* Search Bar */}
+                <div className="relative group w-full max-w-xl">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </div>
 
-          {/* Change text by MODE */}
-          {mode === "B2C" ? (
-            <>
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                Transform Your Everyday with{" "}
-                <span className="text-gray-200">Premium Paper Essentials</span>
-              </h1>
-              <p className="text-xl text-zinc-200 mb-8">
-                Discover high-quality paper products that elevate your day-to-day life.
-              </p>
-            </>
-          ) : (
-            <>
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                Revolutionize{" "}
-                <span className="text-gray-200">Your Business with Premium Paper</span>
-              </h1>
-              <p className="text-xl text-zinc-200 mb-8">
-                High-quality paper products designed for modern B2B needs.
-              </p>
-            </>
-          )}
+                  <input
+                    type="text"
+                    placeholder="Search by product or category..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  />
 
-          {/* CTA BUTTON + SEARCH BAR IN ONE LINE */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full mt-6">
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  </div>
 
-            {/* SEARCH BAR */}
-            <div className="w-full max-w-xl">
-              <div className="relative group w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  {results.length > 0 && (
+                    <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
+                      {results.map((item) => (
+                        <li
+                          key={item.id}
+                          onClick={() => handleSelect(item)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                        >
+                          <div className="flex justify-between">
+                            <span className="font-medium text-gray-800">
+                              {item.product_name}
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+                              Product
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            Category: {item.category?.name || item.category_id}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
 
-                <input
-                  type="text"
-                  placeholder="Search by product or category..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg"
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    size="lg"
+                    className="group bg-white text-blue-600 hover:bg-gray-100"
+                    onClick={() => router.push("/product")}
+                  >
+                    Shop Now
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                    asChild
+                  >
+                    <Link href="/about">Learn More</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="relative animate-fade-in-up">
+                <img
+                  src="/banner2.png"
+                  alt="Paper Products"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
                 />
-
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
-                </div>
-
-                {results.length > 0 && (
-                  <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
-                    {results.map((item) => (
-                      <li
-                        key={item.id}
-                        onClick={() => handleSelect(item)}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                      >
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-800">
-                            {item.product_name}
-                          </span>
-                          <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                            Product
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">
-                          Category: {item.category?.name || item.category_id}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </div>
-            <Button
-              onClick={() => router.push("/product")}
-              className="text-white px-8 py-6 text-lg whitespace-nowrap"
-              style={{ backgroundColor: theme.buttoncolor }}
-            >
-              {mode === "B2C" ? "Shop Now" : "Order Now"}
-              <ShoppingCart className="ml-2" />
-            </Button>
-
           </div>
 
-        </div>
-      </div>
-
-      {/* ⭐ SHOW STATS BASED ON MODE */}
-      {mode === "B2C" ? (
-       <div className="w-full bg-black/50 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
-          <div>
-            <h3 className="text-xl font-bold">500K+</h3>
-            <p>Happy Customers</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">🚚 Fast & Reliable</h3>
-            <p>Delivery</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">1 Million+</h3>
-            <p>Products Sold</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">🏆 Top Rated</h3>
-            <p>Service</p>
-          </div>
-        </div>
+          {/* B2C Stats */}
+          {/* <div className="w-full bg-black/30 backdrop-blur-md py-8 text-white">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-6">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">500K+</h3>
+                  <p className="text-white/80">Happy Customers</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">🚚 Fast</h3>
+                  <p className="text-white/80">Delivery</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">1M+</h3>
+                  <p className="text-white/80">Products Sold</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">🏆 Top</h3>
+                  <p className="text-white/80">Rated Service</p>
+                </div>
+              </div>
+            </div>
+          </div> */}
+        </section>
       ) : (
-        <div className="w-full bg-black/50 backdrop-blur-md py-6 text-white grid grid-cols-2 md:grid-cols-4 text-center gap-6 mt-8">
-          <div>
-            <h3 className="text-xl font-bold">400K+</h3>
-            <p>Raw Materials Prices</p>
+        // B2B HERO SECTION
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#0F9D58]/95 to-[#0B7D46]/80 text-white">
+          <div className="absolute inset-0 bg-[url('/hero-banner.png')] opacity-10" />
+          <div className="container relative mx-auto px-4 py-20 md:py-28">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6 animate-fade-in">
+                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  B2B Solutions
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                  Industrial Paper Solutions for Your Business
+                </h1>
+                <p className="text-lg md:text-xl text-white/90">
+                  Wholesale pricing, bulk ordering, and custom manufacturing solutions for businesses. From raw materials
+                  to finished products.
+                </p>
+
+                {/* Search Bar */}
+                <div className="relative group w-full max-w-xl">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </div>
+
+                  <input
+                    type="text"
+                    placeholder="Search by product or category..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  />
+
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  </div>
+
+                  {results.length > 0 && (
+                    <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
+                      {results.map((item) => (
+                        <li
+                          key={item.id}
+                          onClick={() => handleSelect(item)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                        >
+                          <div className="flex justify-between">
+                            <span className="font-medium text-gray-800">
+                              {item.product_name}
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+                              Product
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            Category: {item.category?.name || item.category_id}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    size="lg"
+                    className="group bg-white text-slate-800 hover:bg-gray-100"
+                    onClick={() => router.push("/product")}
+                  >
+                    Request Quote
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-slate-800 bg-transparent"
+                    asChild
+                  >
+                    <Link href="/livestock">View Livestock</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="relative animate-fade-in-up">
+                <img
+                  src="/banner1.png"
+                  alt="Industrial Paper Products"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold">1 Million+</h3>
-            <p>SMEs Empowered</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">500K+</h3>
-            <p>Orders Delivered</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">30+</h3>
-            <p>Countries Served</p>
-          </div>
-        </div>
+
+          {/* B2B Stats */}
+          {/* <div className="w-full bg-black/30 backdrop-blur-md py-8 text-white">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-6">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">400K+</h3>
+                  <p className="text-white/80">Raw Materials Prices</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">1M+</h3>
+                  <p className="text-white/80">SMEs Empowered</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">500K+</h3>
+                  <p className="text-white/80">Orders Delivered</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold">30+</h3>
+                  <p className="text-white/80">Countries Served</p>
+                </div>
+              </div>
+            </div>
+          </div> */}
+        </section>
       )}
-
-
-      {/* <BioImageSec /> */}
-    </section>
+    </>
   );
 };
 
