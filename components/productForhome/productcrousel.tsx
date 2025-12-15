@@ -11,6 +11,8 @@ import {
 import { useTheme } from "@/hooks/use-theme";
 import { useRouter } from "next/navigation"; // ✅ added
 
+
+
 export default function ProductCrousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
@@ -21,26 +23,25 @@ export default function ProductCrousel() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks?page=1&limit=10`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product?page=1&limit=10`
         );
         const data = await res.json();
 
-        if (data && Array.isArray(data.data)) {
-          const mapped = data.data.map((item: any) => ({
+        if (data && Array.isArray(data.products)) {
+          const mapped = data.products.map((item: any) => ({
             id: item.id,
-            title: item.product_name || "Untitled",
-            subtitle: `${item.gsm || ""} ${item.shade || ""}`.trim() || "—",
-            price: item.price_per_kg ?? 0,
-            change: 0,
-            isPositive: false,
-            date: item.created_at
-              ? new Date(item.created_at).toLocaleDateString()
-              : "—",
-            location: item.category_id || "—",
-            type: "Premium",
+            title: item.product_name,
+            subtitle: `${item.gsm} GSM • ${item.shade}`,
+            price: item.price_per_kg,
+            date: new Date(item.created_at).toLocaleDateString(),
+            type: item.category?.name || "Product",
+            image: item.image,
+            city: item.city,
           }));
+
           setProducts(mapped);
         }
+
       } catch (error) {
         console.error("Error fetching insights:", error);
       }
@@ -113,11 +114,10 @@ export default function ProductCrousel() {
                       title={p.title}
                       subtitle={p.subtitle}
                       price={p.price}
-                      change={p.change}
-                      isPositive={p.isPositive}
                       date={p.date}
-                      location={p.location}
                       type={p.type}
+                      image={p.image}
+                      city={p.city}
                     />
                   ))}
                 </div>
@@ -135,107 +135,77 @@ interface ProductCardProps {
   title: string;
   subtitle: string;
   price: number;
-  change: number;
-  isPositive: boolean;
   date: string;
-  location: string;
-  type: "Premium" | "Standard" | "Industrial" | "Specialty" | "Packaging";
+  type: string;
+  image: string;
+  city: string;
 }
+
 
 function ProductCard({
   id,
   title,
   subtitle,
   price,
-  change,
-  isPositive,
   date,
   type,
+  image,
+  city,
 }: ProductCardProps) {
-  const router = useRouter(); // ✅ for navigation
-
-  const handleClick = () => {
-    router.push(`/product/${id}`); // ✅ Navigate to product detail page
-  };
-
-  const typeColors = {
-    Premium: "from-blue-500 to-cyan-500",
-    Standard: "from-green-500 to-emerald-500",
-    Industrial: "from-amber-500 to-orange-500",
-    Specialty: "from-purple-500 to-pink-500",
-    Packaging: "from-red-500 to-rose-500",
-  };
-
-  const typeIcons = {
-    Premium: "✦",
-    Standard: "●",
-    Industrial: "▲",
-    Specialty: "★",
-    Packaging: "■",
-  };
+  const router = useRouter();
 
   return (
     <div
-      onClick={handleClick}
-      className="group w-[380px] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border border-slate-200 hover:border-blue-300 hover:-translate-y-1 cursor-pointer"
+      onClick={() => router.push(`/product/${id}`)}
+      className="group w-[300px] rounded-xl overflow-hidden bg-white border border-slate-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
     >
-      <div
-        className={`h-24 bg-gradient-to-br ${typeColors[type]} relative overflow-hidden`}
-      >
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs font-semibold flex items-center gap-1.5">
-          <span className="text-sm">{typeIcons[type]}</span>
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={image || "/placeholder.svg"}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+
+        {/* Category Badge */}
+        <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
           {type}
-        </div>
-        <div className="absolute bottom-3 left-4">
-          <Package className="w-8 h-8 text-white/40" />
-        </div>
+        </span>
       </div>
 
-      <div className="p-5">
-        <div className="mb-4">
-          <h3 className="font-bold text-slate-900 text-xl mb-1.5 line-clamp-1">
-            {title}
-          </h3>
-          <p className="text-sm text-slate-500 line-clamp-1">{subtitle}</p>
-        </div>
+      {/* Content */}
+      <div className="p-4">
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-slate-900 mb-1 line-clamp-1">
+          {title}
+        </h3>
 
-        <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-bold text-slate-900">
-              ₹{price ? price.toFixed(2) : "0.00"}
-            </span>
-            <span className="text-slate-500 text-sm font-medium">/ kg</span>
+        {/* Specs */}
+        <p className="text-sm text-slate-500 mb-2 line-clamp-1">
+          {subtitle}
+        </p>
+
+        {/* Location */}
+        <p className="text-xs text-slate-400 mb-3">
+          📍 {city || "India"}
+        </p>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xl font-bold text-blue-600">
+              ₹{price}
+            </div>
+            <div className="text-xs text-slate-400">
+              Listed on {date}
+            </div>
           </div>
 
-          <div
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg font-semibold text-sm ${isPositive
-              ? "bg-green-50 text-green-700"
-              : change === 0
-                ? "bg-slate-50 text-slate-600"
-                : "bg-red-50 text-red-700"
-              }`}
-          >
-            {isPositive ? (
-              <ArrowUp className="w-4 h-4" />
-            ) : change === 0 ? (
-              <TrendingUp className="w-4 h-4" />
-            ) : (
-              <ArrowDown className="w-4 h-4" />
-            )}
-            {change === 0 ? "0.00%" : `${change.toFixed(2)}%`}
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-500 font-medium">Listed on</span>
-          <span className="text-slate-700 font-semibold bg-slate-50 px-3 py-1 rounded-lg">
-            {date}
-          </span>
+          <button className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90">
+            View
+          </button>
         </div>
       </div>
-
-      <div className="h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left bg-[#173a8a]"></div>
     </div>
   );
 }

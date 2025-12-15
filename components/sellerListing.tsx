@@ -2,6 +2,7 @@
 import RequirementModal from "@/components/modal/TellUsModal";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { Award, MapPin, Package, Star } from "lucide-react";
 
 export default function SellerList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,11 +37,19 @@ export default function SellerList() {
   // ✅ Unique categories dynamically
   const categories = useMemo(() => {
     const allCats = sellers
-      .flatMap((seller) => seller.organization?.materials_used_names || [])
+      .flatMap(
+        (seller) => seller.organization?.materials_used_names || []
+      )
       .filter(Boolean);
-    const unique = Array.from(new Set(allCats));
-    return ["All", ...unique];
+
+    return ["All", ...Array.from(new Set(allCats))];
   }, [sellers]);
+
+
+  const handleCategoryFilter = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // Always reset to page 1 when filtering
+  };
 
   // ✅ Filter sellers by category
   const filteredSellers = sellers.filter((seller) => {
@@ -223,21 +232,22 @@ export default function SellerList() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
-        <select
-          value={selectedCategory}
-          onChange={(e) => {
-            setSelectedCategory(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {categories.map((cat, idx) => (
-            <option key={idx} value={cat}>
-              {cat === "All" ? "All Categories" : cat}
-            </option>
+      <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => handleCategoryFilter(cat)}
+              className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat
+                  ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+            >
+              {cat}
+            </button>
           ))}
-        </select>
+        </div>
+
       </div>
 
       {/* Sellers */}
@@ -251,8 +261,8 @@ export default function SellerList() {
         <p className="text-center text-gray-600">No sellers found.</p>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            {selectedSellers.map((seller, index) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {selectedSellers.map((seller) => {
               const org = seller.organization || {};
               const ratingData = ratingsData[seller.id] || {
                 average: 0,
@@ -261,90 +271,107 @@ export default function SellerList() {
 
               return (
                 <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden max-w-md mx-auto flex flex-col h-full"
-
+                  key={seller.id}
+                  className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden cursor-pointer"
+                  onClick={() => router.push(`/B2B/seller/${seller.id}`)}
                 >
-                  {/* Card Content */}
-                  <div className="p-5">
-                    {/* Top Section: Logo + Info */}
+                  {/* Card Header */}
+                  <div className="p-6">
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/mainimg.png"
-                          alt="company logo"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-gray-900 truncate">
-                          {`KPDS_${seller.id}`}
-                        </h3>
-
-                        <span
-                          className={`inline-block mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${seller.approved === "1"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-500 text-white"
-                            }`}
-                        >
-                          {seller.approved === "1" ? "Verified" : "Not Verified"}
-                        </span>
-
-                        {/* Rating Stars */}
-                        <div className="flex items-center mt-2 space-x-0.5">
-                          {[...Array(5)].map((_, i) => (
-                            <svg
-                              key={i}
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill={
-                                i < Math.round(ratingData.average)
-                                  ? "#facc15"
-                                  : "none"
-                              }
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="#facc15"
-                              className="w-4 h-4"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M11.48 3.5a.562.562 0 011.04 0l2.125 4.308a.563.563 0 00.424.308l4.753.691a.563.563 0 01.312.96l-3.438 3.35a.563.563 0 00-.162.498l.812 4.736a.563.563 0 01-.817.593l-4.25-2.23a.563.563 0 00-.524 0l-4.25 2.23a.563.563 0 01-.818-.593l.813-4.736a.563.563 0 00-.162-.498L2.866 9.767a.563.563 0 01.312-.96l4.753-.691a.563.563 0 00.424-.308L10.48 3.5z"
-                              />
-                            </svg>
-                          ))}
-                          <span className="text-xs text-gray-600 ml-1">
-                            {ratingData.average.toFixed(1)} ({ratingData.reviews})
-                          </span>
+                      {/* Avatar */}
+                      <div className="relative">
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0">
+                          <img
+                            src="/mainimg.png"
+                            alt="company logo"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                       </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-1">
+                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                            KPDS_{seller.id}
+                          </h3>
+                          {seller.approved === "1" && (
+                            <Award className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                          )}
+                        </div>
+
+                        {seller.approved === "1" && (
+                          <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                            Top Rated
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Details Section */}
-                    <div className="text-sm text-gray-700 space-y-1.5 mb-4">
-                      <p>
-                        <span className="font-semibold">Company ID:</span> KPDS_{seller.id}
-                      </p>
-                      <p>
-                        <span className="font-semibold">City:</span> {org.city || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Type:</span>{" "}
-                        {seller.user_type === 2 ? "Wholeseller" : "Distributor"}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Deals In:</span>{" "}
-                        {org.materials_used_names && org.materials_used_names.length > 0
-                          ? org.materials_used_names.join(", ")
-                          : "Not Available"}
-                      </p>
+                    {/* Description */}
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {seller.user_type === 2
+                        ? "Leading supplier of premium materials and specialty products"
+                        : "Bulk distributor of industrial supplies"}
+                    </p>
+
+                    {/* Location */}
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                      <MapPin className="h-4 w-4 text-gray-400" />
+                      <span>{org.city || "N/A"}</span>
                     </div>
 
-                    {/* Action Button */}
+                    {/* Rating & Products */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-bold text-gray-900">
+                          {ratingData.average.toFixed(1)}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          ({ratingData.reviews})
+                        </span>
+                      </div>
+                      {/* <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Package className="h-4 w-4" />
+                        <span>156 products</span>
+                      </div> */}
+                    </div>
+
+                    {/* Specialties/Materials */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {org.materials_used_names &&
+                        org.materials_used_names.length > 0 ? (
+                        org.materials_used_names.slice(0, 3).map((material, idx) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
+                          >
+                            {material}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                          General Trade
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Years in Business */}
+                    {/* <div className="text-xs text-gray-600 mb-4">
+                      <span className="font-medium">
+                        {Math.floor(Math.random() * 15) + 5}
+                      </span>{" "}
+                      years in business
+                    </div> */}
+
+                    {/* View Profile Button */}
                     <button
-                      onClick={() => router.push(`/B2B/seller/${seller.id}`)}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-300"
+                      className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/B2B/seller/${seller.id}`);
+                      }}
                     >
                       View Profile
                     </button>
@@ -353,6 +380,8 @@ export default function SellerList() {
               );
             })}
           </div>
+
+
 
           {/* Pagination */}
           {totalPages > 1 && (
