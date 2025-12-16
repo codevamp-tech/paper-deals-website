@@ -38,7 +38,7 @@ export default function ServicesGrid() {
   ];
 
   return (
-    <div className={`py-10 ${theme.Bg}`}>
+    <div className={`pb-5 pt-10 ${theme.Bg}`}>
       <p
         className={`text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center ${theme.Text}`}
       >
@@ -51,7 +51,7 @@ export default function ServicesGrid() {
         place.
       </p>
 
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service, index) => (
             <div
