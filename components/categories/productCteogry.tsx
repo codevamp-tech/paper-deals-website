@@ -22,9 +22,8 @@ const PAGINATION_CONFIG = {
   minPage: 1,
 }
 
-export default function Categories({
-  title = "Explore Our Categories",
-  description = "Tap to access expertise across supply chains. Get Quotations, Prices, and Latest News Instantly",
+export default function ProductCategories({
+
 }: CategoriesProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -65,20 +64,19 @@ export default function Categories({
   const secondRowCategories = categories.slice(midpoint)
 
   return (
-    <section className="w-full overflow-hidden pt-12 px-1 sm:px-2 lg:px-4 bg-gradient-to-b from-background via-background to-muted/20">
+    <section className="w-full overflow-hidden pt-8 px-1 sm:px-2 lg:px-4 bg-gradient-to-b from-background via-background to-muted/20">
       <div className="max-w-7xl mx-auto">
-        <header className="text-center mb-16 sm:mb-20">
-          <h2
-            className={`${theme.Text} text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent`}
-          >
-            {title}
-          </h2>
-          <p className="flex justify-center text-[3vh] text-center pb-4 pt-4 ">{description}</p>
+        <header className="text-center mb-2 sm:mb-5">
+          <h1 className="text-black text-3xl md:text-4xl font-bold text-center mb-10">
+            Explore Our {" "}
+            <span className="text-blue-500">Categories</span>
+          </h1>
+          {/* <p className="flex justify-center text-[3vh] text-center pb-4 pt-4 ">{description}</p> */}
         </header>
 
         {error && (
           <div
-            className="mb-8 p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm backdrop-blur-sm shadow-lg"
+            className="mb-8 p-2 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm backdrop-blur-sm shadow-lg"
             role="alert"
           >
             {error}

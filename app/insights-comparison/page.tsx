@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ShoppingCart, Trash2, X } from "lucide-react";
+import Pagination from "@/components/pagination";
 
 function ProductSkeleton() {
   return (
@@ -40,9 +41,11 @@ export default function PaperProductsComparison() {
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const router = useRouter();
+  const ITEMS_PER_PAGE = 9;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Dropdown states
   // Dropdown states
   const [priceDropdownOpen, setPriceDropdownOpen] = useState(false);
   const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
@@ -95,7 +98,7 @@ export default function PaperProductsComparison() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/live-price`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/live-price?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
         );
         const data = await res.json();
 
@@ -111,6 +114,7 @@ export default function PaperProductsComparison() {
             date: item.updated_at || "—",
           }));
           setProducts(mapped);
+          setTotalPages(data.totalPages);
         } else {
           setProducts([]);
         }
@@ -123,7 +127,7 @@ export default function PaperProductsComparison() {
     };
 
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   // ✅ Get unique companies (mills)
   const companies = [
@@ -225,6 +229,13 @@ export default function PaperProductsComparison() {
     setSelectedProduct("All");
     setSelectedCity("All");
   };
+
+
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCity, selectedCompany, selectedProduct, selectedPriceRange]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
@@ -390,8 +401,8 @@ export default function PaperProductsComparison() {
           {loading ? (
             // 👇 Show 6 skeleton cards
             Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
-          ) : filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
+          ) : products.length > 0 ? (
+            products.map((product) => (
               <Card
                 key={product._id}
                 className="bg-white shadow-sm hover:shadow-lg transition"
@@ -485,6 +496,46 @@ export default function PaperProductsComparison() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-10">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              Prev
+            </Button>
+
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const page = i + 1;
+              return (
+                <Button
+                  key={page}
+                  size="sm"
+                  variant={currentPage === page ? "default" : "outline"}
+                  className={currentPage === page ? "bg-blue-600 text-white" : ""}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+
+
       </div>
       {/* Cart Sidebar */}
       {/* Sleek Animated Cart Sidebar */}
@@ -580,7 +631,6 @@ export default function PaperProductsComparison() {
           </div>
         </div>
       )}
-
 
     </div>
   );

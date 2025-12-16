@@ -27,19 +27,14 @@ export default function Home() {
     setEnabled(savedMode === "B2B" ? true : false)
 
   }, [])
-  return (<div className="min-h-screen"> {/* Hero Section P2 and add intro below*/}
-
-
+  return (<div className="min-h-screen">
     {/* Hero Section */}
     <Hero />
-
-    {/* Insight  */}
 
     {/* Categories */}
     {enabled &&
       <Categories />
     }
-
 
     {enabled &&
       <SellerOrBuyer />
@@ -49,15 +44,14 @@ export default function Home() {
 
     <Advertising />
 
-
-
-
-    {/* <ProductCrousel /> */}
     {/* Our Services */}
     <ServicesGrid />
+
+    {/* <ProductCrousel /> */}
     {!enabled &&
       <ProductCrousel />
     }
+
     {/* Ready To Order */}
     <ReadyToOrder />
 
@@ -69,13 +63,12 @@ export default function Home() {
     {/* Testimonials */}
     <TestimonialsSection />
 
-
-
     {/* AssumptionPartner */}
     <AssumptionPartner />
 
     {/* FAQ Section */}
     <FaqSection />
+
   </div>
   );
 }

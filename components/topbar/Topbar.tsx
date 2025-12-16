@@ -148,56 +148,54 @@ const Topbar = () => {
                   <>
                     <Link
                       href="/B2B/consultants"
-                      className="text-sm hover:text-cyan-300"
+                      className="text-sm "
                     >
                       Consultants
                     </Link>
 
                     <Link
                       href="/B2B/become-a-seller"
-                      className="text-sm hover:text-cyan-300"
+                      className="text-sm "
                     >
                       Become a Seller
                     </Link>
-                    <Link href="/product" className="text-sm hover:text-cyan-300">
+                    <Link href="/product" className="text-sm ">
                       Products
                     </Link>
                     <Link
                       href="/B2B/live-stock"
-                      className="text-sm hover:text-cyan-300"
+                      className="text-sm "
                     >
                       Live Stock
                     </Link>
-                    <Link href="/about" className="text-sm hover:text-cyan-300">
+                    <Link href="/about" className="text-sm ">
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm hover:text-cyan-300">
+                    <Link href="/News" className="text-sm ">
                       News
                     </Link>
-
-
                   </>
                 ) : (
                   <>
                     <Link
                       href="/B2B/live-stock"
-                      className="text-sm hover:text-cyan-300"
+                      className="text-sm "
                     >
                       Live Stock
                     </Link>
-                    <Link href="/product" className="text-sm hover:text-cyan-300">
+                    <Link href="/product" className="text-sm ">
                       Products
                     </Link>
                     <Link
                       href="/B2B/seller"
-                      className="text-sm hover:text-cyan-300"
+                      className="text-sm "
                     >
                       Sellers
                     </Link>
-                    <Link href="/about" className="text-sm hover:text-cyan-300">
+                    <Link href="/about" className="text-sm ">
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm hover:text-cyan-300">
+                    <Link href="/News" className="text-sm ">
                       News
                     </Link>
 
@@ -208,7 +206,7 @@ const Topbar = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="hidden md:flex items-center flex-1 justify-center">
+            {/* <div className="hidden md:flex items-center flex-1 justify-center">
               {showSearch && (
                 <div className="hidden md:flex items-center flex-1 mx-6 relative">
                   <div className="relative w-full max-w-md">
@@ -218,44 +216,37 @@ const Topbar = () => {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
-                    />
-
-                    {/* 🔹 Search Icon on Right */}
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
-
-                    {/* 🔽 Dropdown Results */}
-                    {results.length > 0 && (
-                      <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
-                        {results.map((item) => (
-                          <li
-                            key={item.id}
-                            onClick={() => handleSelect(item)}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                          >
-                            {/* 🏷️ Product Name */}
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-gray-800">
-                                {item.product_name}
-                              </span>
-                              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
-                                Product
-                              </span>
-                            </div>
-
-                            {/* 📦 Category Name */}
-                            {(item.category?.name || item.category_id) && (
-                              <div className="text-sm text-gray-500 mt-1">
-                                Category: {item.category?.name || item.category_id}
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                    />               
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />      
+            {results.length > 0 && (
+              <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
+                {results.map((item) => (
+                  <li
+                    key={item.id}
+                    onClick={() => handleSelect(item)}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                  >   
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-800">
+                        {item.product_name}
+                      </span>
+                      <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                        Product
+                      </span>
+                    </div>
+                    {(item.category?.name || item.category_id) && (
+                      <div className="text-sm text-gray-500 mt-1">
+                        Category: {item.category?.name || item.category_id}
+                      </div>
                     )}
-                  </div>
-                </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
               )}
-            </div>
+      </div> */}
 
             {/* Right Section (Login / User) */}
             <div className="flex gap-4">
@@ -512,11 +503,11 @@ const Topbar = () => {
               )}
             </nav>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
       {/* 🔹 Category Navbar */}
-      <div className="bg-slate-800 text-white">
+      < div className="bg-slate-800 text-white" >
         <div className="container mx-auto px-4">
           {/* <div className="hidden lg:flex items-center gap-6">
             <TopbarWithCategories />
@@ -586,7 +577,7 @@ const Topbar = () => {
             )}
           </div> */}
         </div>
-      </div>
+      </div >
 
       <RequestCallback
         visible={isRequestOpen}
@@ -596,7 +587,7 @@ const Topbar = () => {
         visible={isSupportOpen}
         onClose={() => setIsSupportOpen(false)}
       />
-    </header>
+    </header >
   );
 };
 

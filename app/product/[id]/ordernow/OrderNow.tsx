@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getUserFromToken } from "@/hooks/use-token";
+import { CheckCircle2, Mail, Package, ShieldCheck, Star, Truck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface Category {
   id: number;
@@ -57,7 +59,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     remarks: "",
   });
 
-  // 🔹 Fetch Related Products
+  //  Fetch Related Products
   const fetchRelated = async (category_id: string) => {
     try {
       const res = await fetch(
@@ -71,7 +73,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     }
   };
 
-  // 🔹 Fetch buyer details from token
+  // Fetch buyer details from token
   useEffect(() => {
     const fetchBuyer = async () => {
       if (!user?.user_id) return;
@@ -98,7 +100,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     fetchBuyer();
   }, [user?.user_id]);
 
-  // 🔹 Fetch product details
+  //  Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productId) return;
@@ -127,14 +129,14 @@ const OrderNow = ({ productId }: { productId: string }) => {
     fetchProduct();
   }, [productId]);
 
-  // 🔹 Fetch related products when product changes
+  //  Fetch related products when product changes
   useEffect(() => {
     if (product?.category?.id) {
       fetchRelated(product.category.id);
     }
   }, [product?.category?.id]);
 
-  // 🔹 Fetch all categories
+  //  Fetch all categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -151,7 +153,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     fetchCategories();
   }, []);
 
-  // 🔹 Handle input
+  //  Handle input
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -159,7 +161,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Quantity adjust
+  //  Quantity adjust
   const updateQuantity = (delta: number) => {
     setQuantity((prev) => Math.max(1, prev + delta));
     setFormData((prev) => ({
@@ -168,7 +170,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     }));
   };
 
-  // 🔹 Submit Enquiry
+  //  Submit Enquiry
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -209,140 +211,191 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
   if (!product) return <p className="text-center py-10">Loading product...</p>;
 
+  const specifications = [
+    { label: "GSM", value: product.gsm },
+    { label: "BF", value: product.bf },
+    { label: "Shade", value: product.shade },
+    { label: "Brightness", value: product.brightness },
+    { label: "Size", value: product.sizes },
+  ].filter((spec) => spec.value)
+
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Product Display */}
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 p-6 flex items-center justify-center">
-          <img
-            src={product.image || "/paper.jpg"}
-            alt={product.product_name}
-            className="w-full h-[350px] object-contain rounded-xl shadow-lg"
-          />
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+          {/* Product Image Section */}
+          <div className="space-y-6">
+            <div className="relative bg-white rounded-3xl p-8 shadow-xl border border-slate-200 overflow-hidden group">
+              {/* Category Badge */}
+              <Badge className="absolute top-6 left-6 z-10 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-4 py-1.5 text-sm font-semibold shadow-lg">
+                {product.category?.name}
+              </Badge>
+              {/* Product Image */}
+              <div className="aspect-square flex items-center justify-center bg-gradient-to-br from-slate-50 to-white rounded-2xl p-4">
+                <img
+                  src={product.image || "/paper.jpg"}
+                  alt={product.product_name}
+                  className="max-w-full max-h-full object-contain rounded-xl transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+            </div>
+          </div>
 
-        <div className="w-full md:w-1/2 p-6 md:p-10">
-          <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
-          <p className="text-xl text-blue-500 font-semibold mb-3">
-            ₹{product.price_per_kg} / Kg
-          </p>
-          <p className="text-gray-700 mb-6">{product.description}</p>
+          {/* Product Details Section */}
+          <div className="space-y-8">
+            {/* Description */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-3 text-lg">Product Description</h3>
+              <p className="text-slate-600 leading-relaxed">
+                {product.description || "Premium quality product designed to meet all your industrial and commercial needs with excellence."}
+              </p>
+            </div>
+            {/* Price Section */}
+            <div className="flex items-baseline gap-3 p-6 bg-gradient-to-r from-sky-50 to-blue-50 rounded-2xl border-2 border-sky-200">
+              <span className="text-5xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
+                ₹{product.price_per_kg}
+              </span>
+              <span className="text-xl text-slate-600 font-semibold">per Kg</span>
+            </div>
 
-          {/* Enquiry Now Button */}
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg"
-              >
-                Enquiry Now
-              </Button>
-            </DialogTrigger>
-
-            {/* Enquiry Modal */}
-            <DialogContent className="max-w-3xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-center mb-3">
-                  Enquiry for {product.product_name}
-                </DialogTitle>
-              </DialogHeader>
-
-              <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                {/* Company / Name */}
-                <div>
-                  <Label>Company *</Label>
-                  <Input name="company_name" value={formData.company_name} readOnly />
+            {/* Specifications */}
+            {specifications.length > 0 && (
+              <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 shadow-sm">
+                <h3 className="font-bold text-slate-900 mb-5 text-lg flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-sky-600" />
+                  Specifications
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+                  {specifications.map((spec) => (
+                    <div key={spec.label} className="space-y-2 bg-white p-4 rounded-xl border border-slate-200">
+                      <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">{spec.label}</span>
+                      <p className="font-bold text-slate-900 text-lg">{spec.value}</p>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <Label>Contact Person *</Label>
-                  <Input name="name" value={formData.name} readOnly />
-                </div>
-
-                {/* Contact Info */}
-                <div>
-                  <Label>Phone *</Label>
-                  <Input name="phone" value={formData.phone} onChange={handleChange} />
-                </div>
-                <div>
-                  <Label>Email *</Label>
-                  <Input name="email" value={formData.email} readOnly />
-                </div>
-
-                <div>
-                  <Label>City *</Label>
-                  <Input name="city" value={formData.city} onChange={handleChange} />
-                </div>
-
-                {/* Category */}
-                <div>
-                  <Label>Category *</Label>
-                  <Select
-                    value={formData.category_id}
-                    onValueChange={(val) =>
-                      setFormData((prev) => ({ ...prev, category_id: val }))
-                    }
+              </div>
+            )}
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="lg"
+                    className="flex-1 bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 rounded-xl shadow-lg shadow-sky-200 transition-all hover:shadow-xl hover:shadow-sky-300"
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id.toString()}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <Mail className="w-5 h-5 mr-2" />
+                    Send Enquiry
+                  </Button>
+                </DialogTrigger>
 
-                {/* Product Details */}
-                {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
-                  (f) => (
-                    <div key={f}>
-                      <Label className="capitalize">{f}</Label>
+
+                <DialogContent className="max-w-3xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-center mb-3">
+                      Enquiry for {product.product_name}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <form
+                    onSubmit={handleSubmit}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+
+                    <div>
+                      <Label>Company *</Label>
+                      <Input name="company_name" value={formData.company_name} readOnly />
+                    </div>
+                    <div>
+                      <Label>Contact Person *</Label>
+                      <Input name="name" value={formData.name} readOnly />
+                    </div>
+
+
+                    <div>
+                      <Label>Phone *</Label>
+                      <Input name="phone" value={formData.phone} onChange={handleChange} />
+                    </div>
+                    <div>
+                      <Label>Email *</Label>
+                      <Input name="email" value={formData.email} readOnly />
+                    </div>
+
+                    <div>
+                      <Label>City *</Label>
+                      <Input name="city" value={formData.city} onChange={handleChange} />
+                    </div>
+
+
+                    <div>
+                      <Label>Category *</Label>
+                      <Select
+                        value={formData.category_id}
+                        onValueChange={(val) =>
+                          setFormData((prev) => ({ ...prev, category_id: val }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id.toString()}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+
+                    {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
+                      (f) => (
+                        <div key={f}>
+                          <Label className="capitalize">{f}</Label>
+                          <Input
+                            name={f}
+                            value={(formData as any)[f]}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      )
+                    )}
+
+                    <div>
+                      <Label>Quantity (Kg)</Label>
                       <Input
-                        name={f}
-                        value={(formData as any)[f]}
+                        name="quantity_in_kg"
+                        value={formData.quantity_in_kg || quantity.toString()}
                         onChange={handleChange}
                       />
                     </div>
-                  )
-                )}
 
-                <div>
-                  <Label>Quantity (Kg)</Label>
-                  <Input
-                    name="quantity_in_kg"
-                    value={formData.quantity_in_kg || quantity.toString()}
-                    onChange={handleChange}
-                  />
-                </div>
+                    <div className="md:col-span-2">
+                      <Label>Remarks</Label>
+                      <Textarea
+                        name="remarks"
+                        value={formData.remarks}
+                        onChange={handleChange}
+                        placeholder="Add any extra details..."
+                      />
+                    </div>
 
-                <div className="md:col-span-2">
-                  <Label>Remarks</Label>
-                  <Textarea
-                    name="remarks"
-                    value={formData.remarks}
-                    onChange={handleChange}
-                    placeholder="Add any extra details..."
-                  />
-                </div>
-
-                <div className="md:col-span-2 flex justify-center mt-4">
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500 text-white px-8"
-                  >
-                    {loading ? "Sending..." : "Send Enquiry"}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+                    <div className="md:col-span-2 flex justify-center mt-4">
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500 text-white px-8"
+                      >
+                        {loading ? "Sending..." : "Send Enquiry"}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -384,7 +437,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

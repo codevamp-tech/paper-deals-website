@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User, X } from "lucide-react";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { toast } from "sonner";
+
 
 export default function BuyerSignin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +38,21 @@ export default function BuyerSignin() {
   // ✅ Handle Login Submit
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!formData.isRobot) return; // previously alert removed
+    if (!formData.email) {
+      toast.error("Email is required");
+      return;
+    }
+
+    if (!formData.password) {
+      toast.error("Password is required");
+      return;
+    }
+
+    if (!formData.isRobot) {
+      toast.error("Please confirm you are not a robot");
+      return;
+    }
+    const loadingToast = toast.loading("Signing you in...");
 
     try {
       const res = await fetch(
@@ -60,10 +77,20 @@ export default function BuyerSignin() {
       }
 
       if (res.ok) {
+        toast.success("Login successful 🎉", {
+          id: loadingToast,
+          description: "Redirecting to dashboard...",
+        });
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
         window.location.href = "/buyer3/dashboard";
       } else {
+        toast.error(data.message || "Invalid email or password", {
+          id: loadingToast,
+        });
+        toast.error("Something went wrong. Please try again.", {
+          id: loadingToast,
+        });
         console.log("Login failed:", data.message || "Invalid credentials");
       }
     } catch (err) {
@@ -83,8 +110,12 @@ export default function BuyerSignin() {
   // ✅ Forgot Password Submit
   const handleForgotPassword = async (e: any) => {
     e.preventDefault();
-    if (!forgotEmail) return; // removed alert
+    if (!forgotEmail) {
+      toast.error("Please enter your email");
+      return;
+    }
 
+    const loadingToast = toast.loading("Sending reset link...");
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/admin/forgot`,
@@ -95,11 +126,16 @@ export default function BuyerSignin() {
         }
       );
       const data = await res.json();
-      console.log(data.message || "Password reset link sent!");
+      toast.success("Reset link sent!", {
+        id: loadingToast,
+        description: data.message || "Check your email inbox",
+      });
       setIsForgotOpen(false);
       setForgotEmail("");
     } catch (err) {
-      console.error("Error:", err);
+      toast.error(data.message || "Failed to send reset link", {
+        id: loadingToast,
+      });
     }
   };
 
@@ -110,7 +146,7 @@ export default function BuyerSignin() {
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
           <h1 className="text-5xl font-semibold mb-2">Sign In</h1>
           <div className="flex items-center text-sm opacity-80">
-            <span>Home</span>
+            <Link href="/">Home</Link>
             <span className="mx-2">›</span>
             <span>Sign In</span>
           </div>
@@ -250,7 +286,7 @@ export default function BuyerSignin() {
 
               {mode === "B2C" ? (
                 <p className="text-lg opacity-90 leading-relaxed">
-                  You can buy products and you can sell products both.
+                  You can buy and sell products on this platform.
                 </p>
               ) : (
                 <p className="text-lg opacity-90 leading-relaxed">

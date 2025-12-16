@@ -4,6 +4,8 @@ import { Inter, Poppins } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import Topbar from "@/components/topbar/Topbar";
 import ClientWrapper from "@/components/ClientWraper";
+import { Toaster } from "sonner";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -28,6 +30,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${poppins.variable}`}>
+        <Toaster richColors position="top-center" />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

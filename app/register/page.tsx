@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
 
 export default function CreateBuyerPage() {
   const router = useRouter();
@@ -17,22 +19,28 @@ export default function CreateBuyerPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
+
+  const [mode, setMode] = useState(""); // default
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("mode");
+    if (savedMode) setMode(savedMode);
+  }, []);
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setMessage(""); // Clear message when user edits
   };
+
 
   // Send OTP
   const handleSendOtp = async () => {
     if (!form.mobile) {
-      setMessage("Please enter mobile number");
+      toast.error("Please enter mobile number");
       return;
     }
     setLoading(true);
-    setMessage("");
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp/sendOtp`, {
         method: "POST",
@@ -46,13 +54,13 @@ export default function CreateBuyerPage() {
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
-        setMessage(data.message || "OTP sent successfully!");
+        toast.success(data.message || "OTP sent successfully");
       } else {
-        setMessage(data.message || "Failed to send OTP");
+        toast.error(data.message || "Failed to send OTP");
       }
     } catch (err) {
       console.error(err);
-      setMessage("Something went wrong while sending OTP");
+      toast.error("Something went wrong while sending OTP");
     } finally {
       setLoading(false);
     }
@@ -60,7 +68,10 @@ export default function CreateBuyerPage() {
 
   // Verify OTP
   const handleVerifyOtp = async (): Promise<boolean> => {
-    setMessage("");
+    if (!form.otp) {
+      toast.error("Please enter OTP");
+      return false;
+    }
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp/verify`, {
         method: "POST",
@@ -71,15 +82,14 @@ export default function CreateBuyerPage() {
       const data = await res.json();
       if (res.ok) {
         setOtpVerified(true);
-        setMessage(data.message || "OTP verified successfully!");
+        toast.success(data.message || "OTP verified");
         return true;
       } else {
-        setMessage(data.message || "Invalid OTP");
+        toast.error(data.message || "Invalid OTP");
         return false;
       }
-    } catch (err) {
-      console.error(err);
-      setMessage("Error verifying OTP");
+    } catch {
+      toast.error("Error verifying OTP");
       return false;
     }
   };
@@ -87,12 +97,16 @@ export default function CreateBuyerPage() {
   // Submit Buyer Registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.name || !form.email || !form.password || !form.mobile) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     const verified = await handleVerifyOtp();
     if (!verified) return;
 
     try {
       setLoading(true);
-      setMessage("");
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/create-buyer`, {
         method: "POST",
@@ -110,7 +124,7 @@ export default function CreateBuyerPage() {
 
       if (res.ok) {
         // ✅ Success
-        setMessage(data.message || "Buyer registered successfully!");
+        toast.success(data.message || "Buyer registered successfully!");
         setForm({ name: "", email: "", mobile: "", otp: "", password: "", whatsapp: "" });
         setOtpSent(false);
         setOtpVerified(false);
@@ -127,11 +141,11 @@ export default function CreateBuyerPage() {
           errorMessage = "WhatsApp number already registered";
         }
 
-        setMessage(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (err) {
       console.error("Error registering buyer:", err);
-      setMessage("Something went wrong while registering buyer");
+      toast.error("Something went wrong while registering buyer");
     } finally {
       setLoading(false);
     }
@@ -143,11 +157,11 @@ export default function CreateBuyerPage() {
       {/* Header Section */}
       <div className="relative h-48 bg-gradient-to-r from-cyan-700 via-blue-700 to-indigo-700 overflow-hidden">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
-          <h1 className="text-5xl font-semibold mb-2">Register as Buyer</h1>
+          <h1 className="text-5xl font-semibold mb-2">Sign Up</h1>
           <div className="flex items-center text-sm opacity-80">
-            <span>Home</span>
+            <Link href="/">Home</Link>
             <span className="mx-2">›</span>
-            <span>Register</span>
+            <span>Sign Up</span>
           </div>
         </div>
       </div>
@@ -155,7 +169,7 @@ export default function CreateBuyerPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 -mt-12 relative z-20">
         <div className="flex flex-col lg:flex-row items-stretch justify-center max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white min-h-[600px]">
-          
+
           {/* Left - Form */}
           <div className="w-full lg:w-1/2 p-12 lg:p-16">
             <div className="max-w-md mx-auto">
@@ -169,7 +183,7 @@ export default function CreateBuyerPage() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Enter your full name"
-                    required
+                    // required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                   />
                 </div>
@@ -183,7 +197,7 @@ export default function CreateBuyerPage() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Enter your email"
-                    required
+                    // required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                   />
                 </div>
@@ -197,7 +211,7 @@ export default function CreateBuyerPage() {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Enter a strong password"
-                    required
+                    // required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                   />
                 </div>
@@ -225,7 +239,7 @@ export default function CreateBuyerPage() {
                       value={form.mobile}
                       onChange={handleChange}
                       placeholder="Enter mobile number"
-                      required
+                      // required
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                     />
                   </div>
@@ -249,23 +263,10 @@ export default function CreateBuyerPage() {
                     value={form.otp}
                     onChange={handleChange}
                     placeholder="Enter OTP"
-                    required
+                    // required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                   />
                 </div>
-
-                {/* Message */}
-                {message && (
-                  <p
-                    className={`text-center text-sm ${
-                      message.toLowerCase().includes("success")
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {message}
-                  </p>
-                )}
 
                 {/* Submit */}
                 <button
@@ -292,10 +293,20 @@ export default function CreateBuyerPage() {
             </div>
 
             <div className="relative z-10 text-center">
-              <h3 className="text-2xl font-semibold mb-4">Join as Buyer</h3>
-              <p className="text-lg opacity-90 leading-relaxed">
-                Access exclusive deals and opportunities by creating your buyer account
-              </p>
+              <h3 className="text-2xl font-semibold mb-4">
+                {mode === "B2C" ? "Buyer & Seller Features" : "Create new Buyer Account"}
+              </h3>
+
+              {mode === "B2C" ? (
+                <p className="text-lg opacity-90 leading-relaxed">
+                  You can buy and sell products on this platform.
+                </p>
+              ) : (
+                <p className="text-lg opacity-90 leading-relaxed">
+                  Join our platform to access exclusive buyer deals.
+                </p>
+              )}
+
             </div>
           </div>
         </div>
