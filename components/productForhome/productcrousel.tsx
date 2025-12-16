@@ -75,7 +75,7 @@ export default function ProductCrousel() {
   }, [products]);
 
   return (
-    <div className="w-full py-8 px-4 sm:px-3 lg:px-4 overflow-hidden  bg-white">
+    <div className="w-full py-6 px-4 sm:px-3 lg:px-4 overflow-hidden  bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
