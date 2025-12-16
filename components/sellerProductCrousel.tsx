@@ -74,7 +74,7 @@ export default function SellerProductCrousel({ sellerId }: { sellerId: number })
   }, [products]);
 
   return (
-    <div className="w-full py-16 px-4 sm:px-6 lg:px-8 overflow-hidden pt-32 bg-white">
+    <div className="w-full py-12 px-4 sm:px-6 lg:px-8 overflow-hidden pt-8 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
@@ -84,32 +84,44 @@ export default function SellerProductCrousel({ sellerId }: { sellerId: number })
         </div>
 
         {/* Product Carousel */}
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden py-4">
-            <div
-              ref={scrollRef}
-              className="flex gap-6 transition-transform"
-              style={{ width: "fit-content" }}
-            >
-              {[...Array(2)].map((_, dupeIndex) => (
-                <div key={dupeIndex} className="flex gap-6">
-                  {products.map((p) => (
-                    <ProductCard
-                      key={p.id + dupeIndex}
-                      id={p.id}
-                      title={p.title}
-                      subtitle={p.subtitle}
-                      price={p.price}
-                      date={p.date}
-                      type={p.type}
-                      image={p.image}
-                    />
-                  ))}
-                </div>
-              ))}
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <Package className="w-16 h-16 text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-700">
+              No products found
+            </h3>
+            <p className="text-gray-500 mt-1">
+              This seller hasn’t listed any products yet.
+            </p>
+          </div>
+        ) : (
+          <div className="relative overflow-hidden">
+            <div className="overflow-hidden py-4">
+              <div
+                ref={scrollRef}
+                className="flex gap-6 transition-transform"
+                style={{ width: "fit-content" }}
+              >
+                {[...Array(2)].map((_, dupeIndex) => (
+                  <div key={dupeIndex} className="flex gap-6">
+                    {products.map((p) => (
+                      <ProductCard
+                        key={p.id + dupeIndex}
+                        id={p.id}
+                        title={p.title}
+                        subtitle={p.subtitle}
+                        price={p.price}
+                        date={p.date}
+                        type={p.type}
+                        image={p.image}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
