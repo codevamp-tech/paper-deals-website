@@ -1,39 +1,55 @@
 "use client";
 import { useTheme } from "@/hooks/use-theme";
 import { motion } from "framer-motion";
+import {
+  Factory,
+  Layers,
+  Truck,
+  CreditCard,
+  Warehouse,
+  Users,
+} from "lucide-react";
+
 
 const stats = [
   {
     value: "1200+",
     title: "Paper Mills & Manufacturers",
     desc: "Connect with verified mills, converters, and large-scale producers.",
+    icon: Factory,
   },
   {
     value: "850+",
     title: "Active Product SKUs",
     desc: "From Kraft to Duplex to Copier, choose from our wide SKU catalog.",
+    icon: Layers,
   },
   {
     value: "300k+ MT",
     title: "Paper Supplied Nationwide",
     desc: "End-to-end trade handling with massive supply capability.",
+    icon: Truck,
   },
   {
     value: "15+",
     title: "Financing Providers",
     desc: "Simplified credit access for smoother bulk transactions.",
+    icon: CreditCard,
   },
   {
     value: "70+",
     title: "Logistics & Warehouse Partners",
     desc: "Pan-India logistics for mill-to-doorstep delivery.",
+    icon: Warehouse,
   },
   {
     value: "2000+",
     title: "Businesses Empowered",
     desc: "Serving SMEs, retailers, distributors & large buyers across India.",
+    icon: Users,
   },
 ];
+
 
 export default function PartnerWithUs({ isaboutpage }) {
   const { theme } = useTheme();
@@ -55,36 +71,35 @@ export default function PartnerWithUs({ isaboutpage }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((item, index) => (
-          <motion.div
-            key={index}
-            whileHover={{ scale: 1 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="relative group bg-white text-black rounded-2xl shadow-lg p-6 overflow-hidden"
-            style={{
-              borderTop: `8px solid ${theme.Text}`,
-            }}
-          >
-            <div
-              className="text-3xl font-extrabold"
-              style={{
-                color: theme.Text,
-              }}
-            >
-              {item.value}
-            </div>
-            <div className="mt-2 font-semibold">{item.title}</div>
-            <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
+        {stats.map((item, index) => {
+          const Icon = item.icon;
 
-            <img
-              src="/getcredit.png"
-              alt="Hover Visual"
-              className="absolute bottom-4 right-4 w-16 h-16 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out"
-            />
-          </motion.div>
-        ))}
+          return (
+            <motion.div
+              key={index}
+              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="relative group bg-white text-black rounded-2xl shadow-lg p-6 overflow-hidden"
+              style={{ borderTop: `8px solid ${theme.Text}` }}
+            >
+              <div className="text-3xl font-extrabold" style={{ color: theme.Text }}>
+                {item.value}
+              </div>
+
+              <div className="mt-2 font-semibold">{item.title}</div>
+              <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
+
+              {/* Hover Icon */}
+              <Icon
+                className="absolute bottom-4 right-4 w-12 h-12 opacity-0 translate-y-4 
+        group-hover:opacity-100 group-hover:translate-y-0 
+        transition-all duration-300"
+                style={{ color: theme.Text }}
+              />
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );

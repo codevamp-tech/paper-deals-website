@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, MapPin } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import Link from "next/link";
 
 export default function ProductInsights() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -28,7 +29,6 @@ export default function ProductInsights() {
             isPositive: (item.change || 0) > 0,
             date: item.updated_at || "—",
             location: item.location,
-            type: "Premium", // 🔑 API me type nahi hai, default set kar diya
           }));
           setProducts(mapped);
         }
@@ -95,7 +95,7 @@ export default function ProductInsights() {
             // style={{ color: theme.Text }}
             >
               View all Insights
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 text-blue-500" />
             </button>
           </a>
         </div>
@@ -126,7 +126,7 @@ export default function ProductInsights() {
                         isPositive={p.isPositive}
                         date={p.date}
                         location={p.location}
-                        type={p.type}
+                      // type={p.type}
                       />
                     ))}
                   </div>
@@ -171,39 +171,40 @@ function ProductCard({
   const { theme } = useTheme();
 
   return (
-    <div className="group w-[320px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-white border-2 border-slate-200 hover:border-cyan-400 flex flex-col hover:scale-105 hover:-translate-y-1">
-      {/* Header with gradient background */}
-      <div className="relative   p-5"
-        style={{
-          backgroundColor: theme.bg1,
-        }}>
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-white text-xl leading-tight flex-1 pr-2">
-            {title}
-          </h3>
-          <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${typeColors[type]} `}>
-            {type}
-          </span>
-        </div>
-        {/* <p className="text-sm text-slate-300 line-clamp-1">
+    <Link href="/insights-comparison">
+      <div className="group w-[320px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-white border-2 border-slate-200 hover:border-cyan-400 flex flex-col hover:scale-105 hover:-translate-y-1">
+        {/* Header with gradient background */}
+        <div className="relative   p-5"
+          style={{
+            backgroundColor: theme.bg1,
+          }}>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="font-bold text-white text-xl leading-tight flex-1 pr-2">
+              {title}
+            </h3>
+            {/* <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${typeColors[type]} `}>
+              {type}
+            </span> */}
+          </div>
+          {/* <p className="text-sm text-slate-300 line-clamp-1">
           {subtitle}
         </p> */}
 
-        {/* Decorative element */}
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-cyan-500/10 to-transparent rounded-tl-full"></div>
-      </div>
-
-      {/* Price Section */}
-      <div className="p-6 flex-1 bg-gradient-to-br from-white to-slate-50">
-        <div className="flex items-end gap-2 mb-2">
-          <span className="text-4xl font-black text-slate-800">
-            ₹{price.toFixed(2)}
-          </span>
-          <span className="text-slate-500 text-base font-medium mb-1">/ kg</span>
+          {/* Decorative element */}
+          <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-cyan-500/10 to-transparent rounded-tl-full"></div>
         </div>
 
-        {/* Change indicator with enhanced styling */}
-        {/* <div
+        {/* Price Section */}
+        <div className="p-6 flex-1 bg-gradient-to-br from-white to-slate-50">
+          <div className="flex items-end gap-2 mb-2">
+            <span className="text-4xl font-black text-slate-800">
+              ₹{price.toFixed(2)}
+            </span>
+            <span className="text-slate-500 text-base font-medium mb-1">/ kg</span>
+          </div>
+
+          {/* Change indicator with enhanced styling */}
+          {/* <div
           className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold ${isPositive
             ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-200"
             : change === 0
@@ -218,19 +219,20 @@ function ProductCard({
           )}
           {change === 0 ? "No Change" : `${change > 0 ? '+' : ''}${change.toFixed(2)}%`}
         </div> */}
-      </div>
+        </div>
 
-      {/* Footer */}
-      <div className="bg-gradient-to-r from-slate-100 to-slate-200 p-4 text-sm font-medium text-slate-700 flex justify-between items-center border-t-2 border-slate-300">
-        {/* <span className="flex items-center gap-1">
+        {/* Footer */}
+        <div className="bg-gradient-to-r from-slate-100 to-slate-200 p-4 text-sm font-medium text-slate-700 flex justify-between items-center border-t-2 border-slate-300">
+          {/* <span className="flex items-center gap-1">
           📅 {date}
         </span> */}
-        <div className="flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow-sm">
-          <MapPin className="w-3.5 h-3.5 text-cyan-600" />
-          <span className="text-slate-800 font-semibold">{location}</span>
+          <div className="flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow-sm">
+            <MapPin className="w-3.5 h-3.5 text-cyan-600" />
+            <span className="text-slate-800 font-semibold">{location}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

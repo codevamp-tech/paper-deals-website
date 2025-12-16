@@ -182,13 +182,14 @@ export default function BuyersPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="max-w-5xl mx-auto px-4 py-8 md:py-12">
-        <Card className="border rounded-xl bg-white">
-          <div className="p-5 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 md:gap-8">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-12">
+        {/* Hero Card with Gradient Background */}
+        <Card className="border-0 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-blue-50 shadow-xl overflow-hidden">
+          <div className="p-6 md:p-10">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8">
               {/* Image / Logo */}
               <div className="w-full">
-                <div className="aspect-[4/3] w-full rounded-lg border bg-gray-100 overflow-hidden flex items-center justify-center">
+                <div className="aspect-[4/3] w-full rounded-xl border-2 border-gray-200 bg-white shadow-md overflow-hidden flex items-center justify-center hover:shadow-lg transition-shadow">
                   {org?.image_banner ? (
                     <img
                       src={`${process.env.NEXT_PUBLIC_API_URL}/${org.image_banner}`}
@@ -196,68 +197,92 @@ export default function BuyersPage() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="text-center">
-                      <Building className="mx-auto h-14 w-14 text-gray-400" />
-                      <p className="mt-2 text-xs text-gray-500">
-                        No company logo
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <span className="text-white text-2xl font-bold uppercase">
+                          {orgName
+                            ?.split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .slice(0, 2)}
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-500 mt-3">
+                        {orgName}
                       </p>
                     </div>
                   )}
                 </div>
+
               </div>
 
               {/* Right: Title + badge + fields */}
               <div className="flex flex-col justify-center">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                     {orgName}
                   </h1>
                   <Badge
                     className={
                       isVerified
-                        ? "bg-green-600 text-white px-3 py-1 text-sm"
-                        : "bg-red-600 text-white px-3 py-1 text-sm"
+                        ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 text-sm font-semibold shadow-md"
+                        : "bg-gradient-to-r from-red-500 to-rose-500 text-white px-4 py-1.5 text-sm font-semibold shadow-md"
                     }
                   >
-                    {isVerified ? "Verified" : "Not Verified"}
+                    {isVerified ? "✓ Verified" : "Not Verified"}
                   </Badge>
                 </div>
 
-                {/* Grid fields */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Field label="City" value={org?.city} />
-                  <Field label="Type of Seller" value={typeOfSeller} />
-                  <Field label="State" value={stateName} />
-                  <Field label="Productions Capacity (TPM)" value={capacity} />
-                  <Field label="Deals In" value={dealsIn} />
-                  <Field label="Description" value={org?.contact_person} />
-                  {/* <Field label="Email" value={email} />
-                  <Field label="Phone" value={phone} />
-                  <Field label="Address" value={org?.address} /> */}
+                {/* Grid fields with enhanced styling */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">City</p>
+                    <p className="text-base font-semibold text-gray-900">{org?.city || "N/A"}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">State</p>
+                    <p className="text-base font-semibold text-gray-900">{stateName}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Type of Seller</p>
+                    <p className="text-base font-semibold text-gray-900">{typeOfSeller}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Production Capacity</p>
+                    <p className="text-base font-semibold text-gray-900">{capacity || "N/A"}</p>
+                  </div>
                 </div>
 
-                {/* { Description } */}
-                {description ? (
-                  <div className="mt-6">
-                    <p className="text-sm font-semibold text-gray-800">
-                      Descriptions
+                {/* Deals In - Full width */}
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200 mb-4">
+                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Deals In</p>
+                  <p className="text-sm font-medium text-gray-800">{dealsIn}</p>
+                </div>
+
+                {/* Description */}
+                {description && (
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                      About
                     </p>
-                    <p className="text-sm text-gray-600 mt-1">{description}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
                   </div>
-                ) : null}
+                )}
               </div>
+            </div>
+
+            <div className=" flex justify-center">
+              <Link href={`/B2B/seller/${id}/enquiry`}>
+                <Button className="px-10 h-14 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 hover:from-blue-700 hover:via-cyan-600 hover:to-teal-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 rounded-xl">
+                  Send Enquiry Now
+                </Button>
+              </Link>
             </div>
           </div>
         </Card>
 
         {/* CTA – centered under the card */}
-        <div className="mt-8 flex justify-center">
-          <Link href={`/B2B/seller/${id}/enquiry`}>
-            <Button className="px-6 h-11 text-white bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-600 hover:to-teal-500">
-              Enquiry Now
-            </Button>
-          </Link>
-        </div>
+
 
       </section>
       <SellerProductCrousel sellerId={id} />
