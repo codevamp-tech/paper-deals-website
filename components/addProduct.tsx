@@ -156,7 +156,6 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
   return (
     <div className="max-w-4xl mx-auto py-8">
       <h2 className="text-2xl font-semibold mb-6">Add New Product</h2>
-
       <form onSubmit={handleSubmit} className="space-y-6">
 
 
@@ -336,7 +335,7 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
 
         {/* Submit Button */}
         <div className="flex justify-center pt-6">
-          <Button disabled={loading} className="w-full md:w-auto bg-blue-500">
+          <Button disabled={loading} className="w-full md:w-auto bg-blue-500 text-white">
             {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</> : "Add Product"}
           </Button>
         </div>
