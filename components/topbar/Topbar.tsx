@@ -131,7 +131,7 @@ const Topbar = () => {
       {/* 🔹 Main Top Section */}
       <div className="bg-white">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center ">
             {/* Logo + Toggle */}
             <div className="flex items-center gap-2 md:gap-4">
               <Link href="/" className="flex-shrink-0">
@@ -205,51 +205,8 @@ const Topbar = () => {
 
             </div>
 
-            {/* Search Bar */}
-            {/* <div className="hidden md:flex items-center flex-1 justify-center">
-              {showSearch && (
-                <div className="hidden md:flex items-center flex-1 mx-6 relative">
-                  <div className="relative w-full max-w-md">
-                    <input
-                      type="text"
-                      placeholder="Search by product or category..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
-                    />               
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />      
-            {results.length > 0 && (
-              <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
-                {results.map((item) => (
-                  <li
-                    key={item.id}
-                    onClick={() => handleSelect(item)}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                  >   
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-800">
-                        {item.product_name}
-                      </span>
-                      <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
-                        Product
-                      </span>
-                    </div>
-                    {(item.category?.name || item.category_id) && (
-                      <div className="text-sm text-gray-500 mt-1">
-                        Category: {item.category?.name || item.category_id}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-              )}
-      </div> */}
-
             {/* Right Section (Login / User) */}
-            <div className="flex gap-4">
+            <div className="ml-auto flex items-center gap-4">
               <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
                 {/* B2C Button (Active when enabled is false) */}
                 <button
@@ -376,9 +333,9 @@ const Topbar = () => {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={handleLogout}
-                          className="flex items-center gap-2 text-sm text-black cursor-pointer hover:bg-gray-100"
+                          className="flex items-center gap-2 text-sm !text-red-500 cursor-pointer hover:bg-gray-100"
                         >
-                          <LogOut className="w-4 h-4 text-gray-600" />
+                          <LogOut className="w-4 h-4 text-red-500" />
                           Logout
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -399,7 +356,7 @@ const Topbar = () => {
 
               </div>
             </div>
-            <nav className="relative">
+            <nav className="relative lg:hidden">
               {/* Your regular desktop navigation */}
 
               {/* Mobile Menu Button */}
@@ -579,14 +536,7 @@ const Topbar = () => {
         </div>
       </div >
 
-      <RequestCallback
-        visible={isRequestOpen}
-        onClose={() => setIsRequestOpen(false)}
-      />
-      <SupportModal
-        visible={isSupportOpen}
-        onClose={() => setIsSupportOpen(false)}
-      />
+
     </header >
   );
 };
