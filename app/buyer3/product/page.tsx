@@ -23,14 +23,23 @@ export default function ProductPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [categories, setCategories] = useState<any[]>([])
-
-  // For Edit Dialog
+  const [isApproved, setIsApproved] = useState(false);
   const [open, setOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<any>(null)
   const [formData, setFormData] = useState<any>({})
   const [file, setFile] = useState<File | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showBlockedDialog, setShowBlockedDialog] = useState(false);
 
+  useEffect(() => {
+    const checkUserStatus = () => {
+      const user = getUserFromToken();
+      // Robust check for string "1", number 1, or boolean true
+      const approved = user?.approved == 1 || user?.approved === "1";
+      setIsApproved(approved);
+    };
+    checkUserStatus();
+  }, []);
 
   const fetchProducts = async (pageNumber: number) => {
     try {
@@ -80,7 +89,6 @@ export default function ProductPage() {
       console.error("Error fetching categories:", error)
     }
   }
-
 
   useEffect(() => {
     fetchCategories()
@@ -152,31 +160,34 @@ export default function ProductPage() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold">Products</h2>
-
         <Button
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-          onClick={() => setShowAddForm((prev) => !prev)}
+          onClick={() => {
+            if (!isApproved) {
+              setShowBlockedDialog(true);
+              return;
+            }
+            setShowAddForm((prev) => !prev)
+          }}
+          className={`text-white ${isApproved
+            ? "!bg-blue-500 hover:!bg-blue-600"
+            : "!bg-gray-400 cursor-not-allowed"
+            }`}
         >
           {showAddForm ? "Close Add Product" : "+ Add Product"}
         </Button>
-
       </div>
 
       {/* Show Add Product Form if seller clicked the button */}
-      {showAddForm && (
-        <div className="mb-6 border rounded p-4 bg-gray-50">
-          <h3 className="text-lg font-semibold mb-2">Add New Product</h3>
+      {showAddForm && isApproved && (
+        <div className="mb-6  p-4 bg-gray-50">
           < ProductForm
             onProductAdded={() => fetchProducts(page)} />
         </div>
       )}
+
       <div>
         <div>
-          {loading ? (
-            <p>Loading products...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
+          {products.length > 0 ? (
             <div className="overflow-auto ">
               <table className="w-full border-collapse border border-gray-300 bg-white min-w-[800px]">
                 <thead >
@@ -195,49 +206,50 @@ export default function ProductPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.length > 0 ? (
-                    products.map((product) => (
-                      <tr key={product.id} className="border-t">
-                        <td className="p-2 border">{product.id}</td>
-                        <td className="p-2 border">{product.seller?.name || "Seller not found"}</td>
-                        <td className="p-2 border">{product.product_name || "-"}</td>
-                        <td className="p-2 border">{product.category?.name || "-"}</td>
-                        <td className="p-2 border">{product.price_per_kg || "-"}</td>
-                        <td className="p-2 border">{product.weights || "-"}</td>
-                        <td className="p-2 border">{product.stock_in_kg || "-"}</td>
-                        <td className="p-2 border">{product.shade || "-"}</td>
-                        <td className="p-2 border">
-                          {new Date(product.created_at).toLocaleString()}
-                        </td>
-                        <td className="p-2 border">
-                          <Button
-                            size="sm"
-                            className="bg-green-500 hover:bg-green-600 text-white"
-                            onClick={() => handleEdit(product)}
-                          >
-                            Edit
-                          </Button>
-                        </td>
-                        <td className=" p-2 border ">
-                          <Button
-                            size="sm"
-                            className="bg-red-500 hover:bg-red-600 text-white"
-                            onClick={() => handleDelete(product.id)}
-                          >
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={10} className=" p-6 text-center">
-                        No products found
+                  {products.map((product) => (
+                    <tr key={product.id} className="border-t">
+                      <td className="p-2 border">{product.id}</td>
+                      <td className="p-2 border">{product.seller?.name || "Seller not found"}</td>
+                      <td className="p-2 border">{product.product_name || "-"}</td>
+                      <td className="p-2 border">{product.category?.name || "-"}</td>
+                      <td className="p-2 border">{product.price_per_kg || "-"}</td>
+                      <td className="p-2 border">{product.weights || "-"}</td>
+                      <td className="p-2 border">{product.stock_in_kg || "-"}</td>
+                      <td className="p-2 border">{product.shade || "-"}</td>
+                      <td className="p-2 border">
+                        {new Date(product.created_at).toLocaleString()}
+                      </td>
+                      <td className="p-2 border">
+                        <Button
+                          size="sm"
+                          className="bg-green-500 hover:bg-green-600 text-white"
+                          onClick={() => handleEdit(product)}
+                        >
+                          Edit
+                        </Button>
+                      </td>
+                      <td className=" p-2 border ">
+                        <Button
+                          size="sm"
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          Delete
+                        </Button>
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
+            </div>
+          ) : (
+            <div className="p-8 text-center text-gray-500 ">
+              <p className="text-lg font-medium">
+                You have not listed any products yet
+              </p>
+              <p className="text-sm mt-1">
+                Click <span className="font-semibold">“Add Product”</span> to create your first product.
+              </p>
             </div>
           )}
         </div>
@@ -350,6 +362,29 @@ export default function ProductPage() {
               Cancel
             </Button>
             <Button onClick={handleUpdate}>Update</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Block Product Button Dialog */}
+      <Dialog open={showBlockedDialog} onOpenChange={setShowBlockedDialog}>
+        <DialogContent className="max-w-sm text-center bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">
+              Account Deactivated
+            </DialogTitle>
+          </DialogHeader>
+
+          <p className="text-gray-600 mt-2 items-start">
+            Your account has been deactivated by the admin.
+            <br />
+            Please contact your admin to enable product access.
+          </p>
+
+          <div className="mt-4 flex justify-center">
+            <Button className="bg-blue-500 px-4 py-2 text-white" onClick={() => setShowBlockedDialog(false)}>
+              OK
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
