@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "@/hooks/use-theme"
 
 interface Partner {
   id: string
@@ -16,7 +16,7 @@ export default function AssumptionPartner() {
   const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { theme } = useTheme();
+  const { theme } = useTheme()
 
   useEffect(() => {
     const fetchPartners = async () => {
@@ -41,21 +41,32 @@ export default function AssumptionPartner() {
     </div>
   )
 
+  const LogoItem = ({ partner }: { partner: Partner }) => (
+    <div
+      className="flex-shrink-0 w-32 md:w-40 h-32 md:h-40 border border-gray-200 
+                 flex items-center justify-center cursor-pointer rounded-full"
+    >
+      <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-3xl">
+        <Image
+          src={partner.logo_picture || "/placeholder.svg"}
+          alt={partner.alt || partner.logo_name}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 96px, 128px"
+        />
+      </div>
+    </div>
+  )
+
   return (
     <section className="w-full bg-white my-[20px]">
-
       {/* Header Section */}
       <div className="max-w-4xl mx-auto text-center px-4">
-        <h2
-          className={`text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center ${theme.Text}`}
-        >
-          Our Brands
-        </h2>
+        <h2 className={`text-[6vh] font-[900] mt-1 font-[Poppins] flex justify-center ${theme.Text}`}>Our Brands</h2>
 
         <p className=" flex justify-center text-[3vh] text-center pb-4 pt-4 ">
-          Kay Paper Deals Pvt Ltd is working as a sourcing agent for Paper Industries.
-          We collaborate with leading paper mills across India and export globally
-          to major paper manufacturers.
+          Kay Paper Deals Pvt Ltd is working as a sourcing agent for Paper Industries. We collaborate with leading paper
+          mills across India and export globally to major paper manufacturers.
         </p>
       </div>
 
@@ -75,60 +86,26 @@ export default function AssumptionPartner() {
         ) : partners.length === 0 ? (
           <p className="text-center text-gray-500">No partners found.</p>
         ) : (
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-6 md:gap-8 pt-12 overflow-hidden mb-10 md:pb-0 md:flex-wrap md:justify-center"
-          >
-            {partners.map((partner) => (
-              <div
-                key={partner.id}
-                className="flex-shrink-0 w-32 md:w-40 h-32 md:h-40   border border-gray-200 
-                           flex items-center justify-center  5 
-                             cursor-pointer " style={{borderRadius:'50%'}}
-              >
-                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-3xl">
-                  <Image
-                    src={partner.logo_picture || "/placeholder.svg"}
-                    alt={partner.alt || partner.logo_name}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 96px, 128px"
-                  />
-                </div>
-              </div>
-            ))}
+          <div className="overflow-hidden pt-12 mb-10">
+            <div
+              ref={scrollContainerRef}
+              className="flex gap-6 md:gap-8 animate-marquee hover:pause-animation"
+              style={{
+                width: "max-content",
+              }}
+            >
+              {/* First set of logos */}
+              {partners.map((partner) => (
+                <LogoItem key={partner.id} partner={partner} />
+              ))}
+              {/* Duplicate set for seamless loop */}
+              {partners.map((partner) => (
+                <LogoItem key={`duplicate-${partner.id}`} partner={partner} />
+              ))}
+            </div>
           </div>
         )}
       </div>
-
-      {/* Company Description Section */}
-      {/* <div className="px-4 py-2 md:py-16">
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center max-w-6xl mx-auto">
-
-          <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
-            <div className="relative w-40 h-20 md:w-48 md:h-24">
-              <Image
-                src="/logomain.png"
-                alt="Paper Deals Logo"
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 160px, 192px"
-              />
-            </div>
-          </div>
-
-          <div className="flex-1">
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed text-center md:text-left">
-              Kay Paper Deals Pvt Ltd is working as sourcing agent for Paper Industries. We are working with various
-              paper mills across India and exporting to all the major paper manufacturers across world.
-            </p>
-          </div>
-
-        </div>
-      </div> */}
-
-      {/* Bottom Accent Bar */}
-      {/* <div className="h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"></div> */}
     </section>
   )
 }
