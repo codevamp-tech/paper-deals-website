@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/hooks/use-theme";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Advertisement {
@@ -12,7 +12,7 @@ interface Advertisement {
   created_at: string;
 }
 
-const Advertising = () => {
+const PageAdvertising = () => {
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -46,11 +46,9 @@ const Advertising = () => {
 
   useEffect(() => {
     if (ads.length <= 1) return;
-
     const interval = setInterval(() => {
       handleNext();
     }, 5000);
-
     return () => clearInterval(interval);
   }, [ads, currentIndex]);
 
@@ -70,8 +68,8 @@ const Advertising = () => {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-screen animate-pulse">
-      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex justify-center items-center h-[300px] animate-pulse">
+      <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 
@@ -81,12 +79,12 @@ const Advertising = () => {
 
   return (
     <div
-      className="relative bg-white flex justify-center items-center min-h-screen overflow-hidden transition-colors duration-700"
+      className="relative w-full overflow-hidden transition-colors duration-700 py-4"
     // style={{ backgroundColor: theme.bg1 || "#0f172a" }}
     >
-      {/* 1. Background Blur Layer (Adds depth) */}
+      {/* 1. Background Blur Layer - Reduced opacity and scale for performance */}
       <div
-        className="absolute inset-0 opacity-30 blur-[100px] scale-150 transition-all duration-1000"
+        className="absolute inset-0 opacity-20 blur-[60px] scale-110 transition-all duration-1000"
         style={{
           backgroundImage: `url(${currentAdUrl})`,
           backgroundPosition: 'center',
@@ -94,30 +92,22 @@ const Advertising = () => {
         }}
       />
 
-      <div className="relative z-10 w-[95vw] lg:w-[85vw] max-w-7xl group">
+      <div className="relative z-10 mx-auto w-[95vw] lg:w-[90vw] max-w-7xl group">
 
-        {/* 2. Main Slider Container */}
-        <div className="relative h-[50vh] md:h-[70vh] rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20">
+        {/* 2. Main Slider Container - CHANGED HEIGHT from 70vh to fixed pixels/aspect ratio */}
+        <div className="relative h-[250px] md:h-[350px] lg:h-[400px] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-xl border border-white/10">
 
           {/* 3. Image Layer */}
           <div
-            className={`w-full h-full bg-cover bg-center transition-all duration-700 ease-in-out ${isTransitioning ? "opacity-0 scale-105" : "opacity-100 scale-100"
+            className={`w-full h-full bg-cover bg-center transition-all duration-700 ease-in-out ${isTransitioning ? "opacity-0 scale-102" : "opacity-100 scale-100"
               }`}
             style={{ backgroundImage: `url(${currentAdUrl})` }}
           >
-            {/* Overlay Gradient for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </div>
 
-          {/* 4. Text Content (Optional - if your API provides titles) */}
-          {/* <div className={`absolute bottom-12 left-8 md:left-16 transition-all duration-700 delay-100 ${isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
-            <h2 className="text-white text-3xl md:text-5xl font-bold tracking-tight drop-shadow-lg">
-              {ads[currentIndex]?.advertisement_title}
-            </h2>
-          </div> */}
-
-          {/* 5. Modern Pagination Dots */}
-          <div className="absolute bottom-8 right-12 flex gap-3">
+          {/* 4. Navigation Dots - Adjusted position */}
+          <div className="absolute bottom-4 right-6 flex gap-2">
             {ads.map((_, i) => (
               <button
                 key={i}
@@ -128,25 +118,30 @@ const Advertising = () => {
                     setIsTransitioning(false);
                   }, 400);
                 }}
-                className={`h-1.5 transition-all duration-500 rounded-full ${i === currentIndex ? "bg-white w-8" : "bg-white/40 w-4 hover:bg-white/60"
+                className={`h-1 transition-all duration-500 rounded-full ${i === currentIndex ? "bg-white w-6" : "bg-white/40 w-2 hover:bg-white/60"
                   }`}
               />
             ))}
           </div>
-        </div>
 
-        {/* 6. Navigation Buttons (Visible on Hover) */}
-        <button
-          onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/20"
-        >
-          <ChevronLeftIcon className="h-10 w-10" />
-        </button>
+          {/* 5. Navigation Arrows - Scaled down */}
+          <button
+            onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/10"
+          >
+            <ChevronLeftIcon className="h-6 w-6" />
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/10"
+          >
+            <ChevronRightIcon className="h-6 w-6" />
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-
-
-export default Advertising;
+export default PageAdvertising;

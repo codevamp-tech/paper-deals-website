@@ -5,6 +5,7 @@ import { ShoppingCart, X, Plus, Minus, Trash2, Send } from "lucide-react";
 import EnquiryModal from "@/components/enquiryModal";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
@@ -14,6 +15,7 @@ export default function ProductListing() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [cart, setCart] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const router = useRouter();
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
   const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
   const [enquiryData, setEnquiryData] = useState({
@@ -288,21 +290,7 @@ export default function ProductListing() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 z-40 bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-lg"
-          >
-            <ShoppingCart size={24} />
-            {getTotalItems() > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-                {getTotalItems()}
-              </span>
-            )}
-          </button>
-        </div>
-      </div>
+
 
       {isCartOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
@@ -427,12 +415,31 @@ export default function ProductListing() {
       )}
 
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black">
-            Top-Rated Paper Products in the Market
-          </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mt-2"></div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 border-b border-gray-100 pb-6">
+          {/* Title Section */}
+          <div className="text-center sm:text-left">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Top-Rated Paper Products
+            </h2>
+            <div className="w-20 h-1.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mt-3 mx-auto sm:mx-0"></div>
+          </div>
+
+          {/* Cart Button Section */}
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="group relative p-4 bg-white border border-gray-200 text-blue-600 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              <ShoppingCart size={28} className="group-hover:scale-110 transition-transform" />
+
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-lg h-6 px-2 flex items-center justify-center shadow-lg animate-in zoom-in">
+                  {getTotalItems()}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-10">
@@ -534,7 +541,15 @@ export default function ProductListing() {
                       Contact
                     </button>
                   </div>
-
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/B2B/seller/${item.seller_id}`);
+                    }}
+                    className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
+                  >
+                    View Seller
+                  </button>
                   <button
                     onClick={() => addToCart(item)}
                     className={`w-full py-2 rounded-lg text-white hover:opacity-90 transition mt-2 flex items-center justify-center gap-2 ${isInCart(item.id)
