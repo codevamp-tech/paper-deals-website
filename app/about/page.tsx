@@ -4,6 +4,8 @@ import PartnerWithUs from "@/components/partnerwithus/PartnerWith"
 import FaqSection from "@/components/faqSection/FaqSection"
 import { useTheme } from "@/hooks/use-theme"
 import InfiniteCarousel from "./CulturePaperdeals"
+import VideoCarousel from "@/components/VideoCrousel"
+import ImageCarousel from "@/components/imageCrousel"
 
 export default function AboutUs() {
   const { theme } = useTheme()
@@ -369,7 +371,8 @@ export default function AboutUs() {
           </div>
         </div>
       </div>
-
+      <VideoCarousel />
+      <ImageCarousel />
       {/* <InfiniteCarousel /> */}
       <ReadyToOrder />
       <PartnerWithUs />
