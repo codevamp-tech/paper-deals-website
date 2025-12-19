@@ -69,10 +69,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
   };
 
   const isActive = (href: string) => {
-    // Mark link active if pathname equals or starts with href (handles nested routes)
     if (!href) return false;
-    return pathname === href || pathname.startsWith(href + "/") || pathname.startsWith(href);
+
+    // Exact match
+    if (pathname === href) return true;
+
+    // Nested route match (but avoid partial matches)
+    return pathname.startsWith(href + "/");
   };
+
 
   // Reusable nav link
   const NavLink = ({ href, Icon, children }: { href: string; Icon: any; children: React.ReactNode }) => {
@@ -133,13 +138,13 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
           );
         })}
         <hr className="my-3 border-white/10" />
-        <Button
+        {/* <Button
           onClick={handleLogout}
           variant="ghost"
           className="w-full justify-start text-gray-200 hover:bg-white/10 hover:text-white"
         >
           Logout
-        </Button>
+        </Button> */}
       </div>
     </aside>
   );

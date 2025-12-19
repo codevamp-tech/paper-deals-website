@@ -7,6 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ShoppingCart, Trash2, X } from "lucide-react";
 import Pagination from "@/components/pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+
 
 function ProductSkeleton() {
   return (
@@ -40,6 +49,11 @@ export default function PaperProductsComparison() {
   const [selectedProduct, setSelectedProduct] = useState<string>("All");
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [selectedContactProduct, setSelectedContactProduct] = useState<any>(null);
+  const [contactQuantity, setContactQuantity] = useState(1);
+  const [contactMessage, setContactMessage] = useState("");
+
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
 
@@ -246,17 +260,7 @@ export default function PaperProductsComparison() {
             <h1 className="text-4xl font-bold text-gray-900">
               Paper Products Market
             </h1>
-            <button
-              onClick={() => setShowCart(!showCart)}
-              className="relative p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              {cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cart.length}
-                </span>
-              )}
-            </button>
+
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Compare prices across cities and connect with sellers directly
@@ -442,40 +446,23 @@ export default function PaperProductsComparison() {
                     </div>
                   </div>
 
-                  <div className="mb-4 flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateQuantity(product._id, -1)}
-                    >
-                      -
-                    </Button>
-                    <span>{quantities[product._id] || 1}</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateQuantity(product._id, 1)}
-                    >
-                      +
-                    </Button> Kg
-                  </div>
+
 
                   <div className="space-y-2 mb-4">
-                    <Button
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full bg-blue-600 text-white"
-                      disabled={isProductAdded(product._id)}
-                    >
-                      {isProductAdded(product._id) ? "Added" : "Add to Cart"}
 
-                    </Button>
                     <Button
                       variant="outline"
                       className="w-full"
-                      onClick={() => router.push("/subscriptionPlan")}
+                      onClick={() => {
+                        setSelectedContactProduct(product);
+                        setContactQuantity(1);
+                        setContactMessage("");
+                        setContactOpen(true);
+                      }}
                     >
                       Contact Seller
                     </Button>
+
                   </div>
 
                   <div className="pt-4 border-t border-gray-100 text-sm flex justify-between">
@@ -537,100 +524,83 @@ export default function PaperProductsComparison() {
 
 
       </div>
-      {/* Cart Sidebar */}
-      {/* Sleek Animated Cart Sidebar */}
-      {showCart && (
-        <div
-          className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity"
-          onClick={() => setShowCart(false)} // close when clicking outside
-        >
-          <div
-            onClick={(e) => e.stopPropagation()} // prevent close on inner click
-            className="relative w-96 h-full bg-white/90 backdrop-blur-lg shadow-2xl border-l border-blue-200 p-6 flex flex-col animate-slideIn"
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowCart(false)}
-              className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full shadow-sm transition"
-            >
-              <X className="w-5 h-5 text-gray-700" />
-            </button>
+      <Dialog open={contactOpen} onOpenChange={setContactOpen}>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle>Contact Seller</DialogTitle>
+          </DialogHeader>
 
-            {/* Header */}
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">
-              🛍 Your  Cart
-            </h2>
+          {selectedContactProduct && (
+            <div className="space-y-4">
+              {/* Product Info */}
+              {/* <div className="text-sm">
+                <p className="font-semibold">{selectedContactProduct.name}</p>
+                <p className="text-gray-500">{selectedContactProduct.mill}</p>
+                <p className="text-gray-500">{selectedContactProduct.city}</p>
+              </div> */}
 
-            {/* Cart Content */}
-            {cart.length > 0 ? (
-              <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
-                {cart.map((item) => (
-                  <div
-                    key={item._id}
-                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm hover:shadow-md transition"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                        <p className="text-sm text-gray-600">{item.mill}</p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeFromCart(item._id)}
-                        className="text-gray-500 hover:text-red-500"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="font-semibold text-blue-700">
-                        ₹{item.pricePerKg} /Kg
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateCartQuantity(item._id, item.quantity - 1)}
-                        >
-                          -
-                        </Button>
-                        <span className="text-base font-medium">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateCartQuantity(item._id, item.quantity + 1)}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
-                <ShoppingCart className="w-12 h-12 mb-3 text-gray-400" />
-                <p className="text-lg">Your cart is empty</p>
-              </div>
-            )}
+              {/* Quantity */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Quantity (Kg)
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    value={contactQuantity}
+                    onChange={(e) =>
+                      setContactQuantity(Math.max(1, Number(e.target.value)))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md 
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter quantity in Kg"
+                  />
+                </div>
 
-            {/* Cart Total Section */}
-            <div className="mt-6 border-t pt-4 bg-white/60 rounded-lg shadow-inner">
-              <div className="flex justify-between items-center text-lg font-semibold text-gray-800 mb-4">
-                <span>Total</span>
-                <span>₹{cartTotal}</span>
               </div>
-              <Button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-10"
-                onClick={() => router.push("/subscriptionPlan")}
-              >
-                Proceed to Contact
-              </Button>
+
+              {/* Message */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Message
+                </label>
+                <Textarea
+                  placeholder="Write your requirement or message to seller..."
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button
+              className="bg-blue-500 px-4 py-2 text-white"
+              onClick={() => {
+                console.log("Contact Seller Data:", {
+                  product: selectedContactProduct,
+                  quantity: contactQuantity,
+                  message: contactMessage,
+                });
+
+                // later you can call API / WhatsApp / WATI here
+                setContactOpen(false);
+              }}
+            >
+              Send Request
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setContactOpen(false)}
+            >
+              Cancel
+            </Button>
+
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
     </div>
   );
