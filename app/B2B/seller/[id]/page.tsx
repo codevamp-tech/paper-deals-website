@@ -129,7 +129,7 @@ export default function BuyersPage() {
     const fetchSeller = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/sellers/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users//buyerbyid/${id}`
         )
         const data = await res.json()
 

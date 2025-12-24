@@ -50,38 +50,38 @@ export default function ProductListing() {
   const fetchProducts = async (page: number = 1) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/product?page=${page}&limit=12`
-      );
+
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      const url =
+        mode === "B2C"
+          ? `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`
+          : `${baseUrl}/api/product?page=${page}&limit=12`;
+
+      const res = await fetch(url);
+
       if (!res.ok) throw new Error("Failed to fetch products");
+
       const data = await res.json();
 
       setProducts(data.products || []);
-      setPagination(data.pagination || { total: 0, page: 1, pages: 0 });
+      setPagination(
+        data.pagination || {
+          total: data.totalProducts || 0,
+          page: data.currentPage || page,
+          pages: data.totalPages || 0,
+        }
+      );
 
       const uniqueCategories = Array.from(
         new Map(
-          data.products
+          (data.products || [])
             .filter((p: any) => p.category && p.category.id)
             .map((p: any) => [p.category.id, { id: p.category.id, name: p.category.name }])
         ).values()
       );
 
-      if (uniqueCategories.length === 0) {
-        const fallback = Array.from(
-          new Map(
-            data.products
-              .filter((p: any) => p.category_id && p.category_id !== 0)
-              .map((p: any) => [
-                p.category_id,
-                { id: p.category_id, name: `Category ${p.category_id}` },
-              ])
-          ).values()
-        );
-        setCategories(fallback);
-      } else {
-        setCategories(uniqueCategories);
-      }
+      setCategories(uniqueCategories);
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
@@ -91,7 +91,10 @@ export default function ProductListing() {
 
   useEffect(() => {
     fetchProducts(1);
+  }, [mode]);
 
+
+  useEffect(() => {
     const savedMode = localStorage.getItem("mode") as "B2B" | "B2C";
     if (savedMode) setMode(savedMode);
 

@@ -21,7 +21,7 @@ export default function SellerList() {
     const fetchSellers = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/getActiveSellers`
         );
         const data = await res.json();
         setSellers(data.data || []);
@@ -239,8 +239,8 @@ export default function SellerList() {
               key={cat}
               onClick={() => handleCategoryFilter(cat)}
               className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat
-                  ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
             >
               {cat}
