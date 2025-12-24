@@ -27,9 +27,12 @@ const navigation: NavItem[] = [
   { name: "My Enquiry", href: "/buyer3/enquiry", icon: Package },
   { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
-  { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
+  // { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
   { name: "Products", href: "/buyer3/product", icon: Package },
   { name: "Product's Enquiry", href: "/buyer3/productEnquiry", icon: Package },
+  { name: "Product's Order", href: "/buyer3/product-order", icon: Package },
+
+
   // { name: "Chat", href: "/buyer3/chat", icon: MessageSquareText },
   // { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
   // { name: "Profile", href: "/buyer3/profile", icon: Megaphone },

@@ -40,7 +40,9 @@ export default function Home() {
       <SellerOrBuyer />
     }
 
-    <ProductInsights />
+    {enabled &&
+      <ProductInsights />
+    }
 
     <Advertising />
 
