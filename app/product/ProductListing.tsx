@@ -431,7 +431,7 @@ export default function ProductListing() {
           {/* Cart Button Section */}
           <div className="flex items-center">
             <button
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => router.push("/cart")}
               className="group relative p-4 bg-white border border-gray-200 text-blue-600 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               <ShoppingCart size={28} className="group-hover:scale-110 transition-transform" />
