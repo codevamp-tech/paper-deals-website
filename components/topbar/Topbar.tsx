@@ -191,7 +191,11 @@ const Topbar = () => {
               </div>
             </div>
 
-            {/* Search Bar */}
+            
+
+            {/* Right Section */}
+            <div className="ml-auto flex items-center gap-4">
+              {/* Search Bar */}
             <div className="hidden md:flex items-center flex-1 justify-center">
               <div className="hidden md:flex items-center flex-1 mx-6 relative">
                 <div className="relative w-full max-w-md" ref={searchRef}>
@@ -232,9 +236,6 @@ const Topbar = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right Section */}
-            <div className="ml-auto flex items-center gap-4">
               {/* <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
