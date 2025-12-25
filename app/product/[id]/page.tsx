@@ -24,7 +24,7 @@ const Detail = () => {
   return (
     <div>
       <OrderNow productId={id as string} />
-      <ProductCategories />
+      {/* <ProductCategories /> */}
       <ReadyToOrder />
       <PartnerWithUs />
       <FaqSection />

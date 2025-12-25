@@ -83,7 +83,7 @@ export default function ProductCrousel() {
         {/* Heading */}
         <div className="text-center mb-12">
           <h2 className={`${theme.Text} text-[6vh] font-[900]`}>
-            Products ({mode})
+            Products
           </h2>
         </div>
 
