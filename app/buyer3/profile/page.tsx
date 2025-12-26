@@ -585,7 +585,8 @@ export default function SellerEditForm() {
                 </Label>
                 <Input
                   id="district"
-                  value="muzaffarnagar"
+                  value={formData.district}
+                  onChange={(e) => updateFormData("district", e.target.value)}
                   className="bg-gray-100 text-black border-gray-300"
                 />
               </div>
