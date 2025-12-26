@@ -95,9 +95,7 @@ export default function BuyerSignin() {
         toast.error(data.message || "Invalid email or password", {
           id: loadingToast,
         });
-        toast.error("Something went wrong. Please try again.", {
-          id: loadingToast,
-        });
+       
         console.log("Login failed:", data.message || "Invalid credentials");
       }
     } catch (err) {

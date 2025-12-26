@@ -156,7 +156,7 @@ const Hero = () => {
                   <Button
                     size="lg"
                     className="group bg-white text-blue-600 hover:bg-gray-100"
-                    onClick={() => router.push("/product")}
+                    onClick={() => router.push("/product?toProduct=true")}
                   >
                     Shop Now
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />

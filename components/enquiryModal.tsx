@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getUserFromToken } from "@/hooks/use-token";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 
 interface EnquiryModalProps {
@@ -99,6 +100,10 @@ const EnquiryModal = memo(function EnquiryModal({
     setLoading(false);
   };
 
+
+      const isProfileIncomplete =
+        !enquiryData.company_name?.trim() || !enquiryData.name?.trim();
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
@@ -130,6 +135,23 @@ const EnquiryModal = memo(function EnquiryModal({
             </div>
           ))}
         </div>
+
+         {isProfileIncomplete && (
+                        <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+                            <p className="text-sm font-medium">
+                                Please complete your profile to send an enquiry.
+                            </p>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="ml-auto border-red-400 text-red-600"
+                                onClick={() => router.push("/buyer3/profile")}
+                            >
+                                Complete Profile
+                            </Button>
+                        </div>
+                    )}
+
 
         {/* FORM START */}
         <form onSubmit={handleSubmit} className="space-y-6">
