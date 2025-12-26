@@ -6,19 +6,26 @@ import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
+
 
 
 export default function BuyerSignin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     loginType: "buyer",
     isRobot: false,
   });
+
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const redirectUrl = searchParams.get("redirect") || "/buyer3/dashboard"
+
 
   // ✅ Handle input changes
   const handleInputChange = (e: any) => {
@@ -83,7 +90,7 @@ export default function BuyerSignin() {
         });
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "/buyer3/dashboard";
+        router.push(redirectUrl);
       } else {
         toast.error(data.message || "Invalid email or password", {
           id: loadingToast,

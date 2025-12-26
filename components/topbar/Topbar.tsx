@@ -215,42 +215,53 @@ const Topbar = () => {
                       placeholder="Search by product or category..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
+                      className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300"
                     />
+
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
 
+                    {/* 🔽 Dropdown */}
+                    {(debouncedQuery && (results.length > 0 || results.length === 0)) && (
+                      <div className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 overflow-hidden">
 
-                    {results.length === 0 && debouncedQuery && (
-                      <div className="px-4 py-3 text-sm text-gray-500">
-                        No products found
+                        {/* ❌ No results */}
+                        {results.length === 0 && (
+                          <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                            No products found
+                          </div>
+                        )}
+
+                        {/* ✅ Results */}
+                        {results.length > 0 && (
+                          <ul className="max-h-60 overflow-y-auto text-black">
+                            {results.map((item) => (
+                              <li
+                                key={item.id}
+                                onClick={() => handleSelect(item)}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium text-gray-800">
+                                    {item.product_name}
+                                  </span>
+                                  <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                                    Product
+                                  </span>
+                                </div>
+
+                                {(item.category?.name || item.category_id) && (
+                                  <div className="text-sm text-gray-500 mt-1">
+                                    Category: {item.category?.name || item.category_id}
+                                  </div>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
                     )}
-                    {results.length > 0 && (
-                      <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
-                        {results.map((item) => (
-                          <li
-                            key={item.id}
-                            onClick={() => handleSelect(item)}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-gray-800">
-                                {item.product_name}
-                              </span>
-                              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
-                                Product
-                              </span>
-                            </div>
-                            {(item.category?.name || item.category_id) && (
-                              <div className="text-sm text-gray-500 mt-1">
-                                Category: {item.category?.name || item.category_id}
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
+
                 </div>
               </div>
               {/* <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
