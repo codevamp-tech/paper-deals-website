@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
@@ -38,6 +38,8 @@ const Topbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme } = useTheme();
 
+  const searchRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const mode = localStorage.getItem("mode") === "B2B";
     setEnabled(mode);
@@ -56,9 +58,21 @@ const Topbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // 🔹 Close search dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setResults([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     if (!query.trim()) {
-      console.log("inside")
       setResults([]);
       return;
     }
@@ -71,10 +85,8 @@ const Topbar = () => {
           )}`
         );
         const data = await res.json();
-        console.log("search data", data)
 
         if (data?.success && Array.isArray(data.data)) {
-          // ✅ Filter products where product_name or category matches query
           const filtered = data.data.filter((item: any) => {
             const productName = item.product_name?.toLowerCase() || "";
             const categoryName =
@@ -87,7 +99,6 @@ const Topbar = () => {
             );
           });
 
-          // Tag as product type for UI
           const withType = filtered.map((p: any) => ({
             ...p,
             _type: "product",
@@ -105,9 +116,8 @@ const Topbar = () => {
     fetchResults();
   }, [query]);
 
-  // 🧭 Handle click on search result
   const handleSelect = (item: any) => {
-    router.push(`/product/${item.id}`); // Go directly to product details
+    router.push(`/product/${item.id}`);
   };
 
   const handleLogout = () => {
@@ -117,19 +127,15 @@ const Topbar = () => {
     router.push("/");
   };
 
-
-  console.log("user", user)
-
-  // Helper function to get initials from full name
   const getInitials = (fullName: string) => {
     if (!fullName) return "U";
     const names = fullName.trim().split(" ");
     if (names.length === 1) return names[0].charAt(0).toUpperCase();
     return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
   };
+
   return (
     <header className="bg-white sticky top-0 z-50 shadow-md">
-      {/* 🔹 Main Top Section */}
       <div className="bg-white">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center ">
@@ -144,76 +150,55 @@ const Topbar = () => {
               </Link>
 
               <div className="hidden lg:flex items-center gap-6">
-
                 {enabled ? (
                   <>
                     <TopbarWithCategories />
-                    <Link
-                      href="/B2B/consultants"
-                      className="text-sm "
-                    >
+                    <Link href="/B2B/consultants" className="text-sm">
                       Consultants
                     </Link>
-
-                    <Link
-                      href="/B2B/become-a-seller"
-                      className="text-sm "
-                    >
+                    <Link href="/B2B/become-a-seller" className="text-sm">
                       Become a Seller
                     </Link>
-                    {/* <Link href="/product" className="text-sm ">
-                      Products
-                    </Link> */}
-                    <Link
-                      href="/B2B/live-stock"
-                      className="text-sm "
-                    >
+                    <Link href="/B2B/live-stock" className="text-sm">
                       Live Stock
                     </Link>
-                    <Link href="/about" className="text-sm ">
+                    <Link href="/about" className="text-sm">
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm ">
+                    <Link href="/News" className="text-sm">
                       News
                     </Link>
                   </>
                 ) : (
                   <>
-                    <Link href="/product" className="text-xl ">
+                    <Link href="/product" className="text-sm">
                       Products
                     </Link>
-                    {/* <Link
-                      href="/B2B/live-stock"
-                      className="text-sm "
-                    >
-                      Live Stock
-                    </Link> */}
-                    <Link href="/buyer" className="text-sm ">
+                    <Link href="/buyer" className="text-sm">
                       Buyers
                     </Link>
-                    <Link
-                      href="/B2B/seller"
-                      className="text-sm "
-                    >
+                    <Link href="/B2B/seller" className="text-sm">
                       Sellers
                     </Link>
-                    <Link href="/about" className="text-sm ">
+                    <Link href="/about" className="text-sm">
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm ">
+                    <Link href="/News" className="text-sm">
                       News
                     </Link>
-
                   </>
                 )}
               </div>
-
             </div>
 
-            {/* Search Bar */}
+            
+
+            {/* Right Section */}
+            <div className="ml-auto flex items-center gap-4">
+              {/* Search Bar */}
             <div className="hidden md:flex items-center flex-1 justify-center">
               <div className="hidden md:flex items-center flex-1 mx-6 relative">
-                <div className="relative w-full max-w-md">
+                <div className="relative w-full max-w-md" ref={searchRef}>
                   <input
                     type="text"
                     placeholder="Search by product or category..."
@@ -222,6 +207,7 @@ const Topbar = () => {
                     className="w-full pl-4 pr-12 py-3 rounded-2xl bg-white/70 backdrop-blur-md border border-gray-200 shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/70 focus:border-cyan-500 transition-all duration-300 ease-in-out"
                   />
                   <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
+
                   {results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
                       {results.map((item) => (
@@ -249,14 +235,8 @@ const Topbar = () => {
                   )}
                 </div>
               </div>
-
             </div>
-            {/* Right Section (Login / User) */}
-            <div className="ml-auto flex items-center gap-4">
-              <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
-                {/* B2C Button (Active when enabled is false) */}
-
-
+              {/* <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -266,21 +246,12 @@ const Topbar = () => {
                           setEnabled(false);
                           localStorage.setItem("mode", "B2C");
                           router.push("/");
-                          setTimeout(() => {
-                            window.location.reload();
-                          }, 500);
+                          setTimeout(() => window.location.reload(), 500);
                         }}
-                        // We use inline style for the background color to utilize theme.bg1 dynamically
-                        style={{
-                          backgroundColor: !enabled ? theme.toggle : "transparent"
-                        }}
-                        className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${!enabled
-                          ? "text-white shadow-sm" // Active State (bg handled by style)
-                          : "text-gray-500 hover:text-gray-900" // Inactive State
-                          }`}
+                        style={{ backgroundColor: !enabled ? theme.toggle : "transparent" }}
+                        className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${!enabled ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
                       >
-                        <ShoppingBag className="mr-2 h-4 w-4" />
-                        B2C
+                        <ShoppingBag className="mr-2 h-4 w-4" /> B2C
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
@@ -289,7 +260,6 @@ const Topbar = () => {
                   </Tooltip>
                 </TooltipProvider>
 
-                {/* B2B Button (Active when enabled is true) */}
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -301,28 +271,20 @@ const Topbar = () => {
                           router.push("/");
                           setTimeout(() => window.location.reload(), 500);
                         }}
-                        style={{
-                          backgroundColor: enabled ? theme.toggle : "transparent",
-                        }}
-                        className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${enabled
-                          ? "text-white shadow-sm"
-                          : "text-gray-500 hover:text-gray-900"
-                          }`}
+                        style={{ backgroundColor: enabled ? theme.toggle : "transparent" }}
+                        className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${enabled ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
                       >
-                        <Building2 className="mr-2 h-4 w-4" />
-                        B2B
+                        <Building2 className="mr-2 h-4 w-4" /> B2B
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
-                      <p className="text-sm">
-                        Switch to <b>B2B</b> (Wholesale & Business Mode)
-                      </p>
+                      <p className="text-sm">Switch to <b>B2B</b> (Wholesale & Business Mode)</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+              </div> */}
 
-              </div>
-
+              {/* User/Login */}
               <div className="flex items-end justify-end">
                 <div className="flex items-center gap-3 relative">
                   {isLoggedIn ? (
@@ -338,186 +300,81 @@ const Topbar = () => {
                           <ChevronDown className="w-4 h-4 text-gray-600" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-48 rounded-lg border border-gray-200 shadow-md bg-white text-black"
-                      >
+                      <DropdownMenuContent align="end" className="w-48 rounded-lg border border-gray-200 shadow-md bg-white text-black">
                         <DropdownMenuLabel className="text-sm font-medium bg-white text-black">
                           My Account
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-
-
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/buyer3/dashboard"
-                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                          >
-                            <LayoutDashboard className="w-4 h-4 text-gray-600" />
-                            Dashboard
+                          <Link href="/buyer3/dashboard" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <LayoutDashboard className="w-4 h-4 text-gray-600" /> Dashboard
                           </Link>
                         </DropdownMenuItem>
-
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/buyer3/profile"
-                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                          >
-                            <User className="w-4 h-4 text-gray-600" />
-                            Profile
+                          <Link href="/buyer3/profile" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <User className="w-4 h-4 text-gray-600" /> Profile
                           </Link>
                         </DropdownMenuItem>
-
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/buyer3/chat"
-                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                          >
-                            <MessageCircle className="w-4 h-4 text-gray-600" />
-                            Chat
+                          <Link href="/buyer3/chat" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <MessageCircle className="w-4 h-4 text-gray-600" /> Chat
                           </Link>
                         </DropdownMenuItem>
-
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/buyer3/subscriptions"
-                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                          >
-                            <CreditCard className="w-4 h-4 text-gray-600" />
-                            Subscription
+                          <Link href="/buyer3/subscriptions" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <CreditCard className="w-4 h-4 text-gray-600" /> Subscription
                           </Link>
                         </DropdownMenuItem>
-
                         <DropdownMenuItem asChild>
-                          <Link
-                            href="/buyer3/changepassword"
-                            className="flex items-center gap-2 w-full text-sm hover:bg-gray-100"
-                          >
-                            <Lock className="w-4 h-4 text-gray-600" />
-                            Change Password
+                          <Link href="/buyer3/changepassword" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <Lock className="w-4 h-4 text-gray-600" /> Change Password
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={handleLogout}
-                          className="flex items-center gap-2 text-sm !text-red-500 cursor-pointer hover:bg-gray-100"
-                        >
-                          <LogOut className="w-4 h-4 text-red-500" />
-                          Logout
+                        <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-sm !text-red-500 cursor-pointer hover:bg-gray-100">
+                          <LogOut className="w-4 h-4 text-red-500" /> Logout
                         </DropdownMenuItem>
                       </DropdownMenuContent>
-
                     </DropdownMenu>
                   ) : (
-                    <Link
-                      href="/buyer-login"
-                      className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md `}
-                      style={{ backgroundColor: theme.buttoncolor }}
-                    >
-                      <User className="w-4 h-4" />
-                      Login
+                    <Link href="/buyer-login" className={`hidden md:flex items-center gap-2 px-5 py-2 text-white rounded-lg  transition-colors duration-200 font-semibold shadow-md`} style={{ backgroundColor: theme.buttoncolor }}>
+                      <User className="w-4 h-4" /> Login
                     </Link>
                   )}
-
                 </div>
-
               </div>
             </div>
-            <nav className="relative lg:hidden">
-              {/* Your regular desktop navigation */}
 
-              {/* Mobile Menu Button */}
+            {/* Mobile Menu */}
+            <nav className="relative lg:hidden">
               <div className="flex lg:hidden items-center gap-3">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="p-2 text-gray-800 hover:text-gray-600 transition-colors"
                 >
-                  {isMobileMenuOpen ? (
-                    <X className="w-6 h-6" />
-                  ) : (
-                    <Menu className="w-6 h-6" />
-                  )}
+                  {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               </div>
 
-              {/* Mobile Menu Dropdown */}
               {isMobileMenuOpen && (
                 <div className="lg:hidden fixed top-0 left-0 w-full h-screen bg-black bg-opacity-50 z-50">
                   <div className="absolute top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
                     <div className="flex flex-col h-full">
-                      {/* Header with close button */}
                       <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                        <span className="text-lg font-semibold text-gray-800">
-                          Menu
-                        </span>
-                        <button
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                        >
+                        <span className="text-lg font-semibold text-gray-800">Menu</span>
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
                           <X className="w-6 h-6" />
                         </button>
                       </div>
 
-                      {/* Menu Links */}
                       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        <Link
-                          href="/B2B/consultants"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Consultants
-                        </Link>
-                        {/* <Link
-                          href="/B2B/seller "
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Sellers
-                        </Link> */}
-                        <Link
-                          href="/B2B/become-a-seller"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Become a Seller
-                        </Link>
-                        <Link
-                          href="/product"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Products
-                        </Link>
-                        <Link
-                          href="/B2B/live-stock"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Live Stock
-                        </Link>
-                        <Link
-                          href="/about"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          About Us
-                        </Link>
-                        <Link
-                          href="/News"
-                          className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          News
-                        </Link>
-
-                        {/* ✅ Show only if buyer logged in */}
+                        <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
+                        <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link>
+                        <Link href="/product" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
+                        <Link href="/B2B/live-stock" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Live Stock</Link>
+                        <Link href="/about" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                        <Link href="/News" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>News</Link>
                         {isLoggedIn && (
-                          <Link
-                            href="/order"
-                            className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            My Orders
-                          </Link>
+                          <Link href="/order" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>My Orders</Link>
                         )}
                       </div>
                     </div>
@@ -526,84 +383,9 @@ const Topbar = () => {
               )}
             </nav>
           </div>
-        </div >
-      </div >
-
-      {/* 🔹 Category Navbar */}
-      < div className="bg-slate-800 text-white" >
-        <div className="container mx-auto px-4">
-          {/* <div className="hidden lg:flex items-center gap-6">
-            <TopbarWithCategories />
-            {enabled ? (
-              <>
-                <Link
-                  href="/B2B/consultants"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Consultants
-                </Link>
-
-                <Link
-                  href="/B2B/become-a-seller"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Become a Seller
-                </Link>
-                <Link href="/product" className="text-sm hover:text-cyan-300">
-                  Products
-                </Link>
-                <Link
-                  href="/B2B/live-stock"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Live Stock
-                </Link>
-                <Link href="/about" className="text-sm hover:text-cyan-300">
-                  About Us
-                </Link>
-                <Link href="/News" className="text-sm hover:text-cyan-300">
-                  News
-                </Link>
-
-
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/B2B/live-stock"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Live Stock
-                </Link>
-                <Link href="/product" className="text-sm hover:text-cyan-300">
-                  Products
-                </Link>
-                <Link
-                  href="/B2B/seller"
-                  className="text-sm hover:text-cyan-300"
-                >
-                  Sellers
-                </Link>
-                <Link href="/about" className="text-sm hover:text-cyan-300">
-                  About Us
-                </Link>
-                <Link href="/News" className="text-sm hover:text-cyan-300">
-                  News
-                </Link>
-
-                {isLoggedIn && (
-                  <Link href="/order" className="text-sm hover:text-cyan-300">
-                    My Orders
-                  </Link>
-                )}
-              </>
-            )}
-          </div> */}
         </div>
-      </div >
-
-
-    </header >
+      </div>
+    </header>
   );
 };
 
