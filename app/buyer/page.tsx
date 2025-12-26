@@ -190,7 +190,6 @@ export default function BuyerList() {
                 <div
                   key={buyers.id}
                   className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden cursor-pointer"
-                  onClick={() => router.push(`/buyer/${buyers.id}`)}
                 >
                   {/* Card Header */}
                   <div className="p-6">
