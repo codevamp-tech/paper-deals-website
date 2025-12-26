@@ -214,28 +214,60 @@ const SellerEnquiryPage = () => {
         }
     };
 
+    const paperFields = [
+        { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
+        { key: "bf", label: "BF", info: "Bursting Factor" },
+        { key: "shade", label: "Shade" },
+        { key: "brightness", label: "Brightness" },
+        { key: "rim", label: "Rim" },
+        { key: "sheet", label: "Sheet" },
+        { key: "size", label: "Size" },
+    ];
+
+
+    const isProfileIncomplete =
+        !formData.company_name?.trim() || !formData.name?.trim();
+
+
     return (
         <main className="min-h-screen bg-gray-100 py-10">
             <div className="max-w-6xl mx-auto">
                 {/* Profile Information */}
-                <Card className="mb-8 p-6">
-                    <div className="flex items-center gap-6">
-                        <div className="w-28 h-28 border rounded bg-gray-100 flex items-center justify-center overflow-hidden">
+
+                <div className="flex items-center gap-6 m-2 py-4">
+                    {/* <div className="w-28 h-28 border rounded bg-gray-100 flex items-center justify-center overflow-hidden">
                             <img
                                 src={"/placeholder.png"}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                             />
-                        </div>
-                        <div>
-                            <p className="text-lg font-semibold text-black">Profile Information</p>
-                            <p className="text-gray-600 mt-2">KPDS_{id}</p>
-                        </div>
+                        </div> */}
+                    <div>
+                        <p className="text-lg font-semibold text-black">Profile Information</p>
+                        <p className="text-gray-600 mt-2">KPDS_{id}</p>
                     </div>
-                </Card>
+                </div>
+
 
                 {/* Enquiry Form */}
                 <Card className="p-6 md:p-10">
+                    {isProfileIncomplete && (
+                        <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+                            <p className="text-sm font-medium">
+                                Please complete your profile to send an enquiry.
+                            </p>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="ml-auto border-red-400 text-red-600"
+                                onClick={() => router.push("/buyer3/profile")}
+                            >
+                                Complete Profile
+                            </Button>
+                        </div>
+                    )}
+
+
                     <h2 className="text-xl font-bold mb-6 text-black">Business Enquiry</h2>
 
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -348,12 +380,20 @@ const SellerEnquiryPage = () => {
                         </div>
 
                         {/* Other Fields */}
-                        {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map((field) => (
-                            <div key={field}>
-                                <Label className="capitalize">{field}</Label>
+                        {paperFields.map((field) => (
+                            <div key={field.key}>
+                                <Label>
+                                    {field.label}
+                                    {field.info && (
+                                        <span className="text-xs text-gray-500 ml-1">
+                                            ({field.info})
+                                        </span>
+                                    )}
+                                </Label>
+
                                 <Input
-                                    name={field}
-                                    value={(formData as any)[field]}
+                                    name={field.key}
+                                    value={(formData as any)[field.key]}
                                     onChange={handleChange}
                                     className="bg-gray-50 border border-gray-300 text-black"
                                 />

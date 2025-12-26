@@ -9,6 +9,9 @@ import { Building } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 import SellerProductCrousel from "@/components/sellerProductCrousel"
+import Cookies from "js-cookie"
+import { useRouter, usePathname } from "next/navigation"
+
 
 
 const states = [
@@ -123,6 +126,23 @@ export default function BuyersPage() {
   const { id } = useParams()
   const [seller, setSeller] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const handleSendEnquiry = () => {
+    const token = Cookies.get("token")
+
+    if (!token) {
+      // 🔁 Redirect to login with return URL
+      router.push(`/buyer-login?redirect=${encodeURIComponent(pathname)}`)
+      return
+    }
+
+    // ✅ Logged in → go to enquiry
+    router.push(`/B2B/seller/${id}/enquiry`)
+  }
+
 
   useEffect(() => {
     let isMounted = true
@@ -272,11 +292,12 @@ export default function BuyersPage() {
             </div>
 
             <div className=" flex justify-center">
-              <Link href={`/B2B/seller/${id}/enquiry`}>
-                <Button className="px-10 h-14 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 hover:from-blue-700 hover:via-cyan-600 hover:to-teal-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 rounded-xl">
-                  Send Enquiry Now
-                </Button>
-              </Link>
+              <Button
+                onClick={handleSendEnquiry}
+                className="px-10 h-14 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 hover:scale-105 transition-all rounded-xl"
+              >
+                Send Enquiry Now
+              </Button>
             </div>
           </div>
         </Card>

@@ -277,7 +277,7 @@ export default function BuyerList() {
                     </div> */}
 
                     {/* View Profile Button */}
-                    <button
+                    {/* <button
                       className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -285,7 +285,7 @@ export default function BuyerList() {
                       }}
                     >
                       View Profile
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               );
