@@ -220,6 +220,29 @@ const OrderNow = ({ productId }: { productId: string }) => {
   ].filter((spec) => spec.value)
 
 
+   const paperFields = [
+        { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
+        { key: "bf", label: "BF", info: "Bursting Factor" },
+        { key: "shade", label: "Shade" },
+        { key: "brightness", label: "Brightness" },
+        { key: "rim", label: "Rim" },
+        { key: "sheet", label: "Sheet" },
+        { key: "size", label: "Size" },
+    ];
+
+  const handleEnquiryClick = () => {
+    
+    if (!user) {
+      toast.error("Please login to send enquiry");
+      router.push("/buyer-login");
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
+  const isProfileIncomplete =
+    !formData.company_name?.trim() || !formData.name?.trim();
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Product Display */}
@@ -283,6 +306,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                 <DialogTrigger asChild>
                   <Button
                     size="lg"
+                    onClick={handleEnquiryClick}
                     className="flex-1 bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 rounded-xl shadow-lg shadow-sky-200 transition-all hover:shadow-xl hover:shadow-sky-300"
                   >
                     <Mail className="w-5 h-5 mr-2" />
@@ -297,6 +321,23 @@ const OrderNow = ({ productId }: { productId: string }) => {
                       Enquiry for {product.product_name}
                     </DialogTitle>
                   </DialogHeader>
+
+
+                  {isProfileIncomplete && (
+                    <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+                      <p className="text-sm font-medium">
+                        Please complete your profile to send an enquiry.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="ml-auto border-red-400 text-red-600"
+                        onClick={() => router.push("/buyer3/profile")}
+                      >
+                        Complete Profile
+                      </Button>
+                    </div>
+                  )}
 
                   <form
                     onSubmit={handleSubmit}
@@ -350,19 +391,25 @@ const OrderNow = ({ productId }: { productId: string }) => {
                     </div>
 
 
-                    {["gsm", "bf", "shade", "brightness", "rim", "sheat", "size"].map(
-                      (f) => (
-                        <div key={f}>
-                          <Label className="capitalize">{f}</Label>
-                          <Input
-                            name={f}
-                            value={(formData as any)[f]}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      )
-                    )}
-
+                    {paperFields.map((field) => (
+                                              <div key={field.key}>
+                                                  <Label>
+                                                      {field.label}
+                                                      {field.info && (
+                                                          <span className="text-xs text-gray-500 ml-1">
+                                                              ({field.info})
+                                                          </span>
+                                                      )}
+                                                  </Label>
+                  
+                                                  <Input
+                                                      name={field.key}
+                                                      value={(formData as any)[field.key]}
+                                                      onChange={handleChange}
+                                                      className="bg-gray-50 border border-gray-300 text-black"
+                                                  />
+                                              </div>
+                                          ))}
                     <div>
                       <Label>Quantity (Kg)</Label>
                       <Input

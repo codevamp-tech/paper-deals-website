@@ -5,7 +5,7 @@ import { ShoppingCart, X, Plus, Minus, Trash2, Send } from "lucide-react";
 import EnquiryModal from "@/components/enquiryModal";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
@@ -27,6 +27,9 @@ export default function ProductListing() {
     remarks: "",
     message: "",
   });
+  const productsRef = useRef<HTMLDivElement | null>(null);
+  const searchParams = useSearchParams();
+
 
   const [productEdits, setProductEdits] = useState<Record<
     number,
@@ -92,6 +95,21 @@ export default function ProductListing() {
   useEffect(() => {
     fetchProducts(1);
   }, [mode]);
+
+  useEffect(() => {
+    const toProduct = searchParams.get("toProduct");
+
+    if (toProduct === "true") {
+      // slight delay ensures DOM is rendered
+      setTimeout(() => {
+        productsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+    }
+  }, [searchParams]);
+
 
 
   useEffect(() => {
@@ -422,7 +440,7 @@ export default function ProductListing() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 border-b border-gray-100 pb-6">
           {/* Title Section */}
           <div className="text-center sm:text-left">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 ref={productsRef} className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Top-Rated Paper Products
             </h2>
             <div className="w-20 h-1.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mt-3 mx-auto sm:mx-0"></div>
