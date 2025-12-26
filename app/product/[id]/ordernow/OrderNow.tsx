@@ -63,11 +63,11 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const fetchRelated = async (category_id: string) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${category_id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product/buyer/${category_id}`
       );
       if (!res.ok) throw new Error("Failed to fetch related products");
       const data = await res.json();
-      setRelatedProducts(data || []);
+      setRelatedProducts(data.products || []);
     } catch (err) {
       console.error("❌ Error fetching related products:", err);
     }

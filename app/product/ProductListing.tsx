@@ -53,10 +53,10 @@ export default function ProductListing() {
 
       const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      const url =
-        mode === "B2C"
-          ? `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`
-          : `${baseUrl}/api/product?page=${page}&limit=12`;
+      const url = `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`;
+      // mode === "B2C"
+      //   ? `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`
+      //   : `${baseUrl}/api/product?page=${page}&limit=12`;
 
       const res = await fetch(url);
 

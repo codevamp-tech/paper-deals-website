@@ -31,14 +31,26 @@ const Topbar = () => {
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query);
   const [results, setResults] = useState<any[]>([]);
   const [showSearch, setShowSearch] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme } = useTheme();
-
   const searchRef = useRef<HTMLDivElement>(null);
+
+  function useDebounce<T>(value: T, delay = 400) {
+    const [debounced, setDebounced] = useState(value);
+
+    useEffect(() => {
+      const timer = setTimeout(() => setDebounced(value), delay);
+      return () => clearTimeout(timer);
+    }, [value, delay]);
+
+    return debounced;
+  }
+
 
   useEffect(() => {
     const mode = localStorage.getItem("mode") === "B2C";
@@ -72,7 +84,7 @@ const Topbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!query.trim()) {
+    if (!debouncedQuery.trim()) {
       setResults([]);
       return;
     }
@@ -80,45 +92,38 @@ const Topbar = () => {
     const fetchResults = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/search?query=${encodeURIComponent(
-            query
-          )}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/search?q=${encodeURIComponent(
+            debouncedQuery
+          )}&limit=8`
         );
+
         const data = await res.json();
 
-        if (data?.success && Array.isArray(data.data)) {
-          const filtered = data.data.filter((item: any) => {
-            const productName = item.product_name?.toLowerCase() || "";
-            const categoryName =
-              item.category?.name?.toLowerCase() ||
-              item.category_id?.toLowerCase() ||
-              "";
-            return (
-              productName.includes(query.toLowerCase()) ||
-              categoryName.includes(query.toLowerCase())
-            );
-          });
-
-          const withType = filtered.map((p: any) => ({
-            ...p,
-            _type: "product",
-          }));
-          setResults(withType);
+        if (data?.success && Array.isArray(data.products)) {
+          setResults(
+            data.products.map((item: any) => ({
+              ...item,
+              _type: "product",
+            }))
+          );
         } else {
           setResults([]);
         }
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error("❌ Search error:", err);
         setResults([]);
       }
     };
 
     fetchResults();
-  }, [query]);
+  }, [debouncedQuery]);
 
   const handleSelect = (item: any) => {
+    setQuery("");        // ✅ clear input
+    setResults([]);      // ✅ close dropdown
     router.push(`/product/${item.id}`);
   };
+
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -208,6 +213,12 @@ const Topbar = () => {
                     />
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 cursor-pointer hover:text-cyan-500 transition-colors" />
 
+
+                    {results.length === 0 && debouncedQuery && (
+                      <div className="px-4 py-3 text-sm text-gray-500">
+                        No products found
+                      </div>
+                    )}
                     {results.length > 0 && (
                       <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg text-left z-50 max-h-60 overflow-y-auto text-black">
                         {results.map((item) => (

@@ -25,10 +25,10 @@ export default function ProductCrousel() {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-        const url =
-          mode === "B2C"
-            ? `${baseUrl}/api/product/by-user-type?user_type=3&page=1&limit=10`
-            : `${baseUrl}/api/product?page=1&limit=10`;
+        const url = `${baseUrl}/api/product/by-user-type?user_type=3&page=1&limit=10`;
+        // mode === "B2C"
+        //   ? `${baseUrl}/api/product/by-user-type?user_type=3&page=1&limit=10`
+        //   : `${baseUrl}/api/product?page=1&limit=10`;
 
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch products");
