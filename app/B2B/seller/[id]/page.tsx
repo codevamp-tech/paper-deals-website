@@ -179,7 +179,7 @@ export default function BuyersPage() {
   }
 
   const org = seller.organization || {}
-  const isVerified = Boolean(org?.verified)
+  const isVerified = seller.approved == 1;
   const orgName = org?.organizations || seller.name || "Seller"
   const stateName =
     states.find((s) => s.id === String(org?.state))?.name || "N/A"
