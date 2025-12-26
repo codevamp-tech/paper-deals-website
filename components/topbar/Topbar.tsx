@@ -156,6 +156,25 @@ const Topbar = () => {
 
               <div className="hidden lg:flex items-center gap-6">
                 {enabled ? (
+
+                  <>
+                    <Link href="/product" className="text-sm">
+                      Products
+                    </Link>
+                    <Link href="/buyer" className="text-sm">
+                      Buyers
+                    </Link>
+                    <Link href="/B2B/seller" className="text-sm">
+                      Sellers
+                    </Link>
+                    <Link href="/about" className="text-sm">
+                      About Us
+                    </Link>
+                    <Link href="/News" className="text-sm">
+                      News
+                    </Link>
+                  </>
+                ) : (
                   <>
                     <TopbarWithCategories />
                     <Link href="/B2B/consultants" className="text-sm">
@@ -174,30 +193,9 @@ const Topbar = () => {
                       News
                     </Link>
                   </>
-                ) : (
-                  <>
-                    <Link href="/product" className="text-sm">
-                      Products
-                    </Link>
-                    <Link href="/buyer" className="text-sm">
-                      Buyers
-                    </Link>
-                    <Link href="/B2B/seller" className="text-sm">
-                      Sellers
-                    </Link>
-                    <Link href="/about" className="text-sm">
-                      About Us
-                    </Link>
-                    <Link href="/News" className="text-sm">
-                      News
-                    </Link>
-                  </>
                 )}
               </div>
             </div>
-
-
-
             {/* Right Section */}
             <div className="ml-auto flex items-center gap-4">
               {/* Search Bar */}
