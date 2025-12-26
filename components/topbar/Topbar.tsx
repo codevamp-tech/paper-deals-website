@@ -53,7 +53,7 @@ const Topbar = () => {
 
 
   useEffect(() => {
-    const mode = localStorage.getItem("mode") === "B2B";
+    const mode = localStorage.getItem("mode") === "B2C";
     setEnabled(mode);
   }, []);
 
@@ -378,12 +378,15 @@ const Topbar = () => {
                       </div>
 
                       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
-                        <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link>
+                        {/* <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
+                        <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link> */}
                         <Link href="/product" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
-                        <Link href="/B2B/live-stock" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Live Stock</Link>
+                        <Link href="/buyer" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Buyers</Link>
+                        <Link href="/B2B/seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Sellers</Link>
+                        {/* <Link href="/B2B/live-stock" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Live Stock</Link> */}
                         <Link href="/about" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
                         <Link href="/News" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>News</Link>
+                        <Link href="/buyer-login" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
                         {isLoggedIn && (
                           <Link href="/order" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>My Orders</Link>
                         )}
