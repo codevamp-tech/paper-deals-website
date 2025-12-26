@@ -10,11 +10,24 @@ import Link from "next/link";
 
 const Hero = () => {
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query);
   const [results, setResults] = useState<any[]>([]);
+
   const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
 
   const router = useRouter();
   const { theme } = useTheme();
+
+  function useDebounce<T>(value: T, delay = 400) {
+    const [debounced, setDebounced] = useState(value);
+
+    useEffect(() => {
+      const timer = setTimeout(() => setDebounced(value), delay);
+      return () => clearTimeout(timer);
+    }, [value, delay]);
+
+    return debounced;
+  }
 
   // Detect mode
   useEffect(() => {
@@ -24,46 +37,52 @@ const Hero = () => {
 
   // Search API
   useEffect(() => {
-    if (!query.trim()) return setResults([]);
+    if (!debouncedQuery.trim()) {
+      setResults([]);
+      return;
+    }
 
     const fetchResults = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/stocks/search?query=${encodeURIComponent(query)}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/search?q=${encodeURIComponent(
+            debouncedQuery
+          )}&limit=6`
         );
+
+        if (!res.ok) {
+          setResults([]);
+          return;
+        }
+
         const data = await res.json();
 
-        if (data?.success && Array.isArray(data.data)) {
-          const filtered = data.data.filter((item: any) => {
-            const product = item.product_name?.toLowerCase() || "";
-            const category =
-              item.category?.name?.toLowerCase() ||
-              item.category_id?.toLowerCase() ||
-              "";
-            return (
-              product.includes(query.toLowerCase()) ||
-              category.includes(query.toLowerCase())
-            );
-          });
-
+        if (data?.success && Array.isArray(data.products)) {
           setResults(
-            filtered.map((i) => ({
-              ...i,
+            data.products.map((item: any) => ({
+              ...item,
               _type: "product",
             }))
           );
+        } else {
+          setResults([]);
         }
-      } catch {
+      } catch (err) {
+        console.error("❌ B2C Hero search error:", err);
         setResults([]);
       }
     };
 
     fetchResults();
-  }, [query]);
+  }, [debouncedQuery]);
+
 
   const handleSelect = (item: any) => {
+    setQuery("");        // ✅ clear input
+    setResults([]);      // ✅ close dropdown
     router.push(`/product/${item.id}`);
   };
+
 
   return (
     <>
@@ -102,6 +121,11 @@ const Hero = () => {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
+                  {results.length === 0 && debouncedQuery && (
+                    <li className="px-4 py-3 text-sm text-gray-500">
+                      No products found
+                    </li>
+                  )}
 
                   {results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
