@@ -53,9 +53,17 @@ const Topbar = () => {
 
 
   useEffect(() => {
-    const mode = localStorage.getItem("mode") === "B2C";
-    setEnabled(mode);
+    let mode = localStorage.getItem("mode");
+
+    // ✅ Default mode
+    if (!mode) {
+      mode = "B2C";
+      localStorage.setItem("mode", "B2C");
+    }
+
+    setEnabled(mode === "B2C");
   }, []);
+
 
   useEffect(() => {
     const token = Cookies.get("token");
