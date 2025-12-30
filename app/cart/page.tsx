@@ -6,6 +6,7 @@ import EnquiryModal from "@/components/enquiryModal";
 import { toast } from "sonner";
 
 interface Product {
+  price_per_kg: number;
   id: number;
   seller_id: number;
   product_name: string;
@@ -28,8 +29,7 @@ interface SellerSectionProps {
 
 const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSectionProps) => {
   const sellerName = items[0].seller?.name || "Seller";
-  const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const taxTotal = items.reduce((acc, item) => acc + (item.price * item.quantity * item.tax) / 100, 0);
+  const totalAmount = items.reduce((acc, item) => acc + item.price_per_kg * item.quantity, 0);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 hover:shadow-md transition-shadow duration-200">
@@ -67,10 +67,10 @@ const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSe
                 {/* <span className="bg-gray-100 px-2 py-1 rounded">Tax: {item.tax}%</span> */}
               </div>
               <p className="text-lg font-semibold text-gray-900">
-                ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                <span className="text-sm font-normal text-gray-500 ml-2">
+                ₹{(item.price_per_kg * item.quantity).toLocaleString('en-IN')}
+                {/* <span className="text-sm font-normal text-gray-500 ml-2">
                   (₹{item.price.toLocaleString('en-IN')} per unit)
-                </span>
+                </span> */}
               </p>
             </div>
 
@@ -262,7 +262,7 @@ export default function CartPage() {
   };
 
   const grouped = groupBySeller();
-  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const cartTotal = cart.reduce((acc, item) => acc + item.price_per_kg * item.quantity, 0);
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   if (cart.length === 0) {
@@ -363,7 +363,7 @@ export default function CartPage() {
                           <h4 className="font-medium text-gray-800 truncate">
                             {product.product_name || product.name}
                           </h4>
-                          <p className="font-semibold text-gray-900 mt-1">₹{product.price}</p>
+                          <p className="font-semibold text-gray-900 mt-1">₹{product.price_per_kg}</p>
                         </div>
                         <button
                           onClick={() => addToCart(product)}

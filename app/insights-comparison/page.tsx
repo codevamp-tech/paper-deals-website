@@ -15,6 +15,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { getUserFromToken } from "@/hooks/use-token";
+import { toast } from "sonner";
 
 
 function ProductSkeleton() {
@@ -53,10 +55,10 @@ export default function PaperProductsComparison() {
   const [selectedContactProduct, setSelectedContactProduct] = useState<any>(null);
   const [contactQuantity, setContactQuantity] = useState(1);
   const [contactMessage, setContactMessage] = useState("");
-
   const router = useRouter();
   const ITEMS_PER_PAGE = 9;
-
+  const user = getUserFromToken();
+  const userId = user?.user_id
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -242,6 +244,52 @@ export default function PaperProductsComparison() {
     setSelectedCompany("All");
     setSelectedProduct("All");
     setSelectedCity("All");
+  };
+
+  // ✅ Handle submitting contact seller request
+  const handleSubmit = async () => {
+    if (!selectedContactProduct) return;
+
+    // TODO: replace with actual buyer & seller ids from user/session
+    const buyer_id = userId;
+
+    const payload = {
+      buyer_id,
+      product_id: selectedContactProduct._id,
+      quantity: contactQuantity,
+      msg: contactMessage,
+    };
+
+    console.log("paylaod??", payload);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/live-price-lead`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to send request");
+      }
+
+      const data = await res.json();
+      console.log("Lead submitted:", data);
+
+      setContactOpen(false);
+      setContactQuantity(1);
+      setContactMessage("");
+
+      toast.success("Your request has been sent to the seller!");
+    } catch (err) {
+      console.error("Error submitting lead:", err);
+      toast.error("Failed to send request. Please try again.");
+    }
   };
 
 
@@ -532,12 +580,6 @@ export default function PaperProductsComparison() {
 
           {selectedContactProduct && (
             <div className="space-y-4">
-              {/* Product Info */}
-              {/* <div className="text-sm">
-                <p className="font-semibold">{selectedContactProduct.name}</p>
-                <p className="text-gray-500">{selectedContactProduct.mill}</p>
-                <p className="text-gray-500">{selectedContactProduct.city}</p>
-              </div> */}
 
               {/* Quantity */}
               <div>
@@ -577,16 +619,7 @@ export default function PaperProductsComparison() {
           <DialogFooter className="gap-2">
             <Button
               className="bg-blue-500 px-4 py-2 text-white"
-              onClick={() => {
-                console.log("Contact Seller Data:", {
-                  product: selectedContactProduct,
-                  quantity: contactQuantity,
-                  message: contactMessage,
-                });
-
-                // later you can call API / WhatsApp / WATI here
-                setContactOpen(false);
-              }}
+              onClick={handleSubmit} // use handleSubmit now
             >
               Send Request
             </Button>
