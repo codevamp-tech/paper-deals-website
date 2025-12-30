@@ -233,10 +233,10 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
 
         {/* Row 3 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
+          {/* <div>
             <Label>Price</Label>
             <Input type="number" value={formData.price} onChange={(e) => handleChange("price", e.target.value)} />
-          </div>
+          </div> */}
           <div>
             <Label>HSN Number</Label>
             <Input value={formData.hsn_number} onChange={(e) => handleChange("hsn_number", e.target.value)} />
@@ -247,15 +247,15 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
             <Input value={formData.city} onChange={(e) => handleChange("city", e.target.value)} />
           </div>
 
-
-        </div>
-
-        {/* Row 4 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Mill</Label>
             <Input value={formData.mill} onChange={(e) => handleChange("mill", e.target.value)} />
           </div>
+        </div>
+
+        {/* Row 4 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
           <div>
             <Label>Shade</Label>
             <Input value={formData.shade} onChange={(e) => handleChange("shade", e.target.value)} />
@@ -266,15 +266,15 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
             <Input value={formData.gsm} onChange={(e) => handleChange("gsm", e.target.value)} />
           </div>
 
-
-        </div>
-
-        {/* Row 5 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Sizes</Label>
             <Input value={formData.sizes} onChange={(e) => handleChange("sizes", e.target.value)} />
           </div>
+        </div>
+
+        {/* Row 5 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
           <div>
             <Label>Weights</Label>
             <Input value={formData.weights} onChange={(e) => handleChange("weights", e.target.value)} />
@@ -285,21 +285,21 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
             <Input value={formData.stock_in_kg} onChange={(e) => handleChange("stock_in_kg", e.target.value)} />
           </div>
 
-
-        </div>
-
-        {/* Row 6 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Price per Kg</Label>
             <Input value={formData.price_per_kg} onChange={(e) => handleChange("price_per_kg", e.target.value)} />
           </div>
+        </div>
+
+        {/* Row 6 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
           <div>
             <Label>Quantity in Kg</Label>
             <Input value={formData.quantity_in_kg} onChange={(e) => handleChange("quantity_in_kg", e.target.value)} />
           </div>
 
-          <div>
+          {/* <div>
             <Label>Status</Label>
             <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
               <SelectTrigger>
@@ -310,6 +310,13 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
                 <SelectItem value="0">Inactive</SelectItem>
               </SelectContent>
             </Select>
+          </div> */}
+          <div>
+            <Label>Image</Label>
+            <div className="flex items-center space-x-3">
+              <Input type="file" onChange={handleFileChange} />
+            </div>
+            {formData.image && <p className="text-sm text-gray-600 mt-1">Selected: {formData.image.name}</p>}
           </div>
         </div>
 
@@ -323,15 +330,7 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
           />
         </div>
 
-        {/* Image Upload */}
-        <div>
-          <Label>Image</Label>
-          <div className="flex items-center space-x-3">
-            <Input type="file" onChange={handleFileChange} />
-            <Upload className="w-4 h-4 text-gray-500" />
-          </div>
-          {formData.image && <p className="text-sm text-gray-600 mt-1">Selected: {formData.image.name}</p>}
-        </div>
+
 
         {/* Submit Button */}
         <div className="flex justify-center pt-6">
