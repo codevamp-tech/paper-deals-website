@@ -148,6 +148,12 @@ export default function SellerEditForm() {
   const [loading, setLoading] = useState(false)
   const user = getUserFromToken()
   const userId = user?.user_id
+  const [errors, setErrors] = useState({
+    gstNumber: "",
+    exportImportLicense: "",
+    panCard: "",
+  });
+
 
   // -- NEW STATE FOR CATEGORIES --
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
@@ -243,8 +249,46 @@ export default function SellerEditForm() {
     setFileUploads((prev) => ({ ...prev, [field]: file }))
   }
 
+  const iecRegex = /^[0-9]{10}$/;
+  const gstRegex =
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+  const validateForm = () => {
+    let newErrors: any = {};
+
+    // GST Validation
+    if (!formData.gstNumber) {
+      newErrors.gstNumber = "GST number is required";
+    } else if (!gstRegex.test(formData.gstNumber.toUpperCase())) {
+      newErrors.gstNumber = "Invalid GST number format";
+    }
+
+    // IEC Validation
+    if (!formData.exportImportLicense) {
+      newErrors.exportImportLicense = "IEC number is required";
+    } else if (!iecRegex.test(formData.exportImportLicense)) {
+      newErrors.exportImportLicense = "IEC must be 10 digits";
+    }
+
+    // PAN Card File Validation
+    if (!fileUploads.panCard) {
+      newErrors.panCard = "PAN card file is required";
+    } else if (
+      !["image/png", "image/jpeg", "image/jpg"].includes(
+        fileUploads.panCard.type
+      )
+    ) {
+      newErrors.panCard = "Only PNG, JPG or JPEG files allowed";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // 👉 Save handler (create or update depending on existing record)
   const handleSubmit = async () => {
+    if (!validateForm()) return;
     try {
       setLoading(true);
 
@@ -829,9 +873,14 @@ export default function SellerEditForm() {
                 <Input
                   id="gstNumber"
                   value={formData.gstNumber}
-                  onChange={(e) => updateFormData("gstNumber", e.target.value)}
-                  className="bg-white text-black border-gray-300"
+                  onChange={(e) =>
+                    updateFormData("gstNumber", e.target.value.toUpperCase())
+                  }
                 />
+                {errors.gstNumber && (
+                  <p className="text-red-500 text-sm mt-1">{errors.gstNumber}</p>
+                )}
+
               </div>
               <div>
                 <Label htmlFor="exportImportLicense">
@@ -843,8 +892,13 @@ export default function SellerEditForm() {
                   onChange={(e) =>
                     updateFormData("exportImportLicense", e.target.value)
                   }
-                  className="bg-white text-black border-gray-300"
                 />
+                {errors.exportImportLicense && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.exportImportLicense}
+                  </p>
+                )}
+
               </div>
               <div>
                 <Label>PAN Card (.png, .jpeg, .jpg Only)</Label>
@@ -858,6 +912,10 @@ export default function SellerEditForm() {
                       handleFileUpload("panCard", e.target.files?.[0] || null)
                     }
                   />
+                  {errors.panCard && (
+                    <p className="text-red-500 text-sm mt-2">{errors.panCard}</p>
+                  )}
+
                   <Button
                     variant="default"
                     size="sm"
