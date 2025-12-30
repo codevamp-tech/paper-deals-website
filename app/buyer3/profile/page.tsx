@@ -252,7 +252,6 @@ export default function SellerEditForm() {
   const iecRegex = /^[0-9]{10}$/;
   const gstRegex =
     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 
   const validateForm = () => {
     let newErrors: any = {};
@@ -269,17 +268,6 @@ export default function SellerEditForm() {
       newErrors.exportImportLicense = "IEC number is required";
     } else if (!iecRegex.test(formData.exportImportLicense)) {
       newErrors.exportImportLicense = "IEC must be 10 digits";
-    }
-
-    // PAN Card File Validation
-    if (!fileUploads.panCard) {
-      newErrors.panCard = "PAN card file is required";
-    } else if (
-      !["image/png", "image/jpeg", "image/jpg"].includes(
-        fileUploads.panCard.type
-      )
-    ) {
-      newErrors.panCard = "Only PNG, JPG or JPEG files allowed";
     }
 
     setErrors(newErrors);
@@ -912,9 +900,7 @@ export default function SellerEditForm() {
                       handleFileUpload("panCard", e.target.files?.[0] || null)
                     }
                   />
-                  {errors.panCard && (
-                    <p className="text-red-500 text-sm mt-2">{errors.panCard}</p>
-                  )}
+
 
                   <Button
                     variant="default"
