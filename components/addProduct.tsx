@@ -39,7 +39,7 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
   const sellerId = user?.user_id
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]) // ✅ category list state
-
+  const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
   const [formData, setFormData] = useState<ProductFormData>({
     product_name: "",
     product_unit: "",
@@ -62,6 +62,23 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     image: null,
     category_id: "", // ✅ new
   })
+
+  const validateForm = () => {
+    const newErrors: Partial<Record<keyof ProductFormData, string>> = {}
+
+    if (!formData.product_name.trim()) newErrors.product_name = "Product name is required"
+    if (!formData.category_id) newErrors.category_id = "Category is required"
+    if (!formData.product_unit.trim()) newErrors.product_unit = "Product unit is required"
+
+    if (!formData.price_per_kg || Number(formData.price_per_kg) <= 0)
+      newErrors.price_per_kg = "Price per kg is required"
+
+    if (!formData.image) newErrors.image = "Product image is required"
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
 
   // ✅ Fetch categories on load
   useEffect(() => {
@@ -93,7 +110,17 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault()
+
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors before submitting",
+        variant: "destructive",
+      })
+      return
+    }
     setLoading(true)
     try {
       const submitData = new FormData()
@@ -167,6 +194,10 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
           <div>
             <Label>Product Name</Label>
             <Input value={formData.product_name} onChange={(e) => handleChange("product_name", e.target.value)} />
+
+            {errors.product_name && (
+              <p className="text-red-500 text-sm mt-1">{errors.product_name}</p>
+            )}
           </div>
           <div>
             <Label>Category</Label>
@@ -187,12 +218,19 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
                 ) : (
                   <div className="p-2 text-sm text-gray-500">No categories found</div>
                 )}
+                {errors.category_id && (
+                  <p className="text-red-500 text-sm mt-1">{errors.category_id}</p>
+                )}
+
               </SelectContent>
             </Select>
           </div>
           <div>
             <Label>Product Unit</Label>
             <Input value={formData.product_unit} onChange={(e) => handleChange("product_unit", e.target.value)} />
+            {errors.unit_size && (
+              <p className="text-red-500 text-sm mt-1">{errors.unit_size}</p>
+            )}
           </div>
 
 
@@ -288,6 +326,9 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
           <div>
             <Label>Price per Kg</Label>
             <Input value={formData.price_per_kg} onChange={(e) => handleChange("price_per_kg", e.target.value)} />
+            {errors.price_per_kg && (
+              <p className="text-red-500 text-sm mt-1">{errors.price_per_kg}</p>
+            )}
           </div>
         </div>
 
@@ -317,6 +358,9 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
               <Input type="file" onChange={handleFileChange} />
             </div>
             {formData.image && <p className="text-sm text-gray-600 mt-1">Selected: {formData.image.name}</p>}
+            {errors.image && (
+              <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+            )}
           </div>
         </div>
 

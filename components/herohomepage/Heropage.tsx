@@ -121,33 +121,37 @@ const Hero = () => {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
-                  {results.length === 0 && debouncedQuery && (
-                    <li className="px-4 py-3 text-sm text-gray-500">
-                      No products found
-                    </li>
-                  )}
-
-                  {results.length > 0 && (
+                  {debouncedQuery && (
                     <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
-                      {results.map((item) => (
-                        <li
-                          key={item.id}
-                          onClick={() => handleSelect(item)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                        >
-                          <div className="flex justify-between">
-                            <span className="font-medium text-gray-800">
-                              {item.product_name}
-                            </span>
-                            <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                              Product
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">
-                            Category: {item.category?.name || item.category_id}
-                          </p>
+                      {results.length === 0 && (
+                        <li className="px-4 py-3 text-sm text-gray-500">
+                          No products found
                         </li>
-                      ))}
+                      )}
+
+                      {results.length > 0 && (
+                        <>
+                          {results.map((item) => (
+                            <li
+                              key={item.id}
+                              onClick={() => handleSelect(item)}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                            >
+                              <div className="flex justify-between">
+                                <span className="font-medium text-gray-800">
+                                  {item.product_name}
+                                </span>
+                                <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+                                  Product
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-500">
+                                Category: {item.category?.name || item.category_id}
+                              </p>
+                            </li>
+                          ))}
+                        </>
+                      )}
                     </ul>
                   )}
                 </div>
