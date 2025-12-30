@@ -64,6 +64,7 @@ const EnquiryModal = memo(function EnquiryModal({
 
         setEnquiryData((prev: any) => ({
           ...prev,
+          buyer_id: user.user_id,
           company_name: org.organizations || "",
           name: org.contact_person || "",
           email: org.email || "",
@@ -101,8 +102,8 @@ const EnquiryModal = memo(function EnquiryModal({
   };
 
 
-      const isProfileIncomplete =
-        !enquiryData.company_name?.trim() || !enquiryData.name?.trim();
+  const isProfileIncomplete =
+    !enquiryData.company_name?.trim() || !enquiryData.name?.trim();
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
@@ -136,21 +137,21 @@ const EnquiryModal = memo(function EnquiryModal({
           ))}
         </div>
 
-         {isProfileIncomplete && (
-                        <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
-                            <p className="text-sm font-medium">
-                                Please complete your profile to send an enquiry.
-                            </p>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="ml-auto border-red-400 text-red-600"
-                                onClick={() => router.push("/buyer3/profile")}
-                            >
-                                Complete Profile
-                            </Button>
-                        </div>
-                    )}
+        {isProfileIncomplete && (
+          <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+            <p className="text-sm font-medium">
+              Please complete your profile to send an enquiry.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              className="ml-auto border-red-400 text-red-600"
+              onClick={() => router.push("/buyer3/profile")}
+            >
+              Complete Profile
+            </Button>
+          </div>
+        )}
 
 
         {/* FORM START */}
