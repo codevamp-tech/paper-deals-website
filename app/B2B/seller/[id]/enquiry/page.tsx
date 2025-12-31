@@ -281,6 +281,7 @@ const SellerEnquiryPage = () => {
                                 readOnly
                                 className="bg-gray-100 border border-gray-300 text-black"
                                 required
+                                disabled
                             />
                         </div>
 
@@ -294,6 +295,7 @@ const SellerEnquiryPage = () => {
                                 readOnly
                                 className="bg-gray-100 border border-gray-300 text-black"
                                 required
+                                disabled
                             />
                         </div>
 
@@ -306,6 +308,7 @@ const SellerEnquiryPage = () => {
                                 onChange={handleChange}
                                 className="bg-gray-50 border border-gray-300 text-black"
                                 required
+                                disabled
                             />
                         </div>
 
@@ -320,6 +323,7 @@ const SellerEnquiryPage = () => {
                                 readOnly
                                 className="bg-gray-100 border border-gray-300 text-black"
                                 required
+                                disabled
                             />
                         </div>
 
@@ -332,6 +336,7 @@ const SellerEnquiryPage = () => {
                                 onChange={handleChange}
                                 className="bg-gray-50 border border-gray-300 text-black"
                                 required
+                                disabled
                             />
                         </div>
 

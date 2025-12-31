@@ -228,38 +228,62 @@ export default function CartPage() {
 
   const handleEnquirySubmit = async () => {
     const groupedCart = groupBySeller();
+
     const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => ({
       seller_id: Number(sellerId),
-      product_ids: items.map(i => i.id),
-      products: items.map(item => ({
-        product_id: item.id,
-        product_name: item.product_name,
-        quantity: productEdits[item.id]?.quantity || item.quantity,
-        gsm: productEdits[item.id]?.gsm || "",
-        size: productEdits[item.id]?.size || "",
-        remarks: productEdits[item.id]?.remarks || ""
-      })),
+
+      product_ids: items.map(item => item.id),
+
+      products: items.map(item => {
+        const edit = productEdits[item.id] || {};
+
+        return {
+          // ✅ REQUIRED IDS
+          product_id: item.id,
+          category_id: item.category_id ?? null, // 🔥 FIX
+
+          // ✅ BASE INFO
+          product_name: item.product_name,
+
+          // ✅ MERGED FIELDS (edit > original > null)
+          quantity_in_kg: edit.quantity_in_kg ?? item.quantity ?? null,
+          gsm: edit.gsm ?? item.gsm ?? null,
+          size: edit.size ?? item.size ?? null,
+          shade: edit.shade ?? item.shade ?? null,
+          bf: edit.bf ?? item.bf ?? null,
+          rim: edit.rim ?? item.rim ?? null,
+          sheat: edit.sheat ?? item.sheat ?? null,
+          brightness: edit.brightness ?? item.brightness ?? null,
+          weight: edit.weight ?? item.weight ?? null,
+          remarks: edit.remarks ?? null,
+        };
+      }),
+
       customer_details: enquiryData,
     }));
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enquiries }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ enquiries }),
+        }
+      );
 
-      if (response.ok) {
-        toast.success("Enquiries sent successfully!");
-        updateLocalStorage([]);
-        setIsEnquiryModalOpen(false);
-      } else {
-        toast.error("Failed to send enquiry");
-      }
+      if (!response.ok) throw new Error("Failed");
+
+      toast.success("Enquiries sent successfully!");
+      updateLocalStorage([]);
+      setProductEdits({});
+      setIsEnquiryModalOpen(false);
     } catch (error) {
-      toast.error("An error occurred");
+      toast.error("Failed to send enquiry");
+      console.error(error);
     }
   };
+
 
   const grouped = groupBySeller();
   const cartTotal = cart.reduce((acc, item) => acc + item.price_per_kg * item.quantity, 0);
@@ -273,7 +297,7 @@ export default function CartPage() {
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-3">Your cart is empty</h1>
         <p className="text-gray-600 text-center max-w-md mb-8">Browse our collection and find amazing deals.</p>
-        <button onClick={() => window.location.href = '/'} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors">
+        <button onClick={() => window.location.href = '/product'} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors">
           Continue Shopping
         </button>
       </div>

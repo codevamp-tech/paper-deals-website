@@ -68,13 +68,17 @@ export default function ImageCarousel() {
     };
   }, [images]);
 
+  if (!loading && images.length === 0) {
+    return null;
+  }
+
   return (
     <section className={`w-full py-16 overflow-hidden `}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-8">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight ">
-              Events Gallery
+              Event Gallery
             </h2>
             <p className="text-slate-500 mt-2">Handpicked inspirations for your next project</p>
           </div>

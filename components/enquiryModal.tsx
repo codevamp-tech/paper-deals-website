@@ -174,6 +174,7 @@ const EnquiryModal = memo(function EnquiryModal({
                 readOnly
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
                 required
+                disabled
               />
             </div>
 
@@ -192,6 +193,7 @@ const EnquiryModal = memo(function EnquiryModal({
                 readOnly
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
                 required
+                disabled
               />
             </div>
 
@@ -277,8 +279,11 @@ const EnquiryModal = memo(function EnquiryModal({
                                 key={field}
                                 value={edit[field] ?? ""}
                                 onChange={(e) =>
-                                  setProductEdit(item.id, { [field]: e.target.value })
+                                  setProductEdit(item.id, {
+                                    [field]: e.target.value.trim() || undefined,
+                                  })
                                 }
+
                                 placeholder={
                                   field === "remarks"
                                     ? "Remarks (for this product)"

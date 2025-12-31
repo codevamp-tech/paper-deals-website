@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { getUserFromToken } from "@/hooks/use-token"
 import { motion } from "framer-motion" // Added motion
 import { Badge } from "@/components/ui/badge" // Added Badge
+import { toast } from "@/hooks/use-toast"
 
 const states = [
   { id: "1", name: "Andaman and Nicobar Islands" },
@@ -343,10 +344,17 @@ export default function SellerEditForm() {
         }),
       });
 
-      alert(`Seller info ${exists ? "updated" : "created"} successfully!`);
+      toast({
+        title: "Success",
+        description: `Buyer info ${exists ? "updated" : "created"} successfully!`,
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error saving seller info:", error);
-      alert("Failed to save seller info.");
+      toast({
+        title: "Error",
+        description: "Failed to save seller info.",
+      });
     } finally {
       setLoading(false);
     }
@@ -371,7 +379,7 @@ export default function SellerEditForm() {
             name: data.name || "",
             email: data.email_address || "",
             mobile: data.phone_no || "",
-            joinDate: validJoinDate,
+            joinDate: data.created_on || "",
             whatsappNo: data.whatsapp_no || "",
             status: data.approved === 1 ? "Pending" : "Approved",
             price: data.consultant_price || "",
@@ -541,7 +549,7 @@ export default function SellerEditForm() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="company">Company</Label>
+                <Label htmlFor="company">Company <span className="text-red-500">*</span></Label>
                 <Input
                   id="company"
                   value={formData.company}
@@ -676,7 +684,7 @@ export default function SellerEditForm() {
 
               {/* -- NEW: Deals In Dropdown with Badges -- */}
               <div>
-                <Label htmlFor="dealsIn">Deals In (Select Multiple)</Label>
+                <Label htmlFor="dealsIn">Deals In (Select Multiple) <span className="text-red-500">*</span></Label>
                 <Select
                   onValueChange={(value) => {
                     const id = parseInt(value)
@@ -726,7 +734,7 @@ export default function SellerEditForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>
-                  Type of Seller <span className="text-red-500">*</span>
+                  Type of Seller
                 </Label>
                 <Select
                   value={formData.typeOfSeller}
