@@ -27,18 +27,28 @@ interface SellerSectionProps {
   onUpdateQuantity: (productId: number, change: number) => void;
 }
 
-const getFirstImage = (images?: string) => {
-  if (!images) return "/mainimg.png";
-
-  try {
-    const parsed = JSON.parse(images);
-    return Array.isArray(parsed) && parsed.length > 0
-      ? parsed[0]
-      : "/mainimg.png";
-  } catch {
-    return "/mainimg.png";
+const getFirstImage = (images?: string | string[]) => {
+  // ✅ New API: images already an array
+  if (Array.isArray(images)) {
+    return images.length > 0 ? images[0] : "/mainimg.png";
   }
+
+  // ✅ Old API: images is JSON string
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed[0];
+      }
+    } catch {
+      // ignore parse error
+    }
+  }
+
+  // ✅ Fallback image
+  return "/mainimg.png";
 };
+
 
 const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSectionProps) => {
   const sellerName = items[0].seller?.name || "Seller";
