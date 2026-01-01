@@ -11,14 +11,25 @@ import {
 import { useTheme } from "@/hooks/use-theme";
 import { useRouter } from "next/navigation";
 
-const getProductImage = (images?: string) => {
-  try {
-    const parsed = images ? JSON.parse(images) : [];
-    return parsed?.[0] || "/placeholder.svg";
-  } catch {
-    return "/placeholder.svg";
+const getProductImage = (images?: string | string[]) => {
+  // ✅ Already an array (NEW API)
+  if (Array.isArray(images)) {
+    return images[0] || "/placeholder.svg";
   }
+
+  // ✅ Old API (stringified JSON)
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      return Array.isArray(parsed) ? parsed[0] : "/placeholder.svg";
+    } catch {
+      return "/placeholder.svg";
+    }
+  }
+
+  return "/placeholder.svg";
 };
+
 
 export default function SellerProductCrousel({ sellerId }: { sellerId: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);

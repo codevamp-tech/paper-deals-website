@@ -282,19 +282,28 @@ export default function ProductListing() {
           p.category_id?.toString() === selectedCategory
       );
 
-  const getFirstProductImage = (images?: string) => {
-    if (!images) return "/mainimg.png";
-
-    try {
-      const parsed = JSON.parse(images);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed[0];
-      }
-      return "/mainimg.png";
-    } catch (err) {
-      return "/mainimg.png";
+  const getFirstProductImage = (images?: string | string[]) => {
+    // ✅ New API: images already an array
+    if (Array.isArray(images)) {
+      return images.length > 0 ? images[0] : "/mainimg.png";
     }
+
+    // ✅ Old API: images is JSON string
+    if (typeof images === "string") {
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed[0];
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    // ✅ Fallback
+    return "/mainimg.png";
   };
+
 
 
   const getImageContent = (item: any) => {
