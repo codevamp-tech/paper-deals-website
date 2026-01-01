@@ -39,6 +39,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     company_name: "",
@@ -136,6 +137,20 @@ const OrderNow = ({ productId }: { productId: string }) => {
     }
   }, [product?.category?.id]);
 
+
+  const productImages: string[] = React.useMemo(() => {
+    if (!product?.images) return [];
+    try {
+      return JSON.parse(product.images);
+    } catch {
+      return [];
+    }
+  }, [product?.images]);
+
+  useEffect(() => {
+    setActiveImage(0);
+  }, [productImages.length]);
+
   //  Fetch all categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -209,29 +224,27 @@ const OrderNow = ({ productId }: { productId: string }) => {
     }
   };
 
-  if (!product) return <p className="text-center py-10">Loading product...</p>;
-
   const specifications = [
-    { label: "GSM", value: product.gsm },
-    { label: "BF", value: product.bf },
-    { label: "Shade", value: product.shade },
-    { label: "Brightness", value: product.brightness },
-    { label: "Size", value: product.sizes },
-  ].filter((spec) => spec.value)
+    { label: "GSM", value: product?.gsm },
+    { label: "BF", value: product?.bf },
+    { label: "Shade", value: product?.shade },
+    { label: "Brightness", value: product?.brightness },
+    { label: "Size", value: product?.sizes },
+  ].filter((spec) => spec.value);
 
 
-   const paperFields = [
-        { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
-        { key: "bf", label: "BF", info: "Bursting Factor" },
-        { key: "shade", label: "Shade" },
-        { key: "brightness", label: "Brightness" },
-        { key: "rim", label: "Rim" },
-        { key: "sheet", label: "Sheet" },
-        { key: "size", label: "Size" },
-    ];
+  const paperFields = [
+    { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
+    { key: "bf", label: "BF", info: "Bursting Factor" },
+    { key: "shade", label: "Shade" },
+    { key: "brightness", label: "Brightness" },
+    { key: "rim", label: "Rim" },
+    { key: "sheet", label: "Sheet" },
+    { key: "size", label: "Size" },
+  ];
 
   const handleEnquiryClick = () => {
-    
+
     if (!user) {
       toast.error("Please login to send enquiry");
       router.push("/buyer-login");
@@ -240,8 +253,21 @@ const OrderNow = ({ productId }: { productId: string }) => {
     setIsModalOpen(true);
   };
 
+  const getFirstImage = (images: string) => {
+    try {
+      const parsed = JSON.parse(images);
+      return Array.isArray(parsed) && parsed.length > 0
+        ? parsed[0]
+        : "/paper.jpg";
+    } catch {
+      return "/paper.jpg";
+    }
+  };
+
   const isProfileIncomplete =
     !formData.company_name?.trim() || !formData.name?.trim();
+
+  if (!product) return <p className="text-center py-10">Loading product...</p>;
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -249,20 +275,71 @@ const OrderNow = ({ productId }: { productId: string }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Product Image Section */}
-          <div className="space-y-6">
-            <div className="relative bg-white rounded-3xl p-8 shadow-xl border border-slate-200 overflow-hidden group">
+          <div className="space-y-4">
+            <div className="relative bg-white rounded-3xl  shadow-xl border border-slate-200 overflow-hidden">
+
               {/* Category Badge */}
-              <Badge className="absolute top-6 left-6 z-10 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-4 py-1.5 text-sm font-semibold shadow-lg">
+              <Badge className="absolute top-4 left-4 z-10 bg-blue-600 text-white">
                 {product.category?.name}
               </Badge>
-              {/* Product Image */}
-              <div className="aspect-square flex items-center justify-center bg-gradient-to-br from-slate-50 to-white rounded-2xl p-4">
+
+              {/* Main Image */}
+              <div className="relative aspect-square flex items-center justify-center">
                 <img
-                  src={product.image || "/paper.jpg"}
+                  src={productImages[activeImage] || "/paper.jpg"}
                   alt={product.product_name}
-                  className="max-w-full max-h-full object-contain rounded-xl transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-contain rounded-xl"
                 />
+
+                {/* Left Arrow */}
+                {productImages.length > 1 && (
+                  <button
+                    onClick={() =>
+                      setActiveImage((prev) =>
+                        prev === 0 ? productImages.length - 1 : prev - 1
+                      )
+                    }
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center"
+                  >
+                    ‹
+                  </button>
+                )}
+
+                {/* Right Arrow */}
+                {productImages.length > 1 && (
+                  <button
+                    onClick={() =>
+                      setActiveImage((prev) =>
+                        prev === productImages.length - 1 ? 0 : prev + 1
+                      )
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center"
+                  >
+                    ›
+                  </button>
+                )}
               </div>
+              {/* Thumbnails */}
+              {productImages.length > 1 && (
+                <div className="flex gap-3 justify-center pt-1 pb-2">
+                  {productImages.map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveImage(index)}
+                      className={`w-28 h-28 rounded-lg border-2 overflow-hidden ${activeImage === index
+                        ? "border-blue-600"
+                        : "border-gray-200"
+                        }`}
+                    >
+                      <img
+                        src={img}
+                        alt="thumb"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -392,24 +469,24 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
 
                     {paperFields.map((field) => (
-                                              <div key={field.key}>
-                                                  <Label>
-                                                      {field.label}
-                                                      {field.info && (
-                                                          <span className="text-xs text-gray-500 ml-1">
-                                                              ({field.info})
-                                                          </span>
-                                                      )}
-                                                  </Label>
-                  
-                                                  <Input
-                                                      name={field.key}
-                                                      value={(formData as any)[field.key]}
-                                                      onChange={handleChange}
-                                                      className="bg-gray-50 border border-gray-300 text-black"
-                                                  />
-                                              </div>
-                                          ))}
+                      <div key={field.key}>
+                        <Label>
+                          {field.label}
+                          {field.info && (
+                            <span className="text-xs text-gray-500 ml-1">
+                              ({field.info})
+                            </span>
+                          )}
+                        </Label>
+
+                        <Input
+                          name={field.key}
+                          value={(formData as any)[field.key]}
+                          onChange={handleChange}
+                          className="bg-gray-50 border border-gray-300 text-black"
+                        />
+                      </div>
+                    ))}
                     <div>
                       <Label>Quantity (Kg)</Label>
                       <Input
@@ -461,7 +538,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
             >
               <div className="relative h-44 overflow-hidden group">
                 <img
-                  src={p.image || "/paper.jpg"}
+                  src={getFirstImage(p.images)}
                   alt={p.product_name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />

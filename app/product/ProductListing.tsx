@@ -282,13 +282,23 @@ export default function ProductListing() {
           p.category_id?.toString() === selectedCategory
       );
 
+  const getFirstProductImage = (images?: string) => {
+    if (!images) return "/mainimg.png";
+
+    try {
+      const parsed = JSON.parse(images);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed[0];
+      }
+      return "/mainimg.png";
+    } catch (err) {
+      return "/mainimg.png";
+    }
+  };
+
+
   const getImageContent = (item: any) => {
-    const imageUrl =
-      item.image && item.image !== "null"
-        ? item.image.startsWith("http")
-          ? item.image
-          : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
-        : "/mainimg.png";
+    const imageUrl = getFirstProductImage(item.images);
 
     if (/\.(jpe?g|png|webp)$/i.test(imageUrl)) {
       return (

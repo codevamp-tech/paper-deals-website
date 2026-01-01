@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Upload, Loader2 } from "lucide-react"
+import { Upload, Loader2, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getUserFromToken } from "@/hooks/use-token"
 
@@ -29,8 +29,8 @@ interface ProductFormData {
   quantity_in_kg: string
   description: string
   status: string
-  image: File | null
-  category_id: string // ✅ new field
+  images: File[]
+  category_id: string
 }
 
 export default function ProductForm({ onProductAdded }: { onProductAdded?: () => void }) {
@@ -38,8 +38,9 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
   const user = getUserFromToken()
   const sellerId = user?.user_id
   const [loading, setLoading] = useState(false)
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]) // ✅ category list state
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
   const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [formData, setFormData] = useState<ProductFormData>({
     product_name: "",
     product_unit: "",
@@ -59,8 +60,8 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     quantity_in_kg: "",
     description: "",
     status: "1",
-    image: null,
-    category_id: "", // ✅ new
+    images: [],
+    category_id: "",
   })
 
   const validateForm = () => {
@@ -73,12 +74,12 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     if (!formData.price_per_kg || Number(formData.price_per_kg) <= 0)
       newErrors.price_per_kg = "Price per kg is required"
 
-    if (!formData.image) newErrors.image = "Product image is required"
+    if (!formData.images || formData.images.length === 0)
+      newErrors.images = "At least one image is required"
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
-
 
   // ✅ Fetch categories on load
   useEffect(() => {
@@ -104,9 +105,65 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach(url => URL.revokeObjectURL(url))
+    }
+  }, [imagePreviews])
+
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
     setFormData((prev) => ({ ...prev, image: file }))
+  }
+
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : []
+
+    if (files.length === 0) return
+
+    // Check total images (existing + new)
+    const totalImages = formData.images.length + files.length
+    if (totalImages > 5) {
+      toast({
+        title: "Image limit exceeded",
+        description: `You can upload a maximum of 5 images. You're trying to add ${files.length} more to ${formData.images.length} existing images.`,
+        variant: "destructive",
+      })
+      e.target.value = "" // Reset input
+      return
+    }
+
+    // Create preview URLs for new images
+    const newPreviews = files.map(file => URL.createObjectURL(file))
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...files],
+    }))
+
+    setImagePreviews(prev => [...prev, ...newPreviews])
+
+    // Clear error
+    if (errors.images) {
+      setErrors(prev => ({ ...prev, images: undefined }))
+    }
+
+    // Reset input to allow selecting the same file again
+    e.target.value = ""
+  }
+
+  const removeImage = (index: number) => {
+    // Revoke the URL to free memory
+    URL.revokeObjectURL(imagePreviews[index])
+
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }))
+
+    setImagePreviews(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,13 +181,18 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     setLoading(true)
     try {
       const submitData = new FormData()
+
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === "image" && value instanceof File) {
-          submitData.append("image", value)
-        } else {
-          submitData.append(key, value)
+        if (key === "images" && Array.isArray(value)) {
+          // Append each image file
+          value.forEach((file) => {
+            submitData.append("images", file)
+          })
+        } else if (key !== "images") {
+          submitData.append(key, String(value))
         }
       })
+
       submitData.append("seller_id", String(sellerId))
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product`, {
@@ -142,10 +204,10 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
 
       if (res.ok) {
         toast({ title: "Success", description: "Product added successfully!" });
-        onProductAdded?.(); // 🔥 this triggers parent refresh
+        onProductAdded?.();
       }
-
-
+      imagePreviews.forEach(url => URL.revokeObjectURL(url))
+      setImagePreviews([])
       // Reset form
       setFormData({
         product_name: "",
@@ -166,7 +228,7 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
         quantity_in_kg: "",
         description: "",
         status: "1",
-        image: null,
+        images: [],
         category_id: "",
       })
     } catch (err) {
@@ -184,9 +246,6 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
     <div className="max-w-4xl mx-auto py-8">
       <h2 className="text-2xl font-semibold mb-6">Add New Product</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-
-
-
         {/* 🔽 Your existing product fields continue below 🔽 */}
 
         {/* Row 1 */}
@@ -353,16 +412,47 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
             </Select>
           </div> */}
           <div>
-            <Label>Image</Label>
-            <div className="flex items-center space-x-3">
-              <Input type="file" onChange={handleFileChange} />
-            </div>
-            {formData.image && <p className="text-sm text-gray-600 mt-1">Selected: {formData.image.name}</p>}
-            {errors.image && (
-              <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+            <Label>Product Images * (Max 5)</Label>
+            <Input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            {errors.images && (
+              <p className="text-red-500 text-sm mt-1">{errors.images}</p>
             )}
           </div>
         </div>
+
+        {/* Image Previews */}
+        {imagePreviews.length > 0 && (
+          <div className="space-y-2">
+            <Label>Selected Images ({imagePreviews.length}/5)</Label>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative group">
+                  <img
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-32 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <p className="text-xs text-center mt-1 truncate">
+                    {formData.images[index].name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
 
         {/* Row 7 */}
         <div>

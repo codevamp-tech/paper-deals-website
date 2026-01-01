@@ -14,7 +14,7 @@ interface Product {
   unit_size: number;
   quantity: number;
   price: number;
-  image: string;
+  images?: string; // JSON string from API
   seller: { id: number; name: string };
   tax: number;
   select_tax_type: string;
@@ -26,6 +26,19 @@ interface SellerSectionProps {
   onRemove: (productId: number) => void;
   onUpdateQuantity: (productId: number, change: number) => void;
 }
+
+const getFirstImage = (images?: string) => {
+  if (!images) return "/mainimg.png";
+
+  try {
+    const parsed = JSON.parse(images);
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed[0]
+      : "/mainimg.png";
+  } catch {
+    return "/mainimg.png";
+  }
+};
 
 const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSectionProps) => {
   const sellerName = items[0].seller?.name || "Seller";
@@ -48,7 +61,7 @@ const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSe
           <div key={item.id} className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors duration-150">
             <div className="relative">
               <img
-                src={item.image}
+                src={getFirstImage(item.images)}
                 alt={item.product_name}
                 className="w-24 h-24 object-cover rounded-lg border border-gray-200"
               />
@@ -196,29 +209,32 @@ export default function CartPage() {
     updateLocalStorage(updatedCart);
   };
 
-  // Logic to add dynamic product to cart
   const addToCart = (product: any) => {
     const existingItem = cart.find(item => item.id === product.id);
-    let updatedCart;
 
+    let updatedCart;
     if (existingItem) {
       updatedCart = cart.map(item =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
       );
     } else {
-      const newItem: Product = {
-        ...product,
-        quantity: 1,
-        // Ensure keys match your Product interface
-        product_name: product.product_name || product.name,
-        seller_id: product.seller_id || product.seller?.id
-      };
-      updatedCart = [...cart, newItem];
+      updatedCart = [
+        ...cart,
+        {
+          ...product,
+          images: product.images, // ✅ CRITICAL
+          quantity: 1,
+          seller_id: product.seller_id || product.seller?.id,
+        },
+      ];
     }
 
     updateLocalStorage(updatedCart);
     toast.success("Added to cart!");
   };
+
 
   const setProductEdit = (productId: number, patch: Partial<any>) =>
     setProductEdits((prev) => ({
@@ -379,7 +395,7 @@ export default function CartPage() {
                     {recommended.map((product) => (
                       <div key={product.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                         <img
-                          src={product.image}
+                          src={getFirstImage(product.images)}
                           alt={product.product_name || product.name}
                           className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                         />

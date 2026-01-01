@@ -11,6 +11,15 @@ import {
 import { useTheme } from "@/hooks/use-theme";
 import { useRouter } from "next/navigation";
 
+const getProductImage = (images?: string) => {
+  try {
+    const parsed = images ? JSON.parse(images) : [];
+    return parsed?.[0] || "/placeholder.svg";
+  } catch {
+    return "/placeholder.svg";
+  }
+};
+
 export default function SellerProductCrousel({ sellerId }: { sellerId: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
@@ -35,7 +44,7 @@ export default function SellerProductCrousel({ sellerId }: { sellerId: number })
             date: item.created_at
               ? new Date(item.created_at).toLocaleDateString()
               : "—",
-            image: item.image,
+            images: item.images,
             type: "Premium",
           }));
 
@@ -113,7 +122,7 @@ export default function SellerProductCrousel({ sellerId }: { sellerId: number })
                         price={p.price}
                         date={p.date}
                         type={p.type}
-                        image={p.image}
+                        images={p.images}
                       />
                     ))}
                   </div>
@@ -134,7 +143,7 @@ interface ProductCardProps {
   price: number;
   date: string;
   type: string;
-  image: string;
+  images: string;
 }
 
 function ProductCard({
@@ -144,7 +153,7 @@ function ProductCard({
   price,
   date,
   type,
-  image,
+  images,
 }: ProductCardProps) {
   const router = useRouter();
 
@@ -160,7 +169,7 @@ function ProductCard({
       {/* ✅ IMAGE ADDED */}
       <div className="h-48 w-full overflow-hidden bg-gray-100">
         <img
-          src={image}
+          src={getProductImage(images)}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
         />
