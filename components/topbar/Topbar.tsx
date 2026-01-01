@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock, Building2, ShoppingBag } from "lucide-react";
+import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock, Building2, ShoppingBag, Plus } from "lucide-react";
 import RequestCallback from "../modal/RequestCallback";
 import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
@@ -39,7 +39,8 @@ const Topbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme } = useTheme();
   const searchRef = useRef<HTMLDivElement>(null);
-
+  const checkUser = getUserFromToken();
+  const userId = checkUser?.user_id
   function useDebounce<T>(value: T, delay = 400) {
     const [debounced, setDebounced] = useState(value);
 
@@ -50,7 +51,6 @@ const Topbar = () => {
 
     return debounced;
   }
-
 
   useEffect(() => {
     let mode = localStorage.getItem("mode");
@@ -181,6 +181,19 @@ const Topbar = () => {
                     <Link href="/News" className="text-sm">
                       News
                     </Link>
+                    <button
+                      onClick={() => {
+                        if (!userId) {
+                          router.push("/buyer-login?redirect=/buyer3/product");
+                        } else {
+                          router.push("/buyer3/product");
+                        }
+                      }}
+                      className=" flex items-center gap-1 text-sm cursor-pointer"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Create Post
+                    </button>
                   </>
                 ) : (
                   <>

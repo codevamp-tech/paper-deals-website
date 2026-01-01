@@ -7,6 +7,15 @@ import { useRouter } from "next/navigation";
 
 type Mode = "B2B" | "B2C";
 
+const getProductImage = (images?: string) => {
+  try {
+    const parsed = images ? JSON.parse(images) : [];
+    return parsed?.[0] || "/placeholder.svg";
+  } catch {
+    return "/placeholder.svg";
+  }
+};
+
 export default function ProductCrousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
@@ -43,7 +52,7 @@ export default function ProductCrousel() {
             price: item.price_per_kg,
             date: new Date(item.created_at).toLocaleDateString(),
             type: item.category?.name || "Product",
-            image: item.image,
+            images: item.images,
             city: item.city,
           }));
 
@@ -130,7 +139,7 @@ function ProductCard({
   price,
   date,
   type,
-  image,
+  images,
   city,
 }: any) {
   const router = useRouter();
@@ -142,10 +151,11 @@ function ProductCard({
     >
       <div className="relative h-48 overflow-hidden">
         <img
-          src={image || "/placeholder.svg"}
+          src={getProductImage(images)}
           alt={title}
           className="w-full h-full object-cover hover:scale-110 transition"
         />
+
         <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs px-3 py-1 rounded-full">
           {type}
         </span>
