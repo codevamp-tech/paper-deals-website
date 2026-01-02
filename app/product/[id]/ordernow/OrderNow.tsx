@@ -253,16 +253,28 @@ const OrderNow = ({ productId }: { productId: string }) => {
     setIsModalOpen(true);
   };
 
-  const getFirstImage = (images: string) => {
-    try {
-      const parsed = JSON.parse(images);
-      return Array.isArray(parsed) && parsed.length > 0
-        ? parsed[0]
-        : "/paper.jpg";
-    } catch {
-      return "/paper.jpg";
+  const getFirstImage = (images?: string | string[]) => {
+    // ✅ If backend already sends an array
+    if (Array.isArray(images)) {
+      return images.length > 0 ? images[0] : "/paper.jpg";
     }
+
+    // ✅ If backend sends JSON string
+    if (typeof images === "string") {
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed[0];
+        }
+      } catch {
+        // ignore JSON parse error
+      }
+    }
+
+    // ✅ Fallback image
+    return "/paper.jpg";
   };
+
 
   const isProfileIncomplete =
     !formData.company_name?.trim() || !formData.name?.trim();
