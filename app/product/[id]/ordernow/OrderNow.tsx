@@ -24,6 +24,7 @@ import {
 import { getUserFromToken } from "@/hooks/use-token";
 import { CheckCircle2, Mail, Package, ShieldCheck, Star, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Category {
   id: number;
@@ -140,12 +141,25 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
   const productImages: string[] = React.useMemo(() => {
     if (!product?.images) return [];
-    try {
-      return JSON.parse(product.images);
-    } catch {
-      return [];
+
+    // ✅ Already an array (current backend)
+    if (Array.isArray(product.images)) {
+      return product.images;
     }
+
+    // ✅ Old backend (JSON string)
+    if (typeof product.images === "string") {
+      try {
+        const parsed = JSON.parse(product.images);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    return [];
   }, [product?.images]);
+
 
   useEffect(() => {
     setActiveImage(0);
@@ -279,7 +293,10 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const isProfileIncomplete =
     !formData.company_name?.trim() || !formData.name?.trim();
 
-  if (!product) return <p className="text-center py-10">Loading product...</p>;
+  if (!product) {
+    return <ProductSkeleton />;
+  }
+
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -578,3 +595,54 @@ const OrderNow = ({ productId }: { productId: string }) => {
 };
 
 export default OrderNow;
+
+
+const ProductSkeleton = () => {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Image Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="w-full aspect-square rounded-3xl" />
+          <div className="flex gap-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="w-28 h-28 rounded-lg" />
+            ))}
+          </div>
+        </div>
+
+        {/* Details Skeleton */}
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-20 w-full" />
+
+          <div className="flex gap-3">
+            <Skeleton className="h-12 w-32" />
+            <Skeleton className="h-12 w-20" />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
+            ))}
+          </div>
+
+          <Skeleton className="h-14 w-full rounded-xl" />
+        </div>
+      </div>
+
+      {/* Related products skeleton */}
+      <div className="mt-16">
+        <Skeleton className="h-8 w-1/2 mx-auto mb-8" />
+        <div className="flex gap-5 overflow-hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton
+              key={i}
+              className="min-w-[220px] h-[280px] rounded-2xl"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
