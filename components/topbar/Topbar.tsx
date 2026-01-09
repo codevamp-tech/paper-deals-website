@@ -10,6 +10,7 @@ import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Cookies from "js-cookie";
+import { ShoppingCart } from "lucide-react";
 import { getUserFromToken } from "@/hooks/use-token";
 import {
   DropdownMenu,
@@ -37,8 +38,10 @@ const Topbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [cart, setCart] = useState<any[]>([]);
   const { theme } = useTheme();
   const searchRef = useRef<HTMLDivElement>(null);
+  const [cartCount, setCartCount] = useState(0);
   const checkUser = getUserFromToken();
   const userId = checkUser?.user_id
   function useDebounce<T>(value: T, delay = 400) {
@@ -63,6 +66,30 @@ const Topbar = () => {
 
     setEnabled(mode === "B2C");
   }, []);
+
+  useEffect(() => {
+    const loadCart = () => {
+      const mode = localStorage.getItem("mode") || "B2B";
+      const cart = JSON.parse(localStorage.getItem(`cart_${mode}`) || "[]");
+
+      const totalQty = cart.reduce(
+        (sum: number, item: any) => sum + (item.quantity || 0),
+        0
+      );
+
+      setCartCount(totalQty);
+    };
+
+    loadCart();
+
+    // 🔁 Listen for cart updates from other tabs/components
+    window.addEventListener("storage", loadCart);
+
+    return () => {
+      window.removeEventListener("storage", loadCart);
+    };
+  }, []);
+
 
 
   useEffect(() => {
@@ -139,6 +166,11 @@ const Topbar = () => {
     setIsLoggedIn(false);
     router.push("/");
   };
+
+  useEffect(() => {
+    window.dispatchEvent(new Event("storage"));
+  }, [cart]);
+
 
   const getInitials = (fullName: string) => {
     if (!fullName) return "U";
@@ -219,6 +251,20 @@ const Topbar = () => {
             </div>
             {/* Right Section */}
             <div className="ml-auto flex items-center gap-4">
+
+              <button
+                onClick={() => router.push("/cart")}
+                className="relative p-2 rounded-full hover:bg-gray-100 transition"
+              >
+                <ShoppingCart className="w-6 h-6 text-gray-700" />
+
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
               {/* Search Bar */}
               <div className="hidden md:flex items-center flex-1 justify-center">
                 <div className="hidden md:flex items-center flex-1 mx-6 relative">

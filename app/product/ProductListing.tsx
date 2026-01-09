@@ -466,7 +466,7 @@ export default function ProductListing() {
           </div>
 
           {/* Cart Button Section */}
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <button
               onClick={() => router.push("/cart")}
               className="group relative p-4 bg-white border border-gray-200 text-blue-600 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
@@ -479,7 +479,7 @@ export default function ProductListing() {
                 </span>
               )}
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-10">

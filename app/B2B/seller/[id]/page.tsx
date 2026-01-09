@@ -267,17 +267,21 @@ export default function BuyersPage() {
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Type of Seller</p>
                     <p className="text-base font-semibold text-gray-900">{typeOfSeller}</p>
                   </div>
-                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                  {/* <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Production Capacity</p>
                     <p className="text-base font-semibold text-gray-900">{capacity || "N/A"}</p>
+                  </div> */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Deals In</p>
+                    <p className="text-base font-semibold text-gray-900">{dealsIn || "N/A"}</p>
                   </div>
                 </div>
 
                 {/* Deals In - Full width */}
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200 mb-4">
-                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Deals In</p>
+                {/* <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200 mb-4">
+                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2"></p>
                   <p className="text-sm font-medium text-gray-800">{dealsIn}</p>
-                </div>
+                </div> */}
 
                 {/* Description */}
                 {description && (
