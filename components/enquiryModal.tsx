@@ -66,10 +66,10 @@ const EnquiryModal = memo(function EnquiryModal({
           ...prev,
           buyer_id: user.user_id,
           company_name: org.organizations || "",
-          name: org.contact_person || "",
-          email: org.email || "",
+          // name: org.contact_person || "",
+          // email: org.email || "",
           city: org.city || "",
-          mobile: org.phone ? org.phone.toString() : data.phone_no || "",
+          // mobile: org.phone ? org.phone.toString() : data.phone_no || "",
         }));
       } catch (err) {
         console.error("Error fetching buyer info:", err);
@@ -103,7 +103,7 @@ const EnquiryModal = memo(function EnquiryModal({
 
 
   const isProfileIncomplete =
-    !enquiryData.company_name?.trim() || !enquiryData.name?.trim();
+    !enquiryData.company_name?.trim();
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
@@ -179,7 +179,7 @@ const EnquiryModal = memo(function EnquiryModal({
             </div>
 
             {/* Contact Person */}
-            <div>
+            {/* <div>
               <label className="block text-gray-700 font-medium mb-2">
                 Contact Person *
               </label>
@@ -195,10 +195,10 @@ const EnquiryModal = memo(function EnquiryModal({
                 required
                 disabled
               />
-            </div>
+            </div> */}
 
             {/* Email */}
-            <div>
+            {/* <div>
               <label className="block text-gray-700 font-medium mb-2">Email *</label>
               <input
                 type="email"
@@ -212,10 +212,10 @@ const EnquiryModal = memo(function EnquiryModal({
                 required
                 disabled
               />
-            </div>
+            </div> */}
 
             {/* Mobile */}
-            <div>
+            {/* <div>
               <label className="block text-gray-700 font-medium mb-2">Mobile *</label>
               <input
                 type="tel"
@@ -228,7 +228,7 @@ const EnquiryModal = memo(function EnquiryModal({
                 required
                 disabled
               />
-            </div>
+            </div> */}
 
             {/* City */}
             <div>

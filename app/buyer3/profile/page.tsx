@@ -316,17 +316,17 @@ export default function SellerEditForm() {
       });
 
       // Personal API
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/personal/${exists ? userId : ""}`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          per_name: formData.ownerName,
-          designation: formData.designation,
-          per_address: formData.ownerAddress,
-          per_status: 1,
-        }),
-      });
+      // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/personal/${exists ? userId : ""}`, {
+      //   method,
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     user_id: userId,
+      //     per_name: formData.ownerName,
+      //     designation: formData.designation,
+      //     per_address: formData.ownerAddress,
+      //     per_status: 1,
+      //   }),
+      // });
 
       // Document API
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/document/${exists ? userId : ""}`, {
@@ -403,7 +403,7 @@ export default function SellerEditForm() {
   const allSections = [
     { id: "seller-edit", title: "Profile" },
     { id: "company-info", title: "Company Information" },
-    { id: "personal-info", title: "Personal Information (Owner)" },
+    // { id: "personal-info", title: "Personal Information (Owner)" },
     { id: "documents", title: "Documents Upload" },
   ]
 
@@ -411,7 +411,7 @@ export default function SellerEditForm() {
   const requiredFields = [
     "company", "contactPerson", "companyEmail", "companyMobile",
     "address", "city", "state", "pincode",
-    "ownerName", "designation", "ownerAddress",
+    // "ownerName", "designation", "ownerAddress",
     "gstNumber", "exportImportLicense"
   ]
 
@@ -548,49 +548,13 @@ export default function SellerEditForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Company */}
               <div>
                 <Label htmlFor="company">Company <span className="text-red-500">*</span></Label>
                 <Input
                   id="company"
                   value={formData.company}
                   onChange={(e) => updateFormData("company", e.target.value)}
-                  className="bg-white text-black border-gray-300"
-                />
-              </div>
-              <div>
-                <Label htmlFor="contactPerson">
-                  Contact Person <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="contactPerson"
-                  value={formData.contactPerson}
-                  onChange={(e) => updateFormData("contactPerson", e.target.value)}
-                  className="bg-white text-black border-gray-300"
-                />
-              </div>
-              <div>
-                <Label htmlFor="companyEmail">
-                  Email (to be verified) <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="companyEmail"
-                  type="email"
-                  value={formData.companyEmail}
-                  onChange={(e) => updateFormData("companyEmail", e.target.value)}
-                  className="bg-white text-black border-gray-300"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="companyMobile">
-                  Mobile (to be verified) <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="companyMobile"
-                  value={formData.companyMobile}
-                  onChange={(e) => updateFormData("companyMobile", e.target.value)}
                   className="bg-white text-black border-gray-300"
                 />
               </div>
@@ -616,6 +580,47 @@ export default function SellerEditForm() {
                   className="bg-white text-black border-gray-300"
                 />
               </div>
+              {/* Contact Person */}
+              {/* <div>
+                <Label htmlFor="contactPerson">
+                  Contact Person <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="contactPerson"
+                  value={formData.contactPerson}
+                  onChange={(e) => updateFormData("contactPerson", e.target.value)}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div> */}
+              {/* Email */}
+              {/* <div>
+                <Label htmlFor="companyEmail">
+                  Email (to be verified) <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="companyEmail"
+                  type="email"
+                  value={formData.companyEmail}
+                  onChange={(e) => updateFormData("companyEmail", e.target.value)}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div> */}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Mobile */}
+              {/* <div>
+                <Label htmlFor="companyMobile">
+                  Mobile (to be verified) <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="companyMobile"
+                  value={formData.companyMobile}
+                  onChange={(e) => updateFormData("companyMobile", e.target.value)}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div> */}
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -668,7 +673,7 @@ export default function SellerEditForm() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+              {/* <div>
                 <Label htmlFor="productionCapacity">
                   Production Capacity (TPM)
                 </Label>
@@ -680,7 +685,7 @@ export default function SellerEditForm() {
                   }
                   className="bg-white text-black border-gray-300"
                 />
-              </div>
+              </div> */}
 
               {/* -- NEW: Deals In Dropdown with Badges -- */}
               <div>
@@ -728,10 +733,6 @@ export default function SellerEditForm() {
                   })}
                 </div>
               </div>
-              {/* -- END NEW SECTION -- */}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>
                   Type of Seller
@@ -751,6 +752,20 @@ export default function SellerEditForm() {
                     <SelectItem value="4">Other</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              {/* -- END NEW SECTION -- */}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => updateFormData("description", e.target.value)}
+                  rows={4}
+                  className="resize-none bg-white text-black border-gray-300"
+                />
               </div>
 
               <div>
@@ -787,24 +802,13 @@ export default function SellerEditForm() {
                 </div>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => updateFormData("description", e.target.value)}
-                rows={4}
-                className="resize-none bg-white text-black border-gray-300"
-              />
-            </div>
           </CardContent>
         </Card>
       )}
 
 
       {/* Personal Information Section */}
-      {activeSection === "personal-info" && (
+      {/* {activeSection === "personal-info" && (
         <Card className="bg-white text-black">
           <CardHeader>
             <CardTitle className="text-lg font-medium text-blue-600">
@@ -849,7 +853,7 @@ export default function SellerEditForm() {
             </div>
           </CardContent>
         </Card>
-      )}
+      )} */}
 
 
       {/* Documents Upload Section */}
@@ -1034,7 +1038,6 @@ export default function SellerEditForm() {
           </CardContent>
         </Card>
       )}
-
 
     </div>
   )

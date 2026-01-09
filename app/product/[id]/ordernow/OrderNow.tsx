@@ -44,9 +44,9 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     company_name: "",
-    name: "",
-    phone: "",
-    email: "",
+    // name: "",
+    // phone: "",
+    // email: "",
     city: "",
     category_id: "",
     product_id: "",
@@ -291,7 +291,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
 
   const isProfileIncomplete =
-    !formData.company_name?.trim() || !formData.name?.trim();
+    !formData.company_name?.trim();
 
   if (!product) {
     return <ProductSkeleton />;
@@ -381,6 +381,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                 {product.description || "Premium quality product designed to meet all your industrial and commercial needs with excellence."}
               </p>
             </div>
+
             {/* Price Section */}
             <div className="flex items-baseline gap-3 p-6 bg-gradient-to-r from-sky-50 to-blue-50 rounded-2xl border-2 border-sky-200">
               <span className="text-5xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
@@ -393,8 +394,8 @@ const OrderNow = ({ productId }: { productId: string }) => {
             {specifications.length > 0 && (
               <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 shadow-sm">
                 <h3 className="font-bold text-slate-900 mb-5 text-lg flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-sky-600" />
-                  Specifications
+                  {/* <CheckCircle2 className="w-5 h-5 text-sky-600" /> */}
+                  Product Details
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
                   {specifications.map((spec) => (
@@ -452,26 +453,24 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
                     <div>
                       <Label>Company *</Label>
-                      <Input name="company_name" value={formData.company_name} readOnly />
+                      <Input name="company_name" value={formData.company_name} disabled />
                     </div>
-                    <div>
+                    {/* <div>
                       <Label>Contact Person *</Label>
-                      <Input name="name" value={formData.name} readOnly />
-                    </div>
-
-
-                    <div>
+                      <Input name="name" value={formData.name} disabled />
+                    </div> 
+                     <div>
                       <Label>Phone *</Label>
-                      <Input name="phone" value={formData.phone} onChange={handleChange} />
-                    </div>
-                    <div>
+                      <Input name="phone" value={formData.phone} onChange={handleChange} disabled />
+                    </div> 
+                     <div>
                       <Label>Email *</Label>
-                      <Input name="email" value={formData.email} readOnly />
-                    </div>
+                      <Input name="email" value={formData.email} disabled />
+                    </div> */}
 
                     <div>
                       <Label>City *</Label>
-                      <Input name="city" value={formData.city} onChange={handleChange} />
+                      <Input name="city" value={formData.city} onChange={handleChange} disabled />
                     </div>
 
 

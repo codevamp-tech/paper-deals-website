@@ -49,16 +49,16 @@ const SellerEnquiryPage = () => {
 
     const [formData, setFormData] = useState({
         company_name: "",
-        name: "",
-        phone: "",
-        email: "",
+        // name: "",
+        // phone: "",
+        // email: "",
         city: "",
         category_id: "",
         product_id: "", // ✅ product_id instead of product name
         gsm: "",
         bf: "",
         shade: "",
-        brightness: "",
+        // brightness: "",
         rim: "",
         sheat: "",
         size: "",
@@ -188,16 +188,16 @@ const SellerEnquiryPage = () => {
 
             setFormData({
                 company_name: "",
-                name: "",
-                phone: "",
-                email: "",
+                // name: "",
+                // phone: "",
+                // email: "",
                 city: "",
                 category_id: "",
                 product_id: "",
                 gsm: "",
                 bf: "",
                 shade: "",
-                brightness: "",
+                // brightness: "",
                 rim: "",
                 sheat: "",
                 size: "",
@@ -218,15 +218,15 @@ const SellerEnquiryPage = () => {
         { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
         { key: "bf", label: "BF", info: "Bursting Factor" },
         { key: "shade", label: "Shade" },
-        { key: "brightness", label: "Brightness" },
-        { key: "rim", label: "Rim" },
-        { key: "sheet", label: "Sheet" },
+        // { key: "brightness", label: "Brightness" },
+        // { key: "rim", label: "Rim" },
+        // { key: "sheet", label: "Sheet" }, 
         { key: "size", label: "Size" },
     ];
 
 
     const isProfileIncomplete =
-        !formData.company_name?.trim() || !formData.name?.trim();
+        !formData.company_name?.trim();
 
 
     return (
@@ -286,7 +286,7 @@ const SellerEnquiryPage = () => {
                         </div>
 
                         {/* Contact Person */}
-                        <div>
+                        {/* <div>
                             <Label>Contact Person *</Label>
                             <Input
                                 name="name"
@@ -297,10 +297,10 @@ const SellerEnquiryPage = () => {
                                 required
                                 disabled
                             />
-                        </div>
+                        </div> */}
 
                         {/* Mobile */}
-                        <div>
+                        {/* <div>
                             <Label>Mobile No. *</Label>
                             <Input
                                 name="phone"
@@ -310,10 +310,10 @@ const SellerEnquiryPage = () => {
                                 required
                                 disabled
                             />
-                        </div>
+                        </div> */}
 
                         {/* Email */}
-                        <div>
+                        {/* <div>
                             <Label>Email *</Label>
                             <Input
                                 type="email"
@@ -325,7 +325,7 @@ const SellerEnquiryPage = () => {
                                 required
                                 disabled
                             />
-                        </div>
+                        </div> */}
 
                         {/* City */}
                         <div>
@@ -338,26 +338,6 @@ const SellerEnquiryPage = () => {
                                 required
                                 disabled
                             />
-                        </div>
-
-                        {/* Category */}
-                        <div>
-                            <Label>Category *</Label>
-                            <Select
-                                value={formData.category_id}
-                                onValueChange={(val) => setFormData((prev) => ({ ...prev, category_id: val }))}
-                            >
-                                <SelectTrigger className="bg-white border border-gray-300 text-black">
-                                    <SelectValue placeholder="--Select Category--" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {categories.map((cat) => (
-                                        <SelectItem key={cat.id} value={cat.id.toString()}>
-                                            {cat.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                         </div>
 
                         {/* ✅ Product Dropdown — saves product_id */}
@@ -380,6 +360,26 @@ const SellerEnquiryPage = () => {
                                     ) : (
                                         <p className="px-2 text-gray-500 text-sm">No products found</p>
                                     )}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {/* Category */}
+                        <div>
+                            <Label>Category *</Label>
+                            <Select
+                                value={formData.category_id}
+                                onValueChange={(val) => setFormData((prev) => ({ ...prev, category_id: val }))}
+                            >
+                                <SelectTrigger className="bg-white border border-gray-300 text-black">
+                                    <SelectValue placeholder="--Select Category--" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories.map((cat) => (
+                                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                                            {cat.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
