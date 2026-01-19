@@ -24,7 +24,7 @@ type NavItem = {
 
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
-  { name: "My Enquiry", href: "/buyer3/enquiry", icon: Package },
+  // { name: "My Enquiry", href: "/buyer3/enquiry", icon: Package },
   { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
   // { name: "Order", href: "/buyer3/order", icon: ShoppingCart },

@@ -20,7 +20,7 @@ export default function ViewEnquiryPage() {
     const fetchEnquiry = async () => {
       try {
         const res = await fetch(
-          `${API_URL}/api/enquiry/enquiry-seller/${id}`,
+          `${API_URL}/api/enquiry/getbyId/${id}`,
           { cache: "no-store" }
         );
 
@@ -58,7 +58,7 @@ export default function ViewEnquiryPage() {
   // 🔹 Update status
   const updateStatus = async () => {
     try {
-      await fetch(`${API_URL}/api/enquiry/${id}/status`, {
+      await fetch(`${API_URL}/api/enquiry/enquiries/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -84,47 +84,57 @@ export default function ViewEnquiryPage() {
 
           <div>
             <label className="block text-sm font-medium mb-1">Buyer</label>
-            <Input value={`KPDB_${enquiry?.buyer?.id || "N/A"}`} disabled />
+            <Input value={row.buyer?.id ? `KPDB_${row.buyer.id}` : "N/A"} disabled />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Company</label>
-            <Input value={enquiry?.company_name || "N/A"} disabled />
+            <Input value={row.company_name || "N/A"} disabled />
+
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">City</label>
-            <Input value={enquiry?.city || "N/A"} disabled />
+            <Input value={row.city || "N/A"} disabled />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
-            <Input value={enquiry?.category?.name || "N/A"} disabled />
+            <Input value={row.category?.name || "N/A"} disabled />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Product</label>
-            <Input value={row.product || "N/A"} disabled />
+            <Input value={
+              row.product ||
+              row.productDetails?.product_name ||
+              "N/A"
+            }
+              disabled />
           </div>
 
+          {/* Shade */}
           <div>
             <label className="block text-sm font-medium mb-1">Shade</label>
-            <Input value={enquiry?.shade || "-"} disabled />
+            <Input value={row.shade ? String(row.shade) : "-"} disabled />
           </div>
 
+          {/* GSM */}
           <div>
             <label className="block text-sm font-medium mb-1">GSM</label>
-            <Input value={enquiry?.gsm || "-"} disabled />
+            <Input value={row.gsm ? String(row.gsm) : "-"} disabled />
           </div>
 
+          {/* Size */}
           <div>
             <label className="block text-sm font-medium mb-1">Size</label>
-            <Input value={enquiry?.size || "-"} disabled />
+            <Input value={row.size ? String(row.size) : "-"} disabled />
           </div>
+
 
           <div>
             <label className="block text-sm font-medium mb-1">Remarks</label>
-            <Input value={enquiry?.remarks || "-"} disabled />
+            <Input value={row.remarks || "-"} disabled />
           </div>
         </div>
 

@@ -29,11 +29,13 @@ export default function EnquiryPage() {
   const userRole = user?.user_role;
   const isSellerView = userRole === 1 || userRole === 4
   const userId = user?.user_id
+  console.log("userid??>>", userId);
 
   // fetch enquiries
   useEffect(() => {
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/lead-sellers?page=${page}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/getBuyerEnquiries?user_id=${userId}&page=${page}&limit=${limit}`
+      ,
       {
         method: "GET",
         headers: {
@@ -45,8 +47,8 @@ export default function EnquiryPage() {
     )
       .then((res) => res.json())
       .then((res) => {
-        console.log("API DATA:", res.messages);
-        setData(res.messages || []);
+        console.log("API DATA:", res.enquiries);
+        setData(res.enquiries || []);
         setTotalPages(res.totalPages || 1);
       });
   }, [page, userId]);
@@ -100,7 +102,7 @@ export default function EnquiryPage() {
 
                   {/* 2️⃣ Buyer ID */}
                   <td className="border px-3 py-2">
-                    {`KPDB_${row.enquiry?.buyer_id}`}
+                    {`KPDB_${row.buyer_id}`}
                   </td>
 
                   {/* 3️⃣ Product */}
@@ -110,22 +112,22 @@ export default function EnquiryPage() {
 
                   {/* 4️⃣ City */}
                   <td className="border px-3 py-2">
-                    {row.enquiry?.city || "N/A"}
+                    {row.city || "N/A"}
                   </td>
 
                   {/* 5️⃣ Shade */}
                   <td className="border px-3 py-2">
-                    {row.enquiry?.shade || "-"}
+                    {row.shade || "-"}
                   </td>
 
                   {/* 6️⃣ GSM */}
                   <td className="border px-3 py-2">
-                    {row.enquiry?.gsm || "-"}
+                    {row.gsm || "-"}
                   </td>
 
                   {/* 7️⃣ Remarks */}
                   <td className="border px-3 py-2">
-                    {row.enquiry?.remarks || "-"}
+                    {row.remarks || "-"}
                   </td>
 
                   {/* 8️⃣ Created At */}
