@@ -201,9 +201,6 @@ const Topbar = () => {
                     <Link href="/product" className="text-sm">
                       Products
                     </Link>
-                    <Link href="/buyer" className="text-sm">
-                      Buyers
-                    </Link>
                     <Link href="/B2B/seller" className="text-sm">
                       Sellers
                     </Link>
@@ -400,6 +397,11 @@ const Topbar = () => {
                         <DropdownMenuItem asChild>
                           <Link href="/buyer3/profile" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <User className="w-4 h-4 text-gray-600" /> Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/buyer3/enquiry" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                            <User className="w-4 h-4 text-gray-600" /> My Enquiry
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
