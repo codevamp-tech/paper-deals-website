@@ -329,21 +329,48 @@ export default function SellerEditForm() {
       // });
 
       // Document API
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/document/${exists ? userId : ""}`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          gst_number: formData.gstNumber,
-          export_import_licence: formData.exportImportLicense,
-          pan_card_img: fileUploads.panCard ? fileUploads.panCard.name : null,
-          voter_id_img: null,
-          cert_of_incorp: fileUploads.certificateOfIncorporation ? fileUploads.certificateOfIncorporation.name : null,
-          gst_cert: fileUploads.gstCertificate ? fileUploads.gstCertificate.name : null,
-          doc_status: 1,
-        }),
-      });
+      const docRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/document/${exists ? userId : ""}`,
+        {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            gst_number: formData.gstNumber,
+            export_import_licence: formData.exportImportLicense,
+            pan_card_img: fileUploads.panCard ? fileUploads.panCard.name : null,
+            voter_id_img: null,
+            cert_of_incorp: fileUploads.certificateOfIncorporation
+              ? fileUploads.certificateOfIncorporation.name
+              : null,
+            gst_cert: fileUploads.gstCertificate
+              ? fileUploads.gstCertificate.name
+              : null,
+            doc_status: 1,
+          }),
+        }
+      );
 
+      const docData = await docRes.json();
+
+      if (!docRes.ok) {
+        // 👉 show GST error below field
+        if (docData.message?.toLowerCase().includes("gst")) {
+          setErrors((prev) => ({
+            ...prev,
+            gstNumber: docData.message,
+          }));
+        }
+
+        // 👉 show toast
+        toast({
+          title: "Validation Error",
+          description: docData.message,
+          variant: "destructive",
+        });
+
+        return; // ⛔ stop further execution
+      }
       toast({
         title: "Success",
         description: `Buyer info ${exists ? "updated" : "created"} successfully!`,
@@ -353,7 +380,7 @@ export default function SellerEditForm() {
       console.error("Error saving seller info:", error);
       toast({
         title: "Error",
-        description: "Failed to save seller info.",
+        description: error instanceof Error ? error.message : "An error occurred",
       });
     } finally {
       setLoading(false);

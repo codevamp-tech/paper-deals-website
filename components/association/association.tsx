@@ -21,7 +21,7 @@ export default function AssumptionPartner() {
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bottom-logo`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bottom-logo?type=b2c`)
         if (!res.ok) throw new Error("Failed to fetch partner logos")
         const data = await res.json()
         setPartners(data?.data)
@@ -74,14 +74,14 @@ export default function AssumptionPartner() {
             Our Partners
           </span>
         </div>
-        
+
         <h2 className={`text-4xl md:text-5xl lg:text-6xl font-black mb-6 font-[Poppins] ${theme.Text} 
                         bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent`}>
           Trusted Brands
         </h2>
 
         <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-          Kay Paper Deals Pvt Ltd is working as a sourcing agent for Paper Industries. 
+          Kay Paper Deals Pvt Ltd is working as a sourcing agent for Paper Industries.
           We collaborate with leading paper mills across India and export globally to major paper manufacturers.
         </p>
       </div>
@@ -90,7 +90,7 @@ export default function AssumptionPartner() {
       <div className="relative">
         {/* Left Gradient Overlay */}
         <div className="absolute left-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-        
+
         {/* Right Gradient Overlay */}
         <div className="absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
 

@@ -69,7 +69,6 @@ const Footer = () => {
             <ul className="space-y-2 text-gray-600 text-[15px]">
               {[
                 { name: "About Us", href: "/about" },
-                { name: "Live Stock", href: "/B2B/live-stock" },
                 { name: "Products", href: "/product" },
                 { name: "News", href: "/News" },
               ].map((item) => (
@@ -105,13 +104,7 @@ const Footer = () => {
                 </p>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 mt-1 text-blue-600" />
-                <div>
-                  <p>+91 9837093712</p>
-                  <p>+91 7017744883</p>
-                </div>
-              </div>
+
 
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-blue-600" />
@@ -141,6 +134,7 @@ const Footer = () => {
                   { src: "/p1.jpeg" },
                   { src: "/p2.jpg" },
                   { src: "/p3.jpg" },
+                  { src: "/p4.png" },
                 ].map((partner, i) => (
                   <a
                     key={i}

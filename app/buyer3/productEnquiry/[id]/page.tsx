@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { getCookie } from "@/components/getcookie";
+import { Toast } from "@/components/ui/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,6 +13,8 @@ export default function ViewEnquiryPage() {
   const [loading, setLoading] = useState(true);
   const [row, setRow] = useState<any>(null);
   const [status, setStatus] = useState<number>(0);
+  const token = getCookie("token");
+  const router = useRouter();
 
   // 🔹 Fetch enquiry
   useEffect(() => {
@@ -55,20 +58,24 @@ export default function ViewEnquiryPage() {
   }, [id]);
 
 
-  // 🔹 Update status
-  const updateStatus = async () => {
-    try {
-      await fetch(`${API_URL}/api/enquiry/enquiries/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-
-      toast.success("Status updated successfully");
-    } catch (error) {
-      console.error("Status update failed", error);
-    }
-  };
+  const handleUpdate = () => {
+    fetch(`http://localhost:5000/api/enquiry/enquiries/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({ status }),
+    })
+      .then(res => res.json())
+      .then(() => {
+        setRow((prev: any) => ({ ...prev, status }))
+        Toast({ title: "Status updated successfully!" })
+        router.push('/buyer3/productEnquiry')
+      })
+      .catch(err => console.error(err))
+  }
 
   if (loading) return <p className="p-6">Loading...</p>;
   if (!row) return <p className="p-6">No enquiry found</p>;
@@ -154,7 +161,7 @@ export default function ViewEnquiryPage() {
           </div>
 
           <button
-            onClick={updateStatus}
+            onClick={handleUpdate}
             className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
           >
             Update

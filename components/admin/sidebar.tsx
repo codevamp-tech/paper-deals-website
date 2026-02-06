@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { getUserFromToken } from "@/hooks/use-token";
+
 type NavItem = {
   name: string;
   href: string;
@@ -44,6 +46,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
   const router = useRouter();
 
   const [mode, setMode] = useState<string | null>(null);
+  const [orgName, setOrgName] = useState("Paper Deal");
 
   useEffect(() => {
     // Safely read localStorage (client-only)
@@ -53,6 +56,27 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     } catch (e) {
       setMode(null);
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchOrgName = async () => {
+      const user = getUserFromToken();
+      const userId = user?.user_id;
+
+      if (userId) {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/buyerbyid/${userId}`);
+          if (res.ok) {
+            const data = await res.json();
+            const name = data.organization?.organizations || data.name || "Paper Deal";
+            setOrgName(name);
+          }
+        } catch (error) {
+          console.error("Error fetching organization name:", error);
+        }
+      }
+    };
+    fetchOrgName();
   }, []);
 
   const handleLogout = async () => {
@@ -118,7 +142,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
       {/* Logo (desktop) */}
       <div className="hidden md:flex items-center space-x-2 mb-4 pt-2">
 
-        <div className="text-white font-bold text-xl">PD Buyer</div>
+        <div className="text-white font-bold text-xl">{orgName}</div>
       </div>
 
       {/* Scrollable Navigation */}
