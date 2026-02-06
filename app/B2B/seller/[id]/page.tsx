@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Building } from "lucide-react"
+import { Building, ShieldCheck, BadgeCheck } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 import SellerProductCrousel from "@/components/sellerProductCrousel"
@@ -125,6 +125,7 @@ function SellerSkeleton() {
 export default function BuyersPage() {
   const { id } = useParams()
   const [seller, setSeller] = useState<any>(null)
+  const [document, setDocument] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   const router = useRouter()
@@ -148,6 +149,7 @@ export default function BuyersPage() {
     let isMounted = true
     const fetchSeller = async () => {
       try {
+        // Fetch seller data
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/users//buyerbyid/${id}`
         )
@@ -155,6 +157,19 @@ export default function BuyersPage() {
 
         if (!isMounted) return
         setSeller(data || null)
+
+        // Fetch document data for GST info
+        try {
+          const docRes = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/document/${id}`
+          )
+          if (docRes.ok) {
+            const docData = await docRes.json()
+            if (isMounted) setDocument(docData)
+          }
+        } catch (docErr) {
+          console.log("[BuyersPage] No document found for user")
+        }
       } catch (e) {
         console.error("[BuyersPage] Error fetching seller:", e)
         if (isMounted) setSeller(null)
@@ -200,6 +215,11 @@ export default function BuyersPage() {
   // enquiryid (static or dynamic)
   const enquiryid = "new"
 
+  // GST and Trust Seal status
+  const gstNumber = document?.gst_number || null
+  const isGstVerified = !!document?.gst_cert && document?.doc_status === 1
+  const isTrustSealVerified = isVerified && isGstVerified
+
   return (
     <main className="min-h-screen bg-white">
       <section className="max-w-6xl mx-auto px-4 py-8 md:py-12">
@@ -210,28 +230,22 @@ export default function BuyersPage() {
               {/* Image / Logo */}
               <div className="w-full">
                 <div className="aspect-[4/3] w-full rounded-xl border-2 border-gray-200 bg-white shadow-md overflow-hidden flex items-center justify-center hover:shadow-lg transition-shadow">
-                  {org?.image_banner ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}/${org.image_banner}`}
-                      alt={orgName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center text-center">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                        <span className="text-white text-2xl font-bold uppercase">
-                          {orgName
-                            ?.split(" ")
-                            .map(word => word[0])
-                            .join("")
-                            .slice(0, 2)}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-500 mt-3">
-                        {orgName}
-                      </p>
+
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold uppercase">
+                        {orgName
+                          ?.split(" ")
+                          .map(word => word[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </span>
                     </div>
-                  )}
+                    <p className="text-sm font-medium text-gray-500 mt-3">
+                      {orgName}
+                    </p>
+                  </div>
+
                 </div>
 
               </div>
@@ -251,6 +265,40 @@ export default function BuyersPage() {
                   >
                     {isVerified ? "✓ Verified" : "Not Verified"}
                   </Badge>
+                </div>
+
+                {/* GST and Trust Seal Badges */}
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  {/* GST Number with Verified Icon */}
+                  {gstNumber && (
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${isGstVerified
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-gray-50 border-gray-200'
+                      }`}>
+                      <BadgeCheck className={`w-5 h-5 ${isGstVerified ? 'text-green-600' : 'text-gray-400'
+                        }`} />
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">GST Number</p>
+                        <p className="text-sm font-semibold text-gray-900">{gstNumber}</p>
+                      </div>
+                      {isGstVerified && (
+                        <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                          Verified
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Trust Seal */}
+                  {isTrustSealVerified && (
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200">
+                      <ShieldCheck className="w-6 h-6 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-bold text-blue-800">Trust Seal</p>
+                        <p className="text-xs text-blue-600">Verified Business</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Grid fields with enhanced styling */}

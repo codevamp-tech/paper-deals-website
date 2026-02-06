@@ -192,14 +192,13 @@ export default function ProductPage() {
               <table className="w-full border-collapse border border-gray-300 bg-white min-w-[800px]">
                 <thead >
                   <tr className="bg-gray-100">
-                    <th className="p-2 border">ID</th>
-                    <th className="p-2 border">Seller Name</th>
-                    <th className="p-2 border">Product Name</th>
+                    {/* <th className="p-2 border">ID</th> */}
                     <th className="p-2 border">Category</th>
-                    <th className="p-2 border">Price</th>
-                    <th className="p-2 border">Weight </th>
-                    <th className="p-2 border">Stock</th>
+                    <th className="p-2 border">Product Name</th>
                     <th className="p-2 border">Shade</th>
+                    <th className="p-2 border">Weight </th>
+                    <th className="p-2 border">Gsm </th>
+                    <th className="p-2 border">Price</th>
                     <th className="p-2 border">Created At</th>
                     <th className="p-2 border">Edit</th>
                     <th className="p-2 border">Delete</th>
@@ -208,14 +207,13 @@ export default function ProductPage() {
                 <tbody>
                   {products.map((product) => (
                     <tr key={product.id} className="border-t">
-                      <td className="p-2 border">{product.id}</td>
-                      <td className="p-2 border">{product.seller?.name || "Seller not found"}</td>
-                      <td className="p-2 border">{product.product_name || "-"}</td>
+                      {/* <td className="p-2 border">{product.id}</td> */}
                       <td className="p-2 border">{product.category?.name || "-"}</td>
-                      <td className="p-2 border">{product.price_per_kg || "-"}</td>
-                      <td className="p-2 border">{product.weights || "-"}</td>
-                      <td className="p-2 border">{product.stock_in_kg || "-"}</td>
+                      <td className="p-2 border">{product.product_name || "-"}</td>
                       <td className="p-2 border">{product.shade || "-"}</td>
+                      <td className="p-2 border">{product.weights || "-"}</td>
+                      <td className="p-2 border">{product.gsm || "-"}</td>
+                      <td className="p-2 border">{product.price_per_kg || "-"}</td>
                       <td className="p-2 border">
                         {new Date(product.created_at).toLocaleString()}
                       </td>
@@ -264,7 +262,7 @@ export default function ProductPage() {
 
       {/* Edit Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
           </DialogHeader>
@@ -346,13 +344,49 @@ export default function ProductPage() {
               <div>
                 <Label>Product Image</Label>
                 <Input type="file" onChange={handleFileChange} />
-                {editingProduct?.image && !file && (
-                  <img
-                    src={editingProduct.image}
-                    alt="Product"
-                    className="w-24 h-24 mt-2 rounded object-cover"
-                  />
-                )}
+                <div className="mt-3 flex flex-col gap-2">
+                  {file ? (
+                    <div className="relative w-32 h-32">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Preview"
+                        className="w-full h-full object-cover rounded-lg border border-gray-200"
+                      />
+                      <span className="text-xs text-green-600 font-medium">New Image</span>
+                    </div>
+                  ) : (
+                    (() => {
+                      // Helper to extract image URL
+                      let imageUrl = editingProduct?.image;
+                      if (!imageUrl && editingProduct?.images) {
+                        try {
+                          const parsed = JSON.parse(editingProduct.images);
+                          if (Array.isArray(parsed) && parsed.length > 0) imageUrl = parsed[0];
+                          else if (typeof parsed === 'string') imageUrl = parsed;
+                        } catch (e) {
+                          imageUrl = editingProduct.images;
+                        }
+                      }
+
+                      if (imageUrl) {
+                        return (
+                          <div className="relative w-32 h-32">
+                            <img
+                              src={`${imageUrl.startsWith("http")
+                                ? imageUrl
+                                : `${process.env.NEXT_PUBLIC_API_URL}/${imageUrl}`
+                                }`}
+                              alt="Current"
+                              className="w-full h-full object-cover rounded-lg border border-gray-200"
+                            />
+                            <span className="text-xs text-gray-500 font-medium">Current Image</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()
+                  )}
+                </div>
               </div>
             </div>
           )}

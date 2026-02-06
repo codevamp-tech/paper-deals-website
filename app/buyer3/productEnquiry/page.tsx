@@ -56,11 +56,10 @@ export default function EnquiryPage() {
   // filtered
   const filtered = data.filter((row) =>
     row.product?.toLowerCase().includes(search.toLowerCase()) ||
-    row.seller?.name?.toLowerCase().includes(search.toLowerCase()) ||
-    row.enquiry?.category?.name
-      ?.toLowerCase()
-      .includes(search.toLowerCase())
+    row.city?.toLowerCase().includes(search.toLowerCase()) ||
+    String(row.buyer_id)?.includes(search)
   );
+
 
 
   return (
@@ -102,17 +101,18 @@ export default function EnquiryPage() {
 
                   {/* 2️⃣ Buyer ID */}
                   <td className="border px-3 py-2">
-                    {`KPDB_${row.buyer_id}`}
+                    {row.buyer_id ? `KPDB_${row.buyer_id}` : "-"}
                   </td>
+
 
                   {/* 3️⃣ Product */}
                   <td className="border px-3 py-2">
-                    {row.product}
+                    {row.productDetails?.product_name || "-"}
                   </td>
 
                   {/* 4️⃣ City */}
                   <td className="border px-3 py-2">
-                    {row.city || "N/A"}
+                    {row.city || "-"}
                   </td>
 
                   {/* 5️⃣ Shade */}
@@ -132,7 +132,7 @@ export default function EnquiryPage() {
 
                   {/* 8️⃣ Created At */}
                   <td className="border px-3 py-2">
-                    {new Date(row.created_at).toLocaleString()}
+                    {new Date(row.created_at).toLocaleDateString("en-IN")}
                   </td>
 
                   {/* 9️⃣ Status */}
@@ -166,8 +166,6 @@ export default function EnquiryPage() {
                 </tr>
               ))}
             </tbody>
-
-
           </table>
         </div>
 
@@ -177,10 +175,6 @@ export default function EnquiryPage() {
           onPageChange={(newPage) => setPage(newPage)}
         />
       </div>
-
-
-
-
     </div>
   )
 }
