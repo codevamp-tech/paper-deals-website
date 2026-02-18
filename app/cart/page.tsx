@@ -201,6 +201,7 @@ export default function CartPage() {
   const updateLocalStorage = (updatedCart: Product[]) => {
     setCart(updatedCart);
     localStorage.setItem("cart_B2C", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("cart-updated"));
   };
 
   const handleUpdateQuantity = (productId: number, change: number) => {
@@ -302,6 +303,7 @@ export default function CartPage() {
 
       toast.success("Enquiries sent successfully!");
       updateLocalStorage([]);
+      window.dispatchEvent(new Event("cart-updated"));
       setProductEdits({});
       setIsEnquiryModalOpen(false);
     } catch (error) {

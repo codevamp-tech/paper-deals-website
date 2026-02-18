@@ -3,6 +3,7 @@
 import { getUserFromToken } from "@/hooks/use-token";
 import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
+import TruncatedText from "@/components/ui/TruncatedText";
 import { useState, useEffect } from "react";
 
 const B2cOrder = () => {
@@ -92,9 +93,9 @@ const OrderCard = ({ order }: any) => {
 
   // ✅ Handle track order click
   const handleTrackOrder = () => {
-    
+
     // You can later replace alert() with a router push or modal:
- router.push(`/buyer3/order/tracking/${order.deal_id}`);
+    router.push(`/buyer3/order/tracking/${order.deal_id}`);
   };
 
   return (
@@ -120,10 +121,10 @@ const OrderCard = ({ order }: any) => {
 
         <span
           className={`mt-2 sm:mt-0 px-3 py-1 rounded-full text-xs md:text-sm font-medium ${order.deal_status === 7
-              ? "bg-green-100 text-green-800"
-              : order.deal_status === 6
-                ? "bg-red-100 text-red-800"
-                : "bg-cyan-100 text-cyan-800"
+            ? "bg-green-100 text-green-800"
+            : order.deal_status === 6
+              ? "bg-red-100 text-red-800"
+              : "bg-cyan-100 text-cyan-800"
             }`}
         >
           {statusMap[order.deal_status] || "Unknown"}
@@ -141,8 +142,8 @@ const OrderCard = ({ order }: any) => {
         <p>
           <strong>Price/Kg:</strong> ₹{order.price_per_kg}
         </p>
-        <p>
-          <strong>Remarks:</strong> {order.remarks || "N/A"}
+        <p className="flex items-center gap-1">
+          <strong>Remarks:</strong> <TruncatedText text={order.remarks || "N/A"} limit={20} />
         </p>
         <p>
           <strong>Updated On:</strong>{" "}
@@ -171,8 +172,8 @@ const OrderCard = ({ order }: any) => {
           <div key={idx} className="relative pl-8 pb-4 last:pb-0">
             <div
               className={`absolute top-0 left-0 w-6 h-6 rounded-full flex items-center justify-center ${step.completed
-                  ? "bg-cyan-500 text-white"
-                  : "bg-gray-100 text-gray-400 border border-gray-300"
+                ? "bg-cyan-500 text-white"
+                : "bg-gray-100 text-gray-400 border border-gray-300"
                 }`}
             >
               {step.completed ? <CheckIcon className="w-4 h-4" /> : idx + 1}

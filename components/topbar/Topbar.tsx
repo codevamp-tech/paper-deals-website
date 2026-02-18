@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import TopbarWithCategories from "./Categorei";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock, Building2, ShoppingBag, Plus, ShoppingBasket } from "lucide-react";
+import { ChevronDown, User, Store, Menu, X, Search, LogOut, LayoutDashboard, MessageCircle, CreditCard, Lock, Building2, ShoppingBag, Plus } from "lucide-react";
 import RequestCallback from "../modal/RequestCallback";
 import SupportModal from "../modal/SupportModal";
 import { Switch } from "@/components/ui/switch";
@@ -38,7 +38,7 @@ const Topbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [cart, setCart] = useState<any[]>([]);
+  // const [cart, setCart] = useState<any[]>([]); // Removed unused state
   const { theme } = useTheme();
   const searchRef = useRef<HTMLDivElement>(null);
   const [cartCount, setCartCount] = useState(0);
@@ -69,7 +69,7 @@ const Topbar = () => {
 
   useEffect(() => {
     const loadCart = () => {
-      const mode = localStorage.getItem("mode") || "B2B";
+      const mode = localStorage.getItem("mode") || "B2C";
       const cart = JSON.parse(localStorage.getItem(`cart_${mode}`) || "[]");
 
       const totalQty = cart.reduce(
@@ -84,9 +84,11 @@ const Topbar = () => {
 
     // 🔁 Listen for cart updates from other tabs/components
     window.addEventListener("storage", loadCart);
+    window.addEventListener("cart-updated", loadCart);
 
     return () => {
       window.removeEventListener("storage", loadCart);
+      window.removeEventListener("cart-updated", loadCart);
     };
   }, []);
 
@@ -167,9 +169,9 @@ const Topbar = () => {
     router.push("/");
   };
 
-  useEffect(() => {
-    window.dispatchEvent(new Event("storage"));
-  }, [cart]);
+  // useEffect(() => {
+  //   window.dispatchEvent(new Event("storage"));
+  // }, [cart]);
 
 
   const getInitials = (fullName: string) => {
@@ -253,7 +255,11 @@ const Topbar = () => {
                 onClick={() => router.push("/cart")}
                 className="relative p-2 rounded-full hover:bg-gray-100 transition"
               >
-                <ShoppingBasket className="w-6 h-6 text-gray-700" />
+                <img
+                  src="/trolley.png"
+                  alt="Cart"
+                  className="w-6 h-6 object-contain"
+                />
 
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">

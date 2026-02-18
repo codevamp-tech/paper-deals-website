@@ -134,7 +134,7 @@ const Footer = () => {
                   { src: "/p1.jpeg" },
                   { src: "/p2.jpg" },
                   { src: "/p3.jpg" },
-                  { src: "/p4.png" },
+                  { src: "/p5.png" },
                 ].map((partner, i) => (
                   <a
                     key={i}

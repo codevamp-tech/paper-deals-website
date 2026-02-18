@@ -6,6 +6,7 @@ import { getCookie } from "@/components/getcookie";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import TruncatedText from "@/components/ui/TruncatedText";
 
 type Deal = {
   id: number;
@@ -190,7 +191,7 @@ export default function CloseDealsPage() {
                         {deal.deal_amount?.toLocaleString()}
                       </td>
                       <td className="p-2 border ">
-                        {deal.remarks}
+                        <TruncatedText text={deal.remarks || ""} limit={20} />
                       </td>
                       <td className="p-2 border ">
                         {new Date(deal.created_on).toLocaleString()}
