@@ -17,7 +17,7 @@ export default function ProductListing() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const router = useRouter();
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
-  const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
   const [enquiryData, setEnquiryData] = useState({
     company_name: "",
     name: "",
@@ -131,6 +131,7 @@ export default function ProductListing() {
 
   useEffect(() => {
     localStorage.setItem(`cart_${mode}`, JSON.stringify(cart));
+    window.dispatchEvent(new Event("cart-updated"));
   }, [cart, mode]);
 
 

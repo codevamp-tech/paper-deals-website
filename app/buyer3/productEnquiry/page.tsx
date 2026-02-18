@@ -14,6 +14,7 @@ import Pagination from "@/components/pagination"
 import { getUserFromToken } from "@/hooks/use-token"
 import { useRouter } from "next/navigation"
 import { getCookie } from "@/components/getcookie"
+import TruncatedText from "@/components/ui/TruncatedText"
 
 export default function EnquiryPage() {
   const [data, setData] = useState<any[]>([])
@@ -127,7 +128,7 @@ export default function EnquiryPage() {
 
                   {/* 7️⃣ Remarks */}
                   <td className="border px-3 py-2">
-                    {row.remarks || "-"}
+                    <TruncatedText text={row.remarks || ""} limit={20} />
                   </td>
 
                   {/* 8️⃣ Created At */}

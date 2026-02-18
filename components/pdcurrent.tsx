@@ -7,6 +7,7 @@ import { Edit } from "lucide-react";
 import { getCookie } from "@/components/getcookie"
 import Pagination from "@/components/pagination";
 import { useRouter } from "next/navigation";
+import TruncatedText from "@/components/ui/TruncatedText";
 
 
 type Deal = {
@@ -38,8 +39,8 @@ export default function CurrentPaperDealPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  
+
+
   const router = useRouter();
 
   useEffect(() => {
@@ -107,7 +108,7 @@ export default function CurrentPaperDealPage() {
     )
   );
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: number | string) => {
     router.push(`/admin/pddeal/current/${id}`);
   };
 
@@ -132,134 +133,136 @@ export default function CurrentPaperDealPage() {
         {loading && <p className="text-center py-4">Loading deals...</p>}
         {error && <p className="text-center text-red-500 py-4">{error}</p>}
 
-        
-          <>
-            <div className="overflow-x-auto w-full">
-              <table className="w-full text-sm border table-auto">
-                <thead className="bg-gray-100 sticky top-0 z-10">
-                  <tr className="border-b">
-                    <th className="p-2 border">Sr. NO.</th>
-                    <th className="p-2 border">Deal ID</th>
-                    <th className="p-2 border">PD Executive</th>
-                    <th className="p-2 border">Mobile</th>
 
-                    {/* Show only for role 2 */}
-                    
-                      <>
-                        <th className="p-2 border">Product Description</th>
-                        <th className="p-2 border">Category</th>
-                        <th className="p-2 border">Price in Kg</th>
-                        <th className="p-2 border">Quantity in Kg</th>
-                        <th className="p-2 border">Total Amount</th>
-                      </>
-                    
+        <>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm border table-auto">
+              <thead className="bg-gray-100 sticky top-0 z-10">
+                <tr className="border-b">
+                  <th className="p-2 border">Sr. NO.</th>
+                  <th className="p-2 border">Deal ID</th>
+                  <th className="p-2 border">PD Executive</th>
+                  <th className="p-2 border">Mobile</th>
 
-                    {/* Show extra for role 4 */}
-                    
-                      <>
-                        <th className="p-2 border">Buyer</th>
-                        <th className="p-2 border">Buyer No</th>
-                        <th className="p-2 border">Seller</th>
-                        <th className="p-2 border">Seller No</th>
-                        <th className="p-2 border">Commission</th>
-                        <th className="p-2 border">Buyer Commission</th>
-                        <th className="p-2 border">Seller Commission</th>
-                        <th className="p-2 border">Remarks</th>
-                      </>
-                    
+                  {/* Show only for role 2 */}
 
-                    <th className="p-2 border">Date</th>
-                    <th className="p-2 border">Status</th>
-                    
-                      <th className="p-2 border">Action</th>
-                    
-                  </tr>
-                </thead>
+                  <>
+                    <th className="p-2 border">Product Description</th>
+                    <th className="p-2 border">Category</th>
+                    <th className="p-2 border">Price in Kg</th>
+                    <th className="p-2 border">Quantity in Kg</th>
+                    <th className="p-2 border">Total Amount</th>
+                  </>
 
-                <tbody>
-                  {filteredDeals.length > 0 ? (
-                    filteredDeals.map((d, index) => (
-                      <tr key={d.id} className="border-b hover:bg-gray-50">
-                        <td className="p-2 border">
-                          {(page - 1) * 10 + index + 1}
-                        </td>
-                        <td className="p-2 border">{d.deal_id}</td>
-                        <td className="p-2 border">{d.pdExecutive}</td>
-                        <td className="p-2 border">{d.mobile_no}</td>
 
-                        
-                          <>
-                            <td className="p-2 border">
-                              {d.product_description}
-                            </td>
-                            <td className="p-2 border">{d.category}</td>
-                            <td className="p-2 border">{d.price_per_kg}</td>
-                            <td className="p-2 border">{d.quantity_in_kg}</td>
-                            <td className="p-2 border">{d.total_amount}</td>
-                          </>
-                        
+                  {/* Show extra for role 4 */}
 
-                        
-                          <>
-                            <td className="p-2 border">{d.buyer}</td>
-                            <td className="p-2 border">{d.buyerNo}</td>
-                            <td className="p-2 border">{d.seller}</td>
-                            <td className="p-2 border">{d.sellerNo}</td>
-                            <td className="p-2 border">{d.commission}</td>
-                            <td className="p-2 border">{d.buyer_commission}</td>
-                            <td className="p-2 border">{d.seller_commission}</td>
-                            <td className="p-2 border">{d.remarks}</td>
-                          </>
-                        
+                  <>
+                    <th className="p-2 border">Buyer</th>
+                    <th className="p-2 border">Buyer No</th>
+                    <th className="p-2 border">Seller</th>
+                    <th className="p-2 border">Seller No</th>
+                    <th className="p-2 border">Commission</th>
+                    <th className="p-2 border">Buyer Commission</th>
+                    <th className="p-2 border">Seller Commission</th>
+                    <th className="p-2 border">Remarks</th>
+                  </>
 
-                        <td className="p-2 border">
-                          {new Date(d.created_on).toLocaleString()}
-                        </td>
-                        <td className="p-2 border">
-                          {d.status === 1 ? (
-                            <span className="px-2 py-1 text-white bg-green-500 rounded">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="px-2 py-1 text-white bg-red-500 rounded">
-                              Inactive
-                            </span>
-                          )}
-                        </td>
-                        
-                          <td className="border p-2 text-center">
-                            <button
-                              onClick={() => handleEdit(d.deal_id)}
-                              className="text-blue-600 hover:text-blue-800"
-                            >
-                              <Edit className="w-5 h-5" />
-                            </button>
-                          </td>
-                        
 
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={20}
-                        className="text-center p-4 text-gray-500"
-                      >
-                        No deals found.
+                  <th className="p-2 border">Date</th>
+                  <th className="p-2 border">Status</th>
+
+                  <th className="p-2 border">Action</th>
+
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredDeals.length > 0 ? (
+                  filteredDeals.map((d, index) => (
+                    <tr key={d.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2 border">
+                        {(page - 1) * 10 + index + 1}
                       </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      <td className="p-2 border">{d.deal_id}</td>
+                      <td className="p-2 border">{d.pdExecutive}</td>
+                      <td className="p-2 border">{d.mobile_no}</td>
 
-            <Pagination
-              totalPages={totalPages}
-              currentPage={page}
-              onPageChange={(p) => setPage(p)}
-            />
-          </>
-        
+
+                      <>
+                        <td className="p-2 border">
+                          {d.product_description}
+                        </td>
+                        <td className="p-2 border">{d.category}</td>
+                        <td className="p-2 border">{d.price_per_kg}</td>
+                        <td className="p-2 border">{d.quantity_in_kg}</td>
+                        <td className="p-2 border">{d.total_amount}</td>
+                      </>
+
+
+
+                      <>
+                        <td className="p-2 border">{d.buyer}</td>
+                        <td className="p-2 border">{d.buyerNo}</td>
+                        <td className="p-2 border">{d.seller}</td>
+                        <td className="p-2 border">{d.sellerNo}</td>
+                        <td className="p-2 border">{d.commission}</td>
+                        <td className="p-2 border">{d.buyer_commission}</td>
+                        <td className="p-2 border">{d.seller_commission}</td>
+                        <td className="p-2 border">
+                          <TruncatedText text={d.remarks || ""} limit={20} />
+                        </td>
+                      </>
+
+
+                      <td className="p-2 border">
+                        {new Date(d.created_on).toLocaleString()}
+                      </td>
+                      <td className="p-2 border">
+                        {d.status === 1 ? (
+                          <span className="px-2 py-1 text-white bg-green-500 rounded">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-white bg-red-500 rounded">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="border p-2 text-center">
+                        <button
+                          onClick={() => handleEdit(d.deal_id)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                      </td>
+
+
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={20}
+                      className="text-center p-4 text-gray-500"
+                    >
+                      No deals found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={(p) => setPage(p)}
+          />
+        </>
+
       </div>
     </div>
   );

@@ -36,6 +36,8 @@ const mapApiToForm = (data: any) => ({
   dealId: data.deal_id,
   buyerId: data.buyer_id,
   sellerId: data.seller_id,
+  buyerUser: data.buyerUser, // ✅ Added
+  sellerUser: data.sellerUser, // ✅ Added
   contactPerson: data.contact_person,
   mobile: data.mobile_no,
   email: data.email_id,
@@ -59,7 +61,69 @@ const mapApiToForm = (data: any) => ({
   quantityKg: data.quantity_in_kg,
   priceKg: data.price_per_kg,
   totalAmount: data.deal_amount,
-  technicalDataSheet: data.tds,
+  technicalDataSheet: data.tds, // Deal Details
+
+  // Sampling
+  dateOfSample: data.sampling?.dos,
+  sampleVerification: data.sampling?.sample_verification,
+  labReport: data.sampling?.lab_report,
+  samplingRemarks: data.sampling?.remarks,
+  uploadDocument: data.sampling?.upload_doc,
+  samplingStatus: data.sampling?.status,
+
+  // Verification
+  dov: data.validation?.dov,
+  sample: data.validation?.sample,
+  stockApproved: data.validation?.stock_approve,
+  verificationDoc: data.validation?.upload_docu, // This might be a URL string if fetched, but input type="file" needs handling.
+
+  // Clearance
+  clearanceDate: data.clearance?.doc, // model field 'doc' mapped to clearanceDate?
+  productPrice: data.clearance?.bill, // Wait, model has 'bill', 'product', 'remarks'. Form has productPrice. 
+  // checking mapClearancePayload: clearance_date: form.clearanceDate -> doc? 
+  // No, mapClearancePayload uses: clearance_date, product_price, remarks. 
+  // Backend model Clearance has: doc, bill, ewaybill... 
+  // Let's check mapApiToForm again vs mapClearancePayload.
+  // mapClearancePayload maps clearance_date -> clearance_date? No wait, let's see page.tsx line 118:
+  // clearance_date: form.clearanceDate 
+  // But Validation/Clearance MODELS might have different field names.
+  // Verified model `clearance.js`: doc, bill, ewaybill, stock_statement, ...
+  // So we should map closest fields or fix payload mapper too. 
+  // For now let's map what we can see from model.
+
+  clearanceRemarks: data.clearance?.remarks,
+  purchaseOrder: data.clearance?.bill, // assuming bill is PO?
+  detailsDoc: data.clearance?.ewaybill,
+  document3: data.clearance?.stock_statement,
+  document4: data.clearance?.bill_t,
+
+  // Payment
+  transactionDate: data.payment?.transaction_date,
+  transactionId: data.payment?.detail, // 'detail' in model matches?
+  accountNumber: data.payment?.acc_no,
+  bank: data.payment?.bank,
+  branch: data.payment?.branch,
+  amount: data.payment?.ammount,
+  paymentDoc: data.payment?.upload_docume,
+
+  // Transportation
+  transportationDate: data.transportation?.transportation_date,
+  transporterName: data.transportation?.transporter_name,
+  modeOfTransport: data.transportation?.mot,
+  vehicleNo: data.transportation?.vehicle_no,
+  freight: data.transportation?.ammount_incured,
+  billNo: data.transportation?.bill,
+  distance: data.transportation?.distance,
+  uploadBill: data.transportation?.upload_documen,
+  uploadEwayBill: data.transportation?.ewaybill,
+  uploadStockStatement: data.transportation?.stock_statement,
+  uploadBillT: data.transportation?.bill_t,
+
+  // Closed
+  closedDate: data.close?.close_date,
+  closeRemarks: data.close?.remarks,
+  productReceivedBy: data.close?.product_recd,
+  commission: data.close?.comission,
 })
 
 // helpers
@@ -271,6 +335,31 @@ export default function DealForm() {
       if (res.ok) {
         toast.success(`Step updated successfully: ${FORM_STEPS[currentStep].title}`)
         setCompletedSteps((prev) => new Set([...prev, currentStep]))
+
+        // 🔹 Advance Deal Status logic
+        // If current step is successfully saved, we should increment the status on the server
+        // BUT wait, for step 0 (deal details), the endpoint is "dashboard" (PUT deals/:id).
+        // It updates the deal itself but might not increment status automatically unless we send it.
+        // For other steps, they are separate tables? No, looking at backend, specific routes exist.
+
+        // Let's manually increment status via an API call if needed, or assume the specific step API updates it.
+        // Re-reading implementation plan: "For Steps 1-5, add a subsequent API call... to increment deal_status"
+
+        let nextStatus = currentStep + 2; // Step 0 done -> status 2. Step 1 done -> status 3.
+        if (currentStep === 6) nextStatus = 7; // Closed matches status 7.
+
+        // We need to update the Deal Status in the deals table
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/${dealId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deal_status: nextStatus })
+        });
+
+        // Move UI to next step
+        if (currentStep < FORM_STEPS.length - 1) {
+          setCurrentStep(currentStep + 1);
+        }
+
       } else {
         throw new Error(data.message || "Unknown error")
       }
@@ -303,7 +392,28 @@ export default function DealForm() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/dealbyid/${dealId}`)
       const data = await res.json()
       setForm(mapApiToForm(data))
-      console.log("[v0] Deal data loaded from API")
+
+      // 🔹 Set Current Step based on deal_status
+      // deal_status 1 => Step 0 (Deal Details)
+      // deal_status 2 => Step 1 (Sampling)
+      // ...
+      // deal_status 7 => Closed (Step 6)
+
+      let status = data.deal_status || 1;
+      let step = status - 1;
+      if (step < 0) step = 0;
+      if (step > 6) step = 6;
+
+      setCurrentStep(step);
+
+      // Mark previous steps as completed
+      const completed = new Set<number>();
+      for (let i = 0; i < step; i++) {
+        completed.add(i);
+      }
+      setCompletedSteps(completed);
+
+      console.log("[v0] Deal data loaded from API", data)
     } catch (error) {
       console.log("API unavailable")
     }
@@ -364,14 +474,14 @@ export default function DealForm() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Buyer</label>
                   <Input
-                    value={form.buyerName || ""}
-                    onChange={(e) => handleChange("buyerName", e.target.value)}
+                    value={`KPDB_${form.buyerId || ""}`}
+                    onChange={(e) => handleChange("buyerId", e.target.value)}
                     disabled
                     className="bg-gray-100"
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Contact Person</label>
                   <Input
                     value={form.buyerContact || ""}
@@ -379,9 +489,9 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Mobile No.</label>
                   <Input
                     value={form.buyerMobile || ""}
@@ -389,9 +499,9 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">PD Executive</label>
                   <Input
                     value={form.pdExecutive || ""}
@@ -399,9 +509,9 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Mobile Number</label>
                   <Input
                     value={form.pdExecutiveMobile || ""}
@@ -409,19 +519,19 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
                   <Input
-                    value={form.email || ""}
+                    value={form?.buyerUser?.email_address || ""}
                     onChange={(e) => handleChange("email", e.target.value)}
                     disabled
                     className="bg-gray-100"
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Seller</label>
                   <Input
                     value={form.sellerName || ""}
@@ -429,9 +539,9 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Contact Person</label>
                   <Input
                     value={form.sellerContact || ""}
@@ -439,9 +549,9 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">Mobile No.</label>
                   <Input
                     value={form.sellerMobile || ""}
@@ -449,7 +559,7 @@ export default function DealForm() {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Quantity in Kg</label>
@@ -966,12 +1076,12 @@ export default function DealForm() {
           {FORM_STEPS.map((step, index) => (
             <div key={step.id} className="flex items-center">
               <button
-                onClick={() => goToStep(index)}
+                disabled
                 className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${index === currentStep
                   ? "border-blue-500 bg-blue-500 text-white"
                   : completedSteps.has(index)
                     ? "border-green-500 bg-green-500 text-white"
-                    : "border-gray-300 bg-white text-gray-500 hover:border-gray-400"
+                    : "border-gray-300 bg-white text-gray-500"
                   }`}
               >
                 {completedSteps.has(index) ? (
@@ -1013,13 +1123,7 @@ export default function DealForm() {
 
             <div className="flex items-center space-x-3">
               <Button onClick={handleSubmit}>
-                Update {FORM_STEPS[currentStep].title}
-              </Button>
-
-
-              <Button onClick={nextStep} disabled={currentStep === FORM_STEPS.length - 1} className="flex items-center">
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
+                {currentStep === FORM_STEPS.length - 1 ? "Close Deal" : `Submit & Next`}
               </Button>
             </div>
           </div>

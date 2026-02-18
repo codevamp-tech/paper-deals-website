@@ -4,6 +4,7 @@ import { getCookie } from "@/components/getcookie";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import TruncatedText from "@/components/ui/TruncatedText";
 
 type Deal = {
   dealId: number;
@@ -118,7 +119,9 @@ const DealsTable: React.FC = () => {
                   <td className="border p-2">{deal.pricePerKg}</td>
                   <td className="border p-2">{deal.quantityInKg}</td>
                   <td className="border p-2">{deal.totalAmount || "-"}</td>
-                  <td className="border p-2">{deal.remarks || "-"}</td>
+                  <td className="border p-2">
+                    <TruncatedText text={deal.remarks || ""} limit={20} />
+                  </td>
                   <td className="border p-2">
                     {deal.date ? new Date(deal.date).toLocaleDateString() : "-"}
                   </td>

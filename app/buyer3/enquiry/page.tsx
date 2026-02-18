@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { getCookie } from "@/components/getcookie";
 import Pagination from "@/components/pagination";
 import React, { useEffect, useState } from "react";
+import TruncatedText from "@/components/ui/TruncatedText";
 
 export default function EnquiryShow() {
   const [entries, setEntries] = useState(10);
@@ -13,6 +15,7 @@ export default function EnquiryShow() {
   const [search, setSearch] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const token = getCookie("token");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +52,23 @@ export default function EnquiryShow() {
 
     fetchData();
   }, [page, entries]);
+
+  // ✅ Handle View Deal
+  const handleViewDeal = async (enquiryId: number) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/by-enquiry/${enquiryId}`
+      );
+      const result = await res.json();
+      if (result.success && result.deal) {
+        router.push(`/buyer3/DirectSingleOrder/${result.deal.id}`);
+      } else {
+        console.warn("No deal found for this enquiry or logic pending.");
+      }
+    } catch (error) {
+      console.error("Error fetching deal:", error);
+    }
+  };
 
   // ✅ Search filter
   const filteredData = data.filter((item) => {
@@ -134,7 +154,7 @@ export default function EnquiryShow() {
                     "Remarks",
                     "Created At",
                     "Status",
-
+                    "Action",
                   ].map((h, i) => (
                     <th
                       key={i}
@@ -174,18 +194,24 @@ export default function EnquiryShow() {
                     <td className="border px-3 py-2">
                       {row.quantity_in_kg || "—"}
                     </td>
-                    <td className="border px-3 py-2">{row.remarks || "—"}</td>
+                    <td className="border px-3 py-2">
+                      <TruncatedText text={row.remarks} limit={20} />
+                    </td>
                     <td className="border px-3 py-2">
                       {new Date(row.created_at).toLocaleDateString("en-IN")}
                     </td>
                     <td className="border px-3 py-2">
                       {row.status === 1 ? (
                         <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
-                          Completed
+                          Accepted
                         </span>
                       ) : row.status === 0 ? (
                         <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">
                           Pending
+                        </span>
+                      ) : row.status === 2 ? (
+                        <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">
+                          Rejected
                         </span>
                       ) : (
                         <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
@@ -193,9 +219,18 @@ export default function EnquiryShow() {
                         </span>
                       )}
                     </td>
-                    {/* <td className="border px-3 py-2 text-blue-600 cursor-pointer">
-                      View
-                    </td> */}
+                    <td className="border px-3 py-2 text-center">
+                      <button
+                        onClick={() => handleViewDeal(row.id)}
+                        disabled={row.status === 0 || row.status === 2}
+                        className={`px-3 py-1 rounded text-xs transition ${row.status === 0 || row.status === 2
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                          }`}
+                      >
+                        View
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
