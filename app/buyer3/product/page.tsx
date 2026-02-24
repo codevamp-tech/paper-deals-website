@@ -213,7 +213,7 @@ export default function ProductPage() {
                       <td className="p-2 border">{product.shade || "-"}</td>
                       <td className="p-2 border">{product.weights || "-"}</td>
                       <td className="p-2 border">{product.gsm || "-"}</td>
-                      <td className="p-2 border">{product.price_per_kg || "-"}</td>
+                      <td className="p-2 border">{product.price || "-"}</td>
                       <td className="p-2 border">
                         {new Date(product.created_at).toLocaleString()}
                       </td>

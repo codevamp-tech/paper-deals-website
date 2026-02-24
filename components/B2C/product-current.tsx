@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type Deal = {
+  shade: string;
   dealId: number;
+  enqId: number;
   buyerId: number;
   sellerId: number;
   buyerName: string;
@@ -43,13 +45,15 @@ const ProductCurrentDeal: React.FC = () => {
               Authorization: `Bearer ${token}`,
             },
             credentials: "include",
+            cache: "no-store",
           }
         );
         if (!res.ok) throw new Error("Failed to fetch deals");
         const data = await res.json();
 
         const mappedDeals: Deal[] = (data.deals || []).map((d: any) => ({
-          dealId: d.deal_id,
+          dealId: d.id || d.deal_id,
+          enqId: d.enq_id,
           buyerId: d.buyer_id,
           sellerId: d.seller_id,
           buyerName: d.buyerUser?.name || "-",
@@ -57,6 +61,7 @@ const ProductCurrentDeal: React.FC = () => {
           productDescription: d.product_description,
           pricePerKg: d.price_per_kg,
           quantityInKg: d.quantity_in_kg,
+          shade: d.shade || "-",
           totalAmount: d.deal_amount,
           remarks: d.remarks,
           date: d.created_on,
@@ -91,13 +96,15 @@ const ProductCurrentDeal: React.FC = () => {
           <thead>
             <tr className="bg-gray-100">
               <th className="border p-2">Deal ID</th>
+              <th className="border p-2">Enquiry ID</th>
               <th className="border p-2">Buyer Id</th>
-              <th className="border p-2">Buyer Name</th>
-              <th className="border p-2">Seller Name</th>
+              {/* <th className="border p-2">Buyer Name</th> */}
+              {/* <th className="border p-2">Seller Name</th> */}
               <th className="border p-2">Product Description</th>
               <th className="border p-2">Price in Kg</th>
               <th className="border p-2">Quantity in Kg</th>
-              <th className="border p-2">Total Amount</th>
+              <th className="border p-2">Shade</th>
+              {/* <th className="border p-2">Total Amount</th> */}
               <th className="border p-2">Remarks</th>
               <th className="border p-2">Date</th>
               <th className="border p-2">Status</th>
@@ -109,15 +116,25 @@ const ProductCurrentDeal: React.FC = () => {
               deals.map((deal) => (
                 <tr key={deal.dealId} className="bg-white">
                   <td className="border p-2">{deal.dealId}</td>
+                  <td className="border p-2">
+                    {deal.enqId ? (
+                      <span
+                        className="text-blue-600 cursor-pointer hover:underline"
+                        onClick={() => router.push(`/buyer3/leads/${deal.enqId}`)}
+                      >
+                        {deal.enqId}
+                      </span>
+                    ) : "-"}
+                  </td>
                   <td className="border p-2">KPDB_{deal.buyerId}</td>
-                  <td className="border p-2">{deal.buyerName}</td>
-                  <td className="border p-2">{deal.sellerName}</td>
+                  {/* <td className="border p-2">{deal.buyerName}</td> */}
+                  {/* <td className="border p-2">{deal.sellerName}</td> */}
                   <td className="border p-2">
                     {deal.productDescription || "-"}
                   </td>
                   <td className="border p-2">{deal.pricePerKg}</td>
                   <td className="border p-2">{deal.quantityInKg}</td>
-                  <td className="border p-2">{deal.totalAmount || "-"}</td>
+                  <td className="border p-2">{deal.shade || "-"}</td>
                   <td className="border p-2">{deal.remarks || "-"}</td>
                   <td className="border p-2">
                     {deal.date ? new Date(deal.date).toLocaleDateString() : "-"}
