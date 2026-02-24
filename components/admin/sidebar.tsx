@@ -30,6 +30,7 @@ const navigation: NavItem[] = [
   // { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
   // { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
+  { name: "Leads", href: "/buyer3/leads", icon: Megaphone },
   { name: "Products", href: "/buyer3/product", icon: Package },
   { name: "Product's Enquiry", href: "/buyer3/productEnquiry", icon: Package },
   { name: "Product's Order", href: "/buyer3/product-order", icon: Package },
