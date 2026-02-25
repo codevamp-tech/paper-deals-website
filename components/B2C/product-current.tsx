@@ -96,7 +96,7 @@ const ProductCurrentDeal: React.FC = () => {
           <thead>
             <tr className="bg-gray-100">
               <th className="border p-2">Deal ID</th>
-              <th className="border p-2">Enquiry ID</th>
+              {/* <th className="border p-2">Enquiry ID</th> */}
               <th className="border p-2">Buyer Id</th>
               {/* <th className="border p-2">Buyer Name</th> */}
               {/* <th className="border p-2">Seller Name</th> */}
@@ -116,7 +116,7 @@ const ProductCurrentDeal: React.FC = () => {
               deals.map((deal) => (
                 <tr key={deal.dealId} className="bg-white">
                   <td className="border p-2">{deal.dealId}</td>
-                  <td className="border p-2">
+                  {/* <td className="border p-2">
                     {deal.enqId ? (
                       <span
                         className="text-blue-600 cursor-pointer hover:underline"
@@ -125,7 +125,7 @@ const ProductCurrentDeal: React.FC = () => {
                         {deal.enqId}
                       </span>
                     ) : "-"}
-                  </td>
+                  </td> */}
                   <td className="border p-2">KPDB_{deal.buyerId}</td>
                   {/* <td className="border p-2">{deal.buyerName}</td> */}
                   {/* <td className="border p-2">{deal.sellerName}</td> */}

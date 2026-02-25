@@ -291,7 +291,7 @@ export default function CartPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple-broadcast`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

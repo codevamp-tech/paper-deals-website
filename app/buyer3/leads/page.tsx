@@ -30,6 +30,7 @@ export default function LeadsPage() {
                     Authorization: `Bearer ${token}`,
                 },
                 credentials: "include",
+                cache: "no-store",
             }
         )
             .then((res) => res.json())
