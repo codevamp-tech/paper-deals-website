@@ -61,7 +61,7 @@ export default function EnquiryShow() {
       );
       const result = await res.json();
       if (result.success && result.deal) {
-        router.push(`/buyer3/DirectSingleOrder/${result.deal.id}`);
+        router.push(`/buyer-route/DirectSingleOrder/${result.deal.id}`);
       } else {
         console.warn("No deal found for this enquiry or logic pending.");
       }

@@ -76,7 +76,7 @@ const DealsTable: React.FC = () => {
   }, [currentPage, token]);
 
   const handleEdit = (id: number) => {
-    router.push(`/buyer3/DirectSingleOrder/${id}`);
+    router.push(`/buyer-route/DirectSingleOrder/${id}`);
   };
 
   if (loading) return <p>Loading...</p>;

@@ -24,7 +24,7 @@ export default function BuyerSignin() {
 
   const searchParams = useSearchParams()
   const router = useRouter()
-  const redirectUrl = searchParams.get("redirect") || "/buyer3/dashboard"
+  const redirectUrl = searchParams.get("redirect") || "/buyer-route/dashboard"
 
 
   // ✅ Handle input changes
@@ -95,7 +95,7 @@ export default function BuyerSignin() {
         toast.error(data.message || "Invalid email or password", {
           id: loadingToast,
         });
-       
+
         console.log("Login failed:", data.message || "Invalid credentials");
       }
     } catch (err) {

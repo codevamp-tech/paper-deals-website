@@ -159,7 +159,7 @@ export default function EnquiryPage() {
                   <td
                     className="border px-3 py-2 text-blue-600 cursor-pointer"
                     onClick={() =>
-                      router.push(`/buyer3/productEnquiry/${row.id}`)
+                      router.push(`/buyer-route/productEnquiry/${row.id}`)
                     }
                   >
                     View

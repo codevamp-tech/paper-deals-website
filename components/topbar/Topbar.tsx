@@ -215,9 +215,9 @@ const Topbar = () => {
                     <button
                       onClick={() => {
                         if (!userId) {
-                          router.push("/buyer-login?redirect=/buyer3/product");
+                          router.push("/buyer-login?redirect=/buyer-route/product");
                         } else {
-                          router.push("/buyer3/product");
+                          router.push("/buyer-route/product");
                         }
                       }}
                       className=" flex items-center gap-1 text-sm cursor-pointer"
@@ -396,32 +396,32 @@ const Topbar = () => {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/dashboard" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/dashboard" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <LayoutDashboard className="w-4 h-4 text-gray-600" /> Dashboard
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/profile" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/profile" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <User className="w-4 h-4 text-gray-600" /> Profile
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/enquiry" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/enquiry" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <User className="w-4 h-4 text-gray-600" /> My Enquiry
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/chat" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/chat" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <MessageCircle className="w-4 h-4 text-gray-600" /> Chat
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/subscriptions" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/subscriptions" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <CreditCard className="w-4 h-4 text-gray-600" /> Subscription
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/buyer3/changepassword" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
+                          <Link href="/buyer-route/changepassword" className="flex items-center gap-2 w-full text-sm hover:bg-gray-100">
                             <Lock className="w-4 h-4 text-gray-600" /> Change Password
                           </Link>
                         </DropdownMenuItem>

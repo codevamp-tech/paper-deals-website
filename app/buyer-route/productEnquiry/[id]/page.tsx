@@ -72,7 +72,7 @@ export default function ViewEnquiryPage() {
       .then(() => {
         setRow((prev: any) => ({ ...prev, status }))
         Toast({ title: "Status updated successfully!" })
-        router.push('/buyer3/productEnquiry')
+        router.push('/buyer-route/productEnquiry')
       })
       .catch(err => console.error(err))
   }

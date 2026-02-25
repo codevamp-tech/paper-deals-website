@@ -133,7 +133,7 @@ export default function ViewLeadPage() {
                     <div className="flex gap-4">
                         {status !== 0 && (
                             <button
-                                onClick={() => router.push('/buyer3/leads')}
+                                onClick={() => router.push('/buyer-route/leads')}
                                 className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition"
                             >
                                 Go Back
@@ -157,12 +157,12 @@ export default function ViewLeadPage() {
                                         if (data.success) {
                                             toast.success(data.message);
                                             setStatus(1);
-                                            const redirectUrl = data.dealId ? `/buyer3/product-order/${data.dealId}` : '/buyer3/leads';
+                                            const redirectUrl = data.dealId ? `/buyer-route/product-order/${data.dealId}` : '/buyer-route/leads';
                                             setTimeout(() => router.push(redirectUrl), 2000);
                                         } else {
                                             toast.error(data.message || "Failed to accept deal");
                                             setStatus(2); // E.g., if already accepted
-                                            setTimeout(() => router.push('/buyer3/leads'), 2000);
+                                            setTimeout(() => router.push('/buyer-route/leads'), 2000);
                                         }
 
                                     } catch (error) {

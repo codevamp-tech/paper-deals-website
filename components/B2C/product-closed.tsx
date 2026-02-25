@@ -103,7 +103,7 @@ export default function ProductCloseDealsPage() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/buyer3/product-order/${id}`);
+    router.push(`/buyer-route/product-order/${id}`);
   };
 
   return (
