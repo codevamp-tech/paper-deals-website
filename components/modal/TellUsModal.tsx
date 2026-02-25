@@ -23,6 +23,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     email: "",
     mobile: "",
     otp: "",
+    msg: "",
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -132,6 +133,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
           pincode: form.pincode,
           email: form.email,
           phone_no: form.mobile,
+          msg: form.msg,
           status: 0,
         }),
       });
@@ -148,6 +150,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
           email: "",
           mobile: "",
           otp: "",
+          msg: "",
         });
         setOtpSent(false);
       } else {
@@ -225,6 +228,13 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
               className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
+
+            <textarea
+              placeholder="Enter your message/requirement details"
+              value={form.msg}
+              onChange={(e) => setForm((prev) => ({ ...prev, msg: e.target.value }))}
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm h-24 resize-none"
+            ></textarea>
 
             {/* Mobile + OTP */}
             <div className="flex space-x-2">

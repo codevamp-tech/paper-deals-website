@@ -215,6 +215,23 @@ export default function SellerEditForm() {
 
         if (orgRes.ok) {
           const org = await orgRes.json()
+
+          let parsedDealsIn: number[] = [];
+          try {
+            if (org.materials_used) {
+              let parsed = JSON.parse(org.materials_used);
+              if (typeof parsed === 'string') {
+                parsed = JSON.parse(parsed); // Handle double stringified format like "\"[9,10,8]\""
+              }
+              if (Array.isArray(parsed)) {
+                parsedDealsIn = parsed.map(Number);
+              }
+            }
+          } catch (e) {
+            console.error("Failed to parse materials_used", e);
+          }
+          setSelectedCategories(parsedDealsIn);
+
           setFormData((prev) => ({
             ...prev,
             company: org.organizations || "",
@@ -227,7 +244,7 @@ export default function SellerEditForm() {
             state: org.state?.toString() || "",
             pincode: org.pincode?.toString() || "",
             productionCapacity: org.production_capacity || "",
-            dealsIn: org.materials_used || "",
+            dealsIn: parsedDealsIn,
             typeOfSeller: org.organization_type?.toString() || "",
             description: org.description || "",
           }))
@@ -257,17 +274,21 @@ export default function SellerEditForm() {
   const validateForm = () => {
     let newErrors: any = {};
 
+    const hasGst = formData.gstNumber && formData.gstNumber.trim().length > 0;
+    const hasIec = formData.exportImportLicense && formData.exportImportLicense.trim().length > 0;
+
+    if (!hasGst && !hasIec) {
+      newErrors.gstNumber = "Either GST or IEC is required";
+      newErrors.exportImportLicense = "Either GST or IEC is required";
+    }
+
     // GST Validation
-    if (!formData.gstNumber) {
-      newErrors.gstNumber = "GST number is required";
-    } else if (!gstRegex.test(formData.gstNumber.toUpperCase())) {
+    if (hasGst && !gstRegex.test(formData.gstNumber.toUpperCase())) {
       newErrors.gstNumber = "Invalid GST number format";
     }
 
     // IEC Validation
-    if (!formData.exportImportLicense) {
-      newErrors.exportImportLicense = "IEC number is required";
-    } else if (!iecRegex.test(formData.exportImportLicense)) {
+    if (hasIec && !iecRegex.test(formData.exportImportLicense)) {
       newErrors.exportImportLicense = "IEC must be 10 digits";
     }
 
@@ -276,104 +297,108 @@ export default function SellerEditForm() {
   };
 
   // 👉 Save handler (create or update depending on existing record)
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
+  const handleSubmit = async (section: "organization" | "documents" | "both" = "both") => {
+    // Only validate documents if we are saving documents or both
+    if ((section === "documents" || section === "both") && !validateForm()) return;
+
     try {
       setLoading(true);
 
-      // Check if organization exists
-      const checkRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations/${userId}`);
-      const exists = checkRes.ok;
+      // Check existence based on what we are saving
+      let exists = false;
+      if (section === "organization" || section === "both") {
+        const checkRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations/${userId}`);
+        exists = checkRes.ok;
+      }
+
+      let docExists = false;
+      if (section === "documents" || section === "both") {
+        const docCheckRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/document/${userId}`);
+        docExists = docCheckRes.ok;
+      }
 
       const method = exists ? "PUT" : "POST";
+      const docMethod = docExists ? "PUT" : "POST";
 
       // Organization API
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations/${exists ? userId : ""}`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          organizations: formData.company,
-          contact_person: formData.contactPerson,
-          email: formData.companyEmail,
-          phone: formData.companyMobile,
-          address: formData.address,
-          city: formData.city,
-          district: formData.district,
-          state: formData.state,
-          pincode: formData.pincode,
-          production_capacity: formData.productionCapacity,
-          materials_used: formData.dealsIn,
-          organization_type: formData.typeOfSeller,
-          description: formData.description,
-          price_range: "",
-          production_specification: "",
-          verified: 0,
-          vip: 0,
-          image_banner: fileUploads.logo ? fileUploads.logo.name : null,
-          status: 1,
-        }),
-      });
-
-      // Personal API
-      // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/personal/${exists ? userId : ""}`, {
-      //   method,
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     user_id: userId,
-      //     per_name: formData.ownerName,
-      //     designation: formData.designation,
-      //     per_address: formData.ownerAddress,
-      //     per_status: 1,
-      //   }),
-      // });
-
-      // Document API
-      const docRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/document/${exists ? userId : ""}`,
-        {
+      if (section === "organization" || section === "both") {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations${exists ? `/${userId}` : ""}`, {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user_id: userId,
-            gst_number: formData.gstNumber,
-            export_import_licence: formData.exportImportLicense,
-            pan_card_img: fileUploads.panCard ? fileUploads.panCard.name : null,
-            voter_id_img: null,
-            cert_of_incorp: fileUploads.certificateOfIncorporation
-              ? fileUploads.certificateOfIncorporation.name
-              : null,
-            gst_cert: fileUploads.gstCertificate
-              ? fileUploads.gstCertificate.name
-              : null,
-            doc_status: 1,
+            organizations: formData.company,
+            contact_person: formData.contactPerson,
+            email: formData.companyEmail,
+            phone: formData.companyMobile,
+            address: formData.address,
+            city: formData.city,
+            district: formData.district,
+            state: formData.state,
+            pincode: formData.pincode,
+            production_capacity: formData.productionCapacity,
+            materials_used: formData.dealsIn,
+            organization_type: formData.typeOfSeller,
+            description: formData.description,
+            price_range: "",
+            production_specification: "",
+            verified: 0,
+            vip: 0,
+            image_banner: fileUploads.logo ? fileUploads.logo.name : null,
+            status: 1,
           }),
-        }
-      );
-
-      const docData = await docRes.json();
-
-      if (!docRes.ok) {
-        // 👉 show GST error below field
-        if (docData.message?.toLowerCase().includes("gst")) {
-          setErrors((prev) => ({
-            ...prev,
-            gstNumber: docData.message,
-          }));
-        }
-
-        // 👉 show toast
-        toast({
-          title: "Validation Error",
-          description: docData.message,
-          variant: "destructive",
         });
-
-        return; // ⛔ stop further execution
       }
+
+      // Document API
+      if (section === "documents" || section === "both") {
+        const docRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/document/${userId}`,
+          {
+            method: docMethod,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: userId,
+              gst_number: formData.gstNumber,
+              export_import_licence: formData.exportImportLicense,
+              pan_card_img: fileUploads.panCard ? fileUploads.panCard.name : null,
+              voter_id_img: null,
+              cert_of_incorp: fileUploads.certificateOfIncorporation
+                ? fileUploads.certificateOfIncorporation.name
+                : null,
+              gst_cert: fileUploads.gstCertificate
+                ? fileUploads.gstCertificate.name
+                : null,
+              doc_status: 1,
+            }),
+          }
+        );
+
+        const docData = await docRes.json();
+
+        if (!docRes.ok) {
+          // 👉 show GST error below field
+          if (docData.message?.toLowerCase().includes("gst")) {
+            setErrors((prev) => ({
+              ...prev,
+              gstNumber: docData.message,
+            }));
+          }
+
+          // 👉 show toast
+          toast({
+            title: "Validation Error",
+            description: docData.message,
+            variant: "destructive",
+          });
+
+          return; // ⛔ stop further execution
+        }
+      }
+
       toast({
         title: "Success",
-        description: `Buyer info ${exists ? "updated" : "created"} successfully!`,
+        description: `Information ${exists || docExists ? "updated" : "created"} successfully!`,
         variant: "default",
       });
     } catch (error) {
@@ -409,11 +434,6 @@ export default function SellerEditForm() {
             joinDate: data.created_on || "",
             whatsappNo: data.whatsapp_no || "",
             status: data.approved === 1 ? "Pending" : "Approved",
-            price: data.consultant_price || "",
-            millsSupported: data.consultantPic?.mills_supported || "",
-            yearsOfExperience: data.consultantPic?.years_of_experience || "",
-            consultantDescription: data.consultantPic?.description || "",
-
           }))
         }
       } catch (error) {
@@ -443,12 +463,21 @@ export default function SellerEditForm() {
   ]
 
   // Calculate filled fields
-  const filledCount = requiredFields.filter(field => {
+  const hasDoc = (formData.gstNumber && formData.gstNumber.trim().length > 0) ||
+    (formData.exportImportLicense && formData.exportImportLicense.trim().length > 0);
+
+  const baseFields = requiredFields.filter(f => f !== "gstNumber" && f !== "exportImportLicense");
+  let actualFilledCount = baseFields.filter(field => {
     const value = formData[field as keyof FormData]
     return value !== "" && value !== null && value !== undefined
-  }).length
+  }).length;
 
-  const completionPercent = Math.round((filledCount / requiredFields.length) * 100)
+  if (hasDoc) {
+    actualFilledCount += 1;
+  }
+
+  const totalRequired = baseFields.length + 1;
+  const completionPercent = Math.round((actualFilledCount / totalRequired) * 100)
 
 
   return (
@@ -728,7 +757,7 @@ export default function SellerEditForm() {
                   <SelectTrigger className="bg-white text-black border-gray-300">
                     <SelectValue placeholder="Select categories" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white text-black">
+                  <SelectContent className="bg-white text-black max-h-60 overflow-y-auto">
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id.toString()}>
                         {selectedCategories.includes(cat.id) ? "✅ " : ""} {cat.name}
@@ -824,10 +853,19 @@ export default function SellerEditForm() {
                       : "No file chosen"}
                   </p>
                   <p className="text-xs text-blue-600 mt-1">
-                    Download Paper | View Document
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="flex justify-center pt-6">
+              <Button
+                onClick={() => handleSubmit("organization")}
+                disabled={loading}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-8"
+              >
+                {loading ? "Saving..." : "Save Company Info"}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -895,7 +933,7 @@ export default function SellerEditForm() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="gstNumber">
-                  GST Number <span className="text-red-500">*</span>
+                  GST Number (Required if no IEC)
                 </Label>
                 <Input
                   id="gstNumber"
@@ -911,7 +949,7 @@ export default function SellerEditForm() {
               </div>
               <div>
                 <Label htmlFor="exportImportLicense">
-                  Export Import License <span className="text-red-500">*</span>
+                  Export Import License (Required if no GST)
                 </Label>
                 <Input
                   id="exportImportLicense"
@@ -1055,11 +1093,11 @@ export default function SellerEditForm() {
 
             <div className="flex justify-center pt-6">
               <Button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit("documents")}
                 disabled={loading}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-8"
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Saving..." : "Save Documents"}
               </Button>
             </div>
           </CardContent>
