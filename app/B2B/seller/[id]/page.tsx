@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import SellerProductCrousel from "@/components/sellerProductCrousel"
 import Cookies from "js-cookie"
 import { useRouter, usePathname } from "next/navigation"
-
+import Image from "next/image"
 
 
 const states = [
@@ -207,7 +207,7 @@ export default function BuyersPage() {
     ? org.materials_used_names.join(", ")
     : "Not Available"
 
-  const description = org?.description || org?.descriptions || ""
+  const description = seller?.description || org?.description || org?.descriptions || ""
 
   const email = seller.email_address || org?.email || ""
   const phone = seller.phone_no || org?.phone || ""
@@ -252,53 +252,59 @@ export default function BuyersPage() {
 
               {/* Right: Title + badge + fields */}
               <div className="flex flex-col justify-center">
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    {orgName}
-                  </h1>
-                  <Badge
-                    className={
-                      isVerified
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 text-sm font-semibold shadow-md"
-                        : "bg-gradient-to-r from-red-500 to-rose-500 text-white px-4 py-1.5 text-sm font-semibold shadow-md"
-                    }
-                  >
-                    {isVerified ? "✓ Verified" : "Not Verified"}
-                  </Badge>
-                </div>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+                  {/* Left: Name and Verification Badge */}
+                  <div className="flex flex-col items-start gap-3">
+                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent leading-tight pb-1">
+                      {orgName}
+                    </h1>
+                    <Badge
+                      className={
+                        isVerified
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1.5 text-[13px] font-semibold shadow-sm"
+                          : "bg-gradient-to-r from-red-500 to-rose-500 text-white px-4 py-1.5 text-[13px] font-semibold shadow-sm"
+                      }
+                    >
+                      {isVerified ? "✓ Verified" : "Not Verified"}
+                    </Badge>
+                  </div>
 
-                {/* GST and Trust Seal Badges */}
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  {/* GST Number with Verified Icon */}
-                  {gstNumber && (
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${isGstVerified
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-gray-50 border-gray-200'
-                      }`}>
-                      <BadgeCheck className={`w-5 h-5 ${isGstVerified ? 'text-green-600' : 'text-gray-400'
-                        }`} />
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase">GST Number</p>
-                        <p className="text-sm font-semibold text-gray-900">{gstNumber}</p>
+                  {/* Right: Badges container */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    {/* GST Number */}
+                    {gstNumber && (
+                      <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border ${isGstVerified
+                        ? 'bg-green-50/70 border-green-200'
+                        : 'bg-gray-50/70 border-gray-200'
+                        }`}>
+                        <div className="bg-white p-1 rounded-lg shadow-sm border border-gray-100 flex-shrink-0">
+                          <Image src="/check.png" alt="GST" width={24} height={24} className="object-contain" />
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest leading-none mb-1.5">GST Number</p>
+                          <p className="text-sm font-bold text-gray-900 leading-none">{gstNumber}</p>
+                        </div>
+                        {isGstVerified && (
+                          <span className="ml-2 text-[10px] font-bold text-green-700 bg-green-100/90 px-2 py-1 rounded-full uppercase tracking-wider">
+                            Verified
+                          </span>
+                        )}
                       </div>
-                      {isGstVerified && (
-                        <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
-                          Verified
-                        </span>
-                      )}
-                    </div>
-                  )}
+                    )}
 
-                  {/* Trust Seal */}
-                  {isTrustSealVerified && (
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200">
-                      <ShieldCheck className="w-6 h-6 text-blue-600" />
-                      <div>
-                        <p className="text-sm font-bold text-blue-800">Trust Seal</p>
-                        <p className="text-xs text-blue-600">Verified Business</p>
+                    {/* Trust Seal */}
+                    {isTrustSealVerified && (
+                      <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-50/70 to-cyan-50/70 border border-blue-200">
+                        <div className="bg-white p-1.5 rounded-lg shadow-sm border border-blue-100 flex-shrink-0">
+                          <ShieldCheck className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <p className="text-sm font-bold text-blue-900 leading-none mb-1.5">Trust Seal</p>
+                          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest leading-none">Verified Business</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 {/* Grid fields with enhanced styling */}
@@ -333,7 +339,7 @@ export default function BuyersPage() {
 
                 {/* Description */}
                 {description && (
-                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="bg-white rounded-lg p-8 border border-gray-200">
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                       About
                     </p>
@@ -343,7 +349,7 @@ export default function BuyersPage() {
               </div>
             </div>
 
-            <div className=" flex justify-center">
+            <div className=" flex justify-center p-4">
               <Button
                 onClick={handleSendEnquiry}
                 className="px-10 h-14 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 hover:scale-105 transition-all rounded-xl"

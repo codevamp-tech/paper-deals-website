@@ -80,7 +80,7 @@ const ProductCurrentDeal: React.FC = () => {
   }, [currentPage, token]);
 
   const handleEdit = (id: number) => {
-    router.push(`/buyer3/product-order/${id}`);
+    router.push(`/buyer-route/product-order/${id}`);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -120,7 +120,7 @@ const ProductCurrentDeal: React.FC = () => {
                     {deal.enqId ? (
                       <span
                         className="text-blue-600 cursor-pointer hover:underline"
-                        onClick={() => router.push(`/buyer3/leads/${deal.enqId}`)}
+                        onClick={() => router.push(`/buyer-route/leads/${deal.enqId}`)}
                       >
                         {deal.enqId}
                       </span>

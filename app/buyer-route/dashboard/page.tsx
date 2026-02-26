@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           <div>
             <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Pending Enquiries</p>
             <h2 className="text-3xl font-bold text-gray-900 mt-1">{pendingEnquiries}</h2>
-            <Link href="/buyer3/productEnquiry" className="text-sm text-orange-600 hover:text-orange-700 font-medium mt-2 inline-block">
+            <Link href="/buyer-route/productEnquiry" className="text-sm text-orange-600 hover:text-orange-700 font-medium mt-2 inline-block">
               View details &rarr;
             </Link>
           </div>

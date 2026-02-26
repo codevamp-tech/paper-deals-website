@@ -83,7 +83,7 @@ export default function UserList() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {users.map((user) => (
-                <Link key={user.id} href={`/buyer3/chat/${user.id}`} passHref>
+                <Link key={user.id} href={`/buyer-route/chat/${user.id}`} passHref>
                   <Card className="group cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white border-gray-200">
                     <CardHeader className="pb-4">
                       <div className="flex items-center space-x-4">

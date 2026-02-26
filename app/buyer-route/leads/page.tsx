@@ -125,7 +125,7 @@ export default function LeadsPage() {
                                     <td
                                         className="border px-3 py-2 text-blue-600 cursor-pointer hover:underline"
                                         onClick={() =>
-                                            router.push(`/buyer3/leads/${row.id}`)
+                                            router.push(`/buyer-route/leads/${row.id}`)
                                         }
                                     >
                                         View & Respond

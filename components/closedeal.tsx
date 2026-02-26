@@ -104,7 +104,7 @@ export default function CloseDealsPage() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/buyer3/DirectSingleOrder/${id}`);
+    router.push(`/buyer-route/DirectSingleOrder/${id}`);
   };
 
   return (

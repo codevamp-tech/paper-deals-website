@@ -146,7 +146,7 @@ const EnquiryModal = memo(function EnquiryModal({
               type="button"
               variant="outline"
               className="ml-auto border-red-400 text-red-600"
-              onClick={() => router.push("/buyer3/profile")}
+              onClick={() => router.push("/buyer-route/profile")}
             >
               Complete Profile
             </Button>

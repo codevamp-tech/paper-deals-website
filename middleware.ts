@@ -17,7 +17,7 @@ async function verifyToken(token: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/";
-  const isBuyerRoute = pathname.startsWith("/buyer3");
+  const isBuyerRoute = pathname.startsWith("/buyer-route");
 
   const token = request.cookies.get("token")?.value;
   const user = token ? await verifyToken(token) : null;
@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
 
   // 🚨 Already authenticated but on login page
   if (isLoginPage && isAuthenticated) {
-    return NextResponse.redirect(new URL("/buyer3/dashboard", request.url));
+    return NextResponse.redirect(new URL("/buyer-route/dashboard", request.url));
   }
 
   // ✅ Continue with request and pass user header
@@ -45,5 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/buyer3/:path*", "/admin/:path*"],
+  matcher: ["/buyer-route/:path*", "/admin/:path*"],
 };

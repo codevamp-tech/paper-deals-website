@@ -158,7 +158,7 @@ function ProductCard({
   return (
     <div
       onClick={() => router.push(`/product/${id}`)}
-      className="w-[300px] rounded-xl border hover:shadow-xl cursor-pointer transition-all"
+      className="w-[300px] rounded-xl border hover:shadow-xl cursor-pointer transition-all overflow-hidden"
     >
       <div className="relative h-48 overflow-hidden">
         <img

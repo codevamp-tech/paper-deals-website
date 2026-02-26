@@ -25,21 +25,21 @@ type NavItem = {
 };
 
 const navigation: NavItem[] = [
-  { name: "Dashboard", href: "/buyer3/dashboard", icon: LayoutDashboard },
-  // { name: "My Enquiry", href: "/buyer3/enquiry", icon: Package },
-  // { name: "Direct Single Order", href: "/buyer3/DirectSingleOrder", icon: Award },
-  { name: "Pd bulk deal", href: "/buyer3/pdbulkdeal", icon: ImageIcon },
-  // { name: "Order", href: "/buyer3/order", icon: ShoppingCart },
-  { name: "Leads", href: "/buyer3/leads", icon: Megaphone },
-  { name: "Products", href: "/buyer3/product", icon: Package },
-  { name: "Product's Enquiry", href: "/buyer3/productEnquiry", icon: Package },
-  { name: "Product's Order", href: "/buyer3/product-order", icon: Package },
+  { name: "Dashboard", href: "/buyer-route/dashboard", icon: LayoutDashboard },
+  // { name: "My Enquiry", href: "/buyer-route/enquiry", icon: Package },
+  // { name: "Direct Single Order", href: "/buyer-route/DirectSingleOrder", icon: Award },
+  { name: "Pd bulk deal", href: "/buyer-route/pdbulkdeal", icon: ImageIcon },
+  // { name: "Order", href: "/buyer-route/order", icon: ShoppingCart },
+  { name: "Leads", href: "/buyer-route/leads", icon: Megaphone },
+  { name: "Products", href: "/buyer-route/product", icon: Package },
+  { name: "Product's Enquiry", href: "/buyer-route/productEnquiry", icon: Package },
+  { name: "Product's Order", href: "/buyer-route/product-order", icon: Package },
 
 
-  // { name: "Chat", href: "/buyer3/chat", icon: MessageSquareText },
-  // { name: "Subscriptions", href: "/buyer3/subscriptions", icon: FileBadge },
-  // { name: "Profile", href: "/buyer3/profile", icon: Megaphone },
-  // { name: "Change Password", href: "/buyer3/changepassword", icon: Lock },
+  // { name: "Chat", href: "/buyer-route/chat", icon: MessageSquareText },
+  // { name: "Subscriptions", href: "/buyer-route/subscriptions", icon: FileBadge },
+  // { name: "Profile", href: "/buyer-route/profile", icon: Megaphone },
+  // { name: "Change Password", href: "/buyer-route/changepassword", icon: Lock },
 ];
 
 export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
@@ -151,11 +151,11 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         {/* Render nav items in the new order, but hide product links if B2B */}
         {navigation.map((item) => {
           if (mode === "B2B" &&
-            (item.href === "/buyer3/product" || item.href === "/buyer3/productEnquiry")) {
+            (item.href === "/buyer-route/product" || item.href === "/buyer-route/productEnquiry")) {
             return null;
           }
 
-          if (mode !== "B2B" && item.href === "/buyer3/pdbulkdeal") {
+          if (mode !== "B2B" && item.href === "/buyer-route/pdbulkdeal") {
             return null;
           }
 

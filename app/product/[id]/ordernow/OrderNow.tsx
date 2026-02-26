@@ -385,7 +385,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                       variant="outline"
                       size="sm"
                       className="ml-auto border-red-300 text-red-600 text-xs"
-                      onClick={() => router.push("/buyer3/profile")}
+                      onClick={() => router.push("/buyer-route/profile")}
                     >
                       Complete Profile
                     </Button>
