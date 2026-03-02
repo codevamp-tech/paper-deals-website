@@ -5,11 +5,13 @@ import B2cOrder from "@/components/orders/b2cOrders";
 import { useEffect, useState } from "react";
 
 export default function B2Page() {
-  const [activeTab, setActiveTab] = useState<"b2b" | "b2c">("b2b");
-  const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
+  const [activeTab, setActiveTab] = useState<"b2b" | "b2c">("b2c");
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
   useEffect(() => {
-    const stored: any = localStorage.getItem("mode");
-    setMode(stored)
+    const stored = localStorage.getItem("mode");
+    const currentMode = stored === "B2B" ? "B2B" : "B2C";
+    setMode(currentMode);
+    setActiveTab(currentMode === "B2B" ? "b2b" : "b2c");
   }, []);
 
   return (

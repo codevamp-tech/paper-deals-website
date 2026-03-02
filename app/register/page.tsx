@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { usePasswordStrength, isPasswordStrong } from "@/lib/passwordStrength";
+import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
 
 export default function CreateBuyerPage() {
   const router = useRouter();
@@ -22,6 +24,8 @@ export default function CreateBuyerPage() {
   // const [message, setMessage] = useState("");
 
   const [mode, setMode] = useState(""); // default
+  const { strength, checkStrength } = usePasswordStrength();
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const savedMode = localStorage.getItem("mode");
@@ -30,7 +34,12 @@ export default function CreateBuyerPage() {
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (name === "password") {
+      checkStrength(value);
+      setPasswordError("");
+    }
   };
 
 
@@ -101,6 +110,12 @@ export default function CreateBuyerPage() {
       toast.error("Please fill all required fields");
       return;
     }
+
+    if (!isPasswordStrong(form.password)) {
+      setPasswordError("Please use a strong password that meets all requirements.");
+      return;
+    }
+    setPasswordError("");
 
     const verified = await handleVerifyOtp();
     if (!verified) return;
@@ -214,6 +229,8 @@ export default function CreateBuyerPage() {
                     // required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
                   />
+                  <PasswordStrengthIndicator strength={strength} />
+                  {passwordError && <p className="text-xs text-red-500 mt-1">{passwordError}</p>}
                 </div>
 
                 {/* WhatsApp */}

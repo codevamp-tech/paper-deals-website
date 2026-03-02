@@ -88,6 +88,7 @@ export default function EnquiryPage() {
                 {/* <th className="border px-3 py-2">Category</th> */}
                 <th className="border px-3 py-2">Shade</th>
                 <th className="border px-3 py-2">Gsm</th>
+                <th className="border px-3 py-2">Quantity</th>
                 <th className="border px-3 py-2">Remarks</th>
                 <th className="border px-3 py-2">Created At</th>
                 <th className="border px-3 py-2">Status</th>
@@ -124,6 +125,11 @@ export default function EnquiryPage() {
                   {/* 6️⃣ GSM */}
                   <td className="border px-3 py-2">
                     {row.gsm || "-"}
+                  </td>
+
+                  {/* 6.5️⃣ Quantity */}
+                  <td className="border px-3 py-2">
+                    {row.quantity_in_kg || "-"} {row.quantity_unit || "kg"}
                   </td>
 
                   {/* 7️⃣ Remarks */}

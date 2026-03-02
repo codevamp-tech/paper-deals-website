@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePasswordStrength, isPasswordStrong } from "@/lib/passwordStrength";
+import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
 
 type Props = {
   visible: boolean;
@@ -22,6 +24,8 @@ export default function RegisterNow({ visible, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [message, setMessage] = useState("");
+  const { strength, checkStrength } = usePasswordStrength();
+  const [passwordError, setPasswordError] = useState("");
 
   // Reset form whenever modal opens
   useEffect(() => {
@@ -50,7 +54,12 @@ export default function RegisterNow({ visible, onClose }: Props) {
   if (!visible) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (name === "password") {
+      checkStrength(value);
+      setPasswordError("");
+    }
   };
 
   const handleSendOtp = async () => {
@@ -116,6 +125,12 @@ export default function RegisterNow({ visible, onClose }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isPasswordStrong(form.password)) {
+      setPasswordError("Please use a strong password that meets all requirements.");
+      return;
+    }
+    setPasswordError("");
 
     const verified = await handleVerifyOtp();
     if (!verified) return;
@@ -216,6 +231,8 @@ export default function RegisterNow({ visible, onClose }: Props) {
             required
             className="border border-gray-300 rounded px-3 py-2 w-full bg-white text-black"
           />
+          <PasswordStrengthIndicator strength={strength} />
+          {passwordError && <p className="text-xs text-red-500 mt-1">{passwordError}</p>}
 
           <input
             type="number"
