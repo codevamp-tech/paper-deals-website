@@ -256,7 +256,7 @@ const Topbar = () => {
                 className="relative p-2 rounded-full hover:bg-gray-100 transition"
               >
                 <img
-                  src="/trolley.png"
+                  src="/basket.png"
                   alt="Cart"
                   className="w-6 h-6 object-contain"
                 />
