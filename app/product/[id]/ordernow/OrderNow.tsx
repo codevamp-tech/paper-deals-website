@@ -37,7 +37,6 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
   const [product, setProduct] = useState<any>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
@@ -55,6 +54,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     sheat: "",
     size: "",
     quantity_in_kg: "",
+    quantity_unit: "Kg",
     remarks: "",
   });
 
@@ -166,13 +166,6 @@ const OrderNow = ({ productId }: { productId: string }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const updateQuantity = (delta: number) => {
-    setQuantity((prev) => Math.max(1, prev + delta));
-    setFormData((prev) => ({
-      ...prev,
-      quantity_in_kg: Math.max(1, quantity + delta).toString(),
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,7 +178,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     const sellerId = product?.seller_id;
     const payload = {
       ...formData,
-      quantity_in_kg: formData.quantity_in_kg || quantity.toString(),
+      quantity_in_kg: formData.quantity_in_kg,
       buyer_id: user?.user_id,
       user_id: sellerId,
     };
@@ -443,14 +436,32 @@ const OrderNow = ({ productId }: { productId: string }) => {
                     </div>
                   ))}
 
-                  <div>
-                    <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity (Kg)</Label>
-                    <Input
-                      name="quantity_in_kg"
-                      value={formData.quantity_in_kg || quantity.toString()}
-                      onChange={handleChange}
-                      className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                    />
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</Label>
+                      <Input
+                        name="quantity_in_kg"
+                        value={formData.quantity_in_kg}
+                        onChange={handleChange}
+                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                      />
+                    </div>
+                    <div className="w-[100px]">
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Unit</Label>
+                      <Select
+                        value={formData.quantity_unit}
+                        onValueChange={(val) => setFormData(prev => ({ ...prev, quantity_unit: val }))}
+                      >
+                        <SelectTrigger className="mt-1 h-8 text-xs bg-gray-50 border-gray-200">
+                          <SelectValue placeholder="Unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Kg">Kg</SelectItem>
+                          <SelectItem value="Ton">Ton</SelectItem>
+                          <SelectItem value="Piece">Piece</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div className="md:col-span-2">

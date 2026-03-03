@@ -263,8 +263,32 @@ const EnquiryModal = memo(function EnquiryModal({
                         <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                           <div className="font-medium text-gray-900">{item.product_name}</div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+                            <div className="flex gap-2">
+                              <input
+                                value={edit["quantity_in_kg"] ?? ""}
+                                onChange={(e) =>
+                                  setProductEdit(item.id, {
+                                    quantity_in_kg: e.target.value.trim() || undefined,
+                                  })
+                                }
+                                placeholder="QUANTITY"
+                                className="px-3 py-2 border rounded-lg flex-1 min-w-0"
+                              />
+                              <select
+                                value={edit["quantity_unit"] || "kg"}
+                                onChange={(e) =>
+                                  setProductEdit(item.id, {
+                                    quantity_unit: e.target.value,
+                                  })
+                                }
+                                className="px-3 py-2 border rounded-lg w-24 flex-shrink-0"
+                              >
+                                <option value="kg">kg</option>
+                                <option value="ton">ton</option>
+                                <option value="piece">piece</option>
+                              </select>
+                            </div>
                             {[
-                              "quantity_in_kg",
                               "gsm",
                               "size",
                               "shade",

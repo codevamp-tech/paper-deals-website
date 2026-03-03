@@ -19,6 +19,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     category: "",
     product: "",
     quantity: "",
+    quantity_unit: "kg",
     pincode: "",
     email: "",
     mobile: "",
@@ -130,6 +131,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
           category_id: form.category,
           product_name: form.product,
           quantity: form.quantity,
+          quantity_unit: form.quantity_unit,
           pincode: form.pincode,
           email: form.email,
           phone_no: form.mobile,
@@ -146,6 +148,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
           category: "",
           product: "",
           quantity: "",
+          quantity_unit: "kg",
           pincode: "",
           email: "",
           mobile: "",
@@ -205,13 +208,24 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
-            <input
-              type="text"
-              placeholder="Enter Quantity"
-              value={form.quantity}
-              onChange={(e) => setForm((prev) => ({ ...prev, quantity: e.target.value }))}
-              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
-            />
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="Enter Quantity"
+                value={form.quantity}
+                onChange={(e) => setForm((prev) => ({ ...prev, quantity: e.target.value }))}
+                className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
+              />
+              <select
+                value={form.quantity_unit}
+                onChange={(e) => setForm((prev) => ({ ...prev, quantity_unit: e.target.value }))}
+                className="border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm w-28"
+              >
+                <option value="kg">kg</option>
+                <option value="ton">ton</option>
+                <option value="piece">piece</option>
+              </select>
+            </div>
 
             <input
               type="text"

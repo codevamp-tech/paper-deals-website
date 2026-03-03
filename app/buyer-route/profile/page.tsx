@@ -160,6 +160,64 @@ export default function SellerEditForm() {
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([])
   const [selectedCategories, setSelectedCategories] = useState<number[]>([])
 
+  // Bank Details state
+  const [bankData, setBankData] = useState({
+    bank_name: "",
+    account_holder_name: "",
+    account_number: "",
+    ifsc_code: "",
+    branch_name: "",
+    upi_id: "",
+  })
+  const [bankLoading, setBankLoading] = useState(false)
+
+  // Catalog state
+  const [catalogUrl, setCatalogUrl] = useState<string | null>(null)
+  const [catalogFile, setCatalogFile] = useState<File | null>(null)
+  const [catalogUploading, setCatalogUploading] = useState(false)
+
+  // Fetch bank details
+  useEffect(() => {
+    if (!userId) return
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bank-details/${userId}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) {
+          setBankData({
+            bank_name: data.bank_name || "",
+            account_holder_name: data.account_holder_name || "",
+            account_number: data.account_number || "",
+            ifsc_code: data.ifsc_code || "",
+            branch_name: data.branch_name || "",
+            upi_id: data.upi_id || "",
+          })
+        }
+      })
+      .catch(err => console.error("Error fetching bank details:", err))
+  }, [userId])
+
+  // Save bank details
+  const handleBankSave = async () => {
+    try {
+      setBankLoading(true)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bank-details`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, ...bankData }),
+      })
+      if (res.ok) {
+        toast({ title: "Success", description: "Bank details saved successfully!" })
+      } else {
+        toast({ title: "Error", description: "Failed to save bank details.", variant: "destructive" })
+      }
+    } catch (error) {
+      console.error("Error saving bank details:", error)
+      toast({ title: "Error", description: "Error saving bank details.", variant: "destructive" })
+    } finally {
+      setBankLoading(false)
+    }
+  }
+
   // -- NEW EFFECT: FETCH CATEGORIES --
   useEffect(() => {
     const fetchCategories = async () => {
@@ -248,6 +306,7 @@ export default function SellerEditForm() {
             typeOfSeller: org.organization_type?.toString() || "",
             description: org.description || "",
           }))
+          setCatalogUrl(org.catalog || null)
         }
       } catch (error) {
         console.error("Error fetching data", error)
@@ -322,32 +381,38 @@ export default function SellerEditForm() {
 
       // Organization API
       if (section === "organization" || section === "both") {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations${exists ? `/${userId}` : ""}`, {
+        const fd = new FormData()
+        fd.append("user_id", userId?.toString() || "")
+        fd.append("organizations", formData.company)
+        fd.append("contact_person", formData.contactPerson)
+        fd.append("email", formData.companyEmail)
+        fd.append("phone", formData.companyMobile)
+        fd.append("address", formData.address)
+        fd.append("city", formData.city)
+        fd.append("district", formData.district)
+        fd.append("state", formData.state)
+        fd.append("pincode", formData.pincode)
+        fd.append("production_capacity", formData.productionCapacity)
+        fd.append("materials_used", JSON.stringify(formData.dealsIn))
+        fd.append("organization_type", formData.typeOfSeller)
+        fd.append("description", formData.description)
+        fd.append("price_range", "")
+        fd.append("production_specification", "")
+        fd.append("verified", "0")
+        fd.append("vip", "0")
+        fd.append("status", "1")
+        if (fileUploads.logo) fd.append("logo", fileUploads.logo)
+        if (catalogFile) fd.append("catalog", catalogFile)
+
+        const orgRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations${exists ? `/${userId}` : ""}`, {
           method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: userId,
-            organizations: formData.company,
-            contact_person: formData.contactPerson,
-            email: formData.companyEmail,
-            phone: formData.companyMobile,
-            address: formData.address,
-            city: formData.city,
-            district: formData.district,
-            state: formData.state,
-            pincode: formData.pincode,
-            production_capacity: formData.productionCapacity,
-            materials_used: formData.dealsIn,
-            organization_type: formData.typeOfSeller,
-            description: formData.description,
-            price_range: "",
-            production_specification: "",
-            verified: 0,
-            vip: 0,
-            image_banner: fileUploads.logo ? fileUploads.logo.name : null,
-            status: 1,
-          }),
-        });
+          body: fd,
+        })
+        if (orgRes.ok) {
+          const orgData = await orgRes.json()
+          if (orgData.catalog) setCatalogUrl(orgData.catalog)
+          setCatalogFile(null)
+        }
       }
 
       // Document API
@@ -452,6 +517,7 @@ export default function SellerEditForm() {
     { id: "company-info", title: "Company Information" },
     // { id: "personal-info", title: "Personal Information (Owner)" },
     { id: "documents", title: "Documents Upload" },
+    { id: "bank-details", title: "Bank Details" },
   ]
 
   // -- NEW LOGIC: PROFILE COMPLETION PERCENTAGE --
@@ -823,7 +889,10 @@ export default function SellerEditForm() {
                   className="resize-none bg-white text-black border-gray-300"
                 />
               </div>
+            </div>
 
+            {/* Logo & Catalog Upload */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Logo/Image (1357*150)</Label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center bg-white text-black">
@@ -852,11 +921,71 @@ export default function SellerEditForm() {
                       ? fileUploads.logo.name
                       : "No file chosen"}
                   </p>
-                  <p className="text-xs text-blue-600 mt-1">
+                </div>
+              </div>
+              <div>
+                <Label>Catalog (PDF)</Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center bg-white text-black">
+                  <input
+                    type="file"
+                    id="catalog-upload"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={(e) => setCatalogFile(e.target.files?.[0] || null)}
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById("catalog-upload")?.click()}
+                    className="bg-white text-black border-gray-300 hover:bg-gray-100"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Choose PDF
+                  </Button>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {catalogFile ? catalogFile.name : "No file chosen"}
                   </p>
                 </div>
               </div>
             </div>
+
+            {/* View/Download for Logo & Catalog */}
+            {(fileUploads.logo || fileUploads.catalog || catalogUrl) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {fileUploads.logo && (
+                  <div>
+                    <Label>Current Logo</Label>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm text-gray-600 truncate flex-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-50">
+                        {fileUploads.logo.name}
+                      </span>
+                      {/* Add view/download for logo if needed, or just show name */}
+                    </div>
+                  </div>
+                )}
+                {catalogUrl && (
+                  <div>
+                    <Label>Current Catalog</Label>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm text-gray-600 truncate flex-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-50">
+                        {catalogUrl.split("/").pop() || "Catalog"}
+                      </span>
+                      <Button variant="outline" size="sm" onClick={() => window.open(catalogUrl, "_blank")}>
+                        View
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        const a = document.createElement("a")
+                        a.href = catalogUrl
+                        a.download = "catalog.pdf"
+                        a.click()
+                      }}>
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="flex justify-center pt-6">
               <Button
@@ -1098,6 +1227,84 @@ export default function SellerEditForm() {
                 className="bg-blue-500 hover:bg-blue-600 text-white px-8"
               >
                 {loading ? "Saving..." : "Save Documents"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bank Details Section */}
+      {activeSection === "bank-details" && (
+        <Card className="bg-white text-black">
+          <CardHeader>
+            <CardTitle className="text-lg font-medium text-blue-600">Bank Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="bank_name">Bank Name</Label>
+                <Input
+                  id="bank_name"
+                  value={bankData.bank_name}
+                  onChange={(e) => setBankData(prev => ({ ...prev, bank_name: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="account_holder_name">Account Holder Name</Label>
+                <Input
+                  id="account_holder_name"
+                  value={bankData.account_holder_name}
+                  onChange={(e) => setBankData(prev => ({ ...prev, account_holder_name: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="account_number">Account Number</Label>
+                <Input
+                  id="account_number"
+                  value={bankData.account_number}
+                  onChange={(e) => setBankData(prev => ({ ...prev, account_number: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="ifsc_code">IFSC Code</Label>
+                <Input
+                  id="ifsc_code"
+                  value={bankData.ifsc_code}
+                  onChange={(e) => setBankData(prev => ({ ...prev, ifsc_code: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="branch_name">Branch Name</Label>
+                <Input
+                  id="branch_name"
+                  value={bankData.branch_name}
+                  onChange={(e) => setBankData(prev => ({ ...prev, branch_name: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="upi_id">UPI ID</Label>
+                <Input
+                  id="upi_id"
+                  value={bankData.upi_id}
+                  onChange={(e) => setBankData(prev => ({ ...prev, upi_id: e.target.value }))}
+                  className="bg-white text-black border-gray-300"
+                />
+              </div>
+            </div>
+            <div className="flex justify-center pt-6">
+              <Button
+                onClick={handleBankSave}
+                disabled={bankLoading}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-8"
+              >
+                {bankLoading ? "Saving..." : "Save Bank Details"}
               </Button>
             </div>
           </CardContent>

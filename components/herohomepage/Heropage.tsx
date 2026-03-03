@@ -13,7 +13,7 @@ const Hero = () => {
   const debouncedQuery = useDebounce(query);
   const [results, setResults] = useState<any[]>([]);
 
-  const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
 
   const router = useRouter();
   const { theme } = useTheme();
@@ -32,7 +32,7 @@ const Hero = () => {
   // Detect mode
   useEffect(() => {
     const stored = localStorage.getItem("mode");
-    if (stored === "B2C") setMode("B2C");
+    setMode(stored === "B2B" ? "B2B" : "B2C");
   }, []);
 
   // Search API

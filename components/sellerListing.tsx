@@ -309,11 +309,11 @@ export default function SellerList() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {/* <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {seller.user_type === 2
                         ? "Leading supplier of premium materials and specialty products"
                         : "Bulk distributor of industrial supplies"}
-                    </p>
+                    </p> */}
 
                     {/* Location */}
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">

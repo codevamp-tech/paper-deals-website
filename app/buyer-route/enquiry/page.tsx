@@ -143,14 +143,14 @@ export default function EnquiryShow() {
                   {[
                     "ID",
                     "Seller ID",
-                    "Buyer",
-                    "Phone",
+                    // "Buyer",
+                    // "Phone",
                     "City",
                     "Category",
                     "Product",
                     "GSM",
                     "Shade",
-                    "Quantity (Kg)",
+                    "Quantity",
                     "Remarks",
                     "Created At",
                     "Status",
@@ -176,11 +176,11 @@ export default function EnquiryShow() {
                     </td>
 
                     {/* ✅ Buyer name */}
-                    <td className="border px-3 py-2">
+                    {/* <td className="border px-3 py-2">
                       {row.buyer?.name || "—"}
-                    </td>
+                    </td> */}
 
-                    <td className="border px-3 py-2">{row.phone}</td>
+                    {/* <td className="border px-3 py-2">{row.phone}</td> */}
                     <td className="border px-3 py-2">{row.city}</td>
 
                     {/* ✅ Category name */}
@@ -192,7 +192,7 @@ export default function EnquiryShow() {
                     <td className="border px-3 py-2">{row.gsm}</td>
                     <td className="border px-3 py-2">{row.shade}</td>
                     <td className="border px-3 py-2">
-                      {row.quantity_in_kg || "—"}
+                      {row.quantity_in_kg || "—"} {row.quantity_unit || "kg"}
                     </td>
                     <td className="border px-3 py-2">
                       <TruncatedText text={row.remarks} limit={20} />

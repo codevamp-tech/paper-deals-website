@@ -74,6 +74,7 @@ export default function LeadsPage() {
                                 <th className="border px-3 py-2">City</th>
                                 <th className="border px-3 py-2">Shade</th>
                                 <th className="border px-3 py-2">Gsm</th>
+                                <th className="border px-3 py-2">Quantity</th>
                                 <th className="border px-3 py-2">Remarks</th>
                                 <th className="border px-3 py-2">Created At</th>
                                 <th className="border px-3 py-2">Status</th>
@@ -98,6 +99,9 @@ export default function LeadsPage() {
                                     </td>
                                     <td className="border px-3 py-2">
                                         {row.enquiry?.gsm || "-"}
+                                    </td>
+                                    <td className="border px-3 py-2">
+                                        {row.enquiry?.quantity_in_kg || "-"} {row.enquiry?.quantity_unit || "kg"}
                                     </td>
                                     <td className="border px-3 py-2">
                                         {row.enquiry?.remarks || "-"}

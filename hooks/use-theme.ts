@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { themes } from "@/theme";
 
 export function useTheme() {
-  const [mode, setMode] = useState<"B2B" | "B2C">("B2B");
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
 
   useEffect(() => {
     const storedMode = localStorage.getItem("mode");
-    setMode(storedMode === "B2C" ? "B2C" : "B2B");
+    setMode(storedMode === "B2B" ? "B2B" : "B2C");
   }, []);
 
   const theme = themes[mode];

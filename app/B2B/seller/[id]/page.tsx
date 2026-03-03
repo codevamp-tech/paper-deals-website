@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Building, ShieldCheck, BadgeCheck } from "lucide-react"
+import { Building, ShieldCheck, BadgeCheck, FileText } from "lucide-react"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 import SellerProductCrousel from "@/components/sellerProductCrousel"
@@ -229,7 +229,7 @@ export default function BuyersPage() {
             <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8">
               {/* Image / Logo */}
               <div className="w-full">
-                <div className="aspect-[4/3] w-full rounded-xl border-2 border-gray-200 bg-white shadow-md overflow-hidden flex items-center justify-center hover:shadow-lg transition-shadow">
+                <div className="aspect-[4/3] w-full rounded-xl border-2 border-gray-200 bg-white shadow-md overflow-hidden mb-3 flex items-center justify-center hover:shadow-lg transition-shadow">
 
                   <div className="flex flex-col items-center justify-center text-center">
                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
@@ -247,7 +247,42 @@ export default function BuyersPage() {
                   </div>
 
                 </div>
-
+                {/* Catalog */}
+                {org?.catalog && (
+                  <div className=" rounded-lg p-4 border-2 border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center ">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900"> Catalog</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                        onClick={() => window.open(org.catalog, "_blank")}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                        onClick={() => {
+                          const a = window.document.createElement("a")
+                          a.href = org.catalog
+                          a.download = "catalog.pdf"
+                          a.click()
+                        }}
+                      >
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Right: Title + badge + fields */}
@@ -346,6 +381,8 @@ export default function BuyersPage() {
                     <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
                   </div>
                 )}
+
+
               </div>
             </div>
 
