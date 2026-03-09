@@ -21,7 +21,7 @@ export default function SellerList() {
     const fetchSellers = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/product/getActiveSellers`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/getApprovedSellers`
         );
         const data = await res.json();
         setSellers(data.data || []);
