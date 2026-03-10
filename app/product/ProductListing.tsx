@@ -30,6 +30,9 @@ export default function ProductListing() {
   const productsRef = useRef<HTMLDivElement | null>(null);
   const searchParams = useSearchParams();
 
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const [productEdits, setProductEdits] = useState<Record<
     number,
@@ -52,14 +55,11 @@ export default function ProductListing() {
 
   const fetchProducts = async (page: number = 1) => {
     try {
-      setLoading(true);
+      if (page === 1) setLoading(true);
+      else setIsFetchingMore(true);
 
       const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
       const url = `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`;
-      // mode === "B2C"
-      //   ? `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`
-      //   : `${baseUrl}/api/product?page=${page}&limit=12`;
 
       const res = await fetch(url);
 
@@ -67,7 +67,7 @@ export default function ProductListing() {
 
       const data = await res.json();
 
-      setProducts(data.products || []);
+      setProducts(prev => page === 1 ? (data.products || []) : [...prev, ...(data.products || [])]);
       setPagination(
         data.pagination || {
           total: data.totalProducts || 0,
@@ -76,21 +76,38 @@ export default function ProductListing() {
         }
       );
 
-      const uniqueCategories = Array.from(
-        new Map(
-          (data.products || [])
-            .filter((p: any) => p.category && p.category.id)
-            .map((p: any) => [p.category.id, { id: p.category.id, name: p.category.name }])
-        ).values()
-      );
-
-      setCategories(uniqueCategories);
+      setCategories(prevCats => {
+        const prevMap = new Map(page === 1 ? [] : prevCats.map(c => [c.id, c]));
+        (data.products || []).forEach((p: any) => {
+          if (p.category && p.category.id) {
+            prevMap.set(p.category.id, { id: p.category.id, name: p.category.name });
+          }
+        });
+        return Array.from(prevMap.values());
+      });
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
+      setIsFetchingMore(false);
     }
   };
+
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !loading && !isFetchingMore && pagination.page < pagination.pages) {
+        fetchProducts(pagination.page + 1);
+      }
+    });
+
+    if (bottomRef.current) observerRef.current.observe(bottomRef.current);
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [pagination.page, pagination.pages, loading, isFetchingMore]);
 
   useEffect(() => {
     fetchProducts(1);
@@ -267,8 +284,6 @@ export default function ProductListing() {
     }
   };
 
-
-  const handlePageChange = (page: number) => fetchProducts(page);
 
   const handleCategoryFilter = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -601,6 +616,29 @@ export default function ProductListing() {
                     <ShoppingCart size={18} />
                     {isInCart(item.id) ? `Added (${getCartQuantity(item.id)})` : "Add to Cart"}
                   </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Infinite Scroll Trigger */}
+        {!loading && pagination.page < pagination.pages && (
+          <div ref={bottomRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-10">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={`skeleton-scroll-${i}`}
+                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+              >
+                <div className="h-48 bg-gray-200 w-full"></div>
+                <div className="p-6 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
+                  <div className="flex gap-3 mt-4">
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                  </div>
                 </div>
               </div>
             ))}
