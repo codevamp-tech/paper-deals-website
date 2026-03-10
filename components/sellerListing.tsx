@@ -283,19 +283,30 @@ export default function SellerList() {
                 <div
                   key={seller.id}
                   className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden cursor-pointer"
-                  onClick={() => router.push(`/B2B/seller/${seller.id}`)}
+                  onClick={() => router.push(`/seller/${seller.id}`)}
                 >
                   {/* Card Header */}
                   <div className="p-6">
                     <div className="flex items-start gap-4 mb-4">
                       {/* Avatar */}
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0">
-                          <img
-                            src="/mainimg.png"
-                            alt="company logo"
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500 to-cyan-500">
+                          {org.image_banner && org.image_banner.trim() !== "" ? (
+                            <img
+                              src="/mainimg.png"
+                              alt="company logo"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-white text-xl font-bold uppercase">
+                              {(org.organizations || seller.name || "S")
+                                .split(" ")
+                                .filter(Boolean)
+                                .map((word: string) => word[0])
+                                .join("")
+                                .slice(0, 2)}
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -310,11 +321,28 @@ export default function SellerList() {
                           )}
                         </div>
 
-                        {seller.approved === "1" && (
-                          <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                            Top Rated
-                          </span>
-                        )}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {seller.approved === "1" && (
+                            <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                              Top Rated
+                            </span>
+                          )}
+
+                          {/* Show Seller Type */}
+                          {(() => {
+                            const typeMap: Record<string | number, string> = {
+                              "3": "Distributor",
+                              "4": "Converter",
+                              "5": "Other"
+                            };
+                            const sellerType = typeMap[org.organization_type] || "Seller";
+                            return (
+                              <span className="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                                {sellerType}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </div>
                     </div>
 
@@ -380,7 +408,7 @@ export default function SellerList() {
                       className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/B2B/seller/${seller.id}`);
+                        router.push(`/seller/${seller.id}`);
                       }}
                     >
                       View Profile

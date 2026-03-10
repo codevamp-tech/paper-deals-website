@@ -205,7 +205,7 @@ const SellerEnquiryPage = () => {
                 remarks: "",
             });
 
-            router.push("/B2B/seller");
+            router.push("/seller");
         } catch (err) {
             console.error("❌ Error submitting enquiry:", err);
             alert("Failed to send enquiry!");

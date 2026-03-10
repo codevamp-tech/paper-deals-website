@@ -600,7 +600,7 @@ export default function ProductListing() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/B2B/seller/${item.seller_id}`);
+                      router.push(`/seller/${item.seller_id}`);
                     }}
                     className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
                   >
