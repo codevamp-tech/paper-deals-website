@@ -68,8 +68,17 @@ const PageAdvertising = () => {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center h-[300px] animate-pulse">
-      <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="relative w-full overflow-hidden transition-colors py-4">
+      <div className="relative z-10 mx-auto w-[95vw] lg:w-[90vw] max-w-7xl">
+        <div className="relative h-[250px] md:h-[350px] lg:h-[400px] rounded-2xl md:rounded-[2rem] overflow-hidden bg-slate-200 animate-pulse border border-slate-300">
+          {/* Skeleton elements */}
+          <div className="absolute bottom-4 right-6 flex gap-2">
+            <div className="w-6 h-1 bg-slate-300 rounded-full" />
+            <div className="w-2 h-1 bg-slate-300 rounded-full" />
+            <div className="w-2 h-1 bg-slate-300 rounded-full" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 

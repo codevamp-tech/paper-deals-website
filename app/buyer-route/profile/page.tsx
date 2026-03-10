@@ -226,7 +226,8 @@ export default function SellerEditForm() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`)
         if (res.ok) {
           const data = await res.json()
-          setCategories(data.categories)
+          const b2cCategories = data.categories.filter((cat: any) => cat.mode === "b2c" || !cat.mode)
+          setCategories(b2cCategories)
         }
       } catch (error) {
         console.error("Error fetching categories:", error)
@@ -867,11 +868,9 @@ export default function SellerEditForm() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white text-black">
-                    <SelectItem value="0">Importer</SelectItem>
-                    <SelectItem value="1">Wholeseller</SelectItem>
-                    <SelectItem value="2">Manufacturer</SelectItem>
                     <SelectItem value="3">Distributor</SelectItem>
-                    <SelectItem value="4">Other</SelectItem>
+                    <SelectItem value="4">Converter</SelectItem>
+                    <SelectItem value="5">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -950,7 +949,7 @@ export default function SellerEditForm() {
             </div>
 
             {/* View/Download for Logo & Catalog */}
-            {(fileUploads.logo || fileUploads.catalog || catalogUrl) && (
+            {(fileUploads.logo || catalogFile || catalogUrl) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {fileUploads.logo && (
                   <div>

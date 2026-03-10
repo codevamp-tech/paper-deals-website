@@ -70,8 +70,17 @@ const Advertising = () => {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-screen animate-pulse">
-      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="relative bg-white flex justify-center items-center h-[50vh] md:h-[70vh] min-h-[400px] overflow-hidden">
+      <div className="relative z-10 w-[95vw] lg:w-[85vw] max-w-7xl">
+        <div className="relative w-full h-[50vh] md:h-[70vh] rounded-[2rem] overflow-hidden bg-slate-200 animate-pulse">
+          {/* Skeleton elements */}
+          <div className="absolute bottom-8 right-12 flex gap-3">
+            <div className="w-8 h-1.5 bg-slate-300 rounded-full" />
+            <div className="w-4 h-1.5 bg-slate-300 rounded-full" />
+            <div className="w-4 h-1.5 bg-slate-300 rounded-full" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 

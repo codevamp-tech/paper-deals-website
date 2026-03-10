@@ -203,7 +203,7 @@ const Topbar = () => {
                     <Link href="/product" className="text-sm">
                       Products
                     </Link>
-                    <Link href="/B2B/seller" className="text-sm">
+                    <Link href="/seller" className="text-sm">
                       Sellers
                     </Link>
                     <Link href="/about" className="text-sm">
@@ -253,12 +253,12 @@ const Topbar = () => {
 
               <button
                 onClick={() => router.push("/cart")}
-                className="relative p-2 rounded-full hover:bg-gray-100 transition"
+                className="relative p-1 rounded-full hover:bg-gray-100 transition"
               >
                 <img
-                  src="/basket.png"
+                  src="/bag.png"
                   alt="Cart"
-                  className="w-6 h-6 object-contain"
+                  className="w-8 h-8 object-contain"
                 />
 
                 {cartCount > 0 && (
@@ -465,8 +465,7 @@ const Topbar = () => {
                         {/* <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
                         <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link> */}
                         <Link href="/product" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
-                        <Link href="/buyer" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Buyers</Link>
-                        <Link href="/B2B/seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Sellers</Link>
+                        <Link href="/seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Sellers</Link>
                         {/* <Link href="/B2B/live-stock" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Live Stock</Link> */}
                         <Link href="/about" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
                         <Link href="/News" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>News</Link>

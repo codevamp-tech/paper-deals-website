@@ -141,7 +141,7 @@ export default function BuyersPage() {
     }
 
     // ✅ Logged in → go to enquiry
-    router.push(`/B2B/seller/${id}/enquiry`)
+    router.push(`/seller/${id}/enquiry`)
   }
 
 
@@ -200,7 +200,13 @@ export default function BuyersPage() {
     states.find((s) => s.id === String(org?.state))?.name || "N/A"
 
   // Normalize optional fields
-  const typeOfSeller = org?.type_of_seller || "Seller"
+  const getTypeOfSeller = (type: any) => {
+    if (type === "3" || type === 3) return "Distributor";
+    if (type === "4" || type === 4) return "Converter";
+    if (type === "5" || type === 5) return "Other";
+    return type || "Seller";
+  };
+  const typeOfSeller = getTypeOfSeller(org?.organization_type || org?.type_of_seller);
   const capacity =
     org?.production_capacity_tpm || org?.production_capacity || ""
   const dealsIn = org?.materials_used_names && org.materials_used_names.length > 0
@@ -236,7 +242,7 @@ export default function BuyersPage() {
                       <span className="text-white text-2xl font-bold uppercase">
                         {orgName
                           ?.split(" ")
-                          .map(word => word[0])
+                          .map((word: string) => word[0])
                           .join("")
                           .slice(0, 2)}
                       </span>
@@ -401,7 +407,7 @@ export default function BuyersPage() {
 
 
       </section>
-      <SellerProductCrousel sellerId={id} />
+      <SellerProductCrousel sellerId={id as string} />
     </main>
   )
 }
