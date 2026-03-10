@@ -1,6 +1,6 @@
 "use client";
 import RequirementModal from "@/components/modal/TellUsModal";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Award, MapPin, Package, Star } from "lucide-react";
 
@@ -13,8 +13,9 @@ export default function SellerList() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const router = useRouter();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [visibleCount, setVisibleCount] = useState(6);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ Fetch all sellers
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function SellerList() {
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
-    setCurrentPage(1); // Always reset to page 1 when filtering
+    setVisibleCount(6); // Reset count when filtering
   };
 
   // ✅ Filter sellers by category
@@ -62,17 +63,26 @@ export default function SellerList() {
     );
   });
 
-  // ✅ Pagination logic
-  const totalPages = Math.ceil(filteredSellers.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedSellers = filteredSellers.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  // ✅ Infinite scroll logic
+  const selectedSellers = filteredSellers.slice(0, visibleCount);
 
-  const handlePageChange = (page: number) => {
-    if (page > 0 && page <= totalPages) setCurrentPage(page);
-  };
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && visibleCount < filteredSellers.length) {
+        setVisibleCount((prev) => prev + 6);
+      }
+    });
+
+    if (bottomRef.current) {
+      observerRef.current.observe(bottomRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [visibleCount, filteredSellers.length]);
 
   // ✅ Ratings state
   const [ratingsData, setRatingsData] = useState<Record<
@@ -383,40 +393,12 @@ export default function SellerList() {
 
 
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center mt-8 space-x-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border rounded disabled:opacity-50"
-              >
-                Prev
-              </button>
-
-              {[...Array(totalPages)].map((_, index) => {
-                const pageNum = index + 1;
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`px-3 py-1 border rounded ${currentPage === pageNum
-                      ? "bg-blue-500 text-white"
-                      : "hover:bg-gray-200"
-                      }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 border rounded disabled:opacity-50"
-              >
-                Next
-              </button>
+          {/* Infinite Scroll Trigger */}
+          {visibleCount < filteredSellers.length && (
+            <div ref={bottomRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <SellerSkeleton key={`skeleton-load-${i}`} />
+              ))}
             </div>
           )}
         </>
