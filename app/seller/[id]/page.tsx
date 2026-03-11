@@ -127,6 +127,7 @@ export default function BuyersPage() {
   const [seller, setSeller] = useState<any>(null)
   const [document, setDocument] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [showAllDeals, setShowAllDeals] = useState(false)
 
   const router = useRouter()
   const pathname = usePathname()
@@ -201,17 +202,22 @@ export default function BuyersPage() {
 
   // Normalize optional fields
   const getTypeOfSeller = (type: any) => {
-    if (type === "3" || type === 3) return "Distributor";
-    if (type === "4" || type === 4) return "Converter";
-    if (type === "5" || type === 5) return "Other";
-    return type || "Seller";
+    const typeMap: Record<string | number, string> = {
+      "0": "Importer",
+      "1": "Wholeseller",
+      "2": "Manufacturer",
+      "3": "Distributor",
+      "4": "Converter",
+      "5": "Other"
+    };
+    return typeMap[type] || "Seller";
   };
   const typeOfSeller = getTypeOfSeller(org?.organization_type || org?.type_of_seller);
   const capacity =
     org?.production_capacity_tpm || org?.production_capacity || ""
-  const dealsIn = org?.materials_used_names && org.materials_used_names.length > 0
-    ? org.materials_used_names.join(", ")
-    : "Not Available"
+
+  const materials = org?.materials_used_names || [];
+  const hasMoreDeals = materials.length > 3;
 
   const description = seller?.description || org?.description || org?.descriptions || ""
 
@@ -236,22 +242,29 @@ export default function BuyersPage() {
               {/* Image / Logo */}
               <div className="w-full">
                 <div className="aspect-[4/3] w-full rounded-xl border-2 border-gray-200 bg-white shadow-md overflow-hidden mb-3 flex items-center justify-center hover:shadow-lg transition-shadow">
-
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold uppercase">
-                        {orgName
-                          ?.split(" ")
-                          .map((word: string) => word[0])
-                          .join("")
-                          .slice(0, 2)}
-                      </span>
+                  {org?.image_banner && org.image_banner.trim() !== "" ? (
+                    <img
+                      src={org.image_banner}
+                      alt={orgName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center p-6">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-inner mb-3">
+                        <span className="text-white text-2xl font-bold uppercase tracking-wider">
+                          {orgName
+                            ?.split(" ")
+                            .filter(Boolean)
+                            .map((word: string) => word[0])
+                            .join("")
+                            .slice(0, 2)}
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-500">
+                        {orgName}
+                      </p>
                     </div>
-                    <p className="text-sm font-medium text-gray-500 mt-3">
-                      {orgName}
-                    </p>
-                  </div>
-
+                  )}
                 </div>
                 {/* Catalog */}
                 {org?.catalog && (
@@ -368,7 +381,25 @@ export default function BuyersPage() {
                   </div> */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Deals In</p>
-                    <p className="text-base font-semibold text-gray-900">{dealsIn || "N/A"}</p>
+                    <div className="text-base font-semibold text-gray-900">
+                      {materials.length > 0 ? (
+                        <>
+                          {showAllDeals || !hasMoreDeals
+                            ? materials.join(", ")
+                            : materials.slice(0, 3).join(", ") + "..."}
+                          {hasMoreDeals && (
+                            <button
+                              onClick={() => setShowAllDeals(!showAllDeals)}
+                              className="ml-2 text-sm text-blue-600 hover:text-blue-800 hover:underline focus:outline-none inline-flex"
+                            >
+                              {showAllDeals ? "See less" : "See more"}
+                            </button>
+                          )}
+                        </>
+                      ) : (
+                        "Not Available"
+                      )}
+                    </div>
                   </div>
                 </div>
 
