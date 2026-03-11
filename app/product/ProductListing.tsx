@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ShoppingCart, X, Plus, Minus, Trash2, Send } from "lucide-react";
+import { ShoppingCart, X, Plus, Minus, Trash2, Send, Star, Mail, Store } from "lucide-react";
 import EnquiryModal from "@/components/enquiryModal";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -330,7 +330,7 @@ export default function ProductListing() {
         <img
           src={imageUrl}
           alt={item.product_name || "Product Image"}
-          className="h-40 w-full object-cover rounded-lg"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       );
     }
@@ -339,7 +339,7 @@ export default function ProductListing() {
       <img
         src="/mainimg.png"
         alt="No Image"
-        className="h-40 w-full object-cover rounded-lg"
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
     );
   };
@@ -498,23 +498,23 @@ export default function ProductListing() {
           </div> */}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 border-b border-gray-200 scrollbar-hide">
           <button
             onClick={() => handleCategoryFilter("all")}
-            className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === "all"
-              ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            className={`whitespace-nowrap px-4 py-2 font-medium text-sm border-b-2 transition-colors duration-200 ${selectedCategory === "all"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-600 hover:text-blue-600 hover:border-blue-300"
               }`}
           >
-            All
+            All Categories
           </button>
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleCategoryFilter(cat.id.toString())}
-              className={`px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${selectedCategory === cat.id.toString()
-                ? "text-white bg-gradient-to-r from-blue-500 to-blue-500 shadow-lg"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              className={`whitespace-nowrap px-4 py-2 font-medium text-sm border-b-2 transition-colors duration-200 ${selectedCategory === cat.id.toString()
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-600 hover:text-blue-600 hover:border-blue-300"
                 }`}
             >
               {cat.name}
@@ -527,16 +527,30 @@ export default function ProductListing() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse flex flex-col h-full"
               >
-                <div className="h-48 bg-gray-200 w-full"></div>
-                <div className="p-6 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
-                  <div className="flex gap-3 mt-4">
-                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
-                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                <div className="h-56 bg-gray-100 w-full"></div>
+                <div className="p-5 flex flex-col flex-grow">
+                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-1"></div>
+                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
+
+                  <div className="flex gap-2 mb-4">
+                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
+                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
+                  </div>
+
+                  <div className="mt-auto pt-4 border-t border-gray-50 mb-4">
+                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
+                    <div className="flex gap-2.5">
+                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
+                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -547,75 +561,94 @@ export default function ProductListing() {
             {filteredProducts.map((item) => (
               <div
                 key={item.id}
-                className="relative bg-white rounded-2xl overflow-hidden transition transform hover:-translate-y-2 shadow-lg"
+                className="group bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col h-full overflow-hidden"
               >
-                <div className="absolute top-4 right-4 flex items-center space-x-1 bg-white bg-opacity-90 px-3 py-1 rounded-lg shadow-md z-10">
-                  <span className="text-yellow-400 font-bold">
-                    {item.rating ? item.rating.toFixed(1) : "0.0"}
-                  </span>
-                  <svg
-                    className="w-4 h-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.15c.969 0 1.371 1.24.588 1.81l-3.36 2.44a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.36-2.44a1 1 0 00-1.176 0l-3.36 2.44c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.078 9.382c-.783-.57-.38-1.81.588-1.81h4.15a1 1 0 00.95-.69l1.286-3.955z" />
-                  </svg>
-                  <span className="text-gray-600 text-xs">
-                    ({item.reviews_count || 0})
-                  </span>
+                {/* Image Header */}
+                <div className="relative h-56 w-full bg-gray-50 overflow-hidden">
+                  {/* Rating Pill - Premium Look */}
+                  <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm border border-white/20">
+                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                    <span className="text-xs font-bold text-slate-700">{item.rating ? item.rating.toFixed(1) : "0.0"}</span>
+                  </div>
+
+                  {/* Image */}
+                  <Link href={`/product/${item.id}`} className="block w-full h-full relative">
+                    {getImageContent(item)}
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  </Link>
                 </div>
 
-                <div className="p-6 flex flex-col space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {item.product_name}
-                  </h3>
-                  <Link href={`/product/${item.id}`} className="block">
-                    {getImageContent(item)}
+                {/* Content Body */}
+                <div className="p-5 flex flex-col flex-grow relative">
+
+                  {/* Category */}
+                  <div className="mb-2">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-100/50">
+                      {item.category?.name || "General"}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <Link href={`/product/${item.id}`} className="block mb-3">
+                    <h3 className="text-[17px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                      {item.product_name}
+                    </h3>
                   </Link>
-                  <div className="mt-2 flex justify-between text-gray-700 text-sm">
-                    <p>
-                      <span className="font-semibold">GSM:</span> {item.gsm || "-"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Size:</span> {item.sizes || item.size || "-"}
-                    </p>
+
+                  {/* Specs (Clean & Minimal) */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-sm text-slate-600">
+                    <div className="flex items-center gap-1.5 border border-gray-100 bg-gray-50 rounded-md px-2.5 py-1">
+                      <span className="text-slate-400 font-medium text-xs uppercase tracking-wider">GSM</span>
+                      <span className="font-semibold text-slate-800">{item.gsm || "-"}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 border border-gray-100 bg-gray-50 rounded-md px-2.5 py-1">
+                      <span className="text-slate-400 font-medium text-xs uppercase tracking-wider">Size</span>
+                      <span className="font-semibold text-slate-800 line-clamp-1">{item.sizes || item.size || "-"}</span>
+                    </div>
                   </div>
 
-                  <p className="text-2xl font-extrabold text-blue-600 mt-2">
-                    ₹{item.price_per_kg}
-                  </p>
-                  <p className="text-gray-700">{item.category?.name}</p>
+                  {/* Price & Actions Container */}
+                  <div className="mt-auto pt-4 border-t border-gray-100/80">
+                    <div className="flex items-end justify-between mb-4">
+                      <div>
+                        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest block mb-0.5">Wholesale Price</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-black text-slate-900">₹{item.price_per_kg}</span>
+                          <span className="text-sm font-medium text-slate-500">/ kg</span>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="flex gap-3 mt-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.location.href = "/subscriptionPlan";
-                      }}
-                      className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
-                    >
-                      Contact
-                    </button>
+                    {/* Primary Action */}
+                    <div className="space-y-3">
+
+                      {/* Secondary Actions */}
+                      <div className="flex gap-2.5">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = "/subscriptionPlan";
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-slate-700 font-bold bg-white hover:bg-slate-50 border border-slate-200 transition-all active:scale-[0.98] text-sm shadow-sm"
+                        >
+                          <Mail className="w-4 h-4 text-slate-500" />
+                          Contact Supplier
+                        </button>
+
+                        <button
+                          onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-white font-bold transition-all active:scale-[0.98] text-sm shadow-sm ${isInCart(item.id)
+                            ? "bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:ring-amber-500/20"
+                            : "bg-[#38d200] hover:bg-[#2eaa00] focus:ring-4 focus:ring-[#38d200]/20"
+                            }`}
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          {isInCart(item.id) ? "Added" : "Add to Cart"}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/seller/${item.seller_id}`);
-                    }}
-                    className="flex-1 py-2 rounded-lg text-white bg-[#0f7aed] hover:opacity-90 transition"
-                  >
-                    View Seller
-                  </button>
-                  <button
-                    onClick={() => addToCart(item)}
-                    className={`w-full py-2 rounded-lg text-white hover:opacity-90 transition mt-2 flex items-center justify-center gap-2 ${isInCart(item.id)
-                      ? "bg-orange-500"
-                      : "bg-[#38d200]"
-                      }`}
-                  >
-                    <ShoppingCart size={18} />
-                    {isInCart(item.id) ? `Added (${getCartQuantity(item.id)})` : "Add to Cart"}
-                  </button>
+
                 </div>
               </div>
             ))}
@@ -628,16 +661,30 @@ export default function ProductListing() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={`skeleton-scroll-${i}`}
-                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse flex flex-col h-full"
               >
-                <div className="h-48 bg-gray-200 w-full"></div>
-                <div className="p-6 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-6 bg-gray-300 rounded w-1/4 mt-3"></div>
-                  <div className="flex gap-3 mt-4">
-                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
-                    <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                <div className="h-56 bg-gray-100 w-full"></div>
+                <div className="p-5 flex flex-col flex-grow">
+                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-1"></div>
+                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
+
+                  <div className="flex gap-2 mb-4">
+                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
+                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
+                  </div>
+
+                  <div className="mt-auto pt-4 border-t border-gray-50 mb-4">
+                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
+                    <div className="flex gap-2.5">
+                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
+                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
+                    </div>
                   </div>
                 </div>
               </div>

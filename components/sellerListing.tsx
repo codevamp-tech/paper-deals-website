@@ -282,137 +282,140 @@ export default function SellerList() {
               return (
                 <div
                   key={seller.id}
-                  className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden cursor-pointer"
+                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer flex flex-col h-full"
                   onClick={() => router.push(`/seller/${seller.id}`)}
                 >
-                  {/* Card Header */}
-                  <div className="p-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      {/* Avatar */}
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500 to-cyan-500">
-                          {org.image_banner && org.image_banner.trim() !== "" ? (
-                            <img
-                              src="/mainimg.png"
-                              alt="company logo"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-white text-xl font-bold uppercase">
-                              {(org.organizations || seller.name || "S")
-                                .split(" ")
-                                .filter(Boolean)
-                                .map((word: string) => word[0])
-                                .join("")
-                                .slice(0, 2)}
-                            </span>
-                          )}
-                        </div>
+                  {/* Card Header & Banner Area */}
+                  <div className="relative h-20 bg-gradient-to-r from-blue-50 via-gray-100 to-blue-50 border-b border-gray-100">
+                    {seller.approved === "1" && (
+                      <div className="absolute top-3 right-3 bg-white/80 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full flex items-center gap-1.5 text-xs font-bold shadow-sm backdrop-blur-md">
+                        <Award className="w-4 h-4" />
+                        Verified
                       </div>
+                    )}
+                  </div>
 
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-1">
-                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
-                            KPDS_{seller.id}
-                          </h3>
-                          {seller.approved === "1" && (
-                            <Award className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                          )}
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {seller.approved === "1" && (
-                            <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                              Top Rated
-                            </span>
-                          )}
-
-                          {/* Show Seller Type */}
-                          {(() => {
-                            const typeMap: Record<string | number, string> = {
-                              "3": "Distributor",
-                              "4": "Converter",
-                              "5": "Other"
-                            };
-                            const sellerType = typeMap[org.organization_type] || "Seller";
-                            return (
-                              <span className="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-                                {sellerType}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    {/* <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {seller.user_type === 2
-                        ? "Leading supplier of premium materials and specialty products"
-                        : "Bulk distributor of industrial supplies"}
-                    </p> */}
-
-                    {/* Location */}
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <span>{org.city || "N/A"}</span>
-                    </div>
-
-                    {/* Rating & Products */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-bold text-gray-900">
-                          {ratingData.average.toFixed(1)}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          ({ratingData.reviews})
-                        </span>
-                      </div>
-                      {/* <div className="flex items-center gap-1 text-sm text-gray-600">
-                        <Package className="h-4 w-4" />
-                        <span>156 products</span>
-                      </div> */}
-                    </div>
-
-                    {/* Specialties/Materials */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {org.materials_used_names &&
-                        org.materials_used_names.length > 0 ? (
-                        org.materials_used_names.slice(0, 3).map((material, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
-                          >
-                            {material}
-                          </span>
-                        ))
+                  {/* Content */}
+                  <div className="p-5 pt-0 flex-grow flex flex-col relative">
+                    {/* Top Row: Avatar overlapping banner */}
+                    <div className="w-[76px] h-[76px] -mt-10 mb-3 rounded-2xl bg-white p-1.5 border border-gray-200 shadow-md flex items-center justify-center overflow-hidden relative z-10">
+                      {org.image_banner && org.image_banner.trim() !== "" ? (
+                        <img
+                          src={org.image_banner}
+                          alt="company logo"
+                          className="w-full h-full object-contain rounded-xl"
+                        />
                       ) : (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
-                          General Trade
+                        <span className="text-gray-400 text-2xl font-black uppercase tracking-wider bg-gray-50 w-full h-full flex items-center justify-center rounded-xl">
+                          {(org.organizations || seller.name || "S")
+                            .split(" ")
+                            .filter(Boolean)
+                            .map((word: string) => word[0])
+                            .join("")
+                            .slice(0, 2)}
                         </span>
                       )}
                     </div>
 
-                    {/* Years in Business */}
-                    {/* <div className="text-xs text-gray-600 mb-4">
-                      <span className="font-medium">
-                        {Math.floor(Math.random() * 15) + 5}
-                      </span>{" "}
-                      years in business
-                    </div> */}
+                    <div className="flex justify-between items-start mb-4 gap-3">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-1.5">
+                          {org.organizations || "Seller " + seller.id}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-2.5">
+                          <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
+                          <span className="truncate font-medium">{org.city || "India"}</span>
+                        </div>
 
-                    {/* View Profile Button */}
-                    <button
-                      className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/seller/${seller.id}`);
-                      }}
-                    >
-                      View Profile
-                    </button>
+                        {/* Show Seller Type */}
+                        {(() => {
+                          const typeMap: Record<string | number, string> = {
+                            "0": "Importer",
+                            "1": "Wholeseller",
+                            "2": "Manufacturer",
+                            "3": "Distributor",
+                            "4": "Converter",
+                            "5": "Other"
+                          };
+                          const sellerType = typeMap[org.organization_type] || typeMap[seller.user_type] || "Supplier";
+                          return (
+                            <span className="inline-block px-2.5 py-1 bg-blue-50 border border-blue-100 text-blue-700 rounded-md text-xs font-bold tracking-wide">
+                              {sellerType}
+                            </span>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Product Photos Area */}
+                      {seller.products && seller.products.length > 0 && (
+                        <div className="flex gap-2 shrink-0 pt-1">
+                          {seller.products.slice(0, 2).map((product: any, idx: number) => {
+                            let imgUrl = "";
+                            if (product.images) {
+                              if (Array.isArray(product.images)) {
+                                imgUrl = product.images[0];
+                              } else if (typeof product.images === "string") {
+                                try {
+                                  let parsed = JSON.parse(product.images);
+                                  imgUrl = Array.isArray(parsed) ? parsed[0] : parsed;
+                                } catch (e) {
+                                  imgUrl = product.images.split(",")[0];
+                                }
+                              }
+                            }
+                            if (!imgUrl) return null;
+                            const finalSrc = imgUrl.startsWith("http")
+                              ? imgUrl
+                              : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/${imgUrl}`;
+
+                            return (
+                              <div
+                                key={idx}
+                                className="w-16 h-16 rounded-xl overflow-hidden border border-gray-100 shadow-sm group-hover:shadow-md transition-shadow bg-gray-50"
+                              >
+                                <img
+                                  src={finalSrc}
+                                  alt="Product"
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Stats Box */}
+                    <div className="grid grid-cols-2 gap-3 bg-gray-50/80 rounded-xl p-3.5 mb-5 mt-auto border border-gray-100/80">
+                      <div className="flex flex-col justify-center border-r border-gray-200">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                          <span className="text-base font-bold text-gray-900 leading-none">{ratingData.average.toFixed(1)}</span>
+                        </div>
+                        <span className="text-xs text-gray-500 font-medium tracking-wide uppercase">{ratingData.reviews} Reviews</span>
+                      </div>
+                      <div className="flex flex-col justify-center pl-1">
+                        <div className="text-xs font-bold text-gray-800 mb-1 leading-snug line-clamp-2">
+                          {org.materials_used_names && org.materials_used_names.length > 0
+                            ? org.materials_used_names.slice(0, 2).join(", ") + (org.materials_used_names.length > 2 ? ` +${org.materials_used_names.length - 2}` : "")
+                            : "General Trade"}
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Deals In</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-auto">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/seller/${seller.id}`);
+                        }}
+                        className="w-full py-2.5 rounded-xl border-2 border-transparent bg-gray-900 text-white font-bold text-sm tracking-wide shadow-md hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300"
+                      >
+                        View Profile
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

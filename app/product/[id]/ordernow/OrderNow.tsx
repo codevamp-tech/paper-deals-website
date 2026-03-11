@@ -304,190 +304,203 @@ const OrderNow = ({ productId }: { productId: string }) => {
           </div>
 
           {/* Right: Details */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
 
-            {/* Description */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                Product Description
-              </p>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {product.description ||
-                  "Premium quality product designed to meet all your industrial and commercial needs with excellence."}
-              </p>
+            {/* Title & Category */}
+            <div className="pb-4 border-b border-gray-100">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{product.product_name}</h1>
+              <div className="flex items-center gap-3">
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-2.5 py-0.5 shadow-sm">{product.category?.name}</Badge>
+              </div>
             </div>
 
             {/* Price */}
-            <div className="bg-blue-50 rounded-xl border border-blue-100 px-4 py-3 flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-blue-700">
-                ₹{product.price_per_kg}
-              </span>
-              <span className="text-xs font-medium text-gray-500">per Kg</span>
+            <div className="bg-blue-50 rounded-xl border border-blue-100 px-5 py-4 flex flex-col gap-1 mt-1">
+              <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest">Wholesale Price</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-extrabold text-blue-700">
+                  ₹{product.price_per_kg}
+                </span>
+                <span className="text-sm font-medium text-gray-600"> / Kg</span>
+              </div>
             </div>
 
             {/* Specifications */}
             {specifications.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+              <div className="mt-2">
+                <p className="text-sm font-bold text-gray-900 mb-3 border-b pb-2">
                   Product Details
                 </p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-y-3 gap-x-6">
                   {specifications.map((spec) => (
                     <div
                       key={spec.label}
-                      className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2"
+                      className="flex justify-between items-center border-b border-gray-100 pb-2"
                     >
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      <span className="text-sm text-gray-500">
                         {spec.label}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-800 mt-0.5">
+                      </span>
+                      <span className="text-sm font-medium text-gray-900 text-right">
                         {spec.value}
-                      </p>
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Description */}
+            <div className="mt-2">
+              <p className="text-sm font-bold text-gray-900 mb-2 border-b pb-2">
+                Overview
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                {product.description ||
+                  "Premium quality product designed to meet all your industrial and commercial needs with excellence."}
+              </p>
+            </div>
+
             {/* CTA */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  onClick={handleEnquiryClick}
-                  className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
-                >
-                  <Mail className="w-4 h-4" />
-                  Send Enquiry
-                </Button>
-              </DialogTrigger>
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={handleEnquiryClick}
+                    className="w-full bg-[#0f7aed] hover:bg-[#0c62bd] text-white text-base font-bold py-6 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-md "
+                  >
+                    <Mail className="w-5 h-5" />
+                    Contact Supplier Now
+                  </Button>
+                </DialogTrigger>
 
-              <DialogContent className="max-w-2xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-base font-bold text-center mb-2">
-                    Enquiry for {product.product_name}
-                  </DialogTitle>
-                </DialogHeader>
+                <DialogContent className="max-w-2xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-base font-bold text-center mb-2">
+                      Enquiry for {product.product_name}
+                    </DialogTitle>
+                  </DialogHeader>
 
-                {isProfileIncomplete && (
-                  <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700">
-                    <p className="text-xs font-medium">
-                      Please complete your profile to send an enquiry.
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="ml-auto border-red-300 text-red-600 text-xs"
-                      onClick={() => router.push("/buyer-route/profile")}
-                    >
-                      Complete Profile
-                    </Button>
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-                  <div>
-                    <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company *</Label>
-                    <Input
-                      name="company_name"
-                      value={formData.company_name}
-                      disabled
-                      className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">City *</Label>
-                    <Input
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      disabled
-                      className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category *</Label>
-                    <Input
-                      value={product.category?.name || ""}
-                      disabled
-                      className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                    />
-                  </div>
-
-                  {paperFields.map((field) => (
-                    <div key={field.key}>
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        {field.label}
-                        {field.info && (
-                          <span className="text-xs text-gray-400 ml-1 normal-case font-normal">
-                            ({field.info})
-                          </span>
-                        )}
-                      </Label>
-                      <Input
-                        name={field.key}
-                        value={(formData as any)[field.key]}
-                        onChange={handleChange}
-                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                      />
-                    </div>
-                  ))}
-
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</Label>
-                      <Input
-                        name="quantity_in_kg"
-                        value={formData.quantity_in_kg}
-                        onChange={handleChange}
-                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                      />
-                    </div>
-                    <div className="w-[100px]">
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Unit</Label>
-                      <Select
-                        value={formData.quantity_unit}
-                        onValueChange={(val) => setFormData(prev => ({ ...prev, quantity_unit: val }))}
+                  {isProfileIncomplete && (
+                    <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700">
+                      <p className="text-xs font-medium">
+                        Please complete your profile to send an enquiry.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto border-red-300 text-red-600 text-xs"
+                        onClick={() => router.push("/buyer-route/profile")}
                       >
-                        <SelectTrigger className="mt-1 h-8 text-xs bg-gray-50 border-gray-200">
-                          <SelectValue placeholder="Unit" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Kg">Kg</SelectItem>
-                          <SelectItem value="Ton">Ton</SelectItem>
-                          <SelectItem value="Piece">Piece</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        Complete Profile
+                      </Button>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="md:col-span-2">
-                    <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Remarks</Label>
-                    <Textarea
-                      name="remarks"
-                      value={formData.remarks}
-                      onChange={handleChange}
-                      placeholder="Add any extra details..."
-                      className="mt-1 text-xs bg-gray-50 border-gray-200 resize-none"
-                      rows={3}
-                    />
-                  </div>
+                  <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                  <div className="md:col-span-2 flex justify-center mt-2">
-                    <Button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-8 py-2 rounded-xl transition-colors"
-                    >
-                      {loading ? "Sending..." : "Send Enquiry"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+                    <div>
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company *</Label>
+                      <Input
+                        name="company_name"
+                        value={formData.company_name}
+                        disabled
+                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">City *</Label>
+                      <Input
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        disabled
+                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category *</Label>
+                      <Input
+                        value={product.category?.name || ""}
+                        disabled
+                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                      />
+                    </div>
+
+                    {paperFields.map((field) => (
+                      <div key={field.key}>
+                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          {field.label}
+                          {field.info && (
+                            <span className="text-xs text-gray-400 ml-1 normal-case font-normal">
+                              ({field.info})
+                            </span>
+                          )}
+                        </Label>
+                        <Input
+                          name={field.key}
+                          value={(formData as any)[field.key]}
+                          onChange={handleChange}
+                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                        />
+                      </div>
+                    ))}
+
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</Label>
+                        <Input
+                          name="quantity_in_kg"
+                          value={formData.quantity_in_kg}
+                          onChange={handleChange}
+                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                        />
+                      </div>
+                      <div className="w-[100px]">
+                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Unit</Label>
+                        <Select
+                          value={formData.quantity_unit}
+                          onValueChange={(val) => setFormData(prev => ({ ...prev, quantity_unit: val }))}
+                        >
+                          <SelectTrigger className="mt-1 h-8 text-xs bg-gray-50 border-gray-200">
+                            <SelectValue placeholder="Unit" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Kg">Kg</SelectItem>
+                            <SelectItem value="Ton">Ton</SelectItem>
+                            <SelectItem value="Piece">Piece</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Remarks</Label>
+                      <Textarea
+                        name="remarks"
+                        value={formData.remarks}
+                        onChange={handleChange}
+                        placeholder="Add any extra details..."
+                        className="mt-1 text-xs bg-gray-50 border-gray-200 resize-none"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 flex justify-center mt-2">
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-8 py-2 rounded-xl transition-colors"
+                      >
+                        {loading ? "Sending..." : "Send Enquiry"}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </div>
       </div>
@@ -502,24 +515,26 @@ const OrderNow = ({ productId }: { productId: string }) => {
           {relatedProducts.map((p: any) => (
             <div
               key={p.id}
-              className="min-w-[180px] max-w-[180px] rounded-xl shadow-sm overflow-hidden bg-white flex-shrink-0 border border-blue-200 cursor-pointer hover:shadow-md hover:border-blue-400 transition"
+              className="group min-w-[200px] max-w-[200px] rounded-xl shadow-sm overflow-hidden bg-white flex-shrink-0 border border-gray-200 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all flex flex-col h-full"
               onClick={() => router.push(`/product/${p.id}`)}
             >
-              <div className="relative h-36 overflow-hidden group">
+              <div className="relative h-40 bg-gray-50 overflow-hidden">
                 <img
                   src={getFirstImage(p.images)}
                   alt={p.product_name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <div className="p-3">
-                <h3 className="font-semibold text-gray-800 text-xs line-clamp-2">
+              <div className="p-4 flex flex-col flex-grow">
+                <h3 className="font-bold text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors mb-2">
                   {p.product_name}
                 </h3>
-                <p className="text-base font-bold text-gray-900 mt-1">
-                  ₹{p.price_per_kg}
-                  <span className="text-gray-500 text-xs font-normal"> /Kg</span>
-                </p>
+                <div className="mt-auto">
+                  <p className="text-lg font-extrabold text-blue-700">
+                    ₹{p.price_per_kg}
+                    <span className="text-gray-500 text-xs font-medium tracking-wide"> / Kg</span>
+                  </p>
+                </div>
               </div>
             </div>
           ))}
