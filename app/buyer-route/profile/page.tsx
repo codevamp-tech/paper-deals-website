@@ -175,6 +175,7 @@ export default function SellerEditForm() {
   const [catalogUrl, setCatalogUrl] = useState<string | null>(null)
   const [catalogFile, setCatalogFile] = useState<File | null>(null)
   const [catalogUploading, setCatalogUploading] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
 
   // Fetch bank details
   useEffect(() => {
@@ -308,6 +309,7 @@ export default function SellerEditForm() {
             description: org.description || "",
           }))
           setCatalogUrl(org.catalog || null)
+          setLogoUrl(org.image_banner || null)
         }
       } catch (error) {
         console.error("Error fetching data", error)
@@ -412,6 +414,7 @@ export default function SellerEditForm() {
         if (orgRes.ok) {
           const orgData = await orgRes.json()
           if (orgData.catalog) setCatalogUrl(orgData.catalog)
+          if (orgData.image_banner) setLogoUrl(orgData.image_banner)
           setCatalogFile(null)
         }
       }
@@ -949,16 +952,20 @@ export default function SellerEditForm() {
             </div>
 
             {/* View/Download for Logo & Catalog */}
-            {(fileUploads.logo || catalogFile || catalogUrl) && (
+            {(fileUploads.logo || logoUrl || catalogFile || catalogUrl) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {fileUploads.logo && (
+                {(fileUploads.logo || logoUrl) && (
                   <div>
                     <Label>Current Logo</Label>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-sm text-gray-600 truncate flex-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-50">
-                        {fileUploads.logo.name}
+                        {fileUploads.logo ? fileUploads.logo.name : (logoUrl?.split("/").pop() || "Logo")}
                       </span>
-                      {/* Add view/download for logo if needed, or just show name */}
+                      {!fileUploads.logo && logoUrl && (
+                        <Button variant="outline" size="sm" onClick={() => window.open(logoUrl, "_blank")}>
+                          View
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
