@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MessageCircle, Loader2 } from "lucide-react"
 import Pagination from "@/components/pagination"
+import { getUserFromToken } from "@/hooks/use-token"
 
 interface User {
   id: string
@@ -31,10 +32,11 @@ export default function UserList() {
       setError(null)
       try {
         let url = ""
+        const user = getUserFromToken()
+        const buyerIdForChat = user?.user_id || ""
+
         if (activeTab === "seller") {
-          url = `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=2&page=${currentPage}&limit=9`
-          // } else if (activeTab === "consultant") {
-          //   url = `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=5&page=${currentPage}&limit=9`
+          url = `${process.env.NEXT_PUBLIC_API_URL}/api/users/getallsellers?user_type=3&page=${currentPage}&limit=9&buyer_id_for_chat=${buyerIdForChat}`
         }
         const response = await fetch(url)
         if (!response.ok) {

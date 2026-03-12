@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { CalendarIcon, Upload, X } from "lucide-react" // Added X
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
@@ -161,6 +162,7 @@ export default function SellerEditForm() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([])
 
   // Bank Details state
+  const [showBankConsent, setShowBankConsent] = useState(false)
   const [bankData, setBankData] = useState({
     bank_name: "",
     account_holder_name: "",
@@ -208,6 +210,7 @@ export default function SellerEditForm() {
       })
       if (res.ok) {
         toast({ title: "Success", description: "Bank details saved successfully!" })
+        localStorage.setItem("bankConsentAccepted", "true")
       } else {
         toast({ title: "Error", description: "Failed to save bank details.", variant: "destructive" })
       }
@@ -560,7 +563,19 @@ export default function SellerEditForm() {
               <Button
                 key={section.id}
                 variant={activeSection === section.id ? "default" : "outline"}
-                onClick={() => setActiveSection(section.id)}
+                onClick={() => {
+                  if (section.id === "bank-details") {
+                    // Check if bank details are already in the DB by checking bank_name
+                    const detailsExistInDB = bankData.bank_name && bankData.bank_name.trim().length > 0;
+                    const hasLocalConsent = localStorage.getItem("bankConsentAccepted");
+                    
+                    if (!detailsExistInDB && !hasLocalConsent) {
+                      setShowBankConsent(true)
+                      return
+                    }
+                  }
+                  setActiveSection(section.id)
+                }}
                 className="text-sm text-black bg-white border-gray-300 hover:bg-gray-100"
 
               >
@@ -1317,6 +1332,35 @@ export default function SellerEditForm() {
         </Card>
       )}
 
+      {/* Bank Consent Dialog */}
+      <Dialog open={showBankConsent} onOpenChange={setShowBankConsent}>
+        <DialogContent className="sm:max-w-md bg-white text-black">
+          <DialogHeader>
+            <DialogTitle>Bank Details Consent</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              By providing your bank details, you consent to them being shared with the buyer only when a deal is accepted. Do you wish to continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowBankConsent(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                localStorage.setItem("bankConsentAccepted", "true")
+                setShowBankConsent(false)
+                setActiveSection("bank-details")
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Accept
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
