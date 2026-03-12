@@ -302,7 +302,7 @@ export default function SellerList() {
                       {org.image_banner && org.image_banner.trim() !== "" ? (
                         <img
                           src={org.image_banner}
-                          alt="company logo"
+                          alt="logo"
                           className="w-full h-full object-contain rounded-xl"
                         />
                       ) : (

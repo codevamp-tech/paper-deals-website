@@ -9,6 +9,12 @@ export default function TestimonialSection() {
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [testimonials, setTestimonials] = useState<any[]>([]); // array rakho
+  const [mode, setMode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedMode = localStorage.getItem("mode");
+    setMode(storedMode);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -96,6 +102,10 @@ export default function TestimonialSection() {
     );
   }
 
+  const filteredTestimonials = testimonials.filter((t: any) => {
+    if (!mode) return true;
+    return t.type?.toLowerCase() === mode.toLowerCase();
+  });
 
   return (
     <div
@@ -129,8 +139,8 @@ export default function TestimonialSection() {
             margin: "0 auto",
           }}
         >
-          {testimonials.length > 0 ? (
-            testimonials.map((testimonial: any) => (
+          {filteredTestimonials.length > 0 ? (
+            filteredTestimonials.map((testimonial: any) => (
               <div
                 key={testimonial.id}
                 style={{
