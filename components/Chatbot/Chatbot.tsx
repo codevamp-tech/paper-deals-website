@@ -72,7 +72,7 @@ export default function Chatbot() {
 
         console.log("Starting fetch with messages:", apiMessages);
 
-        const response = await fetch("http://localhost:5000/api/chatbot/ask", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/ask`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ messages: apiMessages }),
@@ -105,18 +105,18 @@ export default function Chatbot() {
 
           const chunk = decoder.decode(value, { stream: true });
           buffer += chunk;
-          
+
           // Split by double newline (SSE standard separator)
           const events = buffer.split("\n\n");
           buffer = events.pop() || ""; // Keep the partial event in buffer
-          
+
           for (const event of events) {
             const lines = event.split("\n");
             for (const line of lines) {
               const trimmedLine = line.trim();
               if (trimmedLine.startsWith("data: ")) {
                 const data = trimmedLine.slice(6).trim();
-                
+
                 if (data === "[DONE]") {
                   console.log("Stream [DONE] reached after", Date.now() - startTime, "ms");
                   continue;
@@ -149,10 +149,10 @@ export default function Chatbot() {
           prev.map((msg) =>
             msg.id === assistantId
               ? {
-                  ...msg,
-                  content:
-                    msg.content || `Sorry, I encountered an error: ${error.message || "Unknown error"}. Please check the server logs.`,
-                }
+                ...msg,
+                content:
+                  msg.content || `Sorry, I encountered an error: ${error.message || "Unknown error"}. Please check the server logs.`,
+              }
               : msg
           )
         );
