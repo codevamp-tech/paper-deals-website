@@ -369,7 +369,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                     className="w-full bg-[#0f7aed] hover:bg-[#0c62bd] text-white text-base font-bold py-6 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-md "
                   >
                     <Mail className="w-5 h-5" />
-                    Contact Supplier Now
+                    Get Enquiry Now
                   </Button>
                 </DialogTrigger>
 

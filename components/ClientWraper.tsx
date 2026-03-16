@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { getUserFromToken } from "@/hooks/use-token";
 import BookModalButton from "@/components/flotiongbutton/StickyButton";
 import Footer from "@/components/footer/Footer";
-import { getUserFromToken } from "@/hooks/use-token";
+import Chatbot from "@/components/Chatbot/Chatbot";
 
 export default function ClientWrapper({
   children,
@@ -32,6 +33,7 @@ export default function ClientWrapper({
       {children}
       {!hideLayout && <BookModalButton />}
       {!hideLayout && <Footer />}
+      <Chatbot />
     </>
   );
 }
