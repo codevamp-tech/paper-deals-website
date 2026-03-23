@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
   ShoppingCart,
-  Settings,
+  Factory,
   DollarSign,
   Recycle,
-  ArrowRight,
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -19,7 +18,7 @@ export default function ServicesGrid() {
         "Get connected to more than 4000+ stakeholders in the paper industry.",
     },
     {
-      icon: <Settings className="text-white" />,
+      icon: <Factory className="text-white" />,
       title: "Paper Fabrication",
       description: "Get seamless paper fabrication and processing solutions.",
     },
@@ -61,11 +60,6 @@ export default function ServicesGrid() {
               <div className="flex justify-between items-start mb-6">
                 <div className={`p-3 rounded-xl ${theme.iconBg}`}>
                   {service.icon}
-                </div>
-                <div
-                  className={`p-2 rounded-full bg-transparent border transition-all cursor-pointer $ `}
-                >
-                  <ArrowRight className={`h-4 w-4 `} />
                 </div>
               </div>
 

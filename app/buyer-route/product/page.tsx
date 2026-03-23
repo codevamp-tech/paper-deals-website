@@ -413,6 +413,8 @@ export default function ProductPage() {
             Your account has been deactivated by the admin.
             <br />
             Please contact your admin to enable product access.
+            <br />
+            <a href="mailto:[support@paperdeals.in]">[support@paperdeals.in]</a>
           </p>
 
           <div className="mt-4 flex justify-center">

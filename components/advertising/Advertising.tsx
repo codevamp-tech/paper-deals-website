@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/hooks/use-theme";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Advertisement {
@@ -35,6 +35,7 @@ const Advertising = () => {
         }
 
         setAds(filteredAds);
+        console.log("filteredads", filteredAds);
       } catch (err) {
         console.error("Error fetching ads:", err);
       } finally {
@@ -48,11 +49,11 @@ const Advertising = () => {
     if (ads.length <= 1) return;
 
     const interval = setInterval(() => {
-      handleNext();
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [ads, currentIndex]);
+  }, [ads]); // ✅ ONLY ads
 
   const handleNext = () => {
     setIsTransitioning(true);
@@ -110,6 +111,7 @@ const Advertising = () => {
 
           {/* 3. Image Layer */}
           <div
+            key={currentAdUrl} // ✅ FORCE RE-RENDER
             className={`w-full h-full bg-cover bg-center transition-all duration-700 ease-in-out ${isTransitioning ? "opacity-0 scale-105" : "opacity-100 scale-100"
               }`}
             style={{ backgroundImage: `url(${currentAdUrl})` }}
@@ -147,9 +149,16 @@ const Advertising = () => {
         {/* 6. Navigation Buttons (Visible on Hover) */}
         <button
           onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/20"
+          className="absolute left-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/20 hover:bg-white/20"
         >
           <ChevronLeftIcon className="h-10 w-10" />
+        </button>
+
+        <button
+          onClick={() => setCurrentIndex((prev) => (prev + 1) % ads.length)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/20 hover:bg-white/20"
+        >
+          <ChevronRightIcon className="h-10 w-10" />
         </button>
       </div>
     </div>

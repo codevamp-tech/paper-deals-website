@@ -200,16 +200,36 @@ const Topbar = () => {
                 {enabled ? (
 
                   <>
-                    <Link href="/product" className="text-sm">
+                    <Link 
+                      href="/product" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       Products
                     </Link>
-                    <Link href="/seller" className="text-sm">
+                    <Link 
+                      href="/seller" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       Sellers
                     </Link>
-                    <Link href="/about" className="text-sm">
+                    <Link 
+                      href="/about" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/about" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm">
+                    <Link 
+                      href="/News" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/News" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       News
                     </Link>
                     <button
@@ -220,22 +240,39 @@ const Topbar = () => {
                           router.push("/buyer-route/product");
                         }
                       }}
-                      className=" flex items-center gap-1 text-sm cursor-pointer"
+                      className={`flex items-center gap-1 text-sm cursor-pointer transition-colors duration-200 ${
+                        pathname === "/buyer-route/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
                     >
                       <Plus className="h-4 w-4" />
-                      Create Post
+                      Sell Products
                     </button>
                   </>
                 ) : (
                   <>
                     <TopbarWithCategories />
-                    <Link href="/B2B/consultants" className="text-sm">
+                    <Link 
+                      href="/B2B/consultants" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/B2B/consultants" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       Consultants
                     </Link>
-                    <Link href="/B2B/become-a-seller" className="text-sm">
+                    <Link 
+                      href="/B2B/become-a-seller" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/B2B/become-a-seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       Become a Seller
                     </Link>
-                    <Link href="/B2B/live-stock" className="text-sm">
+                    <Link 
+                      href="/B2B/live-stock" 
+                      className={`text-sm transition-colors duration-200 ${
+                        pathname === "/B2B/live-stock" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                      }`}
+                    >
                       Live Stock
                     </Link>
                     <Link href="/about" className="text-sm">
@@ -464,12 +501,51 @@ const Topbar = () => {
                       <div className="flex-1 overflow-y-auto p-4 space-y-4">
                         {/* <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
                         <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link> */}
-                        <Link href="/product" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
-                        <Link href="/seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Sellers</Link>
-                        {/* <Link href="/B2B/live-stock" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Live Stock</Link> */}
-                        <Link href="/about" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                        <Link href="/News" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>News</Link>
-                        <Link href="/buyer-login" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+                        <Link 
+                          href="/product" 
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
+                            pathname === "/product" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                          }`} 
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Products
+                        </Link>
+                        <Link 
+                          href="/seller" 
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
+                            pathname === "/seller" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                          }`} 
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Sellers
+                        </Link>
+                        <Link 
+                          href="/about" 
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
+                            pathname === "/about" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                          }`} 
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          About Us
+                        </Link>
+                        <Link 
+                          href="/News" 
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
+                            pathname === "/News" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                          }`} 
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          News
+                        </Link>
+                        <Link 
+                          href="/buyer-login" 
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
+                            pathname === "/buyer-login" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                          }`} 
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Login
+                        </Link>
                         {isLoggedIn && (
                           <Link href="/order" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>My Orders</Link>
                         )}

@@ -77,7 +77,7 @@ export default function OrderConfirmationStep({ form, handleChange, onUpdate }: 
                             {existingUrl && (
                                 <div className="flex items-center gap-2 mt-2">
                                     <Button type="button" variant="outline" size="sm" onClick={() => handleView(existingUrl)} className="flex items-center gap-1 text-xs">
-                                        <Eye className="w-3 h-3" /> View
+                                        <Eye className="w-3 h-3" /> View File
                                     </Button>
                                     <Button type="button" variant="outline" size="sm" onClick={() => handleDownload(existingUrl, doc.label)} className="flex items-center gap-1 text-xs">
                                         <Download className="w-3 h-3" /> Download

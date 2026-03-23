@@ -74,14 +74,13 @@ export default function SamplingStep({ form, handleChange, onUpdate }: SamplingS
                         className="block w-full text-sm text-black border border-gray-300 rounded-lg cursor-pointer bg-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                     {docUrl && (
-                        <div className="flex items-center gap-2 mt-2 text-sm">
-                            <span onClick={handleViewDoc} className="text-blue-500 hover:text-blue-700 cursor-pointer">
-                                View File
-                            </span>
-                            <span className="text-gray-300">|</span>
-                            <span onClick={handleDownloadDoc} className="text-blue-500 hover:text-blue-700 cursor-pointer">
-                                Download
-                            </span>
+                        <div className="flex items-center gap-2 mt-2">
+                            <Button type="button" variant="outline" size="sm" onClick={handleViewDoc} className="flex items-center gap-1">
+                                <Eye className="w-4 h-4" /> View File
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={handleDownloadDoc} className="flex items-center gap-1">
+                                <Download className="w-4 h-4" /> Download
+                            </Button>
                         </div>
                     )}
                 </div>

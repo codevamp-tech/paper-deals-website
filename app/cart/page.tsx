@@ -254,7 +254,11 @@ export default function CartPage() {
     }));
 
   const handleEnquirySubmit = async () => {
-    const groupedCart = groupBySeller();
+    if (!enquiryData.company_name?.trim()) {
+      toast.error("Please fill in your company name");
+      setIsEnquiryModalOpen(true);
+      return;
+    }
 
     const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => ({
       seller_id: Number(sellerId),

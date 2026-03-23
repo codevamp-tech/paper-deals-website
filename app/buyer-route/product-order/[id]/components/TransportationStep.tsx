@@ -103,7 +103,7 @@ export default function TransportationStep({ form, handleChange, onUpdate }: Tra
                             {fileUrl && (
                                 <div className="flex items-center gap-2 mt-2">
                                     <Button type="button" variant="outline" size="sm" onClick={() => handleView(fileUrl)} className="flex items-center gap-1 text-xs">
-                                        <Eye className="w-3 h-3" /> View
+                                        <Eye className="w-3 h-3" /> View File
                                     </Button>
                                     <Button type="button" variant="outline" size="sm" onClick={() => handleDownload(fileUrl, field.label)} className="flex items-center gap-1 text-xs">
                                         <Download className="w-3 h-3" /> Download

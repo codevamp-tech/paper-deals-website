@@ -63,7 +63,7 @@ export default function VerificationStep({ form, handleChange, onUpdate }: Verif
                     {docUrl && (
                         <div className="flex items-center gap-2 mt-2">
                             <Button type="button" variant="outline" size="sm" onClick={handleViewDoc} className="flex items-center gap-1">
-                                <Eye className="w-4 h-4" /> View
+                                <Eye className="w-4 h-4" /> View File
                             </Button>
                             <Button type="button" variant="outline" size="sm" onClick={handleDownloadDoc} className="flex items-center gap-1">
                                 <Download className="w-4 h-4" /> Download

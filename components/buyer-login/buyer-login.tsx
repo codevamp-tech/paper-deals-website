@@ -24,7 +24,7 @@ export default function BuyerSignin() {
 
   const searchParams = useSearchParams()
   const router = useRouter()
-  const redirectUrl = searchParams.get("redirect") || "/buyer-route/dashboard"
+  const redirectUrl = searchParams.get("redirect") || "/"
 
 
   // ✅ Handle input changes
@@ -90,7 +90,7 @@ export default function BuyerSignin() {
         });
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
-        router.push(redirectUrl);
+        router.push(data.user.approved === 1 ? redirectUrl : "/");
       } else {
         toast.error(data.message || "Invalid email or password", {
           id: loadingToast,

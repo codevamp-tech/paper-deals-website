@@ -112,10 +112,7 @@ export default function AssumptionPartner() {
           <div className="overflow-hidden">
             <div
               ref={scrollContainerRef}
-              className="flex gap-6 md:gap-8 animate-marquee hover:pause-animation px-4"
-              style={{
-                width: "max-content",
-              }}
+              className="flex gap-6 md:gap-8 animate-marquee whitespace-nowrap px-4 w-max hover:pause-animation"
             >
               {/* First set of logos */}
               {partners.map((partner) => (
