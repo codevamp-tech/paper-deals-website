@@ -197,95 +197,7 @@ const Topbar = () => {
                 />
               </Link>
 
-              <div className="hidden lg:flex items-center gap-6">
-                {!enabled ? (
-                  // B2C Mode: Products, Sellers, About Us, News, + Sell Products
-                  <>
-                    <Link
-                      href="/product"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                        }`}
-                    >
-                      Products
-                    </Link>
-                    <Link
-                      href="/seller"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                        }`}
-                    >
-                      Sellers
-                    </Link>
-                    <Link
-                      href="/about"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/about" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                        }`}
-                    >
-                      About Us
-                    </Link>
-                    <Link
-                      href="/News"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/News" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                        }`}
-                    >
-                      News
-                    </Link>
-                    <button
-                      onClick={() => {
-                        if (!userId) {
-                          router.push("/buyer-login?redirect=/buyer-route/product");
-                        } else {
-                          router.push("/buyer-route/product");
-                        }
-                      }}
-                      className={`flex items-center gap-1 text-sm cursor-pointer transition-colors duration-200 ${pathname === "/buyer-route/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                        }`}
-                    >
-                      <Plus className="h-4 w-4" />
-                      Sell Products
-                    </button>
-                  </>
-                ) : (
-                  // B2B Mode: All Categories, Consultants, Become a Seller, Live Stock, About Us, News
-                  <>
-                    <TopbarWithCategories />
-                    <Link
-                      href="/B2B/consultants"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/consultants" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
-                        }`}
-                    >
-                      Consultants
-                    </Link>
-                    <Link
-                      href="/B2B/become-a-seller"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/become-a-seller" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
-                        }`}
-                    >
-                      Become a Seller
-                    </Link>
-                    <Link
-                      href="/B2B/live-stock"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/live-stock" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
-                        }`}
-                    >
-                      Live Stock
-                    </Link>
-                    <Link
-                      href="/about"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/about" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
-                        }`}
-                    >
-                      About Us
-                    </Link>
-                    <Link
-                      href="/News"
-                      className={`text-sm transition-colors duration-200 ${pathname === "/News" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
-                        }`}
-                    >
-                      News
-                    </Link>
-                  </>
-                )}
-              </div>
+
             </div>
             {/* Right Section */}
             <div className="ml-auto flex items-center gap-4">
@@ -554,6 +466,99 @@ const Topbar = () => {
                 </div>
               )}
             </nav>
+          </div>
+        </div>
+      </div>
+      <div className="hidden lg:block bg-[#1a233a] py-2 border-t border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-8">
+            {!enabled ? (
+              // B2C Mode: Products, Sellers, About Us, News, + Sell Products
+              <>
+                <Link
+                  href="/product"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/product" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  Products
+                </Link>
+                <Link
+                  href="/seller"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/seller" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  Sellers
+                </Link>
+                <Link
+                  href="/about"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/about" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/News"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/News" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  News
+                </Link>
+                <button
+                  onClick={() => {
+                    if (!userId) {
+                      router.push("/buyer-login?redirect=/buyer-route/product");
+                    } else {
+                      router.push("/buyer-route/product");
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 text-[15px] font-medium cursor-pointer transition-colors duration-200 ${pathname === "/buyer-route/product" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  <Plus className="h-4 w-4" />
+                  Sell Products
+                </button>
+              </>
+            ) : (
+              // B2B Mode: All Categories, Consultants, Become a Seller, Live Stock, About Us, News
+              <>
+                <TopbarWithCategories />
+                <Link
+                  href="/B2B/consultants"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/B2B/consultants" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  Consultants
+                </Link>
+                <Link
+                  href="/B2B/become-a-seller"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/B2B/become-a-seller" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  Become a Seller
+                </Link>
+                <Link
+                  href="/B2B/live-stock"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/B2B/live-stock" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  Live Stock
+                </Link>
+                <Link
+                  href="/about"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/about" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/News"
+                  className={`text-[15px] font-medium transition-colors duration-200 ${pathname === "/News" ? "text-cyan-400" : "text-gray-100 hover:text-cyan-400"
+                    }`}
+                >
+                  News
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
