@@ -9,6 +9,7 @@ export default function SellerList() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const router = useRouter();
@@ -17,13 +18,36 @@ export default function SellerList() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Fetch all sellers
+  // ✅ Read mode from localStorage
+  useEffect(() => {
+    const savedMode = (localStorage.getItem("mode") as "B2B" | "B2C") || "B2C";
+    setMode(savedMode);
+
+    // Listen for mode changes from other tabs
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "mode" && (e.newValue === "B2B" || e.newValue === "B2C")) {
+        setMode(e.newValue as "B2B" | "B2C");
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  // ✅ Fetch sellers based on mode
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/product/getApprovedSellers`
-        );
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+        let url: string;
+        if (mode === "B2B") {
+          // B2B: sellers with user_type = 2
+          url = `${baseUrl}/api/product/getApprovedSellers?user_type=2`;
+        } else {
+          // B2C: sellers with user_type = 3 and approved = 1
+          url = `${baseUrl}/api/product/getApprovedSellers?user_type=3&approved=1`;
+        }
+        const res = await fetch(url);
         const data = await res.json();
         setSellers(data.data || []);
       } catch (err) {
@@ -33,7 +57,7 @@ export default function SellerList() {
       }
     };
     fetchSellers();
-  }, []);
+  }, [mode]);
 
   // ✅ Unique categories dynamically
   const categories = useMemo(() => {
