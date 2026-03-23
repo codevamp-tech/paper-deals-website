@@ -557,7 +557,7 @@ export default function ProductListing() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {filteredProducts.map((item) => (
               <div
                 key={item.id}
@@ -627,7 +627,11 @@ export default function ProductListing() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            window.location.href = "/subscriptionPlan";
+                            // window.location.href = "/subscriptionPlan";
+                            if (!isInCart(item.id)) {
+                              addToCart(item);
+                            }
+                            setIsEnquiryModalOpen(true);
                           }}
                           className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-slate-700 font-bold bg-white hover:bg-slate-50 border border-slate-200 transition-all active:scale-[0.98] text-sm shadow-sm"
                         >

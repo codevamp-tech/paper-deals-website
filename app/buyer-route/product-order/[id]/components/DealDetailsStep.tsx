@@ -120,14 +120,13 @@ export default function DealDetailsStep({ form, handleChange, buyers, sellers, c
                             className="block w-full text-sm text-black border border-gray-300 rounded-lg cursor-pointer bg-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                         />
                         {tdsUrl && (
-                            <div className="flex items-center gap-2 mt-1">
-                                <button type="button" onClick={handleViewTds} className="text-sm text-blue-600 hover:underline">
-                                    View File
-                                </button>
-                                <span className="text-gray-400">|</span>
-                                <button type="button" onClick={handleDownloadTds} className="text-sm text-blue-600 hover:underline">
-                                    Download
-                                </button>
+                            <div className="flex items-center gap-2 mt-2">
+                                <Button type="button" variant="outline" size="sm" onClick={handleViewTds} className="flex items-center gap-1">
+                                    <Eye className="w-4 h-4" /> View File
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={handleDownloadTds} className="flex items-center gap-1">
+                                    <Download className="w-4 h-4" /> Download
+                                </Button>
                             </div>
                         )}
                     </div>

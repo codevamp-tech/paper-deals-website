@@ -5,11 +5,13 @@ import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 import PartnerWithUs from "@/components/partnerwithus/PartnerWith";
 import FaqSection from "@/components/faqSection/FaqSection";
 import SellerList from "@/components/sellerListing";
+import PageAdvertising from "@/components/advertising/pageAdvetise";
 
 
 const Seller = () => {
   return (
     <div>
+      <PageAdvertising />
       <SellerList />
       {/* <Advertising /> */}
       <ReadyToOrder />

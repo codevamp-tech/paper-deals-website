@@ -259,13 +259,31 @@ const EnquiryModal = memo(function EnquiryModal({
                   <div className="space-y-4">
                     {items.map((item: any) => {
                       const edit = productEdits[item.id] || {};
+                      
+                      // Pre-fill fields logic: use edit value if exists, else use item property
+                      const getFieldValue = (field: string) => {
+                        if (edit[field] !== undefined) return edit[field];
+                        
+                        // Mapping for common fields from item to enquiry
+                        const itemMapping: Record<string, any> = {
+                          gsm: item.gsm,
+                          size: item.size || item.sizes,
+                          shade: item.shade,
+                          bf: item.bf,
+                          brightness: item.brightness,
+                          weight: item.weight,
+                        };
+                        
+                        return itemMapping[field] || "";
+                      };
+
                       return (
                         <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                           <div className="font-medium text-gray-900">{item.product_name}</div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
                             <div className="flex gap-2">
                               <input
-                                value={edit["quantity_in_kg"] ?? ""}
+                                value={edit["quantity_in_kg"] ?? item.quantity ?? ""}
                                 onChange={(e) =>
                                   setProductEdit(item.id, {
                                     quantity_in_kg: e.target.value.trim() || undefined,
@@ -301,7 +319,7 @@ const EnquiryModal = memo(function EnquiryModal({
                             ].map((field) => (
                               <input
                                 key={field}
-                                value={edit[field] ?? ""}
+                                value={getFieldValue(field)}
                                 onChange={(e) =>
                                   setProductEdit(item.id, {
                                     [field]: e.target.value.trim() || undefined,

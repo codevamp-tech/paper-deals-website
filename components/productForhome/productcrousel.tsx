@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Mode = "B2B" | "B2C";
 
@@ -27,9 +28,10 @@ const getProductImage = (images?: string | string[]) => {
 };
 
 
-export default function ProductCrousel() {
+export default function ProductCrousel({ initialProducts }: { initialProducts?: any[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>(initialProducts || []);
+  const [isHovered, setIsHovered] = useState(false);
   const [mode, setMode] = useState<Mode>("B2B");
   const { theme } = useTheme();
 
@@ -39,8 +41,10 @@ export default function ProductCrousel() {
     if (savedMode) setMode(savedMode);
   }, []);
 
-  /* ✅ Fetch products based on mode */
+  /* ✅ Fetch products based on mode if no initialProducts provided */
   useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) return;
+
     const fetchProducts = async () => {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -75,7 +79,7 @@ export default function ProductCrousel() {
     };
 
     fetchProducts();
-  }, [mode]);
+  }, [mode, initialProducts]);
 
   /* ✅ Auto-scroll */
   useEffect(() => {
@@ -86,40 +90,46 @@ export default function ProductCrousel() {
     let scrollPosition = 0;
 
     const scroll = () => {
-      scrollPosition += 0.5;
-      const scrollWidth = scrollContainer.scrollWidth / 2;
-      scrollContainer.style.transform = `translateX(-${scrollPosition % scrollWidth}px)`;
+      if (!isHovered) {
+        scrollPosition += 0.5;
+        const scrollWidth = scrollContainer.scrollWidth / 2;
+        scrollContainer.style.transform = `translateX(-${scrollPosition % scrollWidth}px)`;
+      }
       animationId = requestAnimationFrame(scroll);
     };
 
     animationId = requestAnimationFrame(scroll);
     return () => cancelAnimationFrame(animationId);
-  }, [products]);
+  }, [products, isHovered]);
 
   return (
     <div className="w-full py-6 px-4 overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto">
 
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <h2 className={`${theme.Text} text-[6vh] font-[900]`}>
-            Products
-          </h2>
-        </div>
+        {/* Heading & View All Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12 border-b border-gray-100 pb-6">
+          <div className="text-center sm:text-left">
+            <h2 className={`${theme.Text} text-[6vh] font-[900]`}>
+              Products
+            </h2>
+            <div className="w-20 h-1.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-3 mx-auto sm:mx-0"></div>
+          </div>
 
-        {/* View All */}
-        <div className="flex justify-end mb-6">
-          <a href="/product">
-            <button className="flex items-center gap-2 px-6 py-3 border border-cyan-600 rounded-2xl text-blue-600 hover:bg-cyan-50">
+          <Link href="/product">
+            <button className="flex items-center gap-2 px-6 py-3 border border-cyan-600 rounded-2xl text-blue-600 hover:bg-cyan-50 transition-all duration-300 shadow-sm hover:shadow-md">
               View all Products
               <ArrowRight className="w-5 h-5" />
             </button>
-          </a>
+          </Link>
         </div>
 
         {/* Carousel */}
         <div className="relative overflow-hidden">
-          <div className="overflow-hidden py-4">
+          <div 
+            className="overflow-hidden py-4"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <div
               ref={scrollRef}
               className="flex gap-6"
