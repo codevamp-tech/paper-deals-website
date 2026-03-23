@@ -64,7 +64,8 @@ const Topbar = () => {
       localStorage.setItem("mode", "B2C");
     }
 
-    setEnabled(mode === "B2C");
+    // B2B = true (green), B2C = false (blue)
+    setEnabled(mode === "B2B");
   }, []);
 
   useEffect(() => {
@@ -197,38 +198,34 @@ const Topbar = () => {
               </Link>
 
               <div className="hidden lg:flex items-center gap-6">
-                {enabled ? (
-
+                {!enabled ? (
+                  // B2C Mode: Products, Sellers, About Us, News, + Sell Products
                   <>
-                    <Link 
-                      href="/product" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/product"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                        }`}
                     >
                       Products
                     </Link>
-                    <Link 
-                      href="/seller" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/seller"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                        }`}
                     >
                       Sellers
                     </Link>
-                    <Link 
-                      href="/about" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/about" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/about"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/about" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                        }`}
                     >
                       About Us
                     </Link>
-                    <Link 
-                      href="/News" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/News" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/News"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/News" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                        }`}
                     >
                       News
                     </Link>
@@ -240,45 +237,50 @@ const Topbar = () => {
                           router.push("/buyer-route/product");
                         }
                       }}
-                      className={`flex items-center gap-1 text-sm cursor-pointer transition-colors duration-200 ${
-                        pathname === "/buyer-route/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                      className={`flex items-center gap-1 text-sm cursor-pointer transition-colors duration-200 ${pathname === "/buyer-route/product" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
+                        }`}
                     >
                       <Plus className="h-4 w-4" />
                       Sell Products
                     </button>
                   </>
                 ) : (
+                  // B2B Mode: All Categories, Consultants, Become a Seller, Live Stock, About Us, News
                   <>
                     <TopbarWithCategories />
-                    <Link 
-                      href="/B2B/consultants" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/B2B/consultants" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/B2B/consultants"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/consultants" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
+                        }`}
                     >
                       Consultants
                     </Link>
-                    <Link 
-                      href="/B2B/become-a-seller" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/B2B/become-a-seller" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/B2B/become-a-seller"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/become-a-seller" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
+                        }`}
                     >
                       Become a Seller
                     </Link>
-                    <Link 
-                      href="/B2B/live-stock" 
-                      className={`text-sm transition-colors duration-200 ${
-                        pathname === "/B2B/live-stock" ? "text-blue-600 font-bold" : "text-gray-600 hover:text-blue-600"
-                      }`}
+                    <Link
+                      href="/B2B/live-stock"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/B2B/live-stock" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
+                        }`}
                     >
                       Live Stock
                     </Link>
-                    <Link href="/about" className="text-sm">
+                    <Link
+                      href="/about"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/about" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
+                        }`}
+                    >
                       About Us
                     </Link>
-                    <Link href="/News" className="text-sm">
+                    <Link
+                      href="/News"
+                      className={`text-sm transition-colors duration-200 ${pathname === "/News" ? "text-green-600 font-bold" : "text-gray-600 hover:text-green-600"
+                        }`}
+                    >
                       News
                     </Link>
                   </>
@@ -363,19 +365,20 @@ const Topbar = () => {
 
                 </div>
               </div>
-              {/* <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
+              <div className="flex items-center justify-end gap-1 rounded-full bg-gray-100 p-1 border border-gray-200">
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
+                      {/* B2C Button — Blue when active */}
                       <button
                         onClick={() => {
-                          if (!enabled) return;
+                          if (!enabled) return; // already B2C
                           setEnabled(false);
                           localStorage.setItem("mode", "B2C");
                           router.push("/");
                           setTimeout(() => window.location.reload(), 500);
                         }}
-                        style={{ backgroundColor: !enabled ? theme.toggle : "transparent" }}
+                        style={{ backgroundColor: !enabled ? "#3B82F6" : "transparent" }}
                         className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${!enabled ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
                       >
                         <ShoppingBag className="mr-2 h-4 w-4" /> B2C
@@ -390,15 +393,16 @@ const Topbar = () => {
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
+                      {/* B2B Button — Green when active */}
                       <button
                         onClick={() => {
-                          if (enabled) return;
+                          if (enabled) return; // already B2B
                           setEnabled(true);
                           localStorage.setItem("mode", "B2B");
                           router.push("/");
                           setTimeout(() => window.location.reload(), 500);
                         }}
-                        style={{ backgroundColor: enabled ? theme.toggle : "transparent" }}
+                        style={{ backgroundColor: enabled ? "#22C55E" : "transparent" }}
                         className={`flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${enabled ? "text-white shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
                       >
                         <Building2 className="mr-2 h-4 w-4" /> B2B
@@ -409,7 +413,7 @@ const Topbar = () => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div> */}
+              </div>
 
               {/* User/Login */}
               <div className="flex items-end justify-end">
@@ -501,47 +505,42 @@ const Topbar = () => {
                       <div className="flex-1 overflow-y-auto p-4 space-y-4">
                         {/* <Link href="/B2B/consultants" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Consultants</Link>
                         <Link href="/B2B/become-a-seller" className="block py-3 px-4 text-base text-gray-800 hover:text-cyan-500 hover:bg-gray-50 rounded-lg transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Become a Seller</Link> */}
-                        <Link 
-                          href="/product" 
-                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
-                            pathname === "/product" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
-                          }`} 
+                        <Link
+                          href="/product"
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${pathname === "/product" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                            }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           Products
                         </Link>
-                        <Link 
-                          href="/seller" 
-                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
-                            pathname === "/seller" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
-                          }`} 
+                        <Link
+                          href="/seller"
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${pathname === "/seller" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                            }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           Sellers
                         </Link>
-                        <Link 
-                          href="/about" 
-                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
-                            pathname === "/about" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
-                          }`} 
+                        <Link
+                          href="/about"
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${pathname === "/about" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                            }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           About Us
                         </Link>
-                        <Link 
-                          href="/News" 
-                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
-                            pathname === "/News" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
-                          }`} 
+                        <Link
+                          href="/News"
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${pathname === "/News" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                            }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           News
                         </Link>
-                        <Link 
-                          href="/buyer-login" 
-                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${
-                            pathname === "/buyer-login" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
-                          }`} 
+                        <Link
+                          href="/buyer-login"
+                          className={`block py-3 px-4 text-base rounded-lg transition-all duration-200 ${pathname === "/buyer-login" ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-800 hover:text-cyan-500 hover:bg-gray-50"
+                            }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           Login

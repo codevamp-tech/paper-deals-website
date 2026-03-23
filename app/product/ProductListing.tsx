@@ -59,7 +59,9 @@ export default function ProductListing() {
       else setIsFetchingMore(true);
 
       const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-      const url = `${baseUrl}/api/product/by-user-type?user_type=3&page=${page}&limit=12`;
+      const currentMode = localStorage.getItem("mode") || "B2C";
+      const userType = currentMode === "B2B" ? 2 : 3;
+      const url = `${baseUrl}/api/product/by-user-type?user_type=${userType}&page=${page}&limit=12`;
 
       const res = await fetch(url);
 
@@ -130,10 +132,10 @@ export default function ProductListing() {
 
 
   useEffect(() => {
-    const savedMode = localStorage.getItem("mode") as "B2B" | "B2C";
-    if (savedMode) setMode(savedMode);
+    const savedMode = (localStorage.getItem("mode") as "B2B" | "B2C") || "B2C";
+    setMode(savedMode);
 
-    const savedCart = localStorage.getItem(`cart_${savedMode || "B2B"}`);
+    const savedCart = localStorage.getItem(`cart_${savedMode}`);
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }

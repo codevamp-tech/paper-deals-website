@@ -28,10 +28,10 @@ const Advertising = () => {
         const mode = localStorage.getItem("mode");
 
         let filteredAds = data;
-        if (mode === "B2C") {
-          filteredAds = data.filter((ad: Advertisement) => ad.page_type === "buyer");
+        if (mode === "B2C" || !mode) {
+          filteredAds = data.filter((ad: Advertisement) => ad.page_type?.toLowerCase() === "b2c" || ad.page_type?.toLowerCase() === "buyer");
         } else if (mode === "B2B") {
-          filteredAds = data.filter((ad: Advertisement) => ad.page_type === "seller");
+          filteredAds = data.filter((ad: Advertisement) => ad.page_type?.toLowerCase() === "b2b" || ad.page_type?.toLowerCase() === "seller");
         }
 
         setAds(filteredAds);

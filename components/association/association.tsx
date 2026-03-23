@@ -21,7 +21,9 @@ export default function AssumptionPartner() {
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bottom-logo?type=b2c`)
+        const mode = localStorage.getItem("mode") || "B2C"
+        const type = mode.toLowerCase()
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bottom-logo?type=${type}`)
         if (!res.ok) throw new Error("Failed to fetch partner logos")
         const data = await res.json()
         setPartners(data?.data)
