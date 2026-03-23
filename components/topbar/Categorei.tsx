@@ -74,12 +74,15 @@ export default function CategoriesDropdown() {
     <div className="relative">
       {/* Categories Button */}
       <button
-        className="flex items-center gap-2 px-2 py-4 text-black font-medium"
-        onClick={() => setIsOpen((prev) => !prev)}   // 👈 toggle on click
+        className="flex items-center gap-2 pr-4 py-1 text-white font-medium hover:text-cyan-400 transition-colors duration-200"
+        onClick={() => setIsOpen((prev) => !prev)}
       >
-
-        <span className="hidden sm:inline">All Categories</span>
-        <span className="sm:hidden">Categories</span>
+        <div className="bg-white rounded-full p-1 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-grid-2x2 text-[#1a233a]"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 12h18"/><path d="M12 3v18"/></svg>
+        </div>
+        <span className="hidden sm:inline text-[15px]">All Categories</span>
+        <span className="sm:hidden text-[15px]">Categories</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-down opacity-80"><path d="m6 9 6 6 6-6"/></svg>
       </button>
 
       {/* Dropdown */}
