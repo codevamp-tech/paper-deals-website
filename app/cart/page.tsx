@@ -151,6 +151,7 @@ const SellerSection = ({ sellerId, items, onRemove, onUpdateQuantity }: SellerSe
 
 export default function CartPage() {
   const [cart, setCart] = useState<Product[]>([]);
+  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
 
@@ -183,7 +184,10 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("cart_B2C");
+    const savedMode = (localStorage.getItem("mode") as "B2B" | "B2C") || "B2C";
+    setMode(savedMode);
+    
+    const saved = localStorage.getItem(`cart_${savedMode}`);
     setCart(saved ? JSON.parse(saved) : []);
     fetchRelatedProducts();
   }, [fetchRelatedProducts]);
@@ -200,7 +204,7 @@ export default function CartPage() {
 
   const updateLocalStorage = (updatedCart: Product[]) => {
     setCart(updatedCart);
-    localStorage.setItem("cart_B2C", JSON.stringify(updatedCart));
+    localStorage.setItem(`cart_${mode}`, JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cart-updated"));
   };
 
@@ -254,24 +258,29 @@ export default function CartPage() {
     }));
 
   const handleEnquirySubmit = async () => {
-    if (!enquiryData.company_name?.trim()) {
+    // Read mode from localStorage (single source of truth)
+    const currentMode = localStorage.getItem("mode") || "B2C";
+    
+    // Only B2B requires company_name
+    if (currentMode === "B2B" && !enquiryData.company_name?.trim()) {
       toast.error("Please fill in your company name");
       setIsEnquiryModalOpen(true);
       return;
     }
 
-    const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => ({
+    console.log("📤 Cart enquiry mode:", currentMode);
+    const enquiries = Object.entries(groupBySeller()).map(([sellerId, items]) => ({
       seller_id: Number(sellerId),
 
-      product_ids: items.map(item => item.id),
+      product_ids: items.map((item: any) => item.id),
 
-      products: items.map(item => {
+      products: items.map((item: any) => {
         const edit = productEdits[item.id] || {};
 
         return {
           // ✅ REQUIRED IDS
           product_id: item.id,
-          category_id: item.category_id ?? null, // 🔥 FIX
+          category_id: item.category_id ?? null,
 
           // ✅ BASE INFO
           product_name: item.product_name,
@@ -290,12 +299,15 @@ export default function CartPage() {
         };
       }),
 
-      customer_details: enquiryData,
+      customer_details: {
+        ...enquiryData,
+        mode: currentMode, // ✅ single source of truth from localStorage
+      },
     }));
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple-broadcast`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

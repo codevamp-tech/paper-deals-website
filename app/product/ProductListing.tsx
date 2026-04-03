@@ -201,7 +201,7 @@ export default function ProductListing() {
   const groupCartBySeller = () => {
     const grouped: { [key: string]: any[] } = {};
     cart.forEach((item) => {
-      const sellerId = item.seller_id || "unknown";
+      const sellerId = item.seller_id || item.user_id || "unknown";
       if (!grouped[sellerId]) {
         grouped[sellerId] = [];
       }
@@ -250,6 +250,7 @@ export default function ProductListing() {
           city: enquiryData.city,
           remarks: enquiryData.remarks,
           message: enquiryData.message,
+          mode: (localStorage.getItem("mode") as "B2B" | "B2C") || mode || "B2C",
         },
       };
     });

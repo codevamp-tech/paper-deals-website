@@ -23,8 +23,9 @@ export default function EnquiryShow() {
       setError(null);
 
       try {
+        const mode = localStorage.getItem("mode") || "B2C";
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries?page=${page}&limit=${entries}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/enquiries?page=${page}&limit=${entries}&mode=${mode}`,
           {
             method: "GET",
             headers: {
@@ -75,7 +76,7 @@ export default function EnquiryShow() {
     const buyerName = item.buyer?.name?.toLowerCase() || "";
     const city = item.city?.toLowerCase() || "";
     const category = item.category?.name?.toLowerCase() || "";
-    const product = item.product?.toLowerCase() || "";
+    const product = (item.product || item.productDetails?.product_name || "").toLowerCase();
     return (
       buyerName.includes(search.toLowerCase()) ||
       city.includes(search.toLowerCase()) ||
@@ -188,7 +189,7 @@ export default function EnquiryShow() {
                       {row.category?.name || "—"}
                     </td>
 
-                    <td className="border px-3 py-2">{row.product}</td>
+                    <td className="border px-3 py-2">{row.product || row.productDetails?.product_name || "—"}</td>
                     <td className="border px-3 py-2">{row.gsm}</td>
                     <td className="border px-3 py-2">{row.shade}</td>
                     <td className="border px-3 py-2">

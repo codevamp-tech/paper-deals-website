@@ -59,7 +59,7 @@ export default function ViewEnquiryPage() {
 
 
   const handleUpdate = () => {
-    fetch(`http://localhost:5000/api/enquiry/enquiries/${id}`, {
+    fetch(`${API_URL}/api/enquiry/enquiries/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

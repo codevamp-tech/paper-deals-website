@@ -86,17 +86,30 @@ export default function BuyerSignin() {
       if (res.ok) {
         toast.success("Login successful 🎉", {
           id: loadingToast,
-          description: "Redirecting to dashboard...",
+          description: "Redirecting...",
         });
+
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
-        router.push(data.user.approved === 1 ? redirectUrl : "/");
+
+        // Debug: log user to check approved field
+        console.log("[BuyerLogin] user data:", data.user);
+
+        if (data.user?.approved === 1) {
+          // Approved buyer → go to dashboard (or redirect param)
+          const finalUrl = redirectUrl === "/" ? "/buyer-route/dashboard" : redirectUrl;
+          router.replace(finalUrl);
+        } else {
+          // Not approved → go to home page
+          toast.info("Successfully logged in . Redirecting to home...", { id: loadingToast });
+          router.replace("/");
+        }
       } else {
         toast.error(data.message || "Invalid email or password", {
           id: loadingToast,
         });
 
-        console.log("Login failed:", data.message || "Invalid credentials");
+        console.log("[BuyerLogin] Login failed:", data.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -137,10 +150,9 @@ export default function BuyerSignin() {
       });
       setIsForgotOpen(false);
       setForgotEmail("");
+      // ✅ Fix
     } catch (err) {
-      toast.error(data.message || "Failed to send reset link", {
-        id: loadingToast,
-      });
+      toast.error("Failed to send reset link", { id: loadingToast });
     }
   };
 

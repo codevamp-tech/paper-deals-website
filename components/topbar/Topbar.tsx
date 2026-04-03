@@ -202,22 +202,6 @@ const Topbar = () => {
             {/* Right Section */}
             <div className="ml-auto flex items-center gap-4">
 
-              <button
-                onClick={() => router.push("/cart")}
-                className="relative p-1 rounded-full hover:bg-gray-100 transition"
-              >
-                <img
-                  src="/bag.png"
-                  alt="Cart"
-                  className="w-8 h-8 object-contain"
-                />
-
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
 
               {/* Search Bar */}
               <div className="hidden md:flex items-center flex-1 justify-center">
@@ -326,6 +310,22 @@ const Topbar = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+              <button
+                onClick={() => router.push("/cart")}
+                className="relative p-1 rounded-full hover:bg-gray-100 transition"
+              >
+                <img
+                  src="/bag.png"
+                  alt="Cart"
+                  className="w-8 h-8 object-contain"
+                />
+
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
 
               {/* User/Login */}
               <div className="flex items-end justify-end">
