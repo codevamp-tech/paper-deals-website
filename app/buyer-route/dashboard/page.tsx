@@ -68,25 +68,7 @@ export default function AdminDashboard() {
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
       </div>
 
-      {/* Cards */}
-      {/* Cards (only show if NOT consultant) */}
 
-      {/* Overview Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        {/* Pending Enquiries Card */}
-        <div className="bg-white shadow-md rounded-lg p-6 border-l-4 border-orange-500 flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Pending Enquiries</p>
-            <h2 className="text-3xl font-bold text-gray-900 mt-1">{pendingEnquiries}</h2>
-            <Link href="/buyer-route/productEnquiry" className="text-sm text-orange-600 hover:text-orange-700 font-medium mt-2 inline-block">
-              View details &rarr;
-            </Link>
-          </div>
-          <div className="bg-orange-100 p-3 rounded-full">
-            <MessageSquare className="w-8 h-8 text-orange-600" />
-          </div>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <div className="h-full">

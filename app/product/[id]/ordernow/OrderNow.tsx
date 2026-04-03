@@ -175,13 +175,19 @@ const OrderNow = ({ productId }: { productId: string }) => {
       return;
     }
     setLoading(true);
-    const sellerId = product?.seller_id;
+    const sellerId = product?.seller_id || product?.user_id;
+    const mode = localStorage.getItem("mode") || "B2C";
+    
+    // Add mode to the payload, single source of truth from localStorage
     const payload = {
       ...formData,
       quantity_in_kg: formData.quantity_in_kg,
       buyer_id: user?.user_id,
       user_id: sellerId,
+      mode: mode,
     };
+    
+    console.log("📤 Sending Enquiry Payload:", payload);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/broadcast`, {
         method: "POST",
@@ -237,7 +243,8 @@ const OrderNow = ({ productId }: { productId: string }) => {
     return "/paper.jpg";
   };
 
-  const isProfileIncomplete = !formData.company_name?.trim();
+  const mode = typeof window !== "undefined" ? localStorage.getItem("mode") || "B2C" : "B2C";
+  const isProfileIncomplete = mode === "B2B" && !formData.company_name?.trim();
 
   if (!product) return <ProductSkeleton />;
 
@@ -399,15 +406,18 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
                   <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                    <div>
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company *</Label>
-                      <Input
-                        name="company_name"
-                        value={formData.company_name}
-                        disabled
-                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                      />
-                    </div>
+                    {mode === "B2B" && (
+                      <div>
+                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company *</Label>
+                        <Input
+                          name="company_name"
+                          value={formData.company_name}
+                          disabled
+                          onKeyDown={(e) => e.stopPropagation()}
+                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">City *</Label>
@@ -416,6 +426,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                         value={formData.city}
                         onChange={handleChange}
                         disabled
+                        onKeyDown={(e) => e.stopPropagation()}
                         className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
                       />
                     </div>
@@ -423,8 +434,10 @@ const OrderNow = ({ productId }: { productId: string }) => {
                     <div>
                       <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category *</Label>
                       <Input
+                        name="category_id"
                         value={product.category?.name || ""}
                         disabled
+                        onKeyDown={(e) => e.stopPropagation()}
                         className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
                       />
                     </div>
@@ -441,8 +454,9 @@ const OrderNow = ({ productId }: { productId: string }) => {
                         </Label>
                         <Input
                           name={field.key}
-                          value={(formData as any)[field.key]}
+                          value={(formData as any)[field.key] || ""}
                           onChange={handleChange}
+                          onKeyDown={(e) => e.stopPropagation()}
                           className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
                         />
                       </div>
@@ -455,6 +469,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                           name="quantity_in_kg"
                           value={formData.quantity_in_kg}
                           onChange={handleChange}
+                          onKeyDown={(e) => e.stopPropagation()}
                           className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
                         />
                       </div>
@@ -482,6 +497,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
                         name="remarks"
                         value={formData.remarks}
                         onChange={handleChange}
+                        onKeyDown={(e) => e.stopPropagation()}
                         placeholder="Add any extra details..."
                         className="mt-1 text-xs bg-gray-50 border-gray-200 resize-none"
                         rows={3}

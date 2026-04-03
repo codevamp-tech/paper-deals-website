@@ -150,13 +150,23 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
       <div className="flex-1 overflow-y-auto max-h-[calc(100vh-150px)] space-y-2 pr-2 mt-4 md:mt-0 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent">
         {/* Render nav items in the new order, but hide product links if B2B */}
         {navigation.map((item) => {
-          if (mode === "B2B" &&
-            (item.href === "/buyer-route/product" || item.href === "/buyer-route/productEnquiry")) {
-            return null;
-          }
-
-          if (mode !== "B2B" && item.href === "/buyer-route/pdbulkdeal") {
-            return null;
+          if (mode === "B2B") {
+            // In B2B mode, hide B2C-specific items
+            if (
+              item.href === "/buyer-route/product" ||
+              item.href === "/buyer-route/productEnquiry" ||
+              item.href === "/buyer-route/product-order" ||
+              item.href === "/buyer-route/leads"
+            ) {
+              return null;
+            }
+          } else {
+            // In B2C mode (or when mode is not set), hide B2B-specific items
+            if (
+              item.href === "/buyer-route/pdbulkdeal"
+            ) {
+              return null;
+            }
           }
 
           return (
@@ -165,14 +175,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
             </NavLink>
           );
         })}
-        <hr className="my-3 border-white/10" />
-        {/* <Button
-          onClick={handleLogout}
-          variant="ghost"
-          className="w-full justify-start text-gray-200 hover:bg-white/10 hover:text-white"
-        >
-          Logout
-        </Button> */}
+
       </div>
     </aside>
   );

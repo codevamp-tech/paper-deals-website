@@ -41,6 +41,7 @@ const EnquiryModal = memo(function EnquiryModal({
   const firstInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<string>("B2C");
 
   const user = getUserFromToken();
 
@@ -79,6 +80,12 @@ const EnquiryModal = memo(function EnquiryModal({
     fetchBuyerData();
   }, [user?.user_id]);
 
+  // ✅ Read mode from localStorage
+  useEffect(() => {
+    const currentMode = localStorage.getItem("mode") || "B2C";
+    setMode(currentMode);
+  }, [isOpen]);
+
   // ✅ Autofocus on open
   useEffect(() => {
     if (isOpen) {
@@ -102,8 +109,9 @@ const EnquiryModal = memo(function EnquiryModal({
   };
 
 
+  // B2B requires company_name, B2C does not
   const isProfileIncomplete =
-    !enquiryData.company_name?.trim();
+    mode === "B2B" && !enquiryData.company_name?.trim();
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
@@ -157,26 +165,28 @@ const EnquiryModal = memo(function EnquiryModal({
         {/* FORM START */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Company */}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">
-                Company Name *
-              </label>
-              <input
-                ref={firstInputRef}
-                type="text"
-                autoComplete="organization"
-                value={enquiryData.company_name}
-                onChange={(e) =>
-                  setEnquiryData({ ...enquiryData, company_name: e.target.value })
-                }
-                placeholder="Your company"
-                readOnly
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
-                required
-                disabled
-              />
-            </div>
+            {/* Company — Only shown for B2B */}
+            {mode === "B2B" && (
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Company Name *
+                </label>
+                <input
+                  ref={firstInputRef}
+                  type="text"
+                  autoComplete="organization"
+                  value={enquiryData.company_name}
+                  onChange={(e) =>
+                    setEnquiryData({ ...enquiryData, company_name: e.target.value })
+                  }
+                  placeholder="Your company"
+                  readOnly
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
+                  required
+                  disabled
+                />
+              </div>
+            )}
 
             {/* Contact Person */}
             {/* <div>
@@ -286,9 +296,10 @@ const EnquiryModal = memo(function EnquiryModal({
                                 value={edit["quantity_in_kg"] ?? item.quantity ?? ""}
                                 onChange={(e) =>
                                   setProductEdit(item.id, {
-                                    quantity_in_kg: e.target.value.trim() || undefined,
+                                    quantity_in_kg: e.target.value || undefined,
                                   })
                                 }
+                                onKeyDown={(e) => e.stopPropagation()}
                                 placeholder="QUANTITY"
                                 className="px-3 py-2 border rounded-lg flex-1 min-w-0"
                               />
@@ -322,10 +333,10 @@ const EnquiryModal = memo(function EnquiryModal({
                                 value={getFieldValue(field)}
                                 onChange={(e) =>
                                   setProductEdit(item.id, {
-                                    [field]: e.target.value.trim() || undefined,
+                                    [field]: e.target.value || undefined,
                                   })
                                 }
-
+                                onKeyDown={(e) => e.stopPropagation()}
                                 placeholder={
                                   field === "remarks"
                                     ? "Remarks (for this product)"

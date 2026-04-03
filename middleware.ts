@@ -16,22 +16,27 @@ async function verifyToken(token: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isLoginPage = pathname === "/";
+  const isLoginPage = pathname === "/buyer-login";
   const isBuyerRoute = pathname.startsWith("/buyer-route");
 
   const token = request.cookies.get("token")?.value;
   const user = token ? await verifyToken(token) : null;
   const isAuthenticated = !!user;
 
-  // 🚨 Redirect to home if trying to access buyer routes without valid token
-  if (isBuyerRoute && !isLoginPage && !isAuthenticated) {
-    const response = NextResponse.redirect(new URL("/", request.url));
+  // 🚨 Redirect to buyer-login if trying to access buyer routes without valid token
+  if (isBuyerRoute && !isAuthenticated) {
+    const response = NextResponse.redirect(new URL("/buyer-login", request.url));
     response.cookies.delete("token"); // remove expired token
     return response;
   }
 
-  // 🚨 Already authenticated but on login page
-  if (isLoginPage && isAuthenticated) {
+  // 🚨 Unapproved buyer trying to access dashboard → redirect to home
+  if (isBuyerRoute && isAuthenticated && (user as any)?.approved !== 1) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // 🚨 Already authenticated and approved → redirect away from login page
+  if (isLoginPage && isAuthenticated && (user as any)?.approved === 1) {
     return NextResponse.redirect(new URL("/buyer-route/dashboard", request.url));
   }
 
@@ -45,5 +50,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/buyer-route/:path*", "/admin/:path*"],
+  matcher: ["/buyer-route/:path*", "/admin/:path*", "/buyer-login"],
 };
