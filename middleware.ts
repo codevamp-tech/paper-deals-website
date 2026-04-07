@@ -10,7 +10,7 @@ async function verifyToken(token: string) {
     return payload;
   } catch (e: any) {
     console.error("verify error:", e);
-    return null; // invalid or expired
+    return null;
   }
 }
 
@@ -23,24 +23,39 @@ export async function middleware(request: NextRequest) {
   const user = token ? await verifyToken(token) : null;
   const isAuthenticated = !!user;
 
-  // 🚨 Redirect to buyer-login if trying to access buyer routes without valid token
+  const userData = (user as any)?.data;
+  const approved = userData?.approved;
+  const isSeller = approved === '1' || approved === 1;  // seller
+  const isBuyer = approved === '0' || approved === 0;   // buyer
+
+  // 🚨 Not logged in → redirect to login
   if (isBuyerRoute && !isAuthenticated) {
     const response = NextResponse.redirect(new URL("/buyer-login", request.url));
-    response.cookies.delete("token"); // remove expired token
+    response.cookies.delete("token");
     return response;
   }
 
-  // 🚨 Unapproved buyer trying to access dashboard → redirect to home
-  if (isBuyerRoute && isAuthenticated && (user as any)?.approved !== 1) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // ✅ Logged in as buyer or seller → allow access to all buyer-route pages
+  if (isBuyerRoute && isAuthenticated) {
+    const response = NextResponse.next();
+    if (user) {
+      response.headers.set("x-user", JSON.stringify(user));
+    }
+    return response;
   }
 
-  // 🚨 Already authenticated and approved → redirect away from login page
-  if (isLoginPage && isAuthenticated && (user as any)?.approved === 1) {
-    return NextResponse.redirect(new URL("/buyer-route/dashboard", request.url));
+  // ✅ On login page:
+  if (isLoginPage && isAuthenticated) {
+    if (isSeller) {
+      // Seller → go to dashboard
+      return NextResponse.redirect(new URL("/buyer-route/dashboard", request.url));
+    }
+    if (isBuyer) {
+      // Buyer → go to home
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
-  // ✅ Continue with request and pass user header
   const response = NextResponse.next();
   if (user) {
     response.headers.set("x-user", JSON.stringify(user));
