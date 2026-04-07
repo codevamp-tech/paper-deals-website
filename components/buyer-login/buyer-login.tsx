@@ -92,16 +92,21 @@ export default function BuyerSignin() {
         Cookies.set("token", data.token, { expires: 7 });
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Debug: log user to check approved field
-        console.log("[BuyerLogin] user data:", data.user);
+        // ✅ Decode JWT token directly to get approved field
+        // JWT = header.payload.signature — decode the payload part
+        const tokenPayload = JSON.parse(atob(data.token.split(".")[1]));
+        console.log("🔍 Token payload:", tokenPayload);
 
-        if (data.user?.approved === 1) {
-          // Approved buyer → go to dashboard (or redirect param)
+        const approvedValue = tokenPayload?.data?.approved;
+        console.log("✅ approvedValue:", approvedValue, "| type:", typeof approvedValue);
+
+        const isSeller = approvedValue == 1; // handles both '1' and 1
+
+        if (isSeller) {
           const finalUrl = redirectUrl === "/" ? "/buyer-route/dashboard" : redirectUrl;
           router.replace(finalUrl);
         } else {
-          // Not approved → go to home page
-          toast.info("Successfully logged in . Redirecting to home...", { id: loadingToast });
+          toast.info("Successfully logged in. Redirecting to home...", { id: loadingToast });
           router.replace("/");
         }
       } else {
