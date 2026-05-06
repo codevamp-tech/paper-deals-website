@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import TruncatedText from "@/components/ui/TruncatedText";
 
+import { getUserFromToken } from "@/hooks/use-token";
+
 type Deal = {
   dealId: number;
   buyerId: number;
@@ -21,7 +23,9 @@ type Deal = {
   status: string;
 };
 
-const DealsTable: React.FC = () => {
+interface DealsTableProps {}
+
+const DealsTable: React.FC<DealsTableProps> = () => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,15 +33,19 @@ const DealsTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const token = getCookie("token");
+  
+  const user = getUserFromToken();
+  const userId = user?.user_id;
 
   // Fetch deals with pagination
   useEffect(() => {
     const fetchDeals = async () => {
+      if (!userId) return;
       try {
         setLoading(true);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/current?page=${currentPage}&limit=10`,
-          {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/pd-deals/buyer/${userId}`;
+          
+        const res = await fetch(url, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -46,10 +54,22 @@ const DealsTable: React.FC = () => {
             credentials: "include",
           }
         );
-        if (!res.ok) throw new Error("Failed to fetch deals");
+
         const data = await res.json();
 
-        const mappedDeals: Deal[] = (data.deals || []).map((d: any) => ({
+        if (!res.ok) {
+          // If the API returns success: false and a message about no deals, handle it gracefully
+          if (data.success === false) {
+            setDeals([]);
+            setPagination({ total: 0, page: 1, pages: 1 });
+            return;
+          }
+          throw new Error("Failed to fetch deals");
+        }
+
+        let rawDeals = data.data || [];
+
+        const mappedDeals: Deal[] = rawDeals.map((d: any) => ({
           dealId: d.deal_id,
           buyerId: d.buyer_id,
           sellerId: d.seller_id,
@@ -64,8 +84,8 @@ const DealsTable: React.FC = () => {
           status: d.deal_status === 7 ? "Closed" : "Active",
         }));
 
-        setDeals(mappedDeals);
-        setPagination(data.pagination);
+        setDeals(mappedDeals.filter(d => d.status !== "Closed"));
+        setPagination({ total: mappedDeals.length, page: 1, pages: 1 }); // No pagination from B2B API
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -73,7 +93,7 @@ const DealsTable: React.FC = () => {
       }
     };
     fetchDeals();
-  }, [currentPage, token]);
+  }, [currentPage, token, userId]);
 
   const handleEdit = (id: number) => {
     router.push(`/buyer-route/DirectSingleOrder/${id}`);

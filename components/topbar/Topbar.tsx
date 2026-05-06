@@ -129,10 +129,12 @@ const Topbar = () => {
 
     const fetchResults = async () => {
       try {
+        const currentMode = localStorage.getItem("mode") || "B2C";
+        const userType = currentMode === "B2B" ? 2 : 3;
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/product/search?q=${encodeURIComponent(
             debouncedQuery
-          )}&limit=8`
+          )}&user_type=${userType}&limit=8`
         );
 
         const data = await res.json();

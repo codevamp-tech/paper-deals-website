@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import ClosedPdDealsPage from "@/components/currentdeal";
-import CurrentPaperDealPage from "@/components/closedeal";
+import CurrentPaperDealPage from "@/components/currentdeal";
+import ClosedPdDealsPage from "@/components/closedeal";
 
 type DealType = "current" | "closed";
 
@@ -20,7 +20,7 @@ export default function DealsPage() {
             {/* Current Deals Button */}
             <Button
               variant={activeTab === "current" ? "default" : "outline"}
-              onClick={() => setActiveTab("closed")}
+              onClick={() => setActiveTab("current")}
               className={`transition-all duration-200 ease-in-out ${activeTab === "current"
                 ? "bg-white text-black"
                 : "bg-black text-white"
@@ -32,7 +32,7 @@ export default function DealsPage() {
             {/* Closed Deals Button */}
             <Button
               variant={activeTab === "closed" ? "default" : "outline"}
-              onClick={() => setActiveTab("current")}
+              onClick={() => setActiveTab("closed")}
               className={`transition-all duration-200 ease-in-out ${activeTab === "closed"
                 ? "bg-white text-black"
                 : "  bg-black text-white"

@@ -95,7 +95,12 @@ const EnquiryModal = memo(function EnquiryModal({
 
   if (!isOpen) return null;
 
-  // ✅ Handle Submit (block if no token)
+  // City is always required; B2B also requires company_name
+  const isProfileIncomplete =
+    !enquiryData.city?.trim() ||
+    (mode === "B2B" && !enquiryData.company_name?.trim());
+
+  // ✅ Handle Submit — block if profile incomplete
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.user_id) {
@@ -103,15 +108,22 @@ const EnquiryModal = memo(function EnquiryModal({
       return;
     }
 
+    if (isProfileIncomplete) {
+      toast.error("Please complete your profile before raising an enquiry.", {
+        description: "Go to Profile → Company Information and fill in City" +
+          (mode === "B2B" ? " and Company Name" : "") + ".",
+        action: {
+          label: "Complete Profile",
+          onClick: () => router.push("/buyer-route/profile"),
+        },
+      });
+      return;
+    }
+
     setLoading(true);
     await onSubmit();
     setLoading(false);
   };
-
-
-  // B2B requires company_name, B2C does not
-  const isProfileIncomplete =
-    mode === "B2B" && !enquiryData.company_name?.trim();
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
@@ -242,7 +254,9 @@ const EnquiryModal = memo(function EnquiryModal({
 
             {/* City */}
             <div>
-              <label className="block text-gray-700 font-medium mb-2">City</label>
+              <label className="block text-gray-700 font-medium mb-2">
+                City <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={enquiryData.city}
@@ -250,9 +264,26 @@ const EnquiryModal = memo(function EnquiryModal({
                   setEnquiryData({ ...enquiryData, city: e.target.value })
                 }
                 placeholder="City"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800"
+                className={`w-full px-4 py-3 border rounded-lg text-gray-800 ${
+                  !enquiryData.city?.trim()
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 bg-white"
+                }`}
                 disabled
               />
+              {!enquiryData.city?.trim() && (
+                <p className="text-red-500 text-xs mt-1">
+                  City is missing — please{" "}
+                  <button
+                    type="button"
+                    onClick={() => router.push("/buyer-route/profile")}
+                    className="underline font-medium"
+                  >
+                    complete your profile
+                  </button>
+                  .
+                </p>
+              )}
             </div>
           </div>
 

@@ -27,8 +27,10 @@ export default function CategoryProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const currentMode = localStorage.getItem("mode") || "B2C";
+        const userType = currentMode === "B2B" ? 2 : 3;
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${id}?user_type=${userType}`
         );
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
@@ -55,6 +57,19 @@ export default function CategoryProducts() {
 
   const formatSellerId = (id: number) => {
     return `Seller#${Math.abs(id)}`;
+  };
+
+  const getFirstImage = (images?: string | string[] | null) => {
+    if (!images) return "/paper.jpg";
+    if (Array.isArray(images)) return images.length > 0 ? images[0] : "/paper.jpg";
+    if (typeof images === "string") {
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
+      } catch { }
+      return images; // fallback to the string itself if it's a URL
+    }
+    return "/paper.jpg";
   };
 
   if (loading) {
@@ -86,7 +101,7 @@ export default function CategoryProducts() {
             className="border rounded-lg shadow-md p-4 hover:shadow-lg transition"
           >
             <img
-              src={product.image || "/no-image.png"}
+              src={getFirstImage((product as any).images || product.image)}
               alt={product.product_name}
               className="w-full h-48 object-cover rounded-md mb-4"
             />
