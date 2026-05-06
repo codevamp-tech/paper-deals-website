@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 import { getUserFromToken } from "@/hooks/use-token"
 import { motion } from "framer-motion" // Added motion
 import { Badge } from "@/components/ui/badge" // Added Badge
-import { toast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 const states = [
   { id: "1", name: "Andaman and Nicobar Islands" },
@@ -209,14 +209,14 @@ export default function SellerEditForm() {
         body: JSON.stringify({ user_id: userId, ...bankData }),
       })
       if (res.ok) {
-        toast({ title: "Success", description: "Bank details saved successfully!" })
+        toast.success("Bank details saved successfully!")
         localStorage.setItem("bankConsentAccepted", "true")
       } else {
-        toast({ title: "Error", description: "Failed to save bank details.", variant: "destructive" })
+        toast.error("Failed to save bank details.")
       }
     } catch (error) {
       console.error("Error saving bank details:", error)
-      toast({ title: "Error", description: "Error saving bank details.", variant: "destructive" })
+      toast.error("Error saving bank details.")
     } finally {
       setBankLoading(false)
     }
@@ -458,27 +458,16 @@ export default function SellerEditForm() {
           }
 
           // 👉 show toast
-          toast({
-            title: "Validation Error",
-            description: docData.message,
-            variant: "destructive",
-          });
+          toast.error(docData.message || "Validation Error");
 
           return; // ⛔ stop further execution
         }
       }
 
-      toast({
-        title: "Success",
-        description: `Information ${exists || docExists ? "updated" : "created"} successfully!`,
-        variant: "default",
-      });
+      toast.success(`Information ${exists || docExists ? "updated" : "created"} successfully!`);
     } catch (error) {
       console.error("Error saving seller info:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred",
-      });
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setLoading(false);
     }

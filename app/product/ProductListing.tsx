@@ -255,8 +255,11 @@ export default function ProductListing() {
       };
     });
 
+    const currentMode = (localStorage.getItem("mode") as "B2B" | "B2C") || mode || "B2C";
+    const endpoint = currentMode === "B2B" ? "/api/enquiry/multiple" : "/api/enquiry/multiple-broadcast";
+
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ enquiries }),

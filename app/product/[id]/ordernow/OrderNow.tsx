@@ -174,6 +174,17 @@ const OrderNow = ({ productId }: { productId: string }) => {
       router.push("/buyer-login");
       return;
     }
+    if (isProfileIncomplete) {
+      toast.error("Please complete your profile before raising an enquiry.", {
+        description: "Go to Profile → Company Information and fill in Company Name and City.",
+        action: {
+          label: "Complete Profile",
+          onClick: () => router.push("/buyer-route/profile"),
+        },
+      });
+      setIsModalOpen(false);
+      return;
+    }
     setLoading(true);
     const sellerId = product?.seller_id || product?.user_id;
     const mode = localStorage.getItem("mode") || "B2C";
@@ -189,13 +200,14 @@ const OrderNow = ({ productId }: { productId: string }) => {
     
     console.log("📤 Sending Enquiry Payload:", payload);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/broadcast`, {
+      const endpoint = mode === "B2B" ? "/api/enquiry/enquiries" : "/api/enquiry/broadcast";
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed to send broadcast enquiry");
-      toast.success("Enquiry broadcasted successfully!");
+      if (!res.ok) throw new Error("Failed to send enquiry");
+      toast.success(mode === "B2B" ? "Enquiry sent successfully!" : "Enquiry broadcasted successfully!");
       setIsModalOpen(false);
     } catch (err) {
       console.error("❌ Enquiry submit error:", err);
@@ -244,7 +256,9 @@ const OrderNow = ({ productId }: { productId: string }) => {
   };
 
   const mode = typeof window !== "undefined" ? localStorage.getItem("mode") || "B2C" : "B2C";
-  const isProfileIncomplete = mode === "B2B" && !formData.company_name?.trim();
+  const isProfileIncomplete = mode === "B2B"
+    ? (!formData.company_name?.trim() || !formData.city?.trim())
+    : !formData.city?.trim();
 
   if (!product) return <ProductSkeleton />;
 
@@ -427,8 +441,17 @@ const OrderNow = ({ productId }: { productId: string }) => {
                         onChange={handleChange}
                         disabled
                         onKeyDown={(e) => e.stopPropagation()}
-                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
+                        className={`mt-1 h-8 text-xs ${
+                          !formData.city?.trim()
+                            ? "bg-red-50 border-red-400 focus-visible:ring-red-300"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
                       />
+                      {!formData.city?.trim() && (
+                        <p className="text-red-500 text-xs mt-1">
+                          City missing — complete your profile.
+                        </p>
+                      )}
                     </div>
 
                     <div>

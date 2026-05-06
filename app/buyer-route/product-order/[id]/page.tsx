@@ -101,13 +101,13 @@ const mapApiToForm = (data: any) => ({
 
   // Payment
   transactionDate: data.payment?.transaction_date,
-  transactionId: data.payment?.detail,
+  transactionId: data.payment?.details,
   accountNumber: data.payment?.acc_no,
   bank: data.payment?.bank,
   branch: data.payment?.branch,
   amount: data.payment?.ammount,
-  paymentDoc: data.payment?.upload_docume,
-  paymentDocUrl: data.payment?.upload_docume,
+  paymentReceipt: data.payment?.upload_docume,
+  paymentReceiptUrl: data.payment?.upload_docume,
 
   // Transportation
   transportationDate: data.transportation?.transportation_date,
@@ -196,7 +196,7 @@ const mapPaymentPayload = (form: any) => ({
   bank: form.bank,
   branch: form.branch,
   ammount: form.amount,
-  upload_docume: form.paymentDoc,
+  upload_docume: form.paymentReceipt,
 })
 
 const mapTransportationPayload = (form: any) => ({
@@ -272,7 +272,7 @@ export default function DealForm() {
             (form.document3 && typeof form.document3 !== "string") ||
             (form.document4 && typeof form.document4 !== "string")
           )) ||
-          (currentStep === 4 && form.paymentDoc && typeof form.paymentDoc !== "string") ||
+          (currentStep === 4 && form.paymentReceipt && typeof form.paymentReceipt !== "string") ||
           (currentStep === 5 && (
             (form.uploadBill && typeof form.uploadBill !== "string") ||
             (form.uploadEwayBill && typeof form.uploadEwayBill !== "string") ||
@@ -299,19 +299,19 @@ export default function DealForm() {
           fd.append("upload_docu", form.verificationDoc);
         }
         if (currentStep === 3) {
-          if (form.purchaseOrder && typeof form.purchaseOrder !== "string") fd.append("bill", form.purchaseOrder)
-          if (form.detailsDoc && typeof form.detailsDoc !== "string") fd.append("ewaybill", form.detailsDoc)
-          if (form.document3 && typeof form.document3 !== "string") fd.append("stock_statement", form.document3)
-          if (form.document4 && typeof form.document4 !== "string") fd.append("bill_t", form.document4)
+          if (form.purchaseOrder && typeof form.purchaseOrder !== "string") fd.append("file", form.purchaseOrder)
+          else if (form.detailsDoc && typeof form.detailsDoc !== "string") fd.append("file", form.detailsDoc)
+          else if (form.document3 && typeof form.document3 !== "string") fd.append("file", form.document3)
+          else if (form.document4 && typeof form.document4 !== "string") fd.append("file", form.document4)
         }
-        if (currentStep === 4 && form.paymentDoc && typeof form.paymentDoc !== "string") {
-          fd.append("file", form.paymentDoc)
+        if (currentStep === 4 && form.paymentReceipt && typeof form.paymentReceipt !== "string") {
+          fd.append("file", form.paymentReceipt)
         }
         if (currentStep === 5) {
-          if (form.uploadBill && typeof form.uploadBill !== "string") fd.append("upload_documen", form.uploadBill)
-          if (form.uploadEwayBill && typeof form.uploadEwayBill !== "string") fd.append("ewaybill", form.uploadEwayBill)
-          if (form.uploadStockStatement && typeof form.uploadStockStatement !== "string") fd.append("stock_statement", form.uploadStockStatement)
-          if (form.uploadBillT && typeof form.uploadBillT !== "string") fd.append("bill_t", form.uploadBillT)
+          if (form.uploadBill && typeof form.uploadBill !== "string") fd.append("file", form.uploadBill)
+          else if (form.uploadEwayBill && typeof form.uploadEwayBill !== "string") fd.append("file", form.uploadEwayBill)
+          else if (form.uploadStockStatement && typeof form.uploadStockStatement !== "string") fd.append("file", form.uploadStockStatement)
+          else if (form.uploadBillT && typeof form.uploadBillT !== "string") fd.append("file", form.uploadBillT)
         }
 
         options = {

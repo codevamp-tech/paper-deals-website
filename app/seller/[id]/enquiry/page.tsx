@@ -155,12 +155,21 @@ const SellerEnquiryPage = () => {
         }
     };
 
-    // ✅ Handle Submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) {
             alert("Please login to send an enquiry.");
             router.push("/buyer-login");
+            return;
+        }
+        if (isProfileIncomplete) {
+            toast.error("Please complete your profile before raising an enquiry.", {
+                description: "Go to Profile → Company Information and fill in Company Name and City.",
+                action: {
+                    label: "Complete Profile",
+                    onClick: () => router.push("/buyer-route/profile"),
+                },
+            });
             return;
         }
         setLoading(true);
@@ -226,7 +235,7 @@ const SellerEnquiryPage = () => {
 
 
     const isProfileIncomplete =
-        !formData.company_name?.trim();
+        !formData.company_name?.trim() || !formData.city?.trim();
 
 
     return (
@@ -334,10 +343,19 @@ const SellerEnquiryPage = () => {
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 text-black"
+                                className={`bg-gray-50 border text-black ${
+                                    !formData.city?.trim()
+                                        ? "border-red-500 focus-visible:ring-red-400"
+                                        : "border-gray-300"
+                                }`}
                                 required
                                 disabled
                             />
+                            {!formData.city?.trim() && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    City is missing — please complete your profile.
+                                </p>
+                            )}
                         </div>
 
                         {/* ✅ Product Dropdown — saves product_id */}

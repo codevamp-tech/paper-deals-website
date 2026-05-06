@@ -101,13 +101,13 @@ const mapApiToForm = (data: any) => ({
 
   // Payment
   transactionDate: data.payment?.transaction_date,
-  transactionId: data.payment?.detail,
+  transactionId: data.payment?.details,
   accountNumber: data.payment?.acc_no,
   bank: data.payment?.bank,
   branch: data.payment?.branch,
   amount: data.payment?.ammount,
-  paymentDoc: data.payment?.upload_docume,
-  paymentDocUrl: data.payment?.upload_docume,
+  paymentReceipt: data.payment?.upload_docume,
+  paymentReceiptUrl: data.payment?.upload_docume,
 
   // Transportation
   transportationDate: data.transportation?.transportation_date,
@@ -191,12 +191,12 @@ const mapClearancePayload = (form: any) => ({
 const mapPaymentPayload = (form: any) => ({
   deal_id: form.dealId,
   transaction_date: form.transactionDate,
-  transaction_id: form.transactionId,
-  detail: form.detail,
-  account_number: form.accountNumber,
+  details: form.transactionId,
+  acc_no: form.accountNumber,
   bank: form.bank,
   branch: form.branch,
-  amount: form.amount,
+  ammount: form.amount,
+  upload_docume: form.paymentReceipt,
 })
 
 // Transportation
@@ -269,7 +269,8 @@ export default function DealForm() {
         Boolean(
           (currentStep === 0 && form.technicalDataSheet && typeof form.technicalDataSheet !== "string") ||
           (currentStep === 1 && form.uploadDocument && typeof form.uploadDocument !== "string") ||
-          (currentStep === 2 && form.verificationDoc && typeof form.verificationDoc !== "string")
+          (currentStep === 2 && form.verificationDoc && typeof form.verificationDoc !== "string") ||
+          (currentStep === 4 && form.paymentReceipt && typeof form.paymentReceipt !== "string")
         );
 
       let options: RequestInit;
@@ -306,6 +307,10 @@ export default function DealForm() {
 
           if (currentStep === 2 && form.verificationDoc && typeof form.verificationDoc !== "string") {
             fd.append("upload_docu", form.verificationDoc);
+          }
+
+          if (currentStep === 4 && form.paymentReceipt && typeof form.paymentReceipt !== "string") {
+            fd.append("file", form.paymentReceipt);
           }
 
           options = {

@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import TruncatedText from "@/components/ui/TruncatedText";
 
+import { getUserFromToken } from "@/hooks/use-token";
+
 type Deal = {
   id: number;
   deal_id: string;
@@ -21,9 +23,12 @@ type Deal = {
   created_on: string;
   buyerUser?: { name: string };
   sellerUser?: { name: string };
+  deal_status?: number;
 };
 
-export default function CloseDealsPage() {
+interface CloseDealsProps {}
+
+export default function CloseDealsPage({}: CloseDealsProps) {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("");
@@ -33,16 +38,19 @@ export default function CloseDealsPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const token = getCookie("token");
-  console.log("token", token);
+
+  const user = getUserFromToken();
+  const userId = user?.user_id;
 
   // Fetch deals API
   useEffect(() => {
     const fetchDeals = async () => {
+      if (!userId) return;
       try {
         setLoading(true);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/closed?page=${page}`,
-          {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/pd-deals/buyer/${userId}`;
+
+        const res = await fetch(url, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -54,9 +62,20 @@ export default function CloseDealsPage() {
 
         const data = await res.json();
 
-        if (data.success) {
-          setDeals(data.deals || []);
-          setTotalPages(data.pagination?.pages || 1);
+        if (!res.ok) {
+          if (data.success === false) {
+            setDeals([]);
+            setTotalPages(1);
+            return;
+          }
+          throw new Error("Failed to fetch deals");
+        }
+
+        if (data.success || data.data) {
+          let fetchedDeals = data.data || [];
+          fetchedDeals = fetchedDeals.filter((d: any) => d.deal_status === 7);
+          setDeals(fetchedDeals);
+          setTotalPages(1);
         }
       } catch (err) {
         console.error("Error fetching deals:", err);
@@ -66,7 +85,7 @@ export default function CloseDealsPage() {
     };
 
     fetchDeals();
-  }, [page]);
+  }, [page, userId, token]);
 
   // Search filter
   const filteredDeals = deals.filter((deal) =>

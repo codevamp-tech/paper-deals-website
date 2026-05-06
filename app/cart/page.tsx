@@ -260,11 +260,28 @@ export default function CartPage() {
   const handleEnquirySubmit = async () => {
     // Read mode from localStorage (single source of truth)
     const currentMode = localStorage.getItem("mode") || "B2C";
-    
-    // Only B2B requires company_name
+
+    // City is always required for any mode
+    if (!enquiryData.city?.trim()) {
+      toast.error("Please complete your profile before raising an enquiry.", {
+        description: "Go to Profile → Company Information and fill in your City.",
+        action: {
+          label: "Complete Profile",
+          onClick: () => window.location.href = "/buyer-route/profile",
+        },
+      });
+      return;
+    }
+
+    // B2B also requires company_name
     if (currentMode === "B2B" && !enquiryData.company_name?.trim()) {
-      toast.error("Please fill in your company name");
-      setIsEnquiryModalOpen(true);
+      toast.error("Please fill in your company name before raising an enquiry.", {
+        description: "Go to Profile → Company Information and fill in your Company Name.",
+        action: {
+          label: "Complete Profile",
+          onClick: () => window.location.href = "/buyer-route/profile",
+        },
+      });
       return;
     }
 
@@ -306,8 +323,9 @@ export default function CartPage() {
     }));
 
     try {
+      const endpoint = currentMode === "B2B" ? "/api/enquiry/multiple" : "/api/enquiry/multiple-broadcast";
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/enquiry/multiple`,
+        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
