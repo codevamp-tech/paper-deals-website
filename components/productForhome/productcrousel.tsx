@@ -1,64 +1,41 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Link from "next/link";
+import { ProductCard } from "@/components/ui/ProductCard";
+import { ProductCardSkeleton } from "@/components/ui/SkeletonLoader";
 
 type Mode = "B2B" | "B2C";
 
-const getProductImage = (images?: string | string[]) => {
-  // ✅ Already an array (NEW API)
-  if (Array.isArray(images)) {
-    return images[0] || "/placeholder.svg";
-  }
-
-  // ✅ Old API (stringified JSON)
-  if (typeof images === "string") {
-    try {
-      const parsed = JSON.parse(images);
-      return Array.isArray(parsed) ? parsed[0] : "/placeholder.svg";
-    } catch {
-      return "/placeholder.svg";
-    }
-  }
-
-  return "/placeholder.svg";
-};
-
-
 export default function ProductCrousel({ initialProducts }: { initialProducts?: any[] }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>(initialProducts || []);
-  const [isHovered, setIsHovered] = useState(false);
-  const [mode, setMode] = useState<Mode>("B2B");
+  const [loading, setLoading] = useState(!initialProducts);
+  const [mode, setMode] = useState<Mode>("B2C");
   const { theme } = useTheme();
 
-  /* ✅ Read mode from localStorage */
   useEffect(() => {
     const savedMode = localStorage.getItem("mode") as Mode;
     if (savedMode) setMode(savedMode);
   }, []);
 
-  /* ✅ Fetch products based on mode if no initialProducts provided */
   useEffect(() => {
     if (initialProducts && initialProducts.length > 0) return;
 
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-        const url = `${baseUrl}/api/product/by-user-type?user_type=3&page=1&limit=10`;
-        // mode === "B2C"
-        //   ? `${baseUrl}/api/product/by-user-type?user_type=3&page=1&limit=10`
-        //   : `${baseUrl}/api/product?page=1&limit=10`;
-
+        const currentMode = localStorage.getItem("mode") || "B2C";
+        const userType = currentMode === "B2B" ? 2 : 3;
+        
+        const url = `${baseUrl}/api/product/by-user-type?user_type=${userType}&page=1&limit=10`;
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch products");
 
         const data = await res.json();
-
         if (Array.isArray(data.products)) {
           const mapped = data.products.map((item: any) => ({
             id: item.id,
@@ -70,134 +47,91 @@ export default function ProductCrousel({ initialProducts }: { initialProducts?: 
             images: item.images,
             city: item.city,
           }));
-
           setProducts(mapped);
         }
       } catch (err) {
         console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
   }, [mode, initialProducts]);
 
-  /* ✅ Auto-scroll */
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer || products.length === 0) return;
-
-    let animationId: number;
-    let scrollPosition = 0;
-
-    const scroll = () => {
-      if (!isHovered) {
-        scrollPosition += 0.5;
-        const scrollWidth = scrollContainer.scrollWidth / 2;
-        scrollContainer.style.transform = `translateX(-${scrollPosition % scrollWidth}px)`;
-      }
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    animationId = requestAnimationFrame(scroll);
-    return () => cancelAnimationFrame(animationId);
-  }, [products, isHovered]);
-
   return (
-    <div className="w-full py-6 px-4 overflow-hidden bg-white">
-      <div className="max-w-7xl mx-auto">
-
-        {/* Heading & View All Row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12 border-b border-gray-100 pb-6">
-          <div className="text-center sm:text-left">
-            <h2 className={`${theme.Text} text-[6vh] font-[900]`}>
-              Products
+    <section className="w-full py-24 bg-gray-50/50">
+      <div className="container mx-auto px-4">
+        
+        {/* Heading Section */}
+        <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="max-w-2xl"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+              Featured <span className="text-primary">Products</span>
             </h2>
-            <div className="w-20 h-1.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-3 mx-auto sm:mx-0"></div>
-          </div>
+            <p className="text-lg text-gray-500">
+              Browse our curated selection of premium paper products, from industrial bulk supplies to fine stationery.
+            </p>
+          </motion.div>
 
-          <Link href="/product">
-            <button className="flex items-center gap-2 px-6 py-3 border border-cyan-600 rounded-2xl text-blue-600 hover:bg-cyan-50 transition-all duration-300 shadow-sm hover:shadow-md">
-              View all Products
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <Link href="/product">
+              <button className="group flex items-center gap-2 px-8 py-4 bg-white border border-gray-200 rounded-2xl text-gray-900 font-bold hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-primary/20">
+                View All Products
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </Link>
+          </motion.div>
         </div>
 
-        {/* Carousel */}
-        <div className="relative overflow-hidden">
-          <div 
-            className="overflow-hidden py-4"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <div
-              ref={scrollRef}
-              className="flex gap-6"
-              style={{ width: "fit-content" }}
-            >
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="flex gap-6">
-                  {products.map((p) => (
-                    <ProductCard key={`${p.id}-${i}`} {...p} />
-                  ))}
-                </div>
+        {/* Product Grid / Scroll */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[...Array(4)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : products.length > 0 ? (
+          <div className="relative group">
+            <div className="flex gap-8 overflow-x-auto pb-8 snap-x no-scrollbar">
+              {products.map((p, index) => (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  key={p.id} 
+                  className="flex-shrink-0 w-full sm:w-[320px] snap-start"
+                >
+                  <ProductCard {...p} />
+                </motion.div>
               ))}
             </div>
+            
+            {/* Visual indicators for scroll */}
+            <div className="absolute top-1/2 -left-4 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center hidden group-hover:flex border border-gray-100 cursor-pointer hover:bg-gray-50">
+              <ArrowRight className="w-5 h-5 rotate-180" />
+            </div>
+            <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center hidden group-hover:flex border border-gray-100 cursor-pointer hover:bg-gray-50">
+              <ArrowRight className="w-5 h-5" />
+            </div>
           </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- CARD ---------------- */
-
-function ProductCard({
-  id,
-  title,
-  subtitle,
-  price,
-  date,
-  type,
-  images,
-  city,
-}: any) {
-  const router = useRouter();
-
-  return (
-    <div
-      onClick={() => router.push(`/product/${id}`)}
-      className="w-[300px] rounded-xl border hover:shadow-xl cursor-pointer transition-all overflow-hidden"
-    >
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={getProductImage(images)}
-          alt={title}
-          className="w-full h-full object-cover hover:scale-110 transition"
-        />
-
-        <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs px-3 py-1 rounded-full">
-          {type}
-        </span>
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-semibold text-lg">{title}</h3>
-        <p className="text-sm text-slate-500">{subtitle}</p>
-        <p className="text-xs text-slate-400 mt-1">📍 {city || "India"}</p>
-
-        <div className="flex justify-between items-center mt-4">
-          <div>
-            <div className="text-xl font-bold text-blue-600">₹{price}</div>
-            <div className="text-xs text-slate-400">Listed on {date}</div>
+        ) : (
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+            <p className="text-gray-400">No featured products available at the moment.</p>
           </div>
+        )}
 
-          <button className="px-4 py-2 text-sm text-white rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500">
-            View
-          </button>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }

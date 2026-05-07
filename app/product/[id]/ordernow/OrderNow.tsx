@@ -1,8 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  MapPin,
+  ShieldCheck,
+  Truck,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  CheckCircle2,
+  Package,
+  Building2
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,10 +35,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getUserFromToken } from "@/hooks/use-token";
-import { Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { getUserFromToken } from "@/hooks/use-token";
+import { useTheme } from "@/hooks/use-theme";
+import { ListingProductCard } from "@/components/product/ListingProductCard";
 
 interface Category {
   id: number;
@@ -34,6 +48,7 @@ interface Category {
 const OrderNow = ({ productId }: { productId: string }) => {
   const router = useRouter();
   const user = getUserFromToken();
+  const { mode } = useTheme();
 
   const [product, setProduct] = useState<any>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -42,6 +57,9 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [activeImage, setActiveImage] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
     company_name: "",
     city: "",
     category_id: "",
@@ -60,14 +78,12 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
   const fetchRelated = async (category_id: string) => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/product/buyer/${category_id}`
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/buyer/${category_id}`);
       if (!res.ok) throw new Error("Failed to fetch related products");
       const data = await res.json();
       setRelatedProducts(data.products || []);
     } catch (err) {
-      console.error("❌ Error fetching related products:", err);
+      console.error("Error fetching related products:", err);
     }
   };
 
@@ -75,22 +91,19 @@ const OrderNow = ({ productId }: { productId: string }) => {
     const fetchBuyer = async () => {
       if (!user?.user_id) return;
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/users/buyerbyid/${user.user_id}`
-        );
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/buyerbyid/${user.user_id}`);
         if (!res.ok) throw new Error("Failed to fetch buyer");
         const data = await res.json();
         const org = data?.organization || {};
         setFormData((prev) => ({
-          ...prev,
+          name: org.contact_person || data.name || "",
+          email: org.email || data.email_address || "",
+          mobile: org.phone ? org.phone.toString() : data.phone_no || "",
           company_name: org.organizations || "",
-          name: org.contact_person || "",
-          email: org.email || "",
           city: org.city || "",
-          phone: org.phone?.toString() || data.phone_no || "",
         }));
       } catch (err) {
-        console.error("❌ Buyer fetch error:", err);
+        console.error("Buyer fetch error:", err);
       }
     };
     fetchBuyer();
@@ -100,9 +113,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
     const fetchProduct = async () => {
       if (!productId) return;
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`
-        );
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`);
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
         setProduct(data);
@@ -117,55 +128,36 @@ const OrderNow = ({ productId }: { productId: string }) => {
           brightness: data.brightness || "",
         }));
       } catch (err) {
-        console.error("❌ Product fetch error:", err);
+        console.error("Product fetch error:", err);
       }
     };
     fetchProduct();
   }, [productId]);
 
   useEffect(() => {
-    if (product?.category?.id) {
-      fetchRelated(product.category.id);
-    }
+    if (product?.category?.id) fetchRelated(product.category.id);
   }, [product?.category?.id]);
 
-  const productImages: string[] = React.useMemo(() => {
-    if (!product?.images) return [];
-    if (Array.isArray(product.images)) return product.images;
+  const productImages: string[] = useMemo(() => {
+    if (!product?.images) return ["/paper.jpg"];
+    if (Array.isArray(product.images)) return product.images.length > 0 ? product.images : ["/paper.jpg"];
     if (typeof product.images === "string") {
       try {
         const parsed = JSON.parse(product.images);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : ["/paper.jpg"];
+      } catch { return ["/paper.jpg"]; }
     }
-    return [];
+    return ["/paper.jpg"];
   }, [product?.images]);
 
-  useEffect(() => {
-    setActiveImage(0);
-  }, [productImages.length]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`);
-        if (!res.ok) throw new Error("Failed to fetch categories");
-        const data = await res.json();
-        setCategories(data.categories || []);
-      } catch (err) {
-        console.error("❌ Category fetch error:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  const specifications = [
+    { label: "GSM", value: product?.gsm, icon: <Package className="w-4 h-4" /> },
+    { label: "BF", value: product?.bf, icon: <ShieldCheck className="w-4 h-4" /> },
+    { label: "Shade", value: product?.shade, icon: <Info className="w-4 h-4" /> },
+    { label: "Brightness", value: product?.brightness, icon: <Clock className="w-4 h-4" /> },
+    { label: "Size", value: product?.sizes || product?.size, icon: <Truck className="w-4 h-4" /> },
+    { label: "Origin", value: product?.city || "India", icon: <MapPin className="w-4 h-4" /> },
+  ].filter(spec => spec.value);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,459 +166,292 @@ const OrderNow = ({ productId }: { productId: string }) => {
       router.push("/buyer-login");
       return;
     }
-    if (isProfileIncomplete) {
-      toast.error("Please complete your profile before raising an enquiry.", {
-        description: "Go to Profile → Company Information and fill in Company Name and City.",
-        action: {
-          label: "Complete Profile",
-          onClick: () => router.push("/buyer-route/profile"),
-        },
-      });
-      setIsModalOpen(false);
-      return;
-    }
+
     setLoading(true);
     const sellerId = product?.seller_id || product?.user_id;
-    const mode = localStorage.getItem("mode") || "B2C";
-    
-    // Add mode to the payload, single source of truth from localStorage
-    const payload = {
-      ...formData,
-      quantity_in_kg: formData.quantity_in_kg,
-      buyer_id: user?.user_id,
-      user_id: sellerId,
-      mode: mode,
-    };
-    
-    console.log("📤 Sending Enquiry Payload:", payload);
+    const currentMode = localStorage.getItem("mode") || "B2C";
+
     try {
-      const endpoint = mode === "B2B" ? "/api/enquiry/enquiries" : "/api/enquiry/broadcast";
+      const endpoint = currentMode === "B2B" ? "/api/enquiry/enquiries" : "/api/enquiry/broadcast";
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...formData, buyer_id: user.user_id, user_id: sellerId, mode: currentMode }),
       });
       if (!res.ok) throw new Error("Failed to send enquiry");
-      toast.success(mode === "B2B" ? "Enquiry sent successfully!" : "Enquiry broadcasted successfully!");
+      toast.success(currentMode === "B2B" ? "Enquiry sent successfully!" : "Enquiry broadcasted successfully!");
       setIsModalOpen(false);
     } catch (err) {
-      console.error("❌ Enquiry submit error:", err);
       toast.error("Failed to send enquiry!");
     } finally {
       setLoading(false);
     }
   };
 
-  const specifications = [
-    { label: "GSM", value: product?.gsm },
-    { label: "BF", value: product?.bf },
-    { label: "Shade", value: product?.shade },
-    { label: "Brightness", value: product?.brightness },
-    { label: "Size", value: product?.sizes },
-  ].filter((spec) => spec.value);
-
-  const paperFields = [
-    { key: "gsm", label: "GSM", info: "Grams per Square Meter" },
-    { key: "bf", label: "BF", info: "Bursting Factor" },
-    { key: "shade", label: "Shade" },
-    { key: "brightness", label: "Brightness" },
-    { key: "rim", label: "Rim" },
-    { key: "sheet", label: "Sheet" },
-    { key: "size", label: "Size" },
-  ];
-
-  const handleEnquiryClick = () => {
-    if (!user) {
-      toast.error("Please login to send enquiry");
-      router.push("/buyer-login");
-      return;
-    }
-    setIsModalOpen(true);
-  };
-
-  const getFirstImage = (images?: string | string[]) => {
-    if (Array.isArray(images)) return images.length > 0 ? images[0] : "/paper.jpg";
-    if (typeof images === "string") {
-      try {
-        const parsed = JSON.parse(images);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
-      } catch { }
-    }
-    return "/paper.jpg";
-  };
-
-  const mode = typeof window !== "undefined" ? localStorage.getItem("mode") || "B2C" : "B2C";
-  const isProfileIncomplete = mode === "B2B"
-    ? (!formData.company_name?.trim() || !formData.city?.trim())
-    : !formData.city?.trim();
-
-  if (!product) return <ProductSkeleton />;
+  if (!product) return <ProductDetailSkeleton />;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
 
-      {/* ── Product Section ── */}
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Left: Premium Image Gallery */}
+          <div className="lg:col-span-7 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-2xl group"
+            >
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeImage}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  src={productImages[activeImage]}
+                  alt={product.product_name}
+                  className="w-full h-full object-contain p-8"
+                />
+              </AnimatePresence>
 
-          {/* Left: Image */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <div className="relative aspect-square bg-gray-100">
-              <span className="absolute top-3 left-3 z-10 bg-blue-600 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {product.category?.name}
-              </span>
-              <img
-                src={productImages[activeImage] || "/paper.jpg"}
-                alt={product.product_name}
-                className="w-full h-full object-contain"
-              />
               {productImages.length > 1 && (
-                <>
+                <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
-                    onClick={() =>
-                      setActiveImage((prev) =>
-                        prev === 0 ? productImages.length - 1 : prev - 1
-                      )
-                    }
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center text-base transition-colors"
+                    onClick={() => setActiveImage(prev => prev === 0 ? productImages.length - 1 : prev - 1)}
+                    className="p-4 bg-white/90 backdrop-blur-md rounded-full shadow-xl hover:bg-primary hover:text-white transition-all"
                   >
-                    ‹
+                    <ChevronLeft size={24} />
                   </button>
                   <button
-                    onClick={() =>
-                      setActiveImage((prev) =>
-                        prev === productImages.length - 1 ? 0 : prev + 1
-                      )
-                    }
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center text-base transition-colors"
+                    onClick={() => setActiveImage(prev => prev === productImages.length - 1 ? 0 : prev + 1)}
+                    className="p-4 bg-white/90 backdrop-blur-md rounded-full shadow-xl hover:bg-primary hover:text-white transition-all"
                   >
-                    ›
+                    <ChevronRight size={24} />
                   </button>
-                </>
+                </div>
               )}
-            </div>
+            </motion.div>
 
             {productImages.length > 1 && (
-              <div className="flex gap-2 justify-center py-3 px-3">
-                {productImages.map((img, index) => (
+              <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                {productImages.map((img, idx) => (
                   <button
-                    key={index}
-                    onClick={() => setActiveImage(index)}
-                    className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-colors ${activeImage === index
-                      ? "border-blue-600"
-                      : "border-gray-200 hover:border-gray-300"
+                    key={idx}
+                    onClick={() => setActiveImage(idx)}
+                    className={`relative min-w-[100px] h-[100px] rounded-2xl overflow-hidden border-2 transition-all ${activeImage === idx ? "border-primary shadow-lg scale-105" : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                   >
-                    <img src={img} alt="thumb" className="w-full h-full object-cover" />
+                    <img src={img} alt="preview" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Right: Details */}
-          <div className="flex flex-col gap-4">
-
-            {/* Title & Category */}
-            <div className="pb-4 border-b border-gray-100">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{product.product_name}</h1>
-              <div className="flex items-center gap-3">
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-2.5 py-0.5 shadow-sm">{product.category?.name}</Badge>
-              </div>
-            </div>
-
-            {/* Price */}
-            <div className="bg-blue-50 rounded-xl border border-blue-100 px-5 py-4 flex flex-col gap-1 mt-1">
-              <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest">Wholesale Price</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-extrabold text-blue-700">
-                  ₹{product.price_per_kg}
-                </span>
-                <span className="text-sm font-medium text-gray-600"> / Kg</span>
-              </div>
-            </div>
-
-            {/* Specifications */}
-            {specifications.length > 0 && (
-              <div className="mt-2">
-                <p className="text-sm font-bold text-gray-900 mb-3 border-b pb-2">
-                  Product Details
-                </p>
-                <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-                  {specifications.map((spec) => (
-                    <div
-                      key={spec.label}
-                      className="flex justify-between items-center border-b border-gray-100 pb-2"
-                    >
-                      <span className="text-sm text-gray-500">
-                        {spec.label}
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 text-right">
-                        {spec.value}
-                      </span>
-                    </div>
-                  ))}
+          {/* Right: Product Details */}
+          <div className="lg:col-span-5 space-y-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="space-y-4">
+                <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none px-4 py-1.5 text-xs font-bold uppercase tracking-widest rounded-full">
+                  {product.category?.name}
+                </Badge>
+                <h1 className="text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
+                  {product.product_name}
+                </h1>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <MapPin size={18} className="text-primary" />
+                  <span className="font-medium">{product.city || "Pan India Delivery"}</span>
+                  <span className="mx-2 text-gray-300">•</span>
+                  <div className="flex items-center gap-1 text-amber-500">
+                    <CheckCircle2 size={18} />
+                    <span className="font-bold">Verified Manufacturer</span>
+                  </div>
                 </div>
               </div>
-            )}
 
-            {/* Description */}
-            <div className="mt-2">
-              <p className="text-sm font-bold text-gray-900 mb-2 border-b pb-2">
-                Overview
-              </p>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                {product.description ||
-                  "Premium quality product designed to meet all your industrial and commercial needs with excellence."}
-              </p>
-            </div>
+              <div className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center justify-between">
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Starting from</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl font-black text-primary">₹{product.price_per_kg}</span>
+                    <span className="text-lg font-bold text-gray-400">/ Kg</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full inline-block mb-2">Best Price Guaranteed</div>
+                  <p className="text-[10px] text-gray-400 font-medium">*Prices subject to volume</p>
+                </div>
+              </div>
 
-            {/* CTA */}
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    onClick={handleEnquiryClick}
-                    className="w-full bg-[#0f7aed] hover:bg-[#0c62bd] text-white text-base font-bold py-6 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-md "
-                  >
-                    <Mail className="w-5 h-5" />
-                    Get Enquiry Now
-                  </Button>
-                </DialogTrigger>
-
-                <DialogContent className="max-w-2xl bg-white text-black rounded-xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="text-base font-bold text-center mb-2">
-                      Enquiry for {product.product_name}
-                    </DialogTitle>
-                  </DialogHeader>
-
-                  {isProfileIncomplete && (
-                    <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700">
-                      <p className="text-xs font-medium">
-                        Please complete your profile to send an enquiry.
-                      </p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="ml-auto border-red-300 text-red-600 text-xs"
-                        onClick={() => router.push("/buyer-route/profile")}
-                      >
-                        Complete Profile
-                      </Button>
+              <div className="grid grid-cols-2 gap-4">
+                {specifications.map((spec, idx) => (
+                  <div key={idx} className="p-4 bg-white border border-gray-100 rounded-2xl flex items-center gap-4 hover:border-primary/30 transition-colors shadow-sm">
+                    <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
+                      {spec.icon}
                     </div>
-                  )}
-
-                  <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-                    {mode === "B2B" && (
-                      <div>
-                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company *</Label>
-                        <Input
-                          name="company_name"
-                          value={formData.company_name}
-                          disabled
-                          onKeyDown={(e) => e.stopPropagation()}
-                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                        />
-                      </div>
-                    )}
-
                     <div>
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">City *</Label>
-                      <Input
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        disabled
-                        onKeyDown={(e) => e.stopPropagation()}
-                        className={`mt-1 h-8 text-xs ${
-                          !formData.city?.trim()
-                            ? "bg-red-50 border-red-400 focus-visible:ring-red-300"
-                            : "bg-gray-50 border-gray-200"
-                        }`}
-                      />
-                      {!formData.city?.trim() && (
-                        <p className="text-red-500 text-xs mt-1">
-                          City missing — complete your profile.
-                        </p>
-                      )}
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{spec.label}</p>
+                      <p className="text-sm font-bold text-gray-900">{spec.value}</p>
                     </div>
+                  </div>
+                ))}
+              </div>
 
-                    <div>
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category *</Label>
-                      <Input
-                        name="category_id"
-                        value={product.category?.name || ""}
-                        disabled
-                        onKeyDown={(e) => e.stopPropagation()}
-                        className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                      />
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Info size={20} className="text-primary" />
+                  Product Overview
+                </h3>
+                <p className="text-gray-500 leading-relaxed text-base">
+                  {product.description || "Premium industrial grade paper solution engineered for high-performance applications. Ensuring consistent quality and superior finish for all your professional needs."}
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100">
+                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full py-8 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4 bg-primary text-white">
+                      <Mail className="w-6 h-6" />
+                      Request Factory Quote
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-xl rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+                    <div className="bg-primary p-8 text-white relative">
+                      <DialogTitle className="text-2xl font-black">Quick Enquiry</DialogTitle>
+                      <p className="text-primary-foreground/80 mt-2">Enquire about {product.product_name}</p>
                     </div>
+                    <form onSubmit={handleSubmit} className="bg-white flex flex-col max-h-[80vh]">
+                      <div className="p-8 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
+                        {/* <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Contact Person</Label>
+                            <Input name="name" value={formData.name} onChange={(e) => setFormData(p => ({...p, name: e.target.value}))} placeholder="Contact Name" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Mobile</Label>
+                            <Input name="mobile" value={formData.mobile} onChange={(e) => setFormData(p => ({...p, mobile: e.target.value}))} placeholder="Mobile Number" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
+                          </div>
+                        </div> */}
 
-                    {paperFields.map((field) => (
-                      <div key={field.key}>
-                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                          {field.label}
-                          {field.info && (
-                            <span className="text-xs text-gray-400 ml-1 normal-case font-normal">
-                              ({field.info})
-                            </span>
-                          )}
-                        </Label>
-                        <Input
-                          name={field.key}
-                          value={(formData as any)[field.key] || ""}
-                          onChange={handleChange}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                        />
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-bold text-gray-400 uppercase">Company Name</Label>
+                          <Input name="company_name" value={formData.company_name} onChange={(e) => setFormData(p => ({ ...p, company_name: e.target.value }))} placeholder="Company Name" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Quantity</Label>
+                            <Input name="quantity_in_kg" value={formData.quantity_in_kg} onChange={(e) => setFormData(p => ({ ...p, quantity_in_kg: e.target.value }))} placeholder="e.g. 500" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Unit</Label>
+                            <Select value={formData.quantity_unit} onValueChange={(v) => setFormData(p => ({ ...p, quantity_unit: v }))}>
+                              <SelectTrigger className="rounded-xl bg-gray-50 border-gray-100 h-12"><SelectValue /></SelectTrigger>
+                              <SelectContent className="rounded-xl border-gray-100 shadow-xl">
+                                <SelectItem value="Kg">Kilograms (Kg)</SelectItem>
+                                <SelectItem value="Ton">Metric Tons (Ton)</SelectItem>
+                                <SelectItem value="Piece">Piece</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">GSM</Label>
+                            <Input value={formData.gsm} onChange={(e) => setFormData(p => ({ ...p, gsm: e.target.value }))} placeholder="GSM" className="rounded-xl bg-gray-50 border-gray-100 h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">BF</Label>
+                            <Input value={formData.bf} onChange={(e) => setFormData(p => ({ ...p, bf: e.target.value }))} placeholder="BF" className="rounded-xl bg-gray-50 border-gray-100 h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Shade</Label>
+                            <Input value={formData.shade} onChange={(e) => setFormData(p => ({ ...p, shade: e.target.value }))} placeholder="Shade" className="rounded-xl bg-gray-50 border-gray-100 h-12" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Size</Label>
+                            <Input value={formData.size} onChange={(e) => setFormData(p => ({ ...p, size: e.target.value }))} placeholder="Size" className="rounded-xl bg-gray-50 border-gray-100 h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Brightness</Label>
+                            <Input value={formData.brightness} onChange={(e) => setFormData(p => ({ ...p, brightness: e.target.value }))} placeholder="Brightness" className="rounded-xl bg-gray-50 border-gray-100 h-12" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-[10px] font-bold text-gray-400 uppercase">Requirements / Remarks</Label>
+                          <Textarea name="remarks" value={formData.remarks} onChange={(e) => setFormData(p => ({ ...p, remarks: e.target.value }))} placeholder="Detail your specific needs..." className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary min-h-[100px] resize-none" />
+                        </div>
                       </div>
-                    ))}
 
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</Label>
-                        <Input
-                          name="quantity_in_kg"
-                          value={formData.quantity_in_kg}
-                          onChange={handleChange}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          className="mt-1 h-8 text-xs bg-gray-50 border-gray-200"
-                        />
+                      <div className="p-8 pt-0 bg-white">
+                        <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl font-bold bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/20 transition-all">
+                          {loading ? "Processing..." : "Submit Quote Request"}
+                        </Button>
                       </div>
-                      <div className="w-[100px]">
-                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Unit</Label>
-                        <Select
-                          value={formData.quantity_unit}
-                          onValueChange={(val) => setFormData(prev => ({ ...prev, quantity_unit: val }))}
-                        >
-                          <SelectTrigger className="mt-1 h-8 text-xs bg-gray-50 border-gray-200">
-                            <SelectValue placeholder="Unit" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Kg">Kg</SelectItem>
-                            <SelectItem value="Ton">Ton</SelectItem>
-                            <SelectItem value="Piece">Piece</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
 
-                    <div className="md:col-span-2">
-                      <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Remarks</Label>
-                      <Textarea
-                        name="remarks"
-                        value={formData.remarks}
-                        onChange={handleChange}
-                        onKeyDown={(e) => e.stopPropagation()}
-                        placeholder="Add any extra details..."
-                        className="mt-1 text-xs bg-gray-50 border-gray-200 resize-none"
-                        rows={3}
-                      />
-                    </div>
 
-                    <div className="md:col-span-2 flex justify-center mt-2">
-                      <Button
-                        type="submit"
-                        disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-8 py-2 rounded-xl transition-colors"
-                      >
-                        {loading ? "Sending..." : "Send Enquiry"}
-                      </Button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
 
-      {/* ── Related Products ── */}
-      <div className="py-8 px-4 md:px-10 bg-white">
-        <h2 className="text-gray-900 text-xl font-bold text-center mb-6">
-          Related Products in{" "}
-          <span className="text-blue-600">{product.category?.name}</span>
-        </h2>
-        <div className="flex overflow-x-auto scroll-smooth space-x-4 scrollbar-hide px-1">
-          {relatedProducts.map((p: any) => (
-            <div
-              key={p.id}
-              className="group min-w-[200px] max-w-[200px] rounded-xl shadow-sm overflow-hidden bg-white flex-shrink-0 border border-gray-200 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all flex flex-col h-full"
-              onClick={() => router.push(`/product/${p.id}`)}
-            >
-              <div className="relative h-40 bg-gray-50 overflow-hidden">
-                <img
-                  src={getFirstImage(p.images)}
-                  alt={p.product_name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="font-bold text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors mb-2">
-                  {p.product_name}
-                </h3>
-                <div className="mt-auto">
-                  <p className="text-lg font-extrabold text-blue-700">
-                    ₹{p.price_per_kg}
-                    <span className="text-gray-500 text-xs font-medium tracking-wide"> / Kg</span>
-                  </p>
-                </div>
-              </div>
+        {/* Related Products Section */}
+        <div className="mt-24 space-y-12">
+          <div className="flex items-end justify-between border-b border-gray-100 pb-8">
+            <div className="space-y-2">
+              <h2 className="text-4xl font-black text-gray-900">Related Collections</h2>
+              <p className="text-gray-500 font-medium">Explore more products in <span className="text-primary font-bold">{product.category?.name}</span></p>
             </div>
-          ))}
-          {relatedProducts.length === 0 && (
-            <p className="text-gray-400 text-sm text-center w-full">
-              No related products found.
-            </p>
-          )}
+            <Button variant="link" className="text-primary font-bold gap-2 text-lg group">
+              View All <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {relatedProducts.slice(0, 4).map((p) => (
+              <ListingProductCard
+                key={p.id}
+                item={p}
+                mode={mode}
+                isInCart={() => false}
+                addToCart={() => router.push(`/product/${p.id}`)}
+                openEnquiry={() => router.push(`/product/${p.id}`)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+const ProductDetailSkeleton = () => (
+  <div className="min-h-screen bg-white py-12">
+    <div className="max-w-[1440px] mx-auto px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 animate-pulse">
+      <div className="lg:col-span-7 bg-gray-50 rounded-[2.5rem] aspect-[4/3]" />
+      <div className="lg:col-span-5 space-y-8">
+        <div className="h-8 w-32 bg-gray-100 rounded-full" />
+        <div className="h-24 w-full bg-gray-100 rounded-3xl" />
+        <div className="h-32 w-full bg-gray-100 rounded-3xl" />
+        <div className="grid grid-cols-2 gap-4">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-20 bg-gray-50 rounded-2xl" />)}
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default OrderNow;
-
-
-const ProductSkeleton = () => {
-  return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Image Skeleton */}
-        <div className="space-y-3">
-          <Skeleton className="w-full aspect-square rounded-2xl" />
-          <div className="flex gap-2">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="w-12 h-12 rounded-lg" />
-            ))}
-          </div>
-        </div>
-
-        {/* Details Skeleton */}
-        <div className="space-y-3">
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-14 w-full rounded-xl" />
-          <div className="grid grid-cols-3 gap-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 rounded-lg" />
-            ))}
-          </div>
-          <Skeleton className="h-10 w-full rounded-xl" />
-        </div>
-      </div>
-
-      {/* Related skeleton */}
-      <div className="mt-10">
-        <Skeleton className="h-6 w-1/3 mx-auto mb-5" />
-        <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="min-w-[180px] h-[240px] rounded-xl" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};

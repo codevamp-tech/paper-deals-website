@@ -17,26 +17,26 @@ const sellerStories: SellerStory[] = [
   {
     id: 1,
     name: "Vinay Garg",
-    business: "Activa & Digi Smart",
+    business: "Star Paper Mills",
     image: "/myapp.jpg",
     story:
-      "When moving from offline to online business, our aim was to sell 300 orders per month. Today, we sell more than 700 orders per day and this has been possible because of the growth features on the Flipkart seller dashboard, Flipkart Ads and regular payments.",
+      "Paper Deals has revolutionized how we sell our Kraft and Duplex boards. We went from managing manual enquiries to fulfilling bulk factory orders for 180 GSM Kraft paper across India. The automated bidding system and instant payments have streamlined our entire supply chain.",
   },
   {
     id: 2,
-    name: "Priya Sharma",
-    business: "Elegance Apparel",
+    name: "Amit Jha",
+    business: "Global Paper Traders",
     image: "/myapp.jpg",
     story:
-      "Starting with just 5 products on Flipkart, we've expanded to over 200 SKUs in just 18 months. The seller dashboard analytics helped us identify trending products, and Flipkart's logistics support made scaling our business seamless.",
+      "Finding consistent buyers for specialized Chromo and Art paper was always a challenge. With Paper Deals, we now connect directly with premium packaging firms and publishing houses. Our monthly turnover has tripled, and the seller dashboard provides invaluable insights into market demand.",
   },
   {
     id: 3,
-    name: "Rajesh Kumar",
-    business: "TechGadgets India",
+    name: "Sandeep Mehta",
+    business: "EcoPrint Solutions",
     image: "/myapp.jpg",
     story:
-      "As a small electronics retailer, competing with big brands seemed impossible. With Flipkart's platform, we reached customers nationwide and grew our revenue by 300% in just one year. The promotional events like Big Billion Days were game-changers for our business.",
+      "As a manufacturer of recycled Maplitho and Copier paper, Paper Deals helped us reach environmentally conscious corporate clients. The platform's 'Live Stock' feature allowed us to sell over 20 tonnes of excess inventory in just 48 hours. It's truly a game-changer for the paper industry.",
   },
 ];
 
@@ -102,13 +102,10 @@ export function StoryCarousel() {
           }}
         >
           <div className="md:w-1/3 mb-6 md:mb-0 flex justify-center">
-            <div className="relative h-40 w-40 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-blue-100">
-              <Image
-                src={sellerStories[currentIndex].image || "/placeholder.svg"}
-                alt={sellerStories[currentIndex].name}
-                fill
-                className="object-cover"
-              />
+            <div className="relative h-40 w-40 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-blue-50 shadow-inner bg-blue-600 flex items-center justify-center">
+              <span className="text-6xl font-black text-white">
+                {sellerStories[currentIndex].name.charAt(0)}
+              </span>
             </div>
           </div>
 
