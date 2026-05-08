@@ -122,7 +122,7 @@ export default function LeadsPage() {
                                         )}
                                         {row.status === 2 && (
                                             <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">
-                                                Lost / Rejected
+                                                Lost
                                             </span>
                                         )}
                                     </td>

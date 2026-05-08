@@ -88,7 +88,10 @@ export default function ProductForm({ onProductAdded }: { onProductAdded?: () =>
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`)
         if (!res.ok) throw new Error("Failed to load categories")
         const data = await res.json()
-        setCategories(data.categories)
+        const b2cCategories = (data.categories || []).filter(
+          (cat: any) => cat.mode && cat.mode.toLowerCase() === "b2c"
+        )
+        setCategories(b2cCategories)
       } catch (err) {
         console.error(err)
         toast({

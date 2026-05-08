@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { User, Mail, Phone, Lock, ShieldCheck, ArrowRight, Smartphone } from "lucide-react";
 import { usePasswordStrength, isPasswordStrong } from "@/lib/passwordStrength";
 import PasswordStrengthIndicator from "@/components/PasswordStrengthIndicator";
+import { AuthLayout } from "@/components/ui/AuthLayout";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function CreateBuyerPage() {
   const router = useRouter();
@@ -21,18 +27,9 @@ export default function CreateBuyerPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [message, setMessage] = useState("");
-
-  const [mode, setMode] = useState(""); // default
   const { strength, checkStrength } = usePasswordStrength();
   const [passwordError, setPasswordError] = useState("");
 
-  useEffect(() => {
-    const savedMode = localStorage.getItem("mode");
-    if (savedMode) setMode(savedMode);
-  }, []);
-
-  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -42,8 +39,6 @@ export default function CreateBuyerPage() {
     }
   };
 
-
-  // Send OTP
   const handleSendOtp = async () => {
     if (!form.mobile) {
       toast.error("Please enter mobile number");
@@ -54,31 +49,26 @@ export default function CreateBuyerPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp/sendOtp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: form.mobile,
-          type: otpSent ? "Resend OTP" : "GET OTP",
-        }),
+        body: JSON.stringify({ phone: form.mobile, type: otpSent ? "Resend OTP" : "GET OTP" }),
       });
 
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
-        toast.success(data.message || "OTP sent successfully");
+        toast.success(data.message || "Security code sent to your device");
       } else {
         toast.error(data.message || "Failed to send OTP");
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong while sending OTP");
+      toast.error("Verification service currently unavailable");
     } finally {
       setLoading(false);
     }
   };
 
-  // Verify OTP
   const handleVerifyOtp = async (): Promise<boolean> => {
     if (!form.otp) {
-      toast.error("Please enter OTP");
+      toast.error("Please enter the verification code");
       return false;
     }
     try {
@@ -91,38 +81,35 @@ export default function CreateBuyerPage() {
       const data = await res.json();
       if (res.ok) {
         setOtpVerified(true);
-        toast.success(data.message || "OTP verified");
+        toast.success("Identity verified successfully");
         return true;
       } else {
-        toast.error(data.message || "Invalid OTP");
+        toast.error("Invalid verification code");
         return false;
       }
     } catch {
-      toast.error("Error verifying OTP");
+      toast.error("Verification failed");
       return false;
     }
   };
 
-  // Submit Buyer Registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password || !form.mobile) {
-      toast.error("Please fill all required fields");
+      toast.error("All mandatory fields must be completed");
       return;
     }
 
     if (!isPasswordStrong(form.password)) {
-      setPasswordError("Please use a strong password that meets all requirements.");
+      setPasswordError("Please strengthen your password before proceeding.");
       return;
     }
-    setPasswordError("");
 
     const verified = await handleVerifyOtp();
     if (!verified) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/create-buyer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -136,198 +123,157 @@ export default function CreateBuyerPage() {
       });
 
       const data = await res.json();
-
       if (res.ok) {
-        // ✅ Success
-        toast.success(data.message || "Buyer registered successfully!");
-        setForm({ name: "", email: "", mobile: "", otp: "", password: "", whatsapp: "" });
-        setOtpSent(false);
-        setOtpVerified(false);
+        toast.success("Welcome to Paper Deals! Registration complete.");
         setTimeout(() => router.push("/buyer-login"), 1500);
       } else {
-        // ❌ Specific error messages
-        let errorMessage = "Email already exists";
-
-        if (data?.message?.toLowerCase().includes("email")) {
-          errorMessage = "Email already exists";
-        } else if (data?.message?.toLowerCase().includes("mobile") || data?.message?.toLowerCase().includes("phone")) {
-          errorMessage = "Mobile number already registered";
-        } else if (data?.message?.toLowerCase().includes("whatsapp")) {
-          errorMessage = "WhatsApp number already registered";
-        }
-
-        toast.error(errorMessage);
+        toast.error(data.message || "Registration failed");
       }
     } catch (err) {
-      console.error("Error registering buyer:", err);
-      toast.error("Something went wrong while registering buyer");
+      toast.error("System error during registration");
     } finally {
       setLoading(false);
     }
   };
 
-  // UI
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header Section */}
-      <div className="relative h-48 bg-gradient-to-r from-cyan-700 via-blue-700 to-indigo-700 overflow-hidden">
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
-          <h1 className="text-5xl font-semibold mb-2">Sign Up</h1>
-          <div className="flex items-center text-sm opacity-80">
-            <Link href="/">Home</Link>
-            <span className="mx-2">›</span>
-            <span>Sign Up</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 -mt-12 relative z-20">
-        <div className="flex flex-col lg:flex-row items-stretch justify-center max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white min-h-[600px]">
-
-          {/* Left - Form */}
-          <div className="w-full lg:w-1/2 p-12 lg:p-16">
-            <div className="max-w-md mx-auto">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    // required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                  />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    // required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Enter a strong password"
-                    // required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                  />
-                  <PasswordStrengthIndicator strength={strength} />
-                  {passwordError && <p className="text-xs text-red-500 mt-1">{passwordError}</p>}
-                </div>
-
-                {/* WhatsApp */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">WhatsApp Number</label>
-                  <input
-                    type="number"
-                    name="whatsapp"
-                    value={form.whatsapp}
-                    onChange={handleChange}
-                    placeholder="Enter WhatsApp number"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                  />
-                </div>
-
-                {/* Mobile + OTP */}
-                <div className="flex gap-3 items-end">
-                  <div className="flex-1 flex flex-col">
-                    <label className="block text-sm font-medium text-gray-600 mb-2">Mobile Number</label>
-                    <input
-                      type="text"
-                      name="mobile"
-                      value={form.mobile}
-                      onChange={handleChange}
-                      placeholder="Enter mobile number"
-                      // required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    disabled={loading}
-                    className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-cyan-700 transition disabled:opacity-50 flex-shrink-0"
-                  >
-                    {loading ? "Sending..." : otpSent ? "Resend OTP" : "Send OTP"}
-                  </button>
-                </div>
-
-                {/* OTP */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">OTP</label>
-                  <input
-                    type="text"
-                    name="otp"
-                    value={form.otp}
-                    onChange={handleChange}
-                    placeholder="Enter OTP"
-                    // required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 outline-none focus:border-cyan-500 transition"
-                  />
-                </div>
-
-                {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 rounded-xl font-semibold text-lg text-white shadow-lg bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-600 hover:to-blue-700 transform hover:scale-105 transition-all"
-                >
-                  {loading ? "Submitting..." : "Register"}
-                </button>
-              </form>
+    <AuthLayout
+      title="Create Buyer Account"
+      subtitle="Join thousands of businesses sourcing premium paper products worldwide."
+      illustration="/loginimg.svg"
+      oppositeAction={{
+        text: "Already a member?",
+        linkText: "Sign In instead",
+        link: "/buyer-login"
+      }}
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Full Name</Label>
+            <div className="relative group">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+              <Input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+                placeholder="John Doe"
+              />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Corporate Email</Label>
+            <div className="relative group">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+              <Input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+                placeholder="john@company.com"
+              />
+            </div>
+          </div>
+        </div>
 
-          {/* Right - Promo Image */}
-          <div className="w-full lg:w-1/2 bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 p-12 lg:p-16 flex flex-col justify-center items-center text-white relative overflow-hidden">
-            <div className="relative z-10 mb-12">
-              <div className="bg-white bg-opacity-10 rounded-3xl backdrop-blur-sm border border-white border-opacity-20 flex items-center justify-center p-6">
-                <img
-                  style={{ height: "45vh", width: "45vh" }}
-                  src="/loginimg.svg"
-                  alt="Register Illustration"
+        <div className="space-y-2">
+          <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Secure Password</Label>
+          <div className="relative group">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+            <Input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+              placeholder="••••••••"
+            />
+          </div>
+          <div className="px-1 pt-1">
+            <PasswordStrengthIndicator strength={strength} />
+            {passwordError && <p className="text-[10px] text-red-500 mt-1 font-bold">{passwordError}</p>}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">WhatsApp (Optional)</Label>
+            <div className="relative group">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+              <Input
+                name="whatsapp"
+                value={form.whatsapp}
+                onChange={handleChange}
+                className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+                placeholder="+91..."
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Mobile Number</Label>
+            <div className="flex gap-2">
+              <div className="relative group flex-1">
+                <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+                <Input
+                  name="mobile"
+                  value={form.mobile}
+                  onChange={handleChange}
+                  className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+                  placeholder="10 digit number"
                 />
               </div>
-            </div>
-
-            <div className="relative z-10 text-center">
-              <h3 className="text-2xl font-semibold mb-4">
-                {mode === "B2C" ? "Buyer & Seller Features" : "Create new Buyer Account"}
-              </h3>
-
-              {mode === "B2C" ? (
-                <p className="text-lg opacity-90 leading-relaxed">
-                  You can buy and sell products on this platform.
-                </p>
-              ) : (
-                <p className="text-lg opacity-90 leading-relaxed">
-                  Join our platform to access exclusive buyer deals.
-                </p>
-              )}
-
+              <Button 
+                type="button" 
+                onClick={handleSendOtp} 
+                disabled={loading || !form.mobile}
+                className="h-auto px-4 rounded-2xl bg-primary/10 text-primary hover:bg-primary/20 border-none font-bold text-[10px] uppercase"
+              >
+                {otpSent ? "Resend" : "Send OTP"}
+              </Button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+
+        <AnimatePresence>
+          {otpSent && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-2"
+            >
+              <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Verification Code</Label>
+              <div className="relative group">
+                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+                <Input
+                  name="otp"
+                  value={form.otp}
+                  onChange={handleChange}
+                  className="pl-11 py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all tracking-[0.5em] font-black"
+                  placeholder="••••••"
+                  maxLength={6}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="pt-4">
+          <Button 
+            type="submit" 
+            disabled={loading}
+            className="w-full py-8 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all bg-primary text-white flex items-center justify-center gap-3"
+          >
+            {loading ? "Processing Registration..." : (
+              <>
+                Register Account <ArrowRight size={20} />
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
+    </AuthLayout>
   );
 }

@@ -64,13 +64,12 @@ const EnquiryModal = memo(function EnquiryModal({
         const org = data?.organization || {};
 
         setEnquiryData((prev: any) => ({
-          ...prev,
           buyer_id: user.user_id,
           company_name: org.organizations || "",
-          // name: org.contact_person || "",
-          // email: org.email || "",
+          name: org.contact_person || data.name || "",
+          email: org.email || data.email_address || "",
           city: org.city || "",
-          // mobile: org.phone ? org.phone.toString() : data.phone_no || "",
+          mobile: org.phone ? org.phone.toString() : data.phone_no || "",
         }));
       } catch (err) {
         console.error("Error fetching buyer info:", err);
@@ -129,10 +128,10 @@ const EnquiryModal = memo(function EnquiryModal({
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div
-        className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-full max-w-3xl bg-white rounded-2xl shadow-xl p-6 max-h-[90vh] overflow-y-auto"
+        className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-full max-w-3xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-900">Send Enquiry</h2>
           <button
             onClick={onClose}
@@ -142,6 +141,9 @@ const EnquiryModal = memo(function EnquiryModal({
             <X size={24} />
           </button>
         </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
 
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
           <p className="text-sm text-blue-800 font-semibold mb-2">
@@ -174,8 +176,8 @@ const EnquiryModal = memo(function EnquiryModal({
         )}
 
 
-        {/* FORM START */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Form Fields Container */}
+        <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Company — Only shown for B2B */}
             {mode === "B2B" && (
@@ -192,10 +194,8 @@ const EnquiryModal = memo(function EnquiryModal({
                     setEnquiryData({ ...enquiryData, company_name: e.target.value })
                   }
                   placeholder="Your company"
-                  readOnly
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800"
                   required
-                  disabled
                 />
               </div>
             )}
@@ -212,10 +212,8 @@ const EnquiryModal = memo(function EnquiryModal({
                   setEnquiryData({ ...enquiryData, name: e.target.value })
                 }
                 placeholder="Enter contact person"
-                readOnly
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800"
                 required
-                disabled
               />
             </div> */}
 
@@ -229,10 +227,8 @@ const EnquiryModal = memo(function EnquiryModal({
                   setEnquiryData({ ...enquiryData, email: e.target.value })
                 }
                 placeholder="Enter your email"
-                readOnly
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800"
                 required
-                disabled
               />
             </div> */}
 
@@ -246,9 +242,8 @@ const EnquiryModal = memo(function EnquiryModal({
                   setEnquiryData({ ...enquiryData, mobile: e.target.value })
                 }
                 placeholder="Enter your mobile"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800"
                 required
-                disabled
               />
             </div> */}
 
@@ -269,7 +264,6 @@ const EnquiryModal = memo(function EnquiryModal({
                     ? "border-red-500 bg-red-50"
                     : "border-gray-300 bg-white"
                 }`}
-                disabled
               />
               {!enquiryData.city?.trim() && (
                 <p className="text-red-500 text-xs mt-1">
@@ -386,18 +380,21 @@ const EnquiryModal = memo(function EnquiryModal({
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2"
-          >
-            <Send size={20} />
-            {loading
-              ? "Sending..."
-              : `Send Enquiry to ${sellerCount} Seller${sellerCount > 1 ? "s" : ""}`}
-          </button>
+          <div className="p-6 border-t bg-white">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              <Send size={20} />
+              {loading
+                ? "Sending..."
+                : `Send Enquiry to ${sellerCount} Seller${sellerCount > 1 ? "s" : ""}`}
+            </button>
+          </div>
         </form>
       </div>
     </div>

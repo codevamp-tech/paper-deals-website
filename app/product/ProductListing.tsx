@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ShoppingCart, X, Plus, Minus, Trash2, Send, Star, Mail, Store } from "lucide-react";
+import { ShoppingCart, X, Plus, Minus, Trash2, Send, Filter, Grid, LayoutList } from "lucide-react";
 import EnquiryModal from "@/components/enquiryModal";
-import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTheme } from "@/hooks/use-theme";
+import { ListingProductCard } from "@/components/product/ListingProductCard";
+import { ProductCardSkeleton } from "@/components/ui/SkeletonLoader";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<any[]>([]);
@@ -13,11 +16,17 @@ export default function ProductListing() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<any[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedMode = (localStorage.getItem("mode") as "B2B" | "B2C") || "B2C";
+      const savedCart = localStorage.getItem(`cart_${savedMode}`);
+      return savedCart ? JSON.parse(savedCart) : [];
+    }
+    return [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const router = useRouter();
   const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
-  const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
+  const { mode, theme } = useTheme();
   const [enquiryData, setEnquiryData] = useState({
     company_name: "",
     name: "",
@@ -34,23 +43,9 @@ export default function ProductListing() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [productEdits, setProductEdits] = useState<Record<
-    number,
-    {
-      quantity_in_kg?: string;
-      remarks?: string;
-      shade?: string;
-      gsm?: string;
-      size?: string;
-      bf?: string;
-      rim?: string;
-      sheat?: string;
-      brightness?: string;
-      weight?: number | string;
-    }
-  >>({});
+  const [productEdits, setProductEdits] = useState<Record<number, any>>({});
 
-  const setProductEdit = (productId: number, patch: Partial<(typeof productEdits)[number]>) =>
+  const setProductEdit = (productId: number, patch: any) =>
     setProductEdits(prev => ({ ...prev, [productId]: { ...(prev[productId] || {}), ...patch } }));
 
   const fetchProducts = async (page: number = 1) => {
@@ -64,26 +59,16 @@ export default function ProductListing() {
       const url = `${baseUrl}/api/product/by-user-type?user_type=${userType}&page=${page}&limit=12`;
 
       const res = await fetch(url);
-
       if (!res.ok) throw new Error("Failed to fetch products");
-
       const data = await res.json();
 
       setProducts(prev => page === 1 ? (data.products || []) : [...prev, ...(data.products || [])]);
-      setPagination(
-        data.pagination || {
-          total: data.totalProducts || 0,
-          page: data.currentPage || page,
-          pages: data.totalPages || 0,
-        }
-      );
+      setPagination(data.pagination || { total: data.totalProducts || 0, page: data.currentPage || page, pages: data.totalPages || 0 });
 
       setCategories(prevCats => {
         const prevMap = new Map(page === 1 ? [] : prevCats.map(c => [c.id, c]));
         (data.products || []).forEach((p: any) => {
-          if (p.category && p.category.id) {
-            prevMap.set(p.category.id, { id: p.category.id, name: p.category.name });
-          }
+          if (p.category && p.category.id) prevMap.set(p.category.id, { id: p.category.id, name: p.category.name });
         });
         return Array.from(prevMap.values());
       });
@@ -97,55 +82,29 @@ export default function ProductListing() {
 
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
-
     observerRef.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && !loading && !isFetchingMore && pagination.page < pagination.pages) {
         fetchProducts(pagination.page + 1);
       }
     });
-
     if (bottomRef.current) observerRef.current.observe(bottomRef.current);
+    return () => observerRef.current?.disconnect();
+  }, [pagination, loading, isFetchingMore]);
 
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-    };
-  }, [pagination.page, pagination.pages, loading, isFetchingMore]);
-
-  useEffect(() => {
-    fetchProducts(1);
-  }, [mode]);
+  useEffect(() => { fetchProducts(1); }, [mode]);
 
   useEffect(() => {
     const toProduct = searchParams.get("toProduct");
-
     if (toProduct === "true") {
-      // slight delay ensures DOM is rendered
-      setTimeout(() => {
-        productsRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }, 300);
+      setTimeout(() => productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
     }
   }, [searchParams]);
 
-
-
   useEffect(() => {
-    const savedMode = (localStorage.getItem("mode") as "B2B" | "B2C") || "B2C";
-    setMode(savedMode);
-
-    const savedCart = localStorage.getItem(`cart_${savedMode}`);
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
-
-
-
-  useEffect(() => {
+    // Sync cart when mode changes
     const savedCart = localStorage.getItem(`cart_${mode}`);
-    setCart(savedCart ? JSON.parse(savedCart) : []);
+    if (savedCart) setCart(JSON.parse(savedCart));
+    else setCart([]);
   }, [mode]);
 
   useEffect(() => {
@@ -153,78 +112,48 @@ export default function ProductListing() {
     window.dispatchEvent(new Event("cart-updated"));
   }, [cart, mode]);
 
-
   const addToCart = (product: any) => {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
+      if (existingItem) return prevCart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+      toast.success("Added to cart");
       return [...prevCart, { ...product, quantity: 1, mode }];
     });
   };
 
-
   const updateQuantity = (productId: number, delta: number) => {
-    setCart((prevCart) =>
-      prevCart
-        .map((item) =>
-          item.id === productId
-            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+    setCart(prevCart => prevCart.map(item => item.id === productId ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item).filter(item => item.quantity > 0));
   };
 
   const removeFromCart = (productId: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    setCart(prevCart => prevCart.filter(item => item.id !== productId));
+    toast.error("Removed from cart");
   };
 
-  const isInCart = (productId: number) => {
-    return cart.some((item) => item.id === productId);
-  };
-
-  const getCartQuantity = (productId: number) => {
-    const item = cart.find((item) => item.id === productId);
-    return item ? item.quantity : 0;
-  };
-
-  const getTotalItems = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  };
+  const isInCart = (productId: number) => cart.some(item => item.id === productId);
+  const getTotalItems = () => cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const groupCartBySeller = () => {
     const grouped: { [key: string]: any[] } = {};
-    cart.forEach((item) => {
+    cart.forEach(item => {
       const sellerId = item.seller_id || item.user_id || "unknown";
-      if (!grouped[sellerId]) {
-        grouped[sellerId] = [];
-      }
+      if (!grouped[sellerId]) grouped[sellerId] = [];
       grouped[sellerId].push(item);
     });
     return grouped;
   };
 
-  const handleEnquirySubmit = async (): Promise<void> => {
+  const handleEnquirySubmit = async () => {
     const groupedCart = groupCartBySeller();
-
-    // Build enquiries array - one enquiry per seller
-    const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => {
-      // Extract product IDs for this seller
-      const product_ids = items.map((item: any) => item.id);
-
-      // Build detailed product info
-      const products = items.map((item: any) => {
+    const enquiries = Object.entries(groupedCart).map(([sellerId, items]) => ({
+      seller_id: Number(sellerId),
+      product_ids: items.map(item => item.id),
+      products: items.map(item => {
         const edit = productEdits[item.id] || {};
         return {
           product_id: item.id,
           product_name: item.product_name,
-          category_id: item.category?.id ?? item.category_id ?? null,
+          category_id: item.category?.id || item.category_id || null,
           quantity_in_kg: edit.quantity_in_kg || String(item.quantity || ""),
           remarks: edit.remarks || "",
           shade: edit.shade || item.shade || "",
@@ -236,26 +165,11 @@ export default function ProductListing() {
           brightness: edit.brightness || item.brightness || "",
           weight: edit.weight || item.weight || null,
         };
-      });
+      }),
+      customer_details: { ...enquiryData, mode: (localStorage.getItem("mode") as any) || mode || "B2C" },
+    }));
 
-      return {
-        seller_id: Number(sellerId),
-        product_ids, // Array of product IDs
-        products, // Array of detailed product objects
-        customer_details: {
-          company_name: enquiryData.company_name,
-          name: enquiryData.name,
-          email: enquiryData.email,
-          mobile: enquiryData.mobile,
-          city: enquiryData.city,
-          remarks: enquiryData.remarks,
-          message: enquiryData.message,
-          mode: (localStorage.getItem("mode") as "B2B" | "B2C") || mode || "B2C",
-        },
-      };
-    });
-
-    const currentMode = (localStorage.getItem("mode") as "B2B" | "B2C") || mode || "B2C";
+    const currentMode = (localStorage.getItem("mode") as any) || mode || "B2C";
     const endpoint = currentMode === "B2B" ? "/api/enquiry/multiple" : "/api/enquiry/multiple-broadcast";
 
     try {
@@ -264,205 +178,103 @@ export default function ProductListing() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ enquiries }),
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText);
-      }
-
-      toast.success(`Successfully sent ${enquiries.length} enquiry batch(es) to seller(s)!`);
+      if (!res.ok) throw new Error(await res.text());
+      toast.success(`Successfully sent enquiries to ${enquiries.length} seller(s)!`);
       setCart([]);
       setIsEnquiryModalOpen(false);
       setIsCartOpen(false);
-      setEnquiryData({
-        company_name: "",
-        name: "",
-        email: "",
-        mobile: "",
-        city: "",
-        remarks: "",
-        message: "",
-      });
+      setEnquiryData({ company_name: "", name: "", email: "", mobile: "", city: "", remarks: "", message: "" });
       setProductEdits({});
     } catch (error) {
       console.error("Error submitting enquiry:", error);
-      toast.error("Failed to submit enquiry. Please try again.");
+      toast.error("Failed to submit enquiry.");
     }
   };
 
-
-  const handleCategoryFilter = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-  };
-
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter(
-        (p) =>
-          p.category?.id?.toString() === selectedCategory ||
-          p.category_id?.toString() === selectedCategory
-      );
-
-  const getFirstProductImage = (images?: string | string[]) => {
-    // ✅ New API: images already an array
-    if (Array.isArray(images)) {
-      return images.length > 0 ? images[0] : "/mainimg.png";
-    }
-
-    // ✅ Old API: images is JSON string
-    if (typeof images === "string") {
-      try {
-        const parsed = JSON.parse(images);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed[0];
-        }
-      } catch (err) {
-        // ignore
-      }
-    }
-
-    // ✅ Fallback
-    return "/mainimg.png";
-  };
-
-
-
-  const getImageContent = (item: any) => {
-    const imageUrl = getFirstProductImage(item.images);
-
-    if (/\.(jpe?g|png|webp)$/i.test(imageUrl)) {
-      return (
-        <img
-          src={imageUrl}
-          alt={item.product_name || "Product Image"}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      );
-    }
-
-    return (
-      <img
-        src="/mainimg.png"
-        alt="No Image"
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-    );
-  };
+  const filteredProducts = selectedCategory === "all" ? products : products.filter(p => p.category?.id?.toString() === selectedCategory || p.category_id?.toString() === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
-
-      {isCartOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsCartOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl flex flex-col">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Shopping Cart</h2>
-              <button
-                onClick={() => setIsCartOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              {cart.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <ShoppingCart size={64} className="mb-4 opacity-50" />
-                  <p className="text-lg">Your cart is empty</p>
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Premium Cart Sidebar */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex justify-end"
+          >
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsCartOpen(false)} />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col"
+            >
+              <div className="p-8 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Your Selection</h2>
+                  <p className="text-sm text-gray-500 mt-1">{getTotalItems()} items from {Object.keys(groupCartBySeller()).length} suppliers</p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {Object.entries(groupCartBySeller()).map(([sellerId, items]) => (
-                    <div key={sellerId} className="border-b pb-4 mb-4">
-                      <h3 className="font-semibold text-gray-800 mb-3 bg-gray-100 px-3 py-2 rounded-lg">
-                        🏪 Seller {sellerId} ({items.length} product{items.length > 1 ? "s" : ""})
-                      </h3>
+                <button onClick={() => setIsCartOpen(false)} className="p-3 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                {cart.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                      <ShoppingCart size={40} className="text-gray-300" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Cart is Empty</h3>
+                    <p className="text-gray-500 max-w-[200px]">Add some products to start your enquiry process.</p>
+                  </div>
+                ) : (
+                  Object.entries(groupCartBySeller()).map(([sellerId, items]) => (
+                    <div key={sellerId} className="space-y-4">
+                      <div className="flex items-center gap-3 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+                        <span className="text-xs font-bold text-primary uppercase tracking-wider">Supplier ID: {sellerId}</span>
+                      </div>
                       {items.map((item: any) => (
-                        <div
-                          key={item.id}
-                          className="flex gap-4 p-4 bg-gray-50 rounded-lg mb-2"
-                        >
-                          <img
-                            src={
-                              item.image && item.image !== "null"
-                                ? item.image.startsWith("http")
-                                  ? item.image
-                                  : `${process.env.NEXT_PUBLIC_API_URL}/${item.image}`
-                                : "/mainimg.png"
-                            }
-                            alt={item.product_name}
-                            className="w-20 h-20 object-cover rounded-lg"
-                          />
+                        <div key={item.id} className="flex gap-4 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                          <img src={item.images?.[0] || "/mainimg.png"} alt={item.product_name} className="w-20 h-20 object-cover rounded-xl bg-gray-50" />
                           <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-1">
-                              {item.product_name}
-                            </h3>
-                            <div className="mt-2 flex justify-between text-gray-700 text-sm">
-                              <p>
-                                <span className="font-semibold">GSM:</span> {item.gsm || "-"}
-                              </p>
-                              <p>
-                                <span className="font-semibold">Size:</span> {item.sizes || item.size || "-"}
-                              </p>
-                            </div>
-                            <p className="text-blue-600 font-bold mb-2">
-                              ₹{item.price_per_kg}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => updateQuantity(item.id, -1)}
-                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
-                              >
-                                <Minus size={16} />
-                              </button>
-                              <span className="font-semibold px-3">{item.quantity}</span>
-                              <button
-                                onClick={() => updateQuantity(item.id, 1)}
-                                className="p-1 bg-gray-200 hover:bg-gray-300 rounded"
-                              >
-                                <Plus size={16} />
-                              </button>
-                              <button
-                                onClick={() => removeFromCart(item.id)}
-                                className="ml-auto p-1 text-red-500 hover:bg-red-50 rounded"
-                              >
-                                <Trash2 size={18} />
-                              </button>
+                            <h4 className="font-bold text-gray-900 line-clamp-1">{item.product_name}</h4>
+                            <p className="text-xs text-gray-500 mt-1">{item.gsm} GSM • {item.size}</p>
+                            <div className="flex items-center justify-between mt-4">
+                              <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1">
+                                <button onClick={() => updateQuantity(item.id, -1)} className="p-1 hover:bg-white hover:shadow-sm rounded-md transition-all"><Minus size={14} /></button>
+                                <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
+                                <button onClick={() => updateQuantity(item.id, 1)} className="p-1 hover:bg-white hover:shadow-sm rounded-md transition-all"><Plus size={14} /></button>
+                              </div>
+                              <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-500 transition-colors"><Trash2 size={18} /></button>
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  ))}
+                  ))
+                )}
+              </div>
+
+              {cart.length > 0 && (
+                <div className="p-8 border-t border-gray-100 bg-white">
+                  <button
+                    onClick={() => { setIsCartOpen(false); setIsEnquiryModalOpen(true); }}
+                    className="w-full py-5 bg-primary text-white font-bold rounded-[1.25rem] shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                  >
+                    <Send size={20} />
+                    Submit Enquiry for {getTotalItems()} Items
+                  </button>
                 </div>
               )}
-            </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            {cart.length > 0 && (
-              <div className="border-t p-6 bg-white">
-                <div className="mb-4 text-sm text-gray-600">
-                  {Object.keys(groupCartBySeller()).length} Seller{Object.keys(groupCartBySeller()).length > 1 ? "s" : ""} • {getTotalItems()} Item{getTotalItems() > 1 ? "s" : ""}
-                </div>
-                <button
-                  onClick={() => {
-                    setIsCartOpen(false);
-                    setIsEnquiryModalOpen(true);
-                  }}
-                  className="w-full py-2 mb-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Send size={20} />
-                  Send Enquiry
-                </button>
-
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       {isEnquiryModalOpen && (
         <EnquiryModal
           isOpen={isEnquiryModalOpen}
@@ -476,51 +288,57 @@ export default function ProductListing() {
         />
       )}
 
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-4"
+          >
+            <h1 ref={productsRef} className="text-5xl font-black text-gray-900 tracking-tight">
+              Premium <span className="text-primary">Catalog</span>
+            </h1>
+            <p className="text-lg text-gray-500 max-w-2xl">
+              Source high-quality paper products directly from verified manufacturers. Use the cart to batch your enquiries.
+            </p>
+          </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 border-b border-gray-100 pb-6">
-          {/* Title Section */}
-          <div className="text-center sm:text-left">
-            <h2 ref={productsRef} className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Top-Rated Paper Products
-            </h2>
-            <div className="w-20 h-1.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mt-3 mx-auto sm:mx-0"></div>
-          </div>
-
-          {/* Cart Button Section */}
-          {/* <div className="flex items-center">
-            <button
-              onClick={() => router.push("/cart")}
-              className="group relative p-4 bg-white border border-gray-200 text-blue-600 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
-            >
-              <ShoppingCart size={28} className="group-hover:scale-110 transition-transform" />
-
+          <div className="flex items-center gap-4">
+            <div className="flex p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+              <button className="p-2.5 bg-gray-50 rounded-xl text-primary"><Grid size={20} /></button>
+              <button className="p-2.5 hover:bg-gray-50 rounded-xl text-gray-400 transition-colors"><LayoutList size={20} /></button>
+            </div>
+            
+            <button onClick={() => setIsCartOpen(true)} className="relative group px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-primary transition-all duration-300">
+              <ShoppingCart className="text-gray-900 group-hover:text-primary" size={24} />
               {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-lg h-6 px-2 flex items-center justify-center shadow-lg animate-in zoom-in">
+                <span className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-white text-[10px] font-black flex items-center justify-center rounded-full shadow-lg shadow-primary/30 border-2 border-white">
                   {getTotalItems()}
                 </span>
               )}
             </button>
-          </div> */}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 border-b border-gray-200 scrollbar-hide">
+        {/* Category Filters */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-6 mb-12 no-scrollbar">
           <button
-            onClick={() => handleCategoryFilter("all")}
-            className={`whitespace-nowrap px-4 py-2 font-medium text-sm border-b-2 transition-colors duration-200 ${selectedCategory === "all"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-600 hover:text-blue-600 hover:border-blue-300"
+            onClick={() => setSelectedCategory("all")}
+            className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all whitespace-nowrap shadow-sm border ${selectedCategory === "all"
+              ? "bg-primary text-white border-primary shadow-primary/20"
+              : "bg-white text-gray-600 border-gray-100 hover:border-primary/30"
               }`}
           >
-            All Categories
+            All Collections
           </button>
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => handleCategoryFilter(cat.id.toString())}
-              className={`whitespace-nowrap px-4 py-2 font-medium text-sm border-b-2 transition-colors duration-200 ${selectedCategory === cat.id.toString()
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-600 hover:text-blue-600 hover:border-blue-300"
+              onClick={() => setSelectedCategory(cat.id.toString())}
+              className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all whitespace-nowrap shadow-sm border ${selectedCategory === cat.id.toString()
+                ? "bg-primary text-white border-primary shadow-primary/20"
+                : "bg-white text-gray-600 border-gray-100 hover:border-primary/30"
                 }`}
             >
               {cat.name}
@@ -528,179 +346,46 @@ export default function ProductListing() {
           ))}
         </div>
 
+        {/* Grid Area */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse flex flex-col h-full"
-              >
-                <div className="h-56 bg-gray-100 w-full"></div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
-                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-1"></div>
-                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
-
-                  <div className="flex gap-2 mb-4">
-                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
-                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
-                  </div>
-
-                  <div className="mt-auto pt-4 border-t border-gray-50 mb-4">
-                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
-                    <div className="flex gap-2.5">
-                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
-                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {[...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {filteredProducts.map((item) => (
-              <div
-                key={item.id}
-                className="group bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col h-full overflow-hidden"
-              >
-                {/* Image Header */}
-                <div className="relative h-56 w-full bg-gray-50 overflow-hidden">
-                  {/* Rating Pill - Premium Look */}
-                  <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm border border-white/20">
-                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                    <span className="text-xs font-bold text-slate-700">{item.rating ? item.rating.toFixed(1) : "0.0"}</span>
-                  </div>
-
-                  {/* Image */}
-                  <Link href={`/product/${item.id}`} className="block w-full h-full relative">
-                    {getImageContent(item)}
-                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  </Link>
-                </div>
-
-                {/* Content Body */}
-                <div className="p-5 flex flex-col flex-grow relative">
-
-                  {/* Category */}
-                  <div className="mb-2">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-100/50">
-                      {item.category?.name || "General"}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <Link href={`/product/${item.id}`} className="block mb-3">
-                    <h3 className="text-[17px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                      {item.product_name}
-                    </h3>
-                  </Link>
-
-                  {/* Specs (Clean & Minimal) */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-sm text-slate-600">
-                    <div className="flex items-center gap-1.5 border border-gray-100 bg-gray-50 rounded-md px-2.5 py-1">
-                      <span className="text-slate-400 font-medium text-xs uppercase tracking-wider">GSM</span>
-                      <span className="font-semibold text-slate-800">{item.gsm || "-"}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 border border-gray-100 bg-gray-50 rounded-md px-2.5 py-1">
-                      <span className="text-slate-400 font-medium text-xs uppercase tracking-wider">Size</span>
-                      <span className="font-semibold text-slate-800 line-clamp-1">{item.sizes || item.size || "-"}</span>
-                    </div>
-                  </div>
-
-                  {/* Price & Actions Container */}
-                  <div className="mt-auto pt-4 border-t border-gray-100/80">
-                    <div className="flex items-end justify-between mb-4">
-                      <div>
-                        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest block mb-0.5">Wholesale Price</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-black text-slate-900">₹{item.price_per_kg}</span>
-                          <span className="text-sm font-medium text-slate-500">/ kg</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Primary Action */}
-                    <div className="space-y-3">
-
-                      {/* Secondary Actions */}
-                      <div className="flex gap-2.5">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // window.location.href = "/subscriptionPlan";
-                            if (!isInCart(item.id)) {
-                              addToCart(item);
-                            }
-                            setIsEnquiryModalOpen(true);
-                          }}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-slate-700 font-bold bg-white hover:bg-slate-50 border border-slate-200 transition-all active:scale-[0.98] text-sm shadow-sm"
-                        >
-                          <Mail className="w-4 h-4 text-slate-500" />
-                          Contact Supplier
-                        </button>
-
-                        <button
-                          onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-white font-bold transition-all active:scale-[0.98] text-sm shadow-sm ${isInCart(item.id)
-                            ? "bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:ring-amber-500/20"
-                            : "bg-[#38d200] hover:bg-[#2eaa00] focus:ring-4 focus:ring-[#38d200]/20"
-                            }`}
-                        >
-                          <ShoppingCart className="w-4 h-4" />
-                          {isInCart(item.id) ? "Added" : "Add to Cart"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((item, index) => (
+                <ListingProductCard
+                  key={item.id}
+                  item={item}
+                  mode={mode}
+                  isInCart={isInCart}
+                  addToCart={addToCart}
+                  openEnquiry={(item) => {
+                    if (!isInCart(item.id)) addToCart(item);
+                    setIsEnquiryModalOpen(true);
+                  }}
+                />
+              ))}
+            </AnimatePresence>
           </div>
         )}
 
-        {/* Infinite Scroll Trigger */}
-        {!loading && pagination.page < pagination.pages && (
-          <div ref={bottomRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-10">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={`skeleton-scroll-${i}`}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse flex flex-col h-full"
-              >
-                <div className="h-56 bg-gray-100 w-full"></div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-3"></div>
-                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-1"></div>
-                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
-
-                  <div className="flex gap-2 mb-4">
-                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
-                    <div className="h-8 bg-gray-100 rounded w-1/3"></div>
-                  </div>
-
-                  <div className="mt-auto pt-4 border-t border-gray-50 mb-4">
-                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
-                    <div className="flex gap-2.5">
-                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
-                      <div className="h-10 bg-gray-200 rounded-xl flex-1"></div>
-                    </div>
-                  </div>
+        {/* Infinite Scroll Bottom */}
+        <div ref={bottomRef} className="h-20 flex items-center justify-center mt-12">
+          {isFetchingMore && (
+            <div className="flex gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-full max-w-[300px]">
+                  <ProductCardSkeleton />
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+          {!isFetchingMore && pagination.page >= pagination.pages && products.length > 0 && (
+            <p className="text-gray-400 font-medium italic">You've reached the end of our catalog.</p>
+          )}
+        </div>
       </div>
     </div>
   );

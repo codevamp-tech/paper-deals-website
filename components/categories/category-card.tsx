@@ -4,6 +4,7 @@ import { useTheme } from "@/hooks/use-theme"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { motion } from "framer-motion"
 
 interface CategoryCardProps {
   category: {
@@ -15,123 +16,58 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category }: CategoryCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
   const [imageError, setImageError] = useState(false)
-
-  const handleImageError = () => {
-    setImageError(true)
-  }
   const { theme } = useTheme();
 
   return (
-    <article
-      className="group relative bg-gradient-to-br from-card via-card to-muted/30 rounded-3xl 
-                 border border-border/40 backdrop-blur-sm
-                 transition-all duration-500 ease-out 
-                 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30
-                 hover:scale-[1.03] hover:-translate-y-1 cursor-pointer
-                 flex h-full overflow-hidden bg-[#FBFFF9]"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      role="link"
-      tabIndex={0}
-      aria-label={`${category.name} category`}
+    <motion.article
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className="group relative bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex h-full premium-shadow-hover"
     >
-      {/* Animated background gradient */}
-      <div className=" absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none " aria-hidden="true" />
+      {/* Decorative background circle */}
+      <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-500" />
 
-      {/* Left Side Image Container */}
-      <div
-        className="relative flex-shrink-0 w-28 sm:w-32 lg:w-36 
-                   p-5 flex items-center justify-center 
-                   bg-gradient-to-br from-primary/10 via-accent/5 to-transparent "
-      >
-        <div
-          className="relative w-full h-32 sm:h-36
-                     rounded-2xl flex items-center justify-center 
-                     overflow-hidden shadow-lg
-                     transition-all duration-500
-                     group-hover:shadow-xl group-hover:shadow-primary/20 "
-        >
+      {/* Left Side: Image */}
+      <div className="relative w-1/3 min-w-[120px] bg-gray-50 flex items-center justify-center p-4">
+        <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
           <img
             src={imageError ? "/placeholder.svg" : category.image}
-            alt={`${category.name} category icon`}
-            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
-            loading="lazy"
-            onError={handleImageError}
-          />
-          
-          {/* Shimmer effect */}
-          <div
-            className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/40 to-white/0 
-                       opacity-0 group-hover:opacity-100 transition-opacity duration-700
-                       translate-x-[-100%] group-hover:translate-x-[100%] 
-                       skew-x-12 pointer-events-none"
-            style={{ transition: 'transform 0.7s ease-out, opacity 0.7s ease-out' }}
-            aria-hidden="true"
+            alt={category.name}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
           />
         </div>
       </div>
 
-      {/* Right Side Content */}
-      <div className="flex-1 flex flex-col justify-between p-5 pr-6 relative z-10">
-        <div className="space-y-2.5">
-          <h3
-            className="text-lg font-bold text-foreground 
-                      transition-all duration-300 
-                      group-hover:text-primary group-hover:translate-x-1
-                      line-clamp-2"
-          >
+      {/* Right Side: Content */}
+      <div className="flex-1 p-6 flex flex-col justify-between">
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300 line-clamp-1">
             {category.name}
           </h3>
-
-          {category.description && (
-            <p className="text-sm text-muted-foreground/80 line-clamp-3 pr-1 leading-relaxed transition-colors duration-300 group-hover:text-muted-foreground">
-              {category.description}
-            </p>
-          )}
+          <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">
+            {category.description || `Explore our high-quality ${category.name} solutions for your business needs.`}
+          </p>
         </div>
 
-        <div className="mt-5">
-          <Link
-            href={`/category/${category.id}`}
-            className="inline-flex items-center"
-            aria-label={`View all items in ${category.name}`}
-          >
-            <div
-              className="inline-flex items-center justify-center gap-2
-                         px-4 py-2 rounded-xl
-                         text-primary font-semibold text-sm
-                         hover:from-primary/25 hover:via-primary/20 hover:to-accent/20
-                         border border-primary/25 hover:border-primary/40
-                         transition-all duration-300 
-                         group-hover:gap-3 group-hover:translate-x-1
-                         group-hover:shadow-md group-hover:shadow-primary/20
-                         relative overflow-hidden"
-                         style={{color: theme.buttoncolor,
-                          borderColor: theme.buttoncolor
-                         }}
+        <div className="mt-4">
+          <Link href={`/category/${category.id}`}>
+            <div 
+              className="inline-flex items-center gap-2 text-sm font-bold text-primary group/btn"
+              style={{ color: theme.buttoncolor }}
             >
-              <span className="relative z-10">View All</span>
-              <ChevronRight 
-                size={18} 
-                className="relative z-10 transition-transform duration-300 group-hover:translate-x-1" 
-              />
-              
-              {/* Button shimmer effect */}
-              <div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
-                           translate-x-[-100%] group-hover:translate-x-[100%] 
-                           transition-transform duration-700 ease-out"
-                aria-hidden="true"
-              />
+              <span className="relative">
+                View All
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+              </span>
+              <div className="p-1 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                <ChevronRight size={14} />
+              </div>
             </div>
           </Link>
         </div>
       </div>
-
-      {/* Corner accent */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
-    </article>
+    </motion.article>
   )
-}
+}

@@ -1,41 +1,34 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, ChevronRight, ShoppingCart, ArrowRight } from "lucide-react";
+import { Search, ChevronRight, ShoppingCart, ArrowRight, Star, ShieldCheck, Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/hooks/use-theme";
 import Link from "next/link";
 
 const Hero = () => {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query);
   const [results, setResults] = useState<any[]>([]);
-
   const [mode, setMode] = useState<"B2B" | "B2C">("B2C");
-
   const router = useRouter();
-  const { theme } = useTheme();
 
   function useDebounce<T>(value: T, delay = 400) {
     const [debounced, setDebounced] = useState(value);
-
     useEffect(() => {
       const timer = setTimeout(() => setDebounced(value), delay);
       return () => clearTimeout(timer);
     }, [value, delay]);
-
     return debounced;
   }
 
-  // Detect mode
   useEffect(() => {
     const stored = localStorage.getItem("mode");
     setMode(stored === "B2B" ? "B2B" : "B2C");
   }, []);
 
-  // Search API
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setResults([]);
@@ -44,10 +37,12 @@ const Hero = () => {
 
     const fetchResults = async () => {
       try {
+        const currentMode = localStorage.getItem("mode") || "B2C";
+        const userType = currentMode === "B2B" ? 2 : 3;
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/product/search?q=${encodeURIComponent(
             debouncedQuery
-          )}&limit=6`
+          )}&user_type=${userType}&limit=6`
         );
 
         if (!res.ok) {
@@ -56,7 +51,6 @@ const Hero = () => {
         }
 
         const data = await res.json();
-
         if (data?.success && Array.isArray(data.products)) {
           setResults(
             data.products.map((item: any) => ({
@@ -68,7 +62,7 @@ const Hero = () => {
           setResults([]);
         }
       } catch (err) {
-        console.error("❌ B2C Hero search error:", err);
+        console.error("❌ Hero search error:", err);
         setResults([]);
       }
     };
@@ -76,255 +70,204 @@ const Hero = () => {
     fetchResults();
   }, [debouncedQuery]);
 
-
   const handleSelect = (item: any) => {
-    setQuery("");        // ✅ clear input
-    setResults([]);      // ✅ close dropdown
+    setQuery("");
+    setResults([]);
     router.push(`/product/${item.id}`);
   };
 
-
   return (
-    <>
-      {mode === "B2C" ? (
-        // B2C HERO SECTION
-        <section className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-          <div className="absolute inset-0 bg-[url('/abstract-paper-texture-pattern.jpg')] opacity-10" />
-          <div className="container relative mx-auto px-4 py-20 md:py-28">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 animate-fade-in">
-                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                  Premium Paper Products
+    <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-white border-b border-gray-100">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform translate-x-1/2 pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="container relative mx-auto px-4 py-12 md:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-8"
+          >
+            <div className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-primary/20 transition-colors">
+                  {mode === "B2C" ? "✨ Premium Paper Marketplace" : "🏢 Enterprise B2B Solutions"}
                 </Badge>
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                  Quality Paper Products for Every Need
-                </h1>
-                <p className="text-lg md:text-xl text-white/90">
-                  From everyday printing to professional projects, discover our wide range of premium paper products
-                  delivered right to your door.
-                </p>
+              </motion.div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 leading-[1.1]">
+                {mode === "B2C" ? (
+                  <>The Best Quality <span className="text-primary relative inline-block">
+                    Paper
+                    <motion.span 
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 0.8, duration: 0.5 }}
+                      className="absolute bottom-1 left-0 h-2 bg-primary/20 -z-10"
+                    />
+                  </span> for Your Home</>
+                ) : (
+                  <>Direct <span className="text-primary relative inline-block">
+                    Sourcing
+                    <motion.span 
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 0.8, duration: 0.5 }}
+                      className="absolute bottom-1 left-0 h-2 bg-primary/20 -z-10"
+                    />
+                  </span> for Business</>
+                )}
+              </h1>
+              
+              <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed">
+                {mode === "B2C" 
+                  ? "Discover a wide range of premium paper products delivered right to your door. From professional projects to daily needs."
+                  : "Optimize your supply chain with wholesale pricing, bulk ordering, and custom manufacturing solutions for businesses."}
+              </p>
+            </div>
 
-                {/* Search Bar */}
-                <div className="relative group w-full max-w-xl">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400" />
-                  </div>
-
-                  <input
-                    type="text"
-                    placeholder="Search by product or category..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent"
-                  />
-
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </div>
-                  {debouncedQuery && (
-                    <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
-                      {results.length === 0 && (
-                        <li className="px-4 py-3 text-sm text-gray-500">
-                          No products found
-                        </li>
-                      )}
-
-                      {results.length > 0 && (
-                        <>
-                          {results.map((item) => (
-                            <li
-                              key={item.id}
-                              onClick={() => handleSelect(item)}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                            >
-                              <div className="flex justify-between">
-                                <span className="font-medium text-gray-800">
-                                  {item.product_name}
-                                </span>
-                                <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                                  Product
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-500">
+            {/* Premium Search Bar */}
+            <div className="relative max-w-xl group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                <div className="pl-4 pr-2 text-gray-400">
+                  <Search className="h-5 w-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="What are you looking for today?"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full py-5 bg-transparent outline-none text-gray-800 placeholder-gray-400"
+                />
+                <button className="mr-2 bg-primary text-white p-3 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/20 active:scale-95">
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <AnimatePresence>
+                {debouncedQuery && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full mt-3 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                  >
+                    {results.length === 0 ? (
+                      <div className="px-6 py-8 text-center text-gray-500">
+                        No products found for "{debouncedQuery}"
+                      </div>
+                    ) : (
+                      <ul className="max-h-[400px] overflow-y-auto py-2">
+                        {results.map((item, index) => (
+                          <motion.li
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            key={item.id}
+                            onClick={() => handleSelect(item)}
+                            className="px-6 py-4 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex items-center justify-between group"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                                {item.product_name}
+                              </span>
+                              <span className="text-sm text-gray-500">
                                 Category: {item.category?.name || item.category_id}
-                              </p>
-                            </li>
-                          ))}
-                        </>
-                      )}
-                    </ul>
-                  )}
-                </div>
+                              </span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors" />
+                          </motion.li>
+                        ))}
+                      </ul>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-                <div className="flex flex-wrap gap-4">
-                  <Button
-                    size="lg"
-                    className="group bg-white text-blue-600 hover:bg-gray-100"
-                    onClick={() => router.push("/product?toProduct=true")}
-                  >
-                    Shop Now
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
-                    asChild
-                  >
-                    <Link href="/about">Learn More</Link>
-                  </Button>
+            <div className="flex flex-wrap gap-6 pt-4">
+              <div className="flex items-center gap-2.5 text-sm font-medium text-gray-600">
+                <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
+                <span>Verified Suppliers</span>
               </div>
-              <div className="relative animate-fade-in-up">
-                <img
-                  src="/banner2.png"
-                  alt="Paper Products"
-                  className="w-full h-auto rounded-2xl shadow-2xl"
-                />
+              <div className="flex items-center gap-2.5 text-sm font-medium text-gray-600">
+                <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <span>Fast Delivery</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm font-medium text-gray-600">
+                <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                  <Star className="h-5 w-5" />
+                </div>
+                <span>Premium Quality</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* B2C Stats */}
-          {/* <div className="w-full bg-black/30 backdrop-blur-md py-8 text-white">
-            <div className="container mx-auto px-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-6">
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">500K+</h3>
-                  <p className="text-white/80">Happy Customers</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">🚚 Fast</h3>
-                  <p className="text-white/80">Delivery</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">1M+</h3>
-                  <p className="text-white/80">Products Sold</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">🏆 Top</h3>
-                  <p className="text-white/80">Rated Service</p>
-                </div>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="relative z-10 rounded-3xl overflow-hidden premium-shadow group">
+              <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-700 z-10" />
+              <img
+                src={mode === "B2C" ? "/banner2.png" : "/banner1.png"}
+                alt="Paper Solutions"
+                className="w-full h-auto object-cover transform group-hover:scale-105 transition duration-1000"
+              />
             </div>
-          </div> */}
-        </section>
-      ) : (
-        // B2B HERO SECTION
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0F9D58]/95 to-[#0B7D46]/80 text-white">
-          <div className="absolute inset-0 bg-[url('/hero-banner.png')] opacity-10" />
-          <div className="container relative mx-auto px-4 py-20 md:py-28">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 animate-fade-in">
-                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                  B2B Solutions
-                </Badge>
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                  Industrial Paper Solutions for Your Business
-                </h1>
-                <p className="text-lg md:text-xl text-white/90">
-                  Wholesale pricing, bulk ordering, and custom manufacturing solutions for businesses. From raw materials
-                  to finished products.
-                </p>
-
-                {/* Search Bar */}
-                <div className="relative group w-full max-w-xl">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400" />
-                  </div>
-
-                  <input
-                    type="text"
-                    placeholder="Search by product or category..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="block w-full pl-10 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent"
-                  />
-
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </div>
-
-                  {results.length > 0 && (
-                    <ul className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto text-black">
-                      {results.map((item) => (
-                        <li
-                          key={item.id}
-                          onClick={() => handleSelect(item)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                        >
-                          <div className="flex justify-between">
-                            <span className="font-medium text-gray-800">
-                              {item.product_name}
-                            </span>
-                            <span className="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                              Product
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">
-                            Category: {item.category?.name || item.category_id}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+            
+            {/* Floating Info Cards */}
+            <motion.div 
+              animate={{ y: [0, -15, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-6 -left-6 md:-left-12 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-2xl z-20 border border-white/20 hidden md:block"
+            >
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
+                  <ShoppingCart className="h-7 w-7" />
                 </div>
-
-                <div className="flex flex-wrap gap-4">
-                  <Button
-                    size="lg"
-                    className="group bg-white text-slate-800 hover:bg-gray-100"
-                    onClick={() => router.push("/product")}
-                  >
-                    Products
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-slate-800 bg-transparent"
-                    asChild
-                  >
-                    <Link href="/livestock">View Livestock</Link>
-                  </Button>
+                <div>
+                  <div className="text-lg font-bold text-gray-900 tracking-tight">50,000+</div>
+                  <div className="text-sm font-medium text-gray-500 italic">Premium Products</div>
                 </div>
               </div>
-              <div className="relative animate-fade-in-up">
-                <img
-                  src="/banner1.png"
-                  alt="Industrial Paper Products"
-                  className="w-full h-auto rounded-2xl shadow-2xl"
-                />
-              </div>
-            </div>
-          </div>
+            </motion.div>
 
-          {/* B2B Stats */}
-          {/* <div className="w-full bg-black/30 backdrop-blur-md py-8 text-white">
-            <div className="container mx-auto px-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-6">
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">400K+</h3>
-                  <p className="text-white/80">Raw Materials Prices</p>
+            <motion.div 
+              animate={{ y: [0, 15, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute top-12 -right-8 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-2xl z-20 border border-white/20 hidden md:block"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
+                      <img src={`https://i.pravatar.cc/150?u=${i}`} alt="user" />
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">1M+</h3>
-                  <p className="text-white/80">SMEs Empowered</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">500K+</h3>
-                  <p className="text-white/80">Orders Delivered</p>
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold">30+</h3>
-                  <p className="text-white/80">Countries Served</p>
+                <div className="text-sm font-bold text-gray-900">
+                  Join 10k+ <br /> <span className="text-primary">Trusted Users</span>
                 </div>
               </div>
-            </div>
-          </div> */}
-        </section>
-      )}
-    </>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
   );
 };
 

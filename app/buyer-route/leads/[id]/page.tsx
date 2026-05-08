@@ -124,7 +124,7 @@ export default function ViewLeadPage() {
                     <div className="w-64">
                         <label className="block text-sm font-medium mb-1">Lead Status</label>
                         <Input
-                            value={status === 0 ? "Pending Action" : status === 1 ? "Accepted / Won" : "Rejected/Lost"}
+                            value={status === 0 ? "Pending Action" : status === 1 ? "Accepted / Won" : "Lost"}
                             disabled
                             className="bg-gray-100 font-semibold"
                         />
