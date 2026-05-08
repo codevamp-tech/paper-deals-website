@@ -235,7 +235,7 @@ const SellerEnquiryPage = () => {
 
 
     const isProfileIncomplete =
-        !formData.company_name?.trim() || !formData.city?.trim();
+        !formData.city?.trim();
 
 
     return (
@@ -280,19 +280,7 @@ const SellerEnquiryPage = () => {
                     <h2 className="text-xl font-bold mb-6 text-black">Business Enquiry</h2>
 
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Company */}
-                        <div>
-                            <Label>Company *</Label>
-                            <Input
-                                name="company_name"
-                                value={formData.company_name}
-                                onChange={handleChange}
-                                readOnly
-                                className="bg-gray-100 border border-gray-300 text-black"
-                                required
-                                disabled
-                            />
-                        </div>
+                        {/* Company Removed */}
 
                         {/* Contact Person */}
                         {/* <div>

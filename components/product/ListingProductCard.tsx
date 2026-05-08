@@ -114,11 +114,21 @@ export function ListingProductCard({
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => router.push(`/product/${item.id}`)}
-            className="w-full py-4 rounded-[1.25rem] font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg bg-primary text-white shadow-primary/20 hover:opacity-90"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (inCart) {
+                router.push("/cart");
+              } else {
+                addToCart(item);
+              }
+            }}
+            className={`w-full py-4 rounded-[1.25rem] font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg text-white hover:opacity-90 ${
+              inCart ? "bg-gray-800 shadow-gray-800/20" : "bg-primary shadow-primary/20"
+            }`}
           >
-            <ArrowRight className="h-4 w-4" />
-            View Details
+            <ShoppingCart className="h-4 w-4" />
+            {inCart ? "Go to Cart" : "Add to Cart"}
           </motion.button>
         </div>
       </div>

@@ -22,6 +22,7 @@ type ApiCategory = {
   image: string;
   status: number;
   date: string;
+  mode?: string;
 };
 
 type ApiProduct = {
@@ -58,14 +59,22 @@ export default function CategoriesDropdown() {
         setLoading(true);
         // Fetch more categories to reduce pagination need
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=1&limit=50`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=1&limit=100`
         );
         if (!res.ok) throw new Error("Failed to fetch categories");
         const data: ApiResponse = await res.json();
 
         if (Array.isArray(data.categories)) {
-          setCategoriesData(data.categories);
-          if (data.categories.length > 0) setActiveCategory(data.categories[0]);
+          const currentMode = localStorage.getItem("mode") || "B2C";
+          const filtered = data.categories.filter((cat: any) => {
+            if (currentMode === "B2B") {
+              return cat.mode === "b2b";
+            } else {
+              return cat.mode === "b2c" || !cat.mode;
+            }
+          });
+          setCategoriesData(filtered);
+          if (filtered.length > 0) setActiveCategory(filtered[0]);
         }
       } catch (error) {
         console.error("Error fetching categories:", error);

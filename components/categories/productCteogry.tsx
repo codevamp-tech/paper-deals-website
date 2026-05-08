@@ -10,6 +10,7 @@ interface Category {
   image: string
   status: number
   date: string
+  mode?: string
 }
 
 interface CategoriesProps {
@@ -18,7 +19,7 @@ interface CategoriesProps {
 }
 
 const PAGINATION_CONFIG = {
-  limit: 16, // Increased to show more items in carousels
+  limit: 100, // Increased to show more items in carousels
   minPage: 1,
 }
 
@@ -44,9 +45,20 @@ export default function ProductCategories({
         if (!res.ok) throw new Error("Failed to fetch categories")
 
         const data = await res.json()
-        const catArray = Array.isArray(data.categories) ? data.categories : []
-
-        setCategories(catArray)
+        
+        if (Array.isArray(data.categories)) {
+          const currentMode = localStorage.getItem("mode") || "B2C";
+          const filtered = data.categories.filter((cat: any) => {
+            if (currentMode === "B2B") {
+              return cat.mode === "b2b";
+            } else {
+              return cat.mode === "b2c" || !cat.mode;
+            }
+          });
+          setCategories(filtered);
+        } else {
+          setCategories([]);
+        }
       } catch (err) {
         console.error("Error fetching categories:", err)
         setError("Failed to load categories. Please try again.")

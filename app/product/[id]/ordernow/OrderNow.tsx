@@ -327,20 +327,39 @@ const OrderNow = ({ productId }: { productId: string }) => {
                     </div>
                     <form onSubmit={handleSubmit} className="bg-white flex flex-col max-h-[80vh]">
                       <div className="p-8 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
-                        {/* <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Contact Person</Label>
-                            <Input name="name" value={formData.name} onChange={(e) => setFormData(p => ({...p, name: e.target.value}))} placeholder="Contact Name" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="text-[10px] font-bold text-gray-400 uppercase">Mobile</Label>
-                            <Input name="mobile" value={formData.mobile} onChange={(e) => setFormData(p => ({...p, mobile: e.target.value}))} placeholder="Mobile Number" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
-                          </div>
-                        </div> */}
+                        {(!formData.city?.trim()) && (
+                            <div className="flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+                                <p className="text-sm font-medium">
+                                    Please complete your profile to send an enquiry.
+                                </p>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="ml-auto border-red-400 text-red-600"
+                                    onClick={() => router.push("/buyer-route/profile")}
+                                >
+                                    Complete Profile
+                                </Button>
+                            </div>
+                        )}
 
-                        <div className="space-y-2">
-                          <Label className="text-[10px] font-bold text-gray-400 uppercase">Company Name</Label>
-                          <Input name="company_name" value={formData.company_name} onChange={(e) => setFormData(p => ({ ...p, company_name: e.target.value }))} placeholder="Company Name" className="rounded-xl bg-gray-50 border-gray-100 focus:ring-primary h-12" />
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase">City</Label>
+                            <Input 
+                              name="city" 
+                              value={formData.city} 
+                              onChange={(e) => setFormData(p => ({ ...p, city: e.target.value }))} 
+                              placeholder="City" 
+                              className={`rounded-xl bg-gray-50 border h-12 ${!formData.city?.trim() ? 'border-red-500 focus-visible:ring-red-400 text-black' : 'border-gray-100 focus:ring-primary'}`} 
+                              disabled 
+                            />
+                            {!formData.city?.trim() && (
+                                <p className="text-red-500 text-[10px] mt-1">
+                                    City is missing — please complete your profile.
+                                </p>
+                            )}
+                          </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -394,8 +413,12 @@ const OrderNow = ({ productId }: { productId: string }) => {
                       </div>
 
                       <div className="p-8 pt-0 bg-white">
-                        <Button type="submit" disabled={loading} className="w-full py-6 rounded-xl font-bold bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/20 transition-all">
-                          {loading ? "Processing..." : "Submit Quote Request"}
+                        <Button 
+                          type="submit" 
+                          disabled={loading || !formData.city?.trim()} 
+                          className="w-full py-6 rounded-xl font-bold bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/20 transition-all disabled:opacity-50"
+                        >
+                          {loading ? "Processing..." : (!formData.city?.trim() ? "Profile Incomplete" : "Submit Quote Request")}
                         </Button>
                       </div>
                     </form>

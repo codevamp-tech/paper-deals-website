@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Star, Clock, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export type Consultant = {
@@ -69,7 +69,7 @@ export function ConsultantCard({ consultant }: { consultant: Consultant }) {
               </span>
             </div>
           </div>
-          
+
           <div className="relative h-20 w-20 rounded-2xl overflow-hidden border-4 border-white shadow-lg bg-white -mb-10 z-10 flex items-center justify-center">
             {photoUrl && !photoUrl.includes("placeholder") && !imgError ? (
               <Image
