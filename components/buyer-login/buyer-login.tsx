@@ -96,10 +96,14 @@ export default function BuyerSignin() {
         body: JSON.stringify({ email: forgotEmail, user_type: 3 }),
       });
       const data = await res.json();
-      toast.success("Instructions sent to your email", { id: loadingToast });
-      setIsForgotOpen(false);
+      if (res.ok) {
+        toast.success(data.message || "Instructions sent to your email", { id: loadingToast });
+        setIsForgotOpen(false);
+      } else {
+        toast.error(data.message || "Failed to send reset link", { id: loadingToast });
+      }
     } catch (err) {
-      toast.error("Failed to send reset link", { id: loadingToast });
+      toast.error("Network error. Please try again.", { id: loadingToast });
     }
   };
 

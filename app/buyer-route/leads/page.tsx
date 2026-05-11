@@ -101,7 +101,7 @@ export default function LeadsPage() {
                                         {row.enquiry?.gsm || "-"}
                                     </td>
                                     <td className="border px-3 py-2">
-                                        {row.enquiry?.quantity_in_kg || "-"} {row.enquiry?.quantity_unit || "kg"}
+                                        {row.enquiry?.quantity_in_kg || row.enquiry?.stock_in_kg || row.enquiry?.quantity || "-"} {row.enquiry?.quantity_unit || "kg"}
                                     </td>
                                     <td className="border px-3 py-2">
                                         {row.enquiry?.remarks || "-"}

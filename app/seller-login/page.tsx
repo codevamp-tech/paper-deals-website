@@ -10,10 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function SellerSignin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -64,6 +72,29 @@ export default function SellerSignin() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    
+    const loadingToast = toast.loading("Sending reset link...");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/forgot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail, user_type: 2 }), // seller
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || "Instructions sent to your email", { id: loadingToast });
+        setIsForgotOpen(false);
+      } else {
+        toast.error(data.message || "Failed to send reset link", { id: loadingToast });
+      }
+    } catch (err) {
+      toast.error("Service connection failed", { id: loadingToast });
+    }
+  };
+
   return (
     <AuthLayout
       title="Seller Portal"
@@ -95,7 +126,7 @@ export default function SellerSignin() {
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
               <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Secure Access Key</Label>
-              <button type="button" className="text-xs font-bold text-primary hover:underline">Forgot Access?</button>
+              <button type="button" onClick={() => setIsForgotOpen(true)} className="text-xs font-bold text-primary hover:underline">Forgot Access?</button>
             </div>
             <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={20} />
@@ -151,6 +182,32 @@ export default function SellerSignin() {
           </div>
         </div>
       </form>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={isForgotOpen} onOpenChange={setIsForgotOpen}>
+        <DialogContent className="sm:max-w-md rounded-[2.5rem] p-8 border-none shadow-2xl bg-white">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-black text-gray-900">Reset Access</DialogTitle>
+            <p className="text-gray-500 font-medium">Enter your email to receive recovery instructions.</p>
+          </DialogHeader>
+          <form onSubmit={handleForgotPassword} className="space-y-6 pt-4">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Registered Seller Email</Label>
+              <Input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                className="py-6 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:ring-primary/20 transition-all"
+                placeholder="seller@factory.com"
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full py-6 rounded-2xl font-bold bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/20">
+              Send Reset Instructions
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </AuthLayout>
   );
 }
