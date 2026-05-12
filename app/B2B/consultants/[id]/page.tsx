@@ -77,6 +77,17 @@ const ConsultantBookingPage: React.FC = () => {
     }
     if (consultantId) fetchSlots();
   }, [consultantId]);
+ 
+  // ✅ Filter slots by selected date
+  const filteredSlots = slots.filter((s) => {
+    if (!formData.date) return false; // Don't show slots until a date is selected
+    try {
+      const slotDate = new Date(s.date).toISOString().split("T")[0];
+      return slotDate === formData.date;
+    } catch (e) {
+      return false;
+    }
+  });
 
   // ✅ Handle input change
   const handleChange = (
@@ -252,7 +263,12 @@ const ConsultantBookingPage: React.FC = () => {
                       </Label>
                       {loadingSlots ? (
                         <div className="h-14 bg-gray-50 rounded-xl animate-pulse" />
-                      ) : slots.length > 0 ? (
+                      ) : !formData.date ? (
+                        <div className="flex items-center gap-2 p-4 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+                          <AlertCircle className="w-4 h-4" />
+                          <span className="text-sm font-medium">Please select a date to see available slots.</span>
+                        </div>
+                      ) : filteredSlots.length > 0 ? (
                         <Select
                           onValueChange={(val) =>
                             setFormData((prev) => ({ ...prev, slot: val }))
@@ -263,10 +279,12 @@ const ConsultantBookingPage: React.FC = () => {
                             <SelectValue placeholder="Select a convenient slot" />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-gray-100 shadow-2xl">
-                            {slots.map((s) => (
+                            {filteredSlots.map((s) => (
                               <SelectItem key={s.id} value={s.id} className="h-12 focus:bg-primary/5">
                                 <span className="font-medium text-gray-700">{s.from} - {s.to}</span>
-                                <span className="ml-2 text-xs text-gray-400">({s.date})</span>
+                                <span className="ml-2 text-xs text-gray-400">
+                                  ({new Date(s.date).toLocaleDateString()})
+                                </span>
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -274,7 +292,7 @@ const ConsultantBookingPage: React.FC = () => {
                       ) : (
                         <div className="flex items-center gap-2 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
                           <AlertCircle className="w-4 h-4" />
-                          <span className="text-sm font-medium">No slots currently available for this consultant.</span>
+                          <span className="text-sm font-medium">No slots available for the selected date.</span>
                         </div>
                       )}
                     </div>

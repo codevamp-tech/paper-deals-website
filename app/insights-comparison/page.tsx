@@ -125,7 +125,7 @@ export default function PaperProductsComparison() {
             pricePerKg: item.price,
             city: item.location,
             category: "Paper",
-            availability: item.status === 0 ? "In Stock" : "Out of Stock",
+            availability: (item.status === 0 || !item.status) ? "In Stock" : "Out of Stock",
             mill: item.location.split("(")[0].trim(),
             date: item.updated_at || "—",
           }));

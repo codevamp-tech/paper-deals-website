@@ -404,7 +404,7 @@ export default function LiveStockPage() {
               <div className="flex justify-center pt-4">
                 <button
                   onClick={openCartModal}
-                  className="relative inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary hover:bg-accent text-primary-foreground font-semibold transition-colors duration-200 group"
+                  className="relative inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-colors duration-200 group"
                 >
                   <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   <span className="ml-2 text-sm">Shopping Cart</span>
