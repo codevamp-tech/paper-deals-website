@@ -35,6 +35,7 @@ export default function AdminDashboard() {
   const [prevChats, setPrevChats] = useState<number>(0);
   const [upcomingChats, setUpcomingChats] = useState<number>(0);
   const [pendingEnquiries, setPendingEnquiries] = useState<number>(0);
+  const [totalLeads, setTotalLeads] = useState<number>(0);
 
   const token = getCookie("token");
   const user = getUserFromToken();
@@ -56,6 +57,7 @@ export default function AdminDashboard() {
         .then((res) => res.json())
         .then((res) => {
           setPendingEnquiries(res.pendingCount || 0);
+          setTotalLeads(res.total || 0);
         })
         .catch((err) => console.error("Error fetching enquiries:", err));
     }
@@ -69,6 +71,32 @@ export default function AdminDashboard() {
       </div>
 
 
+
+
+      {/* Dynamic Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {/* Total Leads Card */}
+        <Card className="overflow-hidden border-0 bg-cyan-600 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+          <CardContent className="relative p-6">
+            <div className="relative z-10">
+              <div className="text-4xl font-bold text-white">{totalLeads}</div>
+              <div className="mt-1 text-white/90 font-medium">Total Leads</div>
+            </div>
+            <Package className="absolute right-6 top-1/2 h-16 w-16 -translate-y-1/2 text-white/20" />
+          </CardContent>
+        </Card>
+
+        {/* Pending Leads Card */}
+        <Card className="overflow-hidden border-0 bg-amber-500 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+          <CardContent className="relative p-6">
+            <div className="relative z-10">
+              <div className="text-4xl font-bold text-white">{pendingEnquiries}</div>
+              <div className="mt-1 text-white/90 font-medium">Pending Enquiries</div>
+            </div>
+            <MessageSquare className="absolute right-6 top-1/2 h-16 w-16 -translate-y-1/2 text-white/20" />
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <div className="h-full">
