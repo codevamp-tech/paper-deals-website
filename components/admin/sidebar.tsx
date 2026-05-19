@@ -29,6 +29,7 @@ const navigation: NavItem[] = [
   // { name: "My Enquiry", href: "/buyer-route/enquiry", icon: Package },
   // { name: "Direct Single Order", href: "/buyer-route/DirectSingleOrder", icon: Award },
   { name: "Pd bulk deal", href: "/buyer-route/pdbulkdeal", icon: ImageIcon },
+  { name: "Consultant Bookings", href: "/buyer-route/consultant-bookings", icon: FileBadge },
   // { name: "Order", href: "/buyer-route/order", icon: ShoppingCart },
   { name: "Leads", href: "/buyer-route/leads", icon: Megaphone },
   { name: "Products", href: "/buyer-route/product", icon: Package },
@@ -163,7 +164,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
           } else {
             // In B2C mode (or when mode is not set), hide B2B-specific items
             if (
-              item.href === "/buyer-route/pdbulkdeal"
+              item.href === "/buyer-route/pdbulkdeal" ||
+              item.href === "/buyer-route/consultant-bookings"
             ) {
               return null;
             }
