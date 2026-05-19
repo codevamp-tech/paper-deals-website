@@ -26,6 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getUserFromToken } from "@/hooks/use-token";
+import { format, parseISO } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const ConsultantBookingPage: React.FC = () => {
   const router = useRouter();
@@ -33,7 +38,7 @@ const ConsultantBookingPage: React.FC = () => {
   const consultantId = params?.id as string;
 
   const [slots, setSlots] = useState<
-    { id: string; from: string; to: string; date: string }[]
+    { id: string; slot_id: string; from: string; to: string; date: string; price: number }[]
   >([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -43,29 +48,61 @@ const ConsultantBookingPage: React.FC = () => {
     email: "",
     mobile: "",
     consultantId: consultantId || "",
-    slot: "", // ✅ slot_id
+    slot: "", // ✅ ConsultantSlot primary key ID
     date: "", // Fixed: Added missing date field
     remarks: "",
   });
+
+  const user = getUserFromToken();
+
+  // Load Razorpay script when component mounts
+  useEffect(() => {
+    const loadScript = (src: string) => {
+      return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+    };
+    loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  }, []);
+
+  // Prefill buyer information if logged in
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || user.user_name || "",
+        mobile: prev.mobile || user.phone_no || "",
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.user_id]);
 
   // ✅ Fetch slots for consultant
   useEffect(() => {
     async function fetchSlots() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/consultant/${consultantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/consultant-availability/${consultantId}`
         );
         const data = await res.json();
 
-        // ✅ Extract slots from response
+        // ✅ Extract slots from response, only showing available slots (is_booked === 0)
         const extractedSlots =
           Array.isArray(data) && data.length > 0
-            ? data.map((item: any) => ({
-              id: item.slot_id,
-              from: item.slot.from_time,
-              to: item.slot.to_time,
-              date: item.slot.date,
-            }))
+            ? data
+              .filter((item: any) => item.is_booked === 0)
+              .map((item: any) => ({
+                id: String(item.id),
+                slot_id: String(item.id),
+                from: item.from_time || "",
+                to: item.to_time || "",
+                date: item.date || "",
+                price: Number(item.price || 0),
+              }))
             : [];
 
         setSlots(extractedSlots);
@@ -78,12 +115,26 @@ const ConsultantBookingPage: React.FC = () => {
     if (consultantId) fetchSlots();
   }, [consultantId]);
  
+  // ✅ Extract all available dates formatted as YYYY-MM-DD
+  const availableDatesStr = slots.map(s => {
+    const d = new Date(s.date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
+
   // ✅ Filter slots by selected date
   const filteredSlots = slots.filter((s) => {
-    if (!formData.date) return false; // Don't show slots until a date is selected
+    if (!formData.date) return false;
     try {
-      const slotDate = new Date(s.date).toISOString().split("T")[0];
-      return slotDate === formData.date;
+      const d = new Date(s.date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const slotDate = `${year}-${month}-${day}`;
+      
+      return slotDate === formData.date || s.date.split("T")[0] === formData.date;
     } catch (e) {
       return false;
     }
@@ -97,30 +148,152 @@ const ConsultantBookingPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Submit booking form
+  // ✅ Submit booking form & launch payment
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      alert("You must be logged in to book a consultation.");
+      return;
+    }
+
+    const selectedSlotObj = slots.find((s) => String(s.id) === formData.slot);
+    if (!selectedSlotObj) {
+      alert("Please select a valid available time slot.");
+      return;
+    }
+
     setSubmitting(true);
+    const amount = Number(selectedSlotObj.price) || 0;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/consultant/book`,
+      if (amount <= 0) {
+        // Direct booking if price is 0 (free slot)
+        const bookingRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/consultant-booking`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              availability_id: Number(selectedSlotObj.id),
+              consultant_id: Number(consultantId),
+              buyer_id: user.user_id,
+              amount: amount,
+              order_id: null,
+              payment_id: null,
+              signature: null
+            }),
+          }
+        );
+        if (!bookingRes.ok) throw new Error("Failed to create booking.");
+        alert("Booking confirmed successfully!");
+        router.push("/buyer-route/consultant-bookings");
+        return;
+      }
+
+      // 1. Create order on backend (amount in Rupees)
+      const orderResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/razorpay/create-order`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ amount }),
         }
       );
 
-      if (!res.ok) throw new Error(`Error: ${res.status}`);
-      const data = await res.json();
-      
-      // Success animation/redirect
-      router.push("/");
-    } catch (err) {
-      console.error("Error booking consultant:", err);
-      alert("Something went wrong! Please try again.");
-    } finally {
+      const orderData = await orderResponse.json();
+      if (!orderData.success) {
+        throw new Error(orderData.message || "Order creation failed");
+      }
+
+      const { order, key } = orderData;
+
+      // 2. Open Razorpay payment gateway
+      const options = {
+        key: key,
+        amount: order.amount, // in paise
+        currency: "INR",
+        name: "Paper Deals",
+        description: `Consultation Booking`,
+        order_id: order.id,
+        handler: async function (response: any) {
+          try {
+            setSubmitting(true);
+            const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+
+            // 3. Verify payment on backend
+            const verifyResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/razorpay/verify-payment`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_payment_id,
+                  razorpay_order_id,
+                  razorpay_signature,
+                }),
+              }
+            );
+
+            const verifyData = await verifyResponse.json();
+            if (verifyData.success) {
+              // 4. Create the Booking record (marks slot as booked on backend)
+              const bookingRes = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/consultant-booking`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    availability_id: Number(selectedSlotObj.id),
+                    consultant_id: Number(consultantId),
+                    buyer_id: user.user_id,
+                    amount: amount,
+                    order_id: razorpay_order_id,
+                    payment_id: razorpay_payment_id,
+                    signature: razorpay_signature,
+                  }),
+                }
+              );
+
+              if (!bookingRes.ok) throw new Error("Failed to confirm booking.");
+              
+              alert("Payment & Booking confirmed successfully!");
+              router.push("/buyer-route/consultant-bookings");
+            } else {
+              alert(verifyData.message || "Payment verification failed.");
+            }
+          } catch (err: any) {
+            console.error("Booking error:", err);
+            alert("An error occurred during booking confirmation. Please contact support.");
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.mobile,
+        },
+        theme: {
+          color: "#0F766E", // Teal primary color
+        },
+        modal: {
+          ondismiss: function () {
+            setSubmitting(false);
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+
+      rzp.on("payment.failed", function (response: any) {
+        alert(`Payment Failed: ${response.error.description || "Unknown Error"}`);
+        setSubmitting(false);
+      });
+    } catch (err: any) {
+      console.error("Error launching checkout:", err);
+      alert(err.message || "Something went wrong! Please try again.");
       setSubmitting(false);
     }
   };
@@ -241,18 +414,46 @@ const ConsultantBookingPage: React.FC = () => {
                       </div>
 
                       {/* Date */}
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                           <CalendarIcon className="w-4 h-4 text-primary" /> Select Date *
                         </Label>
-                        <Input
-                          type="date"
-                          className="h-14 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/10 transition-all text-base cursor-pointer"
-                          name="date"
-                          value={formData.date}
-                          onChange={handleChange}
-                          required
-                        />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full h-14 justify-start text-left font-normal rounded-xl border-gray-200 text-base hover:bg-gray-50",
+                                !formData.date && "text-muted-foreground"
+                              )}
+                            >
+                              {formData.date ? format(parseISO(formData.date), "PPP") : <span>Pick a date</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 rounded-xl" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={formData.date ? parseISO(formData.date) : undefined}
+                              onSelect={(day) => {
+                                if (day) {
+                                  const year = day.getFullYear();
+                                  const month = String(day.getMonth() + 1).padStart(2, "0");
+                                  const date = String(day.getDate()).padStart(2, "0");
+                                  setFormData(prev => ({ ...prev, date: `${year}-${month}-${date}`, slot: "" }));
+                                }
+                              }}
+                              initialFocus
+                              disabled={(date) => {
+                                const year = date.getFullYear();
+                                const month = String(date.getMonth() + 1).padStart(2, "0");
+                                const day = String(date.getDate()).padStart(2, "0");
+                                const dateStr = `${year}-${month}-${day}`;
+                                // Only allow dates that have available slots
+                                return !availableDatesStr.includes(dateStr);
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </div>
 
@@ -310,6 +511,19 @@ const ConsultantBookingPage: React.FC = () => {
                         onChange={handleChange}
                       />
                     </div>
+
+                    {/* Dynamic Price Display */}
+                    {formData.slot && (
+                      <div className="bg-teal-50/50 p-5 rounded-2xl border border-teal-100/50 flex justify-between items-center animate-fadeIn shadow-sm shadow-teal-500/5">
+                        <div className="flex flex-col">
+                          <span className="text-teal-900 font-bold text-base">Consultation Fee</span>
+                          <span className="text-teal-600/70 text-xs mt-0.5 font-medium">Charged once slot is booked</span>
+                        </div>
+                        <span className="text-teal-700 font-black text-2xl tracking-tight">
+                          Rs. {slots.find((s) => String(s.id) === formData.slot)?.price || 0}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Submit Button */}
                     <div className="pt-6">

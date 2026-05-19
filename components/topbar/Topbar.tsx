@@ -225,7 +225,7 @@ const Topbar = () => {
                 }}
                 className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${!enabled ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
               >
-                Retail
+                Converter
               </button>
               <button
                 onClick={() => {
