@@ -82,6 +82,16 @@ const SellerEnquiryPage = () => {
                 const data = await res.json();
 
                 const org = data?.organization || {};
+                if (!org.city?.trim()) {
+                    toast.error("Please complete your profile (specifically City) before raising an enquiry.", {
+                        description: "Redirecting you to your profile page...",
+                    });
+                    setTimeout(() => {
+                        router.push("/buyer-route/profile");
+                    }, 1500);
+                    return;
+                }
+
                 setFormData((prev) => ({
                     ...prev,
                     company_name: org.organizations || "",

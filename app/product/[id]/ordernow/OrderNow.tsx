@@ -54,6 +54,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
@@ -96,6 +97,7 @@ const OrderNow = ({ productId }: { productId: string }) => {
         const data = await res.json();
         const org = data?.organization || {};
         setFormData((prev) => ({
+          ...prev,
           name: org.contact_person || data.name || "",
           email: org.email || data.email_address || "",
           mobile: org.phone ? org.phone.toString() : data.phone_no || "",
@@ -104,6 +106,8 @@ const OrderNow = ({ productId }: { productId: string }) => {
         }));
       } catch (err) {
         console.error("Buyer fetch error:", err);
+      } finally {
+        setProfileLoaded(true);
       }
     };
     fetchBuyer();
@@ -186,6 +190,31 @@ const OrderNow = ({ productId }: { productId: string }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRequestQuoteClick = () => {
+    if (!user) {
+      toast.error("Please login to request a factory quote.");
+      router.push("/buyer-login");
+      return;
+    }
+
+    if (!profileLoaded) {
+      toast.info("Loading profile details, please wait...");
+      return;
+    }
+
+    if (!formData.city?.trim()) {
+      toast.error("Please complete your profile (specifically City) before requesting a factory quote.", {
+        description: "Redirecting you to your profile page...",
+      });
+      setTimeout(() => {
+        router.push("/buyer-route/profile");
+      }, 1500);
+      return;
+    }
+
+    setIsModalOpen(true);
   };
 
   if (!product) return <ProductDetailSkeleton />;
@@ -314,12 +343,13 @@ const OrderNow = ({ productId }: { productId: string }) => {
 
               <div className="pt-6 border-t border-gray-100">
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full py-8 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4 bg-primary text-white">
-                      <Mail className="w-6 h-6" />
-                      Request Factory Quote
-                    </Button>
-                  </DialogTrigger>
+                  <Button 
+                    onClick={handleRequestQuoteClick}
+                    className="w-full py-8 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4 bg-primary text-white"
+                  >
+                    <Mail className="w-6 h-6" />
+                    Request Factory Quote
+                  </Button>
                   <DialogContent className="max-w-xl rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
                     <div className="bg-primary p-8 text-white relative">
                       <DialogTitle className="text-2xl font-black">Quick Enquiry</DialogTitle>

@@ -35,6 +35,7 @@ const navigation: NavItem[] = [
   { name: "Products", href: "/buyer-route/product", icon: Package },
   { name: "Product's Enquiry", href: "/buyer-route/productEnquiry", icon: Package },
   { name: "Product's Order", href: "/buyer-route/product-order", icon: Package },
+  { name: "Tell Us Requirement", href: "/buyer-route/tellus-requirement", icon: Package },
 
 
   // { name: "Chat", href: "/buyer-route/chat", icon: MessageSquareText },

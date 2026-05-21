@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { getUserFromToken } from "@/hooks/use-token";
 
 type ModalProps = {
   visible: boolean;
@@ -10,10 +11,13 @@ type ModalProps = {
 type Category = {
   id: string | number;
   name: string;
+  mode?: string;
 };
 
 export default function RequirementModal({ visible, onClose }: ModalProps) {
   if (!visible) return null;
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [form, setForm] = useState({
     category: "",
@@ -33,15 +37,31 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // ✅ Fetch categories on mount
+  // ✅ Fetch categories filtered by B2B/B2C mode
   useEffect(() => {
     const fetchCategories = async () => {
       setCatLoading(true);
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categiry`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/categiry?page=1&limit=100`
+        );
         const data = await res.json();
         if (res.ok) {
-          setCategories(data.categories || data || []);
+          const allCategories: Category[] = data.categories || data || [];
+          const currentMode =
+            typeof window !== "undefined"
+              ? localStorage.getItem("mode") || "B2C"
+              : "B2C";
+
+          const filtered = allCategories.filter((cat) => {
+            if (currentMode === "B2B") {
+              return cat.mode === "b2b";
+            } else {
+              return cat.mode === "b2c" || !cat.mode;
+            }
+          });
+
+          setCategories(filtered);
         } else {
           console.error("Failed to fetch categories:", data.message);
         }
@@ -54,28 +74,27 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     fetchCategories();
   }, []);
 
-  // ✅ Send or Resend OTP
+  // ✅ Send / Resend OTP
   const handleSendOtp = async () => {
     if (!form.mobile) {
       setMessage("Please enter mobile number");
       return;
     }
-
     setLoading(true);
     setMessage("");
-
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp/sendOtp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: form.mobile,
-          type: otpSent ? "Resend OTP" : "GET OTP",
-        }),
-      });
-
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/otp/sendOtp`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: form.mobile,
+            type: otpSent ? "Resend OTP" : "GET OTP",
+          }),
+        }
+      );
       const data = await res.json();
-
       if (res.ok) {
         setOtpSent(true);
         setMessage(data.message || "OTP sent successfully!");
@@ -90,7 +109,7 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     }
   };
 
-  // ✅ Submit requirement (auto verify OTP before submit)
+  // ✅ Submit requirement
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -98,7 +117,6 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
       setMessage("Please send OTP before submitting");
       return;
     }
-
     if (!form.otp) {
       setMessage("Please enter OTP");
       return;
@@ -108,38 +126,45 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
     setMessage("");
 
     try {
-      // Step 1️⃣ Verify OTP
-      const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: form.mobile, otp: form.otp }),
-      });
-
+      // Step 1 — Verify OTP
+      const verifyRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/otp/verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: form.mobile, otp: form.otp }),
+        }
+      );
       const verifyData = await verifyRes.json();
-
       if (!verifyRes.ok) {
         setMessage(verifyData.message || "Invalid OTP");
         setLoading(false);
         return;
       }
 
-      // Step 2️⃣ Submit requirement (only if OTP verified)
-      const reqRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rquarment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category_id: form.category,
-          product_name: form.product,
-          quantity: form.quantity,
-          quantity_unit: form.quantity_unit,
-          pincode: form.pincode,
-          email: form.email,
-          phone_no: form.mobile,
-          msg: form.msg,
-          status: 0,
-        }),
-      });
+      // Step 2 — Submit requirement
+      const currentUser = getUserFromToken();
+      const user_id = currentUser?.user_id || null;
 
+      const reqRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/rquarment`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            category_id: form.category,
+            product_name: form.product,
+            quantity: form.quantity,
+            quantity_unit: form.quantity_unit,
+            pincode: form.pincode,
+            email: form.email,
+            phone_no: form.mobile,
+            msg: form.msg,
+            status: 0,
+            user_id,
+          }),
+        }
+      );
       const reqData = await reqRes.json();
 
       if (reqRes.ok) {
@@ -169,26 +194,29 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      {/* Modal container — flex column, capped height */}
       <div
-        className="w-full max-w-md rounded-lg shadow-lg relative ml-[55rem] mt-[7rem]"
-        style={{ background: "white" }}
+        className="w-full max-w-md rounded-lg shadow-lg ml-[55rem] mt-[4rem] flex flex-col"
+        style={{ background: "white", maxHeight: "calc(100vh - 1rem)" }}
       >
-        {/* Header */}
-        <div className="px-4 py-3 text-blue-600 font-bold text-xl rounded-t-lg flex justify-between items-center border-b">
+        {/* ── Sticky Header ── */}
+        <div className="px-4 py-3 text-blue-600 font-bold text-xl rounded-t-lg flex justify-between items-center border-b flex-shrink-0">
           <span>Tell Us Your Requirement</span>
-          <button onClick={onClose} className="text-red-500 text-2xl font-bold">
+          <button onClick={onClose} className="text-red-500 text-2xl font-bold leading-none">
             &times;
           </button>
         </div>
 
-        {/* Modal Content */}
-        <div className="p-4 mb-4">
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Category Dropdown */}
+        {/* ── Scrollable Body ── */}
+        <div className="p-4 overflow-y-auto flex-1">
+          <form ref={formRef} className="space-y-3" onSubmit={handleSubmit}>
+            {/* Category — filtered by B2B / B2C */}
             <select
               className="w-full border border-gray-300 bg-white text-gray-800 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
               value={form.category}
-              onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, category: e.target.value }))
+              }
             >
               <option value="">
                 {catLoading ? "Loading categories..." : "Select Category"}
@@ -204,7 +232,9 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               type="text"
               placeholder="Enter Product"
               value={form.product}
-              onChange={(e) => setForm((prev) => ({ ...prev, product: e.target.value }))}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, product: e.target.value }))
+              }
               className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
@@ -213,12 +243,19 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
                 type="text"
                 placeholder="Enter Quantity"
                 value={form.quantity}
-                onChange={(e) => setForm((prev) => ({ ...prev, quantity: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, quantity: e.target.value }))
+                }
                 className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
               />
               <select
                 value={form.quantity_unit}
-                onChange={(e) => setForm((prev) => ({ ...prev, quantity_unit: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    quantity_unit: e.target.value,
+                  }))
+                }
                 className="border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm w-28"
               >
                 <option value="kg">kg</option>
@@ -231,7 +268,9 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               type="text"
               placeholder="Enter Pincode"
               value={form.pincode}
-              onChange={(e) => setForm((prev) => ({ ...prev, pincode: e.target.value }))}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, pincode: e.target.value }))
+              }
               className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
@@ -239,18 +278,22 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               type="email"
               placeholder="Enter Email"
               value={form.email}
-              onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, email: e.target.value }))
+              }
               className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
             />
 
             <textarea
               placeholder="Enter your message/requirement details"
               value={form.msg}
-              onChange={(e) => setForm((prev) => ({ ...prev, msg: e.target.value }))}
-              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm h-24 resize-none"
-            ></textarea>
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, msg: e.target.value }))
+              }
+              className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm h-16 resize-none"
+            />
 
-            {/* Mobile + OTP */}
+            {/* Mobile row */}
             <div className="flex space-x-2">
               <select className="border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-2 py-2 text-sm">
                 <option>+91</option>
@@ -259,45 +302,40 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
                 type="tel"
                 placeholder="Enter mobile"
                 value={form.mobile}
-                onChange={(e) => setForm((prev) => ({ ...prev, mobile: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, mobile: e.target.value }))
+                }
                 className="flex-1 border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
               />
             </div>
 
-            {/* Send OTP */}
+            {/* Send OTP button */}
             {!otpSent && (
               <button
                 type="button"
                 onClick={handleSendOtp}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-green-600  text-white py-2 rounded-md font-semibold"
+                className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-2 rounded-md font-semibold text-sm"
               >
                 {loading ? "Please wait..." : "Send OTP"}
               </button>
             )}
 
-            {/* OTP Input */}
+            {/* OTP input */}
             {otpSent && (
               <input
                 type="text"
                 placeholder="Enter OTP"
                 value={form.otp}
-                onChange={(e) => setForm((prev) => ({ ...prev, otp: e.target.value }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, otp: e.target.value }))
+                }
                 className="w-full border border-gray-300 bg-gray-100 text-gray-800 rounded-md px-3 py-2 text-sm"
               />
             )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-2 rounded-md font-semibold"
-            >
-              {loading ? "Submitting..." : "Submit Requirement"}
-            </button>
           </form>
 
-          {/* Message */}
+          {/* Feedback message */}
           {message && (
             <p
               className={`text-sm mt-3 font-medium ${message.includes("success") ? "text-green-600" : "text-red-500"
@@ -306,6 +344,18 @@ export default function RequirementModal({ visible, onClose }: ModalProps) {
               {message}
             </p>
           )}
+        </div>
+
+        {/* ── Sticky Footer — Submit always visible ── */}
+        <div className="px-4 py-3 border-t border-gray-200 flex-shrink-0 bg-white rounded-b-lg">
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => formRef.current?.requestSubmit()}
+            className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-2.5 rounded-md font-semibold text-sm disabled:opacity-60"
+          >
+            {loading ? "Submitting..." : "Submit Requirement"}
+          </button>
         </div>
       </div>
     </div>

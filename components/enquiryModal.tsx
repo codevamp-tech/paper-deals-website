@@ -63,6 +63,16 @@ const EnquiryModal = memo(function EnquiryModal({
         const data = await res.json();
         const org = data?.organization || {};
 
+        if (!org.city?.trim()) {
+          toast.error("Please complete your profile (specifically City) before raising an enquiry.", {
+            description: "Redirecting you to your profile page...",
+          });
+          setTimeout(() => {
+            router.push("/buyer-route/profile");
+          }, 1500);
+          return;
+        }
+
         setEnquiryData((prev: any) => ({
           buyer_id: user.user_id,
           company_name: org.organizations || "",
