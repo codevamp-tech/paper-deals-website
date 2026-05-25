@@ -58,7 +58,7 @@ export function ProductCard({
           alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        
+
         {/* Type Badge */}
         <div className="absolute top-4 left-4 z-10">
           <Badge className="bg-white/90 backdrop-blur-md text-primary border-primary/20 hover:bg-white text-xs font-bold px-3 py-1 shadow-sm">
@@ -67,14 +67,7 @@ export function ProductCard({
         </div>
 
         {/* Quick Action Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-          <button className="p-3 bg-white rounded-full text-primary shadow-xl hover:scale-110 transition-transform">
-            <ShoppingCart className="h-5 w-5" />
-          </button>
-          <button className="p-3 bg-primary text-white rounded-full shadow-xl hover:scale-110 transition-transform">
-            <ArrowRight className="h-5 w-5" />
-          </button>
-        </div>
+
       </div>
 
       {/* Content */}
@@ -104,8 +97,8 @@ export function ProductCard({
             <span className="text-2xl font-[900] text-primary">₹{price}</span>
             <span className="text-[10px] text-gray-400 block -mt-1">Inc. GST</span>
           </div>
-          
-          <div 
+
+          <div
             className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary opacity-0 group-hover:opacity-100 transition-opacity"
             style={{ color: theme.buttoncolor }}
           >

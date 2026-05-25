@@ -718,105 +718,273 @@ export default function LiveStockPage() {
         </section>
       </main>
 
-      {/* View Modal - Seller Products */}
+      {/* View Modal - Seller Products — Premium Redesign */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-3xl rounded-2xl shadow-2xl bg-white max-h-[90vh] overflow-hidden flex flex-col p-0 border border-slate-100">
-          <div className={`${brandGradientHeader} px-5 sm:px-6 py-4 flex items-center justify-between border-b border-slate-100/10`}>
-            <DialogTitle className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <Layers className="w-5 h-5 animate-pulse" />
-              Seller's Product List
-            </DialogTitle>
+        <DialogContent className="max-w-2xl w-full rounded-3xl shadow-[0_32px_80px_-12px_rgba(0,0,0,0.25)] bg-white max-h-[92vh] overflow-hidden flex flex-col p-0 border-0 gap-0">
+
+          {/* ── Header ── */}
+          <div className={`relative ${brandGradientHeader} px-6 py-5 flex items-center justify-between overflow-hidden`}>
+            {/* decorative blobs */}
+            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute bottom-0 left-1/2 w-40 h-10 rounded-full bg-black/10 blur-xl" />
+
+            <div className="relative flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-white/15 backdrop-blur-sm">
+                <Layers className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-base sm:text-lg font-extrabold text-white leading-tight tracking-tight">
+                  Seller's Product List
+                </DialogTitle>
+                {!modalLoading && sellerProducts.length > 0 && (
+                  <p className="text-white/70 text-[11px] font-medium mt-0.5">
+                    {sellerProducts.length} product{sellerProducts.length !== 1 ? "s" : ""} available
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* cart badge in header */}
+            {cart.length > 0 && (
+              <button
+                onClick={() => { setIsModalOpen(false); setIsCartModalOpen(true); }}
+                className="relative flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs font-bold px-4 py-2 rounded-xl transition-all duration-200 border border-white/30"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>Cart</span>
+                <span className="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow">
+                  {cart.length}
+                </span>
+              </button>
+            )}
           </div>
 
+          {/* ── Body ── */}
           {modalLoading ? (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-500 gap-3">
-              <div className={`w-8 h-8 rounded-full border-4 border-slate-200 border-t-current animate-spin ${brandColor}`} />
-              <span className="text-sm font-medium">Fetching seller stock items...</span>
+            <div className="p-6 space-y-3 overflow-y-auto flex-1">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse rounded-2xl border border-slate-100 p-4 flex gap-4">
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-slate-200 rounded-full w-1/2" />
+                    <div className="flex gap-2">
+                      <div className="h-3 bg-slate-100 rounded-full w-16" />
+                      <div className="h-3 bg-slate-100 rounded-full w-16" />
+                      <div className="h-3 bg-slate-100 rounded-full w-16" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="h-5 bg-slate-200 rounded-full w-20" />
+                    <div className="h-8 bg-slate-200 rounded-xl w-28" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : sellerProducts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3 flex-1">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                <Package className="w-12 h-12 text-slate-300" />
+              </div>
+              <p className="text-base font-bold text-slate-600">No products found</p>
+              <p className="text-sm text-slate-400">This seller has no live products listed right now.</p>
             </div>
           ) : (
-            <div className="p-5 sm:p-6 overflow-auto flex-1 bg-white">
-              {sellerProducts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-slate-400 gap-2">
-                  <Package className="w-12 h-12 text-slate-200" />
-                  <p className="text-base font-semibold text-slate-600">No products found</p>
-                  <p className="text-sm text-slate-400">This seller has no live products listed.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto border border-slate-100 rounded-xl shadow-sm">
-                  <table className="w-full text-xs sm:text-sm border-collapse min-w-[640px] text-left">
-                    <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50/80 text-slate-500 font-semibold">
-                        <th className="py-3 px-4 font-semibold">Product</th>
-                        <th className="py-3 px-3 font-semibold">Category</th>
-                        <th className="py-3 px-3 font-semibold">GSM</th>
-                        <th className="py-3 px-3 font-semibold">BF</th>
-                        <th className="py-3 px-3 font-semibold">Shade</th>
-                        <th className="py-3 px-4 font-semibold text-right">Price</th>
-                        <th className="py-3 px-4 font-semibold text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {sellerProducts.map((p) => {
-                        const inCart = cart.some((item) => item.id === p.id);
+            <div className="overflow-y-auto flex-1 px-5 sm:px-6 py-5 space-y-3 bg-slate-50/40">
+              {sellerProducts.map((p, idx) => {
+                const inCart = cart.some((item) => item.id === p.id);
+                const productLabel = p.product_name || p.name;
+                const categoryLabel = (p as any).category?.name || p.category_id || p.category || "-";
+                const price = p.price_per_kg || p.price;
+
+                return (
+                  <div
+                    key={p.id}
+                    className={`group relative bg-white rounded-2xl border transition-all duration-200 overflow-hidden ${
+                      inCart
+                        ? isB2B ? "border-emerald-200 shadow-emerald-50 shadow-md" : "border-blue-200 shadow-blue-50 shadow-md"
+                        : "border-slate-100 hover:border-slate-200 hover:shadow-md shadow-sm"
+                    }`}
+                  >
+                    {/* left accent bar */}
+                    <div
+                      className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-all duration-300 ${
+                        inCart
+                          ? isB2B ? "bg-emerald-500" : "bg-blue-500"
+                          : "bg-transparent group-hover:bg-slate-200"
+                      }`}
+                    />
+
+                    <div className="pl-5 pr-4 py-4 flex items-center justify-between gap-4">
+                      {/* left: product info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full tracking-wider">#{idx + 1}</span>
+                          <h3 className="font-extrabold text-slate-900 text-sm truncate">{productLabel}</h3>
+                          {inCart && (
+                            <span className={`ml-auto flex-shrink-0 flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              isB2B ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"
+                            }`}>
+                              <CheckCircle className="w-3 h-3" /> In Cart
+                            </span>
+                          )}
+                        </div>
+
+                        {/* attribute chips */}
+                        <div className="flex flex-wrap gap-1.5">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-orange-50 text-orange-700 border border-orange-100">
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+                            {categoryLabel}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-teal-50 text-teal-700 border border-teal-100">
+                            {p.gsm} GSM
+                          </span>
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-pink-50 text-pink-700 border border-pink-100">
+                            {p.bf} BF
+                          </span>
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-violet-50 text-violet-700 border border-violet-100">
+                            {p.shade}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* right: price + CTA */}
+                      <div className="flex flex-col items-end gap-2.5 flex-shrink-0">
+                        <div className="text-right">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Price / kg</span>
+                          <span className="text-rose-600 font-black text-lg leading-tight">
+                            ₹ {price}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => addToCart(p)}
+                          disabled={inCart}
+                          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap ${
+                            inCart
+                              ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
+                              : `${brandButton} hover:scale-105 active:scale-95`
+                          }`}
+                        >
+                          {inCart ? (
+                            <>
+                              <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                              Added
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingCart className="w-3.5 h-3.5" />
+                              Add to Cart
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ── Footer ── */}
+          {!modalLoading && sellerProducts.length > 0 && (
+            <div className="border-t border-slate-100 bg-white px-6 py-4 flex flex-col gap-4">
+              
+              {/* Pagination Section */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-slate-400 font-medium">Page</span>
+                    <span className="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">
+                      {modalPage} of {totalPages}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleView(selectedRow!, modalPage - 1)}
+                      disabled={modalPage === 1}
+                      className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white transition-all duration-150"
+                      title="Previous Page"
+                    >
+                      <span className="text-xs font-bold px-1">&larr;</span>
+                    </button>
+
+                    {(() => {
+                      const pages = [];
+                      if (totalPages <= 7) {
+                        for (let i = 1; i <= totalPages; i++) pages.push(i);
+                      } else {
+                        pages.push(1);
+                        const start = Math.max(2, modalPage - 1);
+                        const end = Math.min(totalPages - 1, modalPage + 1);
+                        if (start > 2) pages.push("...");
+                        for (let i = start; i <= end; i++) pages.push(i);
+                        if (end < totalPages - 1) pages.push("...");
+                        pages.push(totalPages);
+                      }
+                      return pages.map((page, idx) => {
+                        if (page === "...") {
+                          return (
+                            <span key={`dots-${idx}`} className="px-1.5 text-slate-400 text-xs font-bold select-none">
+                              ...
+                            </span>
+                          );
+                        }
+                        const isCurrent = page === modalPage;
                         return (
-                          <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-3.5 px-4 font-bold text-slate-900">
-                              {p.product_name || p.name}
-                            </td>
-                            <td className="py-3.5 px-3">
-                              <span className="font-semibold text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                                {p.category?.name || p.category_id || "-"}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-3">
-                              <span className="font-semibold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap">
-                                {p.gsm} GSM
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-3">
-                              <span className="font-semibold text-pink-600 bg-pink-50 border border-pink-100 px-1.5 py-0.5 rounded text-[11px] whitespace-nowrap">
-                                {p.bf} BF
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-3">
-                              <span className="font-semibold text-purple-600 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded text-[11px]">
-                                {p.shade}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-4 text-rose-600 font-extrabold text-right text-sm whitespace-nowrap">
-                              ₹ {p.price_per_kg || p.price}
-                              <span className="text-[10px] font-normal text-slate-400"> / kg</span>
-                            </td>
-                            <td className="py-3.5 px-4 text-center">
-                              <button
-                                onClick={() => addToCart(p)}
-                                disabled={inCart}
-                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
-                                  inCart
-                                    ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
-                                    : brandButton
-                                }`}
-                              >
-                                {inCart ? (
-                                  <span className="flex items-center gap-1.5 justify-center">
-                                    <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                                    Added
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1.5 justify-center">
-                                    <ShoppingCart className="w-3.5 h-3.5" />
-                                    Add to Cart
-                                  </span>
-                                )}
-                              </button>
-                            </td>
-                          </tr>
+                          <button
+                            key={page}
+                            onClick={() => handleView(selectedRow!, page as number)}
+                            className={`w-7 h-7 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center ${
+                              isCurrent
+                                ? `${brandBg} text-white shadow-sm`
+                                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                            }`}
+                          >
+                            {page}
+                          </button>
                         );
-                      })}
-                    </tbody>
-                  </table>
+                      });
+                    })()}
+
+                    <button
+                      onClick={() => handleView(selectedRow!, modalPage + 1)}
+                      disabled={modalPage === totalPages}
+                      className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white transition-all duration-150"
+                      title="Next Page"
+                    >
+                      <span className="text-xs font-bold px-1">&rarr;</span>
+                    </button>
+                  </div>
                 </div>
               )}
+
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs text-slate-400 font-medium">
+                  {cart.length > 0 ? (
+                    <span className={`font-bold ${isB2B ? "text-emerald-600" : "text-blue-600"}`}>
+                      {cart.length} item{cart.length !== 1 ? "s" : ""} in cart
+                    </span>
+                  ) : (
+                    "Select products to add to cart"
+                  )}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-5 py-2 rounded-xl text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-200"
+                  >
+                    Close
+                  </button>
+                  {cart.length > 0 && (
+                    <button
+                      onClick={() => { setIsModalOpen(false); setIsCartModalOpen(true); }}
+                      className={`px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 ${brandButton}`}
+                    >
+                      View Cart →
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
