@@ -392,6 +392,28 @@ export default function LiveStockPage() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 9999px;
+          transition: background 0.15s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+        /* Firefox fallback */
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #cbd5e1 transparent;
+        }
+      `}} />
       <main className="w-full min-h-screen bg-[#fafafa] px-4 sm:px-6 lg:px-8">
         {/* Hero */}
         <section className="relative border-b border-slate-100">
@@ -761,7 +783,7 @@ export default function LiveStockPage() {
 
           {/* ── Body ── */}
           {modalLoading ? (
-            <div className="p-6 space-y-3 overflow-y-auto flex-1">
+            <div className="p-6 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="animate-pulse rounded-2xl border border-slate-100 p-4 flex gap-4">
                   <div className="flex-1 space-y-2">
@@ -788,7 +810,7 @@ export default function LiveStockPage() {
               <p className="text-sm text-slate-400">This seller has no live products listed right now.</p>
             </div>
           ) : (
-            <div className="overflow-y-auto flex-1 px-5 sm:px-6 py-5 space-y-3 bg-slate-50/40">
+            <div className="overflow-y-auto flex-1 px-5 sm:px-6 py-5 space-y-3 bg-slate-50/40 custom-scrollbar">
               {sellerProducts.map((p, idx) => {
                 const inCart = cart.some((item) => item.id === p.id);
                 const productLabel = p.product_name || p.name;
@@ -1008,7 +1030,7 @@ export default function LiveStockPage() {
             )}
           </div>
 
-          <div className="p-5 sm:p-6 overflow-auto flex-1 bg-white">
+          <div className="p-5 sm:p-6 overflow-auto flex-1 bg-white custom-scrollbar">
             {cart.length === 0 ? (
               <div className="text-center py-16 flex flex-col items-center justify-center gap-3 text-slate-400">
                 <ShoppingCart className="w-16 h-16 text-slate-200" />
@@ -1089,13 +1111,13 @@ export default function LiveStockPage() {
             </DialogTitle>
           </div>
 
-          <form className="p-6 space-y-4 overflow-y-auto flex-1 bg-white" onSubmit={handleSubmitEnquiry}>
+          <form className="p-6 space-y-4 overflow-y-auto flex-1 bg-white custom-scrollbar" onSubmit={handleSubmitEnquiry}>
             {/* Cart Summary */}
             <div className={`border rounded-xl p-4 ${isB2B ? "bg-emerald-50/50 border-emerald-100/80" : "bg-blue-50/50 border-blue-100/80"}`}>
               <h4 className="font-bold text-slate-800 mb-2 text-sm">
                 Selected Products ({cart.length})
               </h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
                 {cart.map((item, idx) => (
                   <div
                     key={item.id}
