@@ -105,10 +105,14 @@ export default function VideoCarousel() {
     };
   }, [videos]);
 
+  if (!loading && videos.length === 0) {
+    return null;
+  }
+
   return (
     <section className={`w-full my-12 ${theme.Bg}`}>
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">
+        <h2 className={`text-3xl md:text-4xl font-bold mb-8 ${theme.Text}`}>
           Event Videos
         </h2>
 

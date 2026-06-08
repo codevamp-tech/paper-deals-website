@@ -26,7 +26,7 @@ export default function AssumptionPartner() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bottom-logo?type=${type}`)
         if (!res.ok) throw new Error("Failed to fetch partner logos")
         const data = await res.json()
-        setPartners(data?.data)
+        setPartners(data?.data || [])
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -36,6 +36,18 @@ export default function AssumptionPartner() {
 
     fetchPartners()
   }, [])
+
+  const minItems = 20
+  let repeatedPartners: Partner[] = []
+  if (partners && partners.length > 0) {
+    while (repeatedPartners.length < minItems) {
+      repeatedPartners = [...repeatedPartners, ...partners]
+    }
+  }
+
+  const animationDuration = repeatedPartners.length > 0
+    ? (repeatedPartners.length * 200) / 50
+    : 15
 
   const PartnerSkeleton = () => (
     <div className="flex-shrink-0 w-40 md:w-48 h-32 md:h-36 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-sm animate-pulse">
@@ -115,14 +127,15 @@ export default function AssumptionPartner() {
             <div
               ref={scrollContainerRef}
               className="flex gap-6 md:gap-8 animate-marquee whitespace-nowrap px-4 w-max hover:pause-animation"
+              style={{ animationDuration: `${animationDuration}s` }}
             >
               {/* First set of logos */}
-              {partners.map((partner) => (
-                <LogoItem key={partner.id} partner={partner} />
+              {repeatedPartners.map((partner, index) => (
+                <LogoItem key={`first-${partner.id}-${index}`} partner={partner} />
               ))}
               {/* Duplicate set for seamless loop */}
-              {partners.map((partner) => (
-                <LogoItem key={`duplicate-${partner.id}`} partner={partner} />
+              {repeatedPartners.map((partner, index) => (
+                <LogoItem key={`second-${partner.id}-${index}`} partner={partner} />
               ))}
             </div>
           </div>

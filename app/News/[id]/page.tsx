@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 
 
@@ -23,9 +25,9 @@ const NewsDetailSkeleton = () => {
 
 const NewsDetailPage = () => {
   const params = useParams();
-  const [news, setNews] = useState(null);
+  const [news, setNews] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
@@ -43,12 +45,57 @@ const NewsDetailPage = () => {
     fetchNewsDetail();
   }, [params.id]);
 
-  if (loading) return <NewsDetailSkeleton />;
-  if (error) return <p>{error}</p>;
-  if (!news) return <p>News not found.</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-3xl mx-auto mb-4">
+          <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+        </div>
+        <NewsDetailSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center justify-center">
+        <p className="text-red-500 font-semibold mb-4">{error}</p>
+        <Link
+          href="/News"
+          className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to News
+        </Link>
+      </div>
+    );
+  }
+
+  if (!news) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center justify-center">
+        <p className="text-gray-600 font-semibold mb-4">News not found.</p>
+        <Link
+          href="/News"
+          className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to News
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-3xl mx-auto mb-4">
+        <Link
+          href="/News"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to News
+        </Link>
+      </div>
+
       <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
         <h1 className="text-3xl font-bold mb-4">{news.title}</h1>
         <p className="text-sm text-gray-400 mb-4">

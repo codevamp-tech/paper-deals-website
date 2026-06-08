@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "@/hooks/use-theme";
+import { Quote } from "lucide-react";
 
 export default function TestimonialSection() {
   const [mounted, setMounted] = useState(false);
@@ -47,54 +48,44 @@ export default function TestimonialSection() {
 
     fetchTestimonial();
   }, []);
+
   const { theme } = useTheme();
 
   const SkeletonCard = () => (
-    <div
-      className="animate-pulse bg-white rounded-lg p-6 mb-6 inline-block w-full"
-      style={{
-        backdropFilter: "blur(48px)",
-        border: "1px solid #f1f1f1",
-        borderRadius: "12px",
-        boxShadow:
-          "rgba(0, 0, 0, 0.08) 0px 1px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px",
-      }}
-    >
-      <div className="flex items-center mb-4">
-        <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
+    <div className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-md flex flex-col">
+      <div className="flex-1 bg-white rounded-2xl border border-gray-100 p-6 md:p-8 flex flex-col justify-between h-[280px] shadow-sm animate-pulse">
         <div className="flex-1">
-          <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 rounded w-full mb-3"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6 mb-3"></div>
+          <div className="h-4 bg-gray-200 rounded w-4/6 mb-3"></div>
+        </div>
+        <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
+          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          <div className="flex-1">
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+          </div>
         </div>
       </div>
-      <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-      <div className="h-3 bg-gray-200 rounded w-5/6 mb-2"></div>
-      <div className="h-3 bg-gray-200 rounded w-4/6"></div>
     </div>
   );
 
   if (!mounted) return null;
+
   if (loading) {
     return (
-      <div
-        className="bg-white min-h-screen flex flex-col items-center justify-center "
-        style={{ padding: "40px 20px" }}
-      >
-        <p
-          className={`${theme.Text} text-[6vh] font-[900] font-[Poppins] mb-10`}
-        // style={{ color: theme.Text }}
-        >
-          Testimonials
-        </p>
-        <div
-          style={{
-            columnCount: isMobile ? 1 : 3,
-            columnGap: "20px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          {[...Array(6)].map((_, i) => (
+      <div className="w-full bg-gradient-to-b from-gray-50 via-white to-gray-50 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto text-center px-4 mb-12 md:mb-16">
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold px-4 py-2 rounded-full uppercase tracking-wider bg-gray-100 text-gray-400">
+              Testimonials
+            </span>
+          </div>
+          <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-6"></div>
+          <div className="h-4 bg-gray-200 rounded w-96 mx-auto mb-3"></div>
+        </div>
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8 max-w-7xl mx-auto px-4">
+          {[...Array(3)].map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
@@ -108,115 +99,89 @@ export default function TestimonialSection() {
   });
 
   return (
-    <div
-      className="bg-white"
-      style={{
-        padding: "40px 20px",
-        width: "100%",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div>
-        <p
-          className={` bg-clip-text bg-gradient-to-r from-[#fff] to-[#fff] text-[6vh] font-[900] mt-1 font-[Poppins]
-           flex  justify-center  ${theme.Text}`}
-        // style={{ color: theme.Text }}
-        >
-          Testimonials
-        </p>
-        <p className="flex justify-center text-[3vh] mt-1 mb-11 ">
+    <section className="w-full bg-gradient-to-b from-gray-50 via-white to-gray-50 py-16 md:py-24 overflow-hidden">
+      {/* Header Section */}
+      <div className="max-w-4xl mx-auto text-center px-4 mb-12 md:mb-16">
+        <div className="inline-block mb-4">
+          <span className={`text-sm font-semibold px-4 py-2 rounded-full uppercase tracking-wider ${
+            mode === "B2B" ? "text-green-600 bg-green-50" : "text-blue-600 bg-blue-50"
+          }`}>
+            Testimonials
+          </span>
+        </div>
+
+        <h2 className={`text-4xl md:text-5xl lg:text-6xl font-black mb-6 font-[Poppins] ${
+          mode === "B2B"
+            ? "bg-gradient-to-r from-blue-600 via-emerald-600 to-green-600 bg-clip-text text-transparent"
+            : "text-blue-500"
+        }`}>
+          What Our Clients Say
+        </h2>
+
+        <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
           Discover what our valued partners and clients have to say about their
-          seamless experiences with paperbook.
+          seamless experiences with Paper Deals.
         </p>
-        <div
-          style={{
-            columnCount: isMobile ? 1 : 3,
-            columnGap: "20px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          {filteredTestimonials.length > 0 ? (
-            filteredTestimonials.map((testimonial: any) => (
+      </div>
+
+      {/* Testimonials Grid / Flex Container */}
+      <div className="flex flex-wrap justify-center items-start gap-6 md:gap-8 max-w-7xl mx-auto px-4">
+        {filteredTestimonials.length > 0 ? (
+          filteredTestimonials.map((testimonial: any) => (
+            <div
+              key={testimonial.id}
+              className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-md"
+            >
+              {/* Card Item */}
               <div
-                key={testimonial.id}
-                style={{
-                  backdropFilter: "blur(48px)",
-                  border: "1px solid #fff",
-                  color: "#F1F5F9",
-                  borderRadius: "12px",
-                  padding: "24px",
-                  display: "inline-block",
-                  width: "100%",
-                  marginBottom: "20px",
-                  boxShadow:
-                    "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                }}
-                className="hover:shadow-lg hover:transform hover:scale-[1.02] bg-testo-gradient"
+                className="bg-white rounded-2xl border border-gray-100 hover:border-gray-200
+                           shadow-md hover:shadow-xl transition-all duration-300 p-6 md:p-8
+                           relative overflow-hidden group transform hover:scale-[1.02] hover:-translate-y-1"
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "50%",
-                      overflow: "hidden",
-                      position: "relative",
-                      marginRight: "12px",
-                    }}
-                  >
+                {/* Quote Icon in Background */}
+                <div className="absolute right-6 top-6 text-gray-100 transition-colors duration-300 pointer-events-none">
+                  <Quote className={`w-12 h-12 opacity-15 transition-all duration-300 group-hover:scale-110 ${
+                    mode === "B2B" ? "group-hover:text-green-500 group-hover:opacity-25" : "group-hover:text-blue-500 group-hover:opacity-25"
+                  }`} />
+                </div>
+
+                <div>
+                  {/* Quote text */}
+                  <p className="text-gray-600 italic text-base md:text-lg leading-relaxed mb-6 relative z-10">
+                    "{testimonial.para}"
+                  </p>
+                </div>
+
+                {/* Author Details */}
+                <div className="flex items-center gap-4 border-t border-gray-50 pt-6">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
                     <Image
                       src={testimonial.profile || "/placeholder.svg"}
                       alt={testimonial.writer}
                       fill
-                      style={{ objectFit: "cover" }}
+                      className="object-cover"
+                      sizes="48px"
                     />
                   </div>
                   <div>
-                    <h3
-                      style={{
-                        margin: "0",
-                        color: "#333",
-                        fontSize: "18px",
-                        fontWeight: "600",
-                      }}
-                    >
+                    <h3 className="font-semibold text-gray-900 text-base md:text-lg leading-snug">
                       {testimonial.writer}
                     </h3>
-                    <p style={{ margin: "0", color: "gray", fontSize: "14px" }}>
+                    <p className="text-sm text-gray-500 font-medium">
                       {testimonial.post}
                     </p>
                   </div>
                 </div>
-                <p
-                  style={{
-                    color: "#333",
-                    fontSize: "16px",
-                    lineHeight: "1.6",
-                    margin: "0",
-                  }}
-                >
-                  "{testimonial.para}"
-                </p>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-400">
-              No testimonials available
-            </p>
-          )}
-        </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-lg">No testimonials available.</p>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }
+

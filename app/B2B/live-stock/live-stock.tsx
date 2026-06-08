@@ -512,7 +512,8 @@ export default function LiveStockPage() {
                   filteredRows.map((r, i) => (
                     <div
                       key={i}
-                      className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200"
+                      onClick={() => handleView(r)}
+                      className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
@@ -569,14 +570,6 @@ export default function LiveStockPage() {
                             {Number(r.quantity).toLocaleString()} kg
                           </span>
                         </div>
-                        <button
-                          onClick={() => handleView(r)}
-                          className={`p-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-500 hover:text-white transition duration-200 shadow-sm hover:scale-105 ${
-                            isB2B ? "hover:bg-emerald-600 hover:border-emerald-600" : "hover:bg-blue-600 hover:border-blue-600"
-                          }`}
-                        >
-                          <Eye className="w-4.5 h-4.5" />
-                        </button>
                       </div>
                     </div>
                   ))
@@ -598,22 +591,17 @@ export default function LiveStockPage() {
                         { key: "shade", label: "Shade" },
                         { key: "pricePerKg", label: "Price / kg" },
                         { key: "quantity", label: "Quantity" },
-                        { key: "action", label: "View" },
                       ].map((col) => {
                         const isSorted = sortConfig?.key === col.key;
                         return (
                           <th
                             key={col.key}
-                            onClick={() => col.key !== "action" && handleSort(col.key as keyof Row)}
-                            className={`py-4 px-4 xl:px-5 font-semibold text-[11px] uppercase tracking-wider select-none whitespace-nowrap ${
-                              col.key !== "action" ? "cursor-pointer hover:text-slate-800 transition-colors" : ""
-                            }`}
+                            onClick={() => handleSort(col.key as keyof Row)}
+                            className="py-4 px-4 xl:px-5 font-semibold text-[11px] uppercase tracking-wider select-none whitespace-nowrap cursor-pointer hover:text-slate-800 transition-colors"
                           >
                             <div className="flex items-center gap-1.5">
                               {col.label}
-                              {col.key !== "action" && (
-                                <ArrowUpDown className={`w-3.5 h-3.5 transition-colors ${isSorted ? brandColor : "text-slate-300"}`} />
-                              )}
+                              <ArrowUpDown className={`w-3.5 h-3.5 transition-colors ${isSorted ? brandColor : "text-slate-300"}`} />
                             </div>
                           </th>
                         );
@@ -623,7 +611,7 @@ export default function LiveStockPage() {
                   <tbody className="divide-y divide-slate-100">
                     {loading ? (
                       <tr>
-                        <td colSpan={10} className="p-8">
+                        <td colSpan={9} className="p-8">
                           <div className="animate-pulse space-y-4">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <div
@@ -637,7 +625,7 @@ export default function LiveStockPage() {
                     ) : error ? (
                       <tr>
                         <td
-                          colSpan={10}
+                          colSpan={9}
                           className="py-12 text-center text-rose-500 font-medium"
                         >
                           <div className="flex flex-col items-center justify-center gap-2">
@@ -649,7 +637,7 @@ export default function LiveStockPage() {
                     ) : filteredRows.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={10}
+                          colSpan={9}
                           className="py-12 text-center text-slate-500"
                         >
                           <div className="flex flex-col items-center justify-center gap-2">
@@ -665,7 +653,8 @@ export default function LiveStockPage() {
                         return (
                           <tr
                             key={i}
-                            className={`group border-l-2 border-l-transparent hover:bg-slate-50/40 transition-all duration-200 ${
+                            onClick={() => handleView(r)}
+                            className={`group border-l-2 border-l-transparent hover:bg-slate-50/40 transition-all duration-200 cursor-pointer ${
                               isEven ? "bg-white" : "bg-slate-50/10"
                             } ${isB2B ? "hover:border-l-emerald-500" : "hover:border-l-blue-500"}`}
                           >
@@ -717,16 +706,6 @@ export default function LiveStockPage() {
                               <span className="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-800 rounded-lg font-medium shadow-inner">
                                 {Number(r.quantity).toLocaleString()} kg
                               </span>
-                            </td>
-                            <td className="py-4 px-4 xl:px-5">
-                              <button
-                                onClick={() => handleView(r)}
-                                className={`p-2 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 text-slate-400 transition-all duration-200 shadow-sm hover:scale-105 ${
-                                  isB2B ? "hover:text-emerald-600 hover:border-emerald-100" : "hover:text-blue-600 hover:border-blue-100"
-                                }`}
-                              >
-                                <Eye className="w-4.5 h-4.5" />
-                              </button>
                             </td>
                           </tr>
                         );
