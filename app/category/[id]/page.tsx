@@ -10,6 +10,9 @@ import { ListingProductCard } from "@/components/product/ListingProductCard";
 import { ProductCardSkeleton } from "@/components/ui/SkeletonLoader";
 import EnquiryModal from "@/components/enquiryModal";
 import { useTheme } from "@/hooks/use-theme";
+import PageAdvertising from "@/components/advertising/pageAdvetise";
+import ProductCrousel from "@/components/productForhome/productcrousel";
+import ReadyToOrder from "@/components/readyToOrder/ReadytoOrder";
 
 export default function CategoryProductsPage() {
   const { id } = useParams();
@@ -152,6 +155,9 @@ export default function CategoryProductsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/50">
+      {/* Ads Banner */}
+      <PageAdvertising />
+
       {/* Cart Sidebar */}
       <AnimatePresence>
         {isCartOpen && (
@@ -258,22 +264,12 @@ export default function CategoryProductsPage() {
               )}
             </h1>
             <p className="text-lg text-gray-500">
-              {loading ? "Loading..." : `${products.length} product${products.length !== 1 ? "s" : ""} found`}
+              {loading ? "" : `${products.length} product${products.length !== 1 ? "s" : ""} found`}
             </p>
           </div>
 
           {/* Cart Button */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative group px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-primary transition-all duration-300 self-start lg:self-auto"
-          >
-            <ShoppingCart className="text-gray-900 group-hover:text-primary" size={24} />
-            {getTotalItems() > 0 && (
-              <span className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-white text-[10px] font-black flex items-center justify-center rounded-full shadow-lg shadow-primary/30 border-2 border-white">
-                {getTotalItems()}
-              </span>
-            )}
-          </button>
+
         </div>
 
         {/* Product Grid */}
@@ -312,6 +308,12 @@ export default function CategoryProductsPage() {
           </div>
         )}
       </div>
+
+      {/* Additional home page components */}
+      <div className="mt-16 border-t border-gray-100 bg-white">
+        <ProductCrousel />
+      </div>
+      <ReadyToOrder />
     </div>
   );
 }

@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  MessageSquare, 
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar as CalendarIcon,
+  Clock,
+  MessageSquare,
   ArrowLeft,
   CheckCircle2,
   AlertCircle
@@ -114,7 +114,7 @@ const ConsultantBookingPage: React.FC = () => {
     }
     if (consultantId) fetchSlots();
   }, [consultantId]);
- 
+
   // ✅ Extract all available dates formatted as YYYY-MM-DD
   const availableDatesStr = slots.map(s => {
     const d = new Date(s.date);
@@ -133,7 +133,7 @@ const ConsultantBookingPage: React.FC = () => {
       const month = String(d.getMonth() + 1).padStart(2, "0");
       const day = String(d.getDate()).padStart(2, "0");
       const slotDate = `${year}-${month}-${day}`;
-      
+
       return slotDate === formData.date || s.date.split("T")[0] === formData.date;
     } catch (e) {
       return false;
@@ -256,7 +256,7 @@ const ConsultantBookingPage: React.FC = () => {
               );
 
               if (!bookingRes.ok) throw new Error("Failed to confirm booking.");
-              
+
               alert("Payment & Booking confirmed successfully!");
               router.push("/buyer-route/consultant-bookings");
             } else {
@@ -302,7 +302,7 @@ const ConsultantBookingPage: React.FC = () => {
     <main className="min-h-screen bg-gray-50/50 py-12 md:py-20">
       <div className="max-w-4xl mx-auto px-4">
         {/* Back Button */}
-        <button 
+        <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-gray-500 hover:text-primary mb-8 transition-colors group"
         >
@@ -318,6 +318,14 @@ const ConsultantBookingPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
+
+              {/* Tips or Summary */}
+              <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+                <h3 className="font-bold text-gray-900 mb-4">Quick Tip</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Briefly describe your requirements in the remarks section to help the consultant prepare better for your session.
+                </p>
+              </div>
               <Card className="bg-primary border-none text-white rounded-[2rem] overflow-hidden shadow-2xl shadow-primary/20">
                 <CardContent className="p-8 space-y-6">
                   <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center">
@@ -346,13 +354,7 @@ const ConsultantBookingPage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Tips or Summary */}
-              <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
-                <h3 className="font-bold text-gray-900 mb-4">Quick Tip</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Briefly describe your requirements in the remarks section to help the consultant prepare better for your session.
-                </p>
-              </div>
+
             </motion.div>
           </div>
 

@@ -304,25 +304,11 @@ export default function ProductListing() {
             </p>
           </motion.div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
-              <button className="p-2.5 bg-gray-50 rounded-xl text-primary"><Grid size={20} /></button>
-              <button className="p-2.5 hover:bg-gray-50 rounded-xl text-gray-400 transition-colors"><LayoutList size={20} /></button>
-            </div>
-            
-            <button onClick={() => setIsCartOpen(true)} className="relative group px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-primary transition-all duration-300">
-              <ShoppingCart className="text-gray-900 group-hover:text-primary" size={24} />
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-white text-[10px] font-black flex items-center justify-center rounded-full shadow-lg shadow-primary/30 border-2 border-white">
-                  {getTotalItems()}
-                </span>
-              )}
-            </button>
-          </div>
+
         </div>
 
         {/* Category Filters */}
-        <div className="flex items-center gap-3 overflow-x-auto pb-6 mb-12 no-scrollbar">
+        <div className="flex flex-wrap items-center gap-3 mb-12">
           <button
             onClick={() => setSelectedCategory("all")}
             className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all whitespace-nowrap shadow-sm border ${selectedCategory === "all"

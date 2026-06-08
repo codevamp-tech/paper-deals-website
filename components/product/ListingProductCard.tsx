@@ -59,10 +59,10 @@ export function ListingProductCard({
         </Link>
 
         {/* Rating Badge */}
-        <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg flex items-center gap-1.5 border border-white/50">
+        {/* <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg flex items-center gap-1.5 border border-white/50">
           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
           <span className="text-xs font-bold text-gray-800">{item.rating?.toFixed(1) || "5.0"}</span>
-        </div>
+        </div> */}
 
         {/* Category Tag */}
         <div className="absolute top-4 left-4 z-10">
@@ -123,9 +123,8 @@ export function ListingProductCard({
                 addToCart(item);
               }
             }}
-            className={`w-full py-4 rounded-[1.25rem] font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg text-white hover:opacity-90 ${
-              inCart ? "bg-gray-800 shadow-gray-800/20" : "bg-primary shadow-primary/20"
-            }`}
+            className={`w-full py-4 rounded-[1.25rem] font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg text-white hover:opacity-90 ${inCart ? "bg-gray-800 shadow-gray-800/20" : "bg-primary shadow-primary/20"
+              }`}
           >
             <ShoppingCart className="h-4 w-4" />
             {inCart ? "Go to Cart" : "Add to Cart"}

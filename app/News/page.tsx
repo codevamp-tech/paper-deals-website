@@ -3,6 +3,7 @@
 
 import { useTheme } from "@/hooks/use-theme";
 import React, { useEffect, useState } from "react";
+import PageAdvertising from "@/components/advertising/pageAdvetise";
 
 
 const NewsSkeleton = () => {
@@ -50,26 +51,43 @@ const NewsPage = () => {
 
   if (loading)
     return (
-      <NewsSkeleton />
+      <div className="min-h-screen bg-gray-50 pb-12">
+        <PageAdvertising />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <NewsSkeleton />
+        </div>
+      </div>
     );
 
   if (error)
     return (
-      <p className="text-center mt-10 text-red-500 font-semibold">{error}</p>
+      <div className="min-h-screen bg-gray-50 pb-12">
+        <PageAdvertising />
+        <p className="text-center mt-10 text-red-500 font-semibold">{error}</p>
+      </div>
     );
 
   if (!newsData.length)
     return (
-      <p className="text-center mt-10 text-gray-600 font-medium">
-        No news available at the moment.
-      </p>
+      <div className="min-h-screen bg-gray-50 pb-12">
+        <PageAdvertising />
+        <p className="text-center mt-10 text-gray-600 font-medium">
+          No news available at the moment.
+        </p>
+      </div>
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className={`text-3xl font-bold mb-6 text-center ${theme.Text}`}>Paper Deal News</h1>
+    <div className="min-h-screen bg-gray-50 pb-12">
+      {/* Ads Banner */}
+      <PageAdvertising />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 className="text-5xl font-black text-gray-900 tracking-tight mb-8 text-left">
+          Paper Deal <span className="text-primary">News</span>
+        </h1>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {newsData.map((news) => (
           <div
             key={news.id}
@@ -99,6 +117,7 @@ const NewsPage = () => {
             </a>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

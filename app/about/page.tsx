@@ -28,7 +28,7 @@ export default function AboutUs() {
       </div>
 
       {/* Company Background Section */}
-      <div className="w-full bg-[#111111] rounded-tl-3xl rounded-tr-3xl">
+      <div className="w-full bg-[#111111] ">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
           <div className="max-w-7xl mx-auto">
             <div className="space-y-16">
@@ -223,7 +223,7 @@ export default function AboutUs() {
       {/* Founder's Legacy Section */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Left - Content */}
             <div className="space-y-6 order-2 lg:order-1">
               <div className="space-y-4">
@@ -287,12 +287,12 @@ export default function AboutUs() {
             </div>
 
             {/* Right - Image Placeholder */}
-            <div className="order-1 lg:order-2">
-              <div className="relative rounded-2xl overflow-hidden shadow-xl h-96 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] w-full max-w-[450px] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                 <img
-                  src="/mainimg.png"
+                  src="/ravi-kumar-agarwal-professional.png"
                   alt="Late Shri Ravi Kumar Agarwal - Founder"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </div>
@@ -303,14 +303,14 @@ export default function AboutUs() {
       {/* Managing Director's Message Section */}
       <div className="w-full bg-gradient-to-b from-gray-50 to-white py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Left - Image */}
-            <div>
-              <div className="relative rounded-2xl overflow-hidden shadow-xl h-96 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+            <div className="flex justify-center lg:justify-start">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] w-full max-w-[450px] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                 <img
-                  src="/mainimg.png"
+                  src="/tanuj-agarwal-professional.png"
                   alt="Mr. Tanuj Agarwal - Managing Director"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </div>

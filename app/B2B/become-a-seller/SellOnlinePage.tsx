@@ -1,25 +1,77 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Star, MessageSquare } from "lucide-react";
 import WhySellpaperdeals from "./Why-Sell-Paperdeals";
 import RegisterNow from "@/components/modal/RegisterNow";
 import { useTheme } from "@/hooks/use-theme";
+import { toast } from "sonner";
+import { StoryCarousel } from "./SuccessCarousel";
 
 export default function SellOnlinePage() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { theme } = useTheme();
 
+  // Form states
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formRating, setFormRating] = useState(5);
+  const [formHoverRating, setFormHoverRating] = useState(0);
+  const [formReview, setFormReview] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formName || !formEmail || !formReview) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/websiterating/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formName,
+          email: formEmail,
+          rating: formRating,
+          review: formReview,
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        toast.success("Thank you for your rating & review!");
+        setFormName("");
+        setFormEmail("");
+        setFormRating(5);
+        setFormReview("");
+        // Dispatch custom event to tell SuccessCarousel to refresh
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("refresh-reviews"));
+        }
+      } else {
+        toast.error(json.message || "Failed to submit review");
+      }
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      toast.error("An error occurred while submitting your review.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
   const handleSellerLogin = () => {
     window.location.href = "https://paper-deals-admin.netlify.app/";
   };
 
   return (
-    <div className="min-h-screen font-sans">
+    <div className="min-h-screen font-sans ">
 
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4 text-sm">
@@ -60,7 +112,7 @@ export default function SellOnlinePage() {
 
             <div className="flex space-x-4">
               <button
-                className="bg-[#0f7aed] text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
+                className="bg-[#0f7aed] text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition shadow-lg shadow-blue-500/20 active:scale-95"
                 onClick={() => setIsOpen(true)}
               >
                 Start Selling
@@ -109,11 +161,7 @@ export default function SellOnlinePage() {
           </p>
 
           <button
-            className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg"
-            style={{
-              boxShadow:
-                "rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-            }}
+            className="bg-white text-blue-600 font-bold py-4 px-10 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all border border-gray-100"
             onClick={() => setIsOpen(true)}
           >
             Register Now – It’s Free!
@@ -123,6 +171,99 @@ export default function SellOnlinePage() {
         {/* Popup Modal */}
         <RegisterNow visible={isOpen} onClose={() => setIsOpen(false)} />
       </section>
+
+      {/* SUCCESS CAROUSEL */}
+      <div className="flex justify-center items-center bg-gray-50/30 border-t border-gray-100">
+        <StoryCarousel />
+      </div>
+
+      {/* RATING & REVIEW SECTION */}
+      <section className="bg-gray-50/50 py-16 border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
+              Rate Your <span className={`${theme.Text}`}>Experience</span>
+            </h2>
+            <p className="text-gray-800 max-w-2xl mx-auto mb-8 text-lg font-semibold">
+              Share your experience selling on PaperDeals. Your feedback helps us improve our services for all merchants.
+            </p>
+          </div>
+
+          {/* Submit Form */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Select Stars</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFormRating(star)}
+                      onMouseEnter={() => setFormHoverRating(star)}
+                      onMouseLeave={() => setFormHoverRating(0)}
+                      className="focus:outline-none transition-transform active:scale-90"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${star <= (formHoverRating || formRating)
+                          ? "text-amber-400 fill-amber-400"
+                          : "text-gray-200"
+                          }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. John Doe"
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 bg-gray-50/50 text-slate-800 placeholder-slate-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. john@example.com"
+                  value={formEmail}
+                  onChange={(e) => setFormEmail(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 bg-gray-50/50 text-slate-800 placeholder-slate-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Your Review</label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Share your experience selling on PaperDeals..."
+                  value={formReview}
+                  onChange={(e) => setFormReview(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 bg-gray-50/50 text-slate-800 placeholder-slate-400"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl text-sm shadow-md transition"
+              >
+                {submittingReview ? "Submitting..." : "Submit Review"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
+

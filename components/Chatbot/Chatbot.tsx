@@ -164,7 +164,7 @@ export default function Chatbot() {
   );
 
   return (
-    <div className="fixed bottom-12 right-6 z-[60] flex flex-col items-end">
+    <div className="fixed bottom-20 right-6 z-[60] flex flex-col items-end">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -173,7 +173,7 @@ export default function Chatbot() {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.2 }}
             className="mb-4 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
-            style={{ height: "500px", maxHeight: "calc(100vh - 120px)" }}
+            style={{ height: "500px", maxHeight: "calc(100vh - 180px)" }}
           >
             {/* Header */}
             <div className="bg-primary px-4 py-4 flex items-center justify-between text-primary-foreground shadow-sm">
