@@ -45,14 +45,14 @@ export default function VideoCarousel() {
         );
         const json = await res.json();
 
-        const mapped =
+        const mapped: Video[] =
           json?.data?.map((v: any) => ({
             id: v.id,
             title: v.video_title,
             videoId: extractYouTubeId(v.video),
           })) || [];
 
-        setVideos(mapped.filter(v => v.videoId));
+        setVideos(mapped.filter((v) => v.videoId));
       } catch (err) {
         console.error("Video fetch error:", err);
       } finally {
